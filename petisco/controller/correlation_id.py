@@ -10,7 +10,7 @@ class CorrelationId(str):
         self.value = value
 
     @staticmethod
-    def generator(func_name: str = ""):
+    def generate(func_name: str = ""):
         datetime_string = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
         data_to_hash = (
             func_name + CorrelationId.random_string(10) + " " + datetime_string

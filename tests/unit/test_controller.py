@@ -4,8 +4,7 @@ import logging
 import pytest
 from meiga import Result
 
-from petisco.controller.controller_decorator import controller
-from petisco.controller.correlation_id import CorrelationId
+from petisco import controller, CorrelationId
 from tests.unit.fake_logger import FakeLogger
 from tests.unit.log_message_mother import LogMessageMother
 

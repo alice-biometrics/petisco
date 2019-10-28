@@ -1,6 +1,5 @@
 from typing import List
 
-import inspect
 import logging
 from meiga import Result
 from meiga.decorators import meiga

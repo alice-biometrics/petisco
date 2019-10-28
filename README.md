@@ -5,9 +5,15 @@ Petisco is a framework for helping Python developers to build clean Applications
 
 #### Installation 
 
-~~~
+```console
 pip install petisco
-~~~
+```
+
+If you are using the flask framework you can use additional extras with:
+
+```console
+pip install petisco[flask]
+```
 
 #### Getting Started
 
@@ -25,6 +31,12 @@ pip install -r requirements/dev.txt
 
 ```console
 pip install -e . && pytest
+```
+
+or if you are using flask extensions
+
+```console
+pip install -e .[flask] && pytest
 ```
 
 ##### Upload to PyPi 

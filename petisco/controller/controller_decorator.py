@@ -9,6 +9,7 @@ from meiga import Result
 from petisco.controller.correlation_id import CorrelationId
 from petisco.controller.errors.http_error import HttpError
 from petisco.controller.jwt.jwt_config import JwtConfig
+from petisco.frameworks.flask.correlation_id_provider import flask_correlation_id_provider
 from petisco.logger.log_message import LogMessage
 
 DEFAULT_SUCCESS_MESSAGE = {"message": "OK"}, 200
@@ -22,11 +23,13 @@ class ControllerDecorator(object):
         jwt_config: JwtConfig = None,
         success_handler: Callable = None,
         error_handler: Callable = None,
+        correlation_id_provider: Callable = flask_correlation_id_provider
     ):
         self.logger = logger
         self.jwt_config = jwt_config
         self.success_handler = success_handler
         self.error_handler = error_handler
+        self.correlation_id_provider = correlation_id_provider
 
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
@@ -75,7 +78,7 @@ class ControllerDecorator(object):
                 "correlation_id" in signature.parameters
                 and "correlation_id" not in kwargs
             ):
-                correlation_id = CorrelationId.generator(func.__name__)
+                correlation_id = self.correlation_id_provider(func.__name__)
                 kwargs = dict(kwargs, correlation_id=correlation_id)
             else:
                 correlation_id = None
