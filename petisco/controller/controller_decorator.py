@@ -2,14 +2,15 @@ import inspect
 import logging
 from functools import wraps
 import traceback
-from typing import Callable
+from typing import Callable, Tuple, Dict
 
 from meiga import Result
 
-from petisco.controller.correlation_id import CorrelationId
 from petisco.controller.errors.http_error import HttpError
 from petisco.controller.jwt.jwt_config import JwtConfig
-from petisco.frameworks.flask.correlation_id_provider import flask_correlation_id_provider
+from petisco.frameworks.flask.correlation_id_provider import (
+    flask_correlation_id_provider,
+)
 from petisco.logger.log_message import LogMessage
 
 DEFAULT_SUCCESS_MESSAGE = {"message": "OK"}, 200
@@ -21,9 +22,9 @@ class ControllerDecorator(object):
         self,
         logger=None,
         jwt_config: JwtConfig = None,
-        success_handler: Callable = None,
-        error_handler: Callable = None,
-        correlation_id_provider: Callable = flask_correlation_id_provider
+        success_handler: Callable[[Result], Tuple[Dict, int]] = None,
+        error_handler: Callable[[Result], HttpError] = None,
+        correlation_id_provider: Callable = flask_correlation_id_provider,
     ):
         self.logger = logger
         self.jwt_config = jwt_config
@@ -52,16 +53,17 @@ class ControllerDecorator(object):
                 self.logger.log(logging.INFO, log_message.to_json())
                 result = run_controller(*args, **kwargs)
                 log_message.message = f"Result: {result}"
-                self.logger.log(logging.INFO, log_message.to_json())
                 if result.is_success:
+                    self.logger.log(logging.INFO, log_message.to_json())
                     return (
                         self.success_handler(result)
                         if self.success_handler
                         else DEFAULT_SUCCESS_MESSAGE
                     )
                 else:
+                    self.logger.log(logging.ERROR, log_message.to_json())
                     return (
-                        self.error_handler(result)
+                        self.error_handler(result).handle()
                         if self.error_handler
                         else DEFAULT_ERROR_MESSAGE
                     )

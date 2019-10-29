@@ -26,9 +26,7 @@ def test_should_log_successfully_a_non_error_use_case_without_input_parameters_a
 
     assert first_logging_message == (
         logging.INFO,
-        LogMessageMother.get_use_case(
-            operation="MyUseCase", message="Start"
-        ).to_json(),
+        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
     )
     assert second_logging_message == (
         logging.INFO,
@@ -55,9 +53,7 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters_but_
 
     assert first_logging_message == (
         logging.INFO,
-        LogMessageMother.get_use_case(
-            operation="MyUseCase", message="Start"
-        ).to_json(),
+        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
     )
     assert second_logging_message == (
         logging.INFO,
@@ -65,6 +61,7 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters_but_
             operation="MyUseCase", message="Result: Hello Petisco"
         ).to_json(),
     )
+
 
 @pytest.mark.unit
 def test_should_log_successfully_a_non_error_use_case_with_input_parameters():
@@ -86,14 +83,13 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters():
 
     assert first_logging_message == (
         logging.INFO,
-        LogMessageMother.get_use_case(
-            operation="MyUseCase", message="Start"
-        ).to_json(),
+        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
     )
     assert second_logging_message == (
         logging.INFO,
         LogMessageMother.get_use_case(
-            operation="MyUseCase", message={"client_id": "client_id", "user_id": "user_id"}
+            operation="MyUseCase",
+            message={"client_id": "client_id", "user_id": "user_id"},
         ).to_json(),
     )
     assert third_logging_message == (
