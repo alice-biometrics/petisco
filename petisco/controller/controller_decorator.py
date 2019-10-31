@@ -1,11 +1,11 @@
 import inspect
-import logging
 from functools import wraps
 import traceback
 from typing import Callable, Tuple, Dict
 
 from meiga import Result
 
+from petisco.logger.logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
 from petisco.controller.jwt.jwt_config import JwtConfig
 from petisco.frameworks.flask.correlation_id_provider import (
@@ -50,18 +50,18 @@ class ControllerDecorator(object):
 
             try:
                 log_message.message = "Start"
-                self.logger.log(logging.INFO, log_message.to_json())
+                self.logger.log(INFO, log_message.to_json())
                 result = run_controller(*args, **kwargs)
                 log_message.message = f"{result}"
                 if result.is_success:
-                    self.logger.log(logging.INFO, log_message.to_json())
+                    self.logger.log(INFO, log_message.to_json())
                     return (
                         self.success_handler(result)
                         if self.success_handler
                         else DEFAULT_SUCCESS_MESSAGE
                     )
                 else:
-                    self.logger.log(logging.ERROR, log_message.to_json())
+                    self.logger.log(ERROR, log_message.to_json())
                     return (
                         self.error_handler(result).handle()
                         if self.error_handler
@@ -72,7 +72,7 @@ class ControllerDecorator(object):
                 log_message.message = (
                     f"Error {func.__name__}: {e} | {traceback.print_exc()}"
                 )
-                self.logger.log(logging.ERROR, log_message.to_json())
+                self.logger.log(ERROR, log_message.to_json())
 
         def update_correlation_id(kwargs):
             signature = inspect.signature(func)

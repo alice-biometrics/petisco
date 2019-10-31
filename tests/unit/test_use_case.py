@@ -1,8 +1,6 @@
-import logging
-
 import pytest
 
-from petisco import UseCase, use_case_logger
+from petisco import UseCase, use_case_logger, INFO
 from meiga import Result
 
 from tests.unit.fake_logger import FakeLogger
@@ -25,13 +23,13 @@ def test_should_log_successfully_a_non_error_use_case_without_input_parameters_a
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        logging.INFO,
+        INFO,
         LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
     )
     assert second_logging_message == (
-        logging.INFO,
+        INFO,
         LogMessageMother.get_use_case(
-            operation="MyUseCase", message="Result: Hello Petisco"
+            operation="MyUseCase", message="Hello Petisco"
         ).to_json(),
     )
 
@@ -52,13 +50,13 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters_but_
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        logging.INFO,
+        INFO,
         LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
     )
     assert second_logging_message == (
-        logging.INFO,
+        INFO,
         LogMessageMother.get_use_case(
-            operation="MyUseCase", message="Result: Hello Petisco"
+            operation="MyUseCase", message="Hello Petisco"
         ).to_json(),
     )
 
@@ -82,19 +80,19 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters():
     third_logging_message = logger.get_logging_messages()[2]
 
     assert first_logging_message == (
-        logging.INFO,
+        INFO,
         LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
     )
     assert second_logging_message == (
-        logging.INFO,
+        INFO,
         LogMessageMother.get_use_case(
             operation="MyUseCase",
             message={"client_id": "client_id", "user_id": "user_id"},
         ).to_json(),
     )
     assert third_logging_message == (
-        logging.INFO,
+        INFO,
         LogMessageMother.get_use_case(
-            operation="MyUseCase", message="Result: Hello Petisco"
+            operation="MyUseCase", message="Hello Petisco"
         ).to_json(),
     )

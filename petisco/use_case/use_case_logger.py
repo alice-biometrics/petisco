@@ -1,9 +1,9 @@
 from typing import List
 
-import logging
 from meiga import Result
 from meiga.decorators import meiga
 
+from petisco.logger.logger import ERROR, INFO
 from petisco.logger.log_message import LogMessage
 from petisco.use_case.use_case import UseCase
 
@@ -31,7 +31,7 @@ class UseCaseLogger(object):
                 )
 
                 log_message.message = f"Start"
-                self.logger.log(logging.INFO, log_message.to_json())
+                self.logger.log(INFO, log_message.to_json())
 
                 if self.logging_parameters_whitelist:
                     loggable_kwargs = [
@@ -42,7 +42,7 @@ class UseCaseLogger(object):
 
                     if loggable_kwargs:
                         log_message.message = dict(loggable_kwargs)
-                        self.logger.log(logging.INFO, log_message.to_json())
+                        self.logger.log(INFO, log_message.to_json())
 
                 result = self._run_execute(*args, **kwargs)
 
@@ -57,10 +57,10 @@ class UseCaseLogger(object):
 
                 if result.is_failure:
                     log_message.message = f"{result} {detail}"
-                    self.logger.log(logging.ERROR, log_message.to_json())
+                    self.logger.log(ERROR, log_message.to_json())
                 else:
                     log_message.message = f"{result.value}"
-                    self.logger.log(logging.INFO, log_message.to_json())
+                    self.logger.log(INFO, log_message.to_json())
 
                 return result
 
