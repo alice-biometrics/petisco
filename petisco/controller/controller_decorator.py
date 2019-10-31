@@ -52,7 +52,7 @@ class ControllerDecorator(object):
                 log_message.message = "Start"
                 self.logger.log(logging.INFO, log_message.to_json())
                 result = run_controller(*args, **kwargs)
-                log_message.message = f"Result: {result}"
+                log_message.message = f"{result}"
                 if result.is_success:
                     self.logger.log(logging.INFO, log_message.to_json())
                     return (

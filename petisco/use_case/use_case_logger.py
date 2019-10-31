@@ -56,10 +56,10 @@ class UseCaseLogger(object):
                     detail = ""
 
                 if result.is_failure:
-                    log_message.message = f"Error: {result} {detail}"
+                    log_message.message = f"{result} {detail}"
                     self.logger.log(logging.ERROR, log_message.to_json())
                 else:
-                    log_message.message = f"Result: {result.value}"
+                    log_message.message = f"{result.value}"
                     self.logger.log(logging.INFO, log_message.to_json())
 
                 return result
