@@ -102,8 +102,7 @@ def test_should_execute_with_a_failure_a_empty_controller_without_input_paramete
     assert second_logging_message == (
         ERROR,
         LogMessageMother.get_controller(
-            operation="my_controller",
-            message="Result[status: failure | value: Error]",
+            operation="my_controller", message="Result[status: failure | value: Error]"
         ).to_json(),
     )
 

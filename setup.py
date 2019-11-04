@@ -4,7 +4,7 @@ from setuptools import setup
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 PACKAGE_NAME = "petisco"
-VERSION = "0.0.11"
+VERSION = "0.0.12"
 
 # The text of the README file
 with open(os.path.join(CURRENT_DIR, "README.md")) as fid:
@@ -35,7 +35,7 @@ setup(
         "petisco/frameworks/flask",
         "petisco/frameworks/flask/application",
         "petisco/logger",
-        "petisco/use_case"
+        "petisco/use_case",
     ],
     zip_safe=False,
     extras_require={"flask": ["connexion==2.2.0", "Flask-Cors==3.0.7"]},
