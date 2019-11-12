@@ -15,6 +15,12 @@ from petisco.use_case import use_case_logger
 from petisco.controller.controller_decorator import controller
 from petisco.controller.correlation_id import CorrelationId
 from petisco.controller.errors.http_error import HttpError
+from petisco.events.event import Event
+from petisco.events.event_id import EventId
+from petisco.events.event_manager import EventManager
+from petisco.events.fake_event_manager import FakeEventManager
+from petisco.events.redis.redis_based_event_handler import redis_based_event_handler
+from petisco.events.redis.redis_based_event_manager import RedisBasedEventManager
 
 classes = [
     "ApplicationConfig",
@@ -27,6 +33,12 @@ classes = [
     "HttpError",
     "LoggingBasedLogger",
     "Logger",
+    "Event",
+    "EventId",
+    "EventManager",
+    "FakeEventManager",
+    "redis_based_event_handler",
+    "RedisBasedEventManager"
 ]
 
 # Constants
