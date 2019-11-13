@@ -4,8 +4,8 @@ import pytest
 from meiga import Success, isFailure
 
 from petisco import controller, CorrelationId, ERROR, INFO
-from tests.unit.fake_logger import FakeLogger
-from tests.unit.log_message_mother import LogMessageMother
+from tests.unit.mocks.fake_logger import FakeLogger
+from tests.unit.mocks.log_message_mother import LogMessageMother
 
 
 @pytest.mark.unit

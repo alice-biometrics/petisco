@@ -3,8 +3,8 @@ import pytest
 from petisco import UseCase, use_case_logger, INFO
 from meiga import Result
 
-from tests.unit.fake_logger import FakeLogger
-from tests.unit.log_message_mother import LogMessageMother
+from tests.unit.mocks.fake_logger import FakeLogger
+from tests.unit.mocks.log_message_mother import LogMessageMother
 
 
 @pytest.mark.unit

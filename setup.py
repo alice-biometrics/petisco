@@ -4,7 +4,7 @@ from setuptools import setup
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 PACKAGE_NAME = "petisco"
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 # The text of the README file
 with open(os.path.join(CURRENT_DIR, "README.md")) as fid:
@@ -31,7 +31,7 @@ setup(
         "petisco/application",
         "petisco/controller",
         "petisco/controller/errors",
-        "petisco/controller/jwt",
+        "petisco/controller/tokens",
         "petisco/events",
         "petisco/events/redis",
         "petisco/frameworks/flask",

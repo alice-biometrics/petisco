@@ -8,6 +8,8 @@
 from petisco.application.application_config import ApplicationConfig
 from petisco.application.repository import Repository
 from petisco.application.service import Service
+from petisco.application.singleton import Singleton
+from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.logger import Logger
 from petisco.use_case import UseCase
@@ -21,6 +23,8 @@ from petisco.events.event_manager import EventManager
 from petisco.events.fake_event_manager import FakeEventManager
 from petisco.events.redis.redis_based_event_handler import redis_based_event_handler
 from petisco.events.redis.redis_based_event_manager import RedisBasedEventManager
+
+
 
 classes = [
     "ApplicationConfig",
@@ -38,7 +42,9 @@ classes = [
     "EventManager",
     "FakeEventManager",
     "redis_based_event_handler",
-    "RedisBasedEventManager"
+    "RedisBasedEventManager",
+    "Singleton"
+    "JwtConfig"
 ]
 
 # Constants

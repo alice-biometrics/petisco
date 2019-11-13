@@ -5,9 +5,12 @@ from typing import Callable, Tuple, Dict
 
 from meiga import Result
 
+from petisco.controller.errors.known_result_failure_handler import \
+    KnownResultFailureHandler
+from petisco.controller.tokens.jwt_decorator import jwt
 from petisco.logger.logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
-from petisco.controller.jwt.jwt_config import JwtConfig
+from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.frameworks.flask.correlation_id_provider import (
     flask_correlation_id_provider,
 )
@@ -35,9 +38,7 @@ class ControllerDecorator(object):
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            log_message = LogMessage(layer="controller", operation=f"{func.__name__}")
-
-            # @jwt(jwt_config=self.jwt_config)
+            @jwt(jwt_config=self.jwt_config)
             def run_controller(*args, **kwargs) -> Result:
                 return func(*args, **kwargs)
 
@@ -62,11 +63,16 @@ class ControllerDecorator(object):
                     )
                 else:
                     self.logger.log(ERROR, log_message.to_json())
-                    return (
-                        self.error_handler(result).handle()
-                        if self.error_handler
-                        else DEFAULT_ERROR_MESSAGE
-                    )
+                    known_result_failure_handler = KnownResultFailureHandler(result)
+
+                    if not known_result_failure_handler.is_a_result_known_error:
+                        return (
+                            self.error_handler(result).handle()
+                            if self.error_handler
+                            else DEFAULT_ERROR_MESSAGE
+                        )
+                    else:
+                        return known_result_failure_handler.http_error.handle()
 
             except Exception as e:
                 log_message.message = (

@@ -57,16 +57,9 @@ def test_should_unsubscribe_all_successfully():
         assert event.data["user_id"] == given_any_user_id_2
 
     event_manager = RedisBasedEventManager(
-        redis=FakeRedis(),
-        subscribers={
-            "user_created": user_created_handler,
-        },
+        redis=FakeRedis(), subscribers={"user_created": user_created_handler}
     )
 
     event_manager.send("user_created", UserCreated(user_id=given_any_user_id_1))
     event_manager.unsubscribe_all()
     event_manager.send("user_created", UserCreated(user_id=given_any_user_id_2))
-
-
-
-

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from petisco.application.repository import Repository
 from petisco.application.service import Service
 from petisco.application.singleton import Singleton
+from petisco.events.event_manager import EventManager
 from petisco.logger.logger import Logger, INFO, ERROR
 
 
@@ -12,6 +13,7 @@ from petisco.logger.logger import Logger, INFO, ERROR
 class ApplicationConfig(metaclass=Singleton):
     services_provider: Callable[[], Dict[str, Service]]
     repositories_provider: Callable[[], Dict[str, Repository]]
+    event_manager: EventManager
     options: Dict[str, Any]
     info: Dict
 
@@ -27,6 +29,7 @@ class ApplicationConfig(metaclass=Singleton):
         config_persistence: Callable = None,
         services_mode_mapper: Dict[str, Callable] = None,
         repositories_mode_mapper: Dict[str, Callable] = None,
+        event_manager: EventManager = None,
         options: Dict[str, Any] = None,
     ):
         """
@@ -47,6 +50,10 @@ class ApplicationConfig(metaclass=Singleton):
             A dictionary to map DeploymentMode with a service provider function. This is used as a dependency injector
         repositories_mode_mapper
             A dictionary to map DeploymentMode with a repository provider function. This is used as a dependency injector
+        event_manager
+            Pre configured event manager. For intance, a event manager that uses Redis for messaging
+        options
+            A dictionary with specific application options
         """
 
         self.mode = mode
@@ -98,7 +105,9 @@ class ApplicationConfig(metaclass=Singleton):
                     raise TypeError(f"{key} repository must implement info")
             self.info["repositories"] = info_repositories
 
+        self.event_manager = event_manager
         self.options = options
 
         self.logger.log(INFO, f"Info: {self.info}")
+        self.logger.log(INFO, f"{self.event_manager}")
         self.logger.log(INFO, f"Options: {self.options}")

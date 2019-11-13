@@ -1,7 +1,10 @@
 from functools import wraps
 
+from meiga import Failure
+
 from petisco.controller.errors.invalid_token_http_error import InvalidTokenHttpError
-from petisco.controller.jwt.jwt_config import JwtConfig
+from petisco.controller.tokens.jwt_config import JwtConfig
+from petisco.controller.tokens.jwt_errors import InvalidTokenError
 
 
 class JwtDecorator(object):
@@ -18,11 +21,11 @@ class JwtDecorator(object):
             token_info = kwargs.get("token_info")
 
             if not token_info:
-                return InvalidTokenHttpError(
-                    suffix="This entry point expects a valid {} Token ".format(
-                        self.jwt_config.token_type
+                return Failure(
+                    InvalidTokenError(
+                        message=f"This entry point expects a valid {self.jwt_config.token_type} Token"
                     )
-                ).handle()
+                )
 
             client_id = token_info.get("client_id")
             token_type = token_info.get("token_type")
@@ -36,14 +39,13 @@ class JwtDecorator(object):
                 or (self.jwt_config.require_user and not user_id)
                 or (not self.jwt_config.require_user and user_id)
             ):
-                return InvalidTokenHttpError(
-                    suffix="This entry point expects a valid {} Token ".format(
-                        self.jwt_config.token_type
+                return Failure(
+                    InvalidTokenError(
+                        message=f"This entry point expects a valid {self.jwt_config.token_type} Token"
                     )
-                ).handle()
+                )
 
             del kwargs["token_info"]
-            del kwargs["user"]
             if self.jwt_config.require_user:
                 return func(client_id, user_id, *args, **kwargs)
             else:
