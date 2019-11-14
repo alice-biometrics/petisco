@@ -4,9 +4,13 @@ exclude =
     .git,
     # There's no value in checking cache directories
     __pycache__,
+    build,
+    tests/conftest.py,
     # Tricky imports
     petisco/__init__.py,
-    petisco/public_api.py
+    petisco/public_api.py,
+    petisco/frameworks/flask/application/__init__.py
+
 
 max-line-length = 110
 

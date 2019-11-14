@@ -2,7 +2,6 @@ from functools import wraps
 
 from meiga import Failure
 
-from petisco.controller.errors.invalid_token_http_error import InvalidTokenHttpError
 from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.controller.tokens.jwt_errors import InvalidTokenError
 

@@ -70,4 +70,3 @@ def test_should_return_200_when_call_sum_without_required_value(client):
         content_type="multipart/form-data",
     )
     assert 400 == response.status_code
-

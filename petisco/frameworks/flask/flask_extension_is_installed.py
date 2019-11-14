@@ -1,7 +1,7 @@
 def flask_extension_is_installed() -> bool:
     try:
-        import connexion
+        import connexion  # noqa: F401
 
         return True
-    except:
+    except:  # noqa: E722
         return False
