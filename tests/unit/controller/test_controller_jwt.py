@@ -134,7 +134,15 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
 
     http_response = my_controller(token_info=given_any_decoded_token_info)
 
-    assert http_response == ({'error': {'message': 'Access token is missing or invalid. This entry point expects a valid REQUIRED_TOKEN Token', 'type': 'InvalidTokenHttpError'}}, 401)
+    assert http_response == (
+        {
+            "error": {
+                "message": "Access token is missing or invalid. This entry point expects a valid REQUIRED_TOKEN Token",
+                "type": "InvalidTokenHttpError",
+            }
+        },
+        401,
+    )
 
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
@@ -168,7 +176,15 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
 
     http_response = my_controller(token_info=given_any_decoded_token_info)
 
-    assert http_response == ({'error': {'message': 'Access token is missing or invalid. This entry point expects a valid TOKEN Token', 'type': 'InvalidTokenHttpError'}}, 401)
+    assert http_response == (
+        {
+            "error": {
+                "message": "Access token is missing or invalid. This entry point expects a valid TOKEN Token",
+                "type": "InvalidTokenHttpError",
+            }
+        },
+        401,
+    )
 
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]

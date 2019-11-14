@@ -25,7 +25,6 @@ from petisco.events.redis.redis_based_event_handler import redis_based_event_han
 from petisco.events.redis.redis_based_event_manager import RedisBasedEventManager
 
 
-
 classes = [
     "ApplicationConfig",
     "Service",
@@ -43,8 +42,8 @@ classes = [
     "FakeEventManager",
     "redis_based_event_handler",
     "RedisBasedEventManager",
-    "Singleton"
-    "JwtConfig"
+    "Singleton",
+    "JwtConfig",
 ]
 
 # Constants

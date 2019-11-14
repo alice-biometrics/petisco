@@ -6,7 +6,6 @@ from petisco.controller.tokens.jwt_errors import InvalidTokenError
 
 
 class KnownResultFailureHandler:
-
     def __init__(self, result: Result):
         self.domain_error = result.value
 
@@ -17,5 +16,3 @@ class KnownResultFailureHandler:
         if isinstance(domain_error, InvalidTokenError):
             self.http_error = InvalidTokenHttpError(suffix=domain_error.message)
             self.is_a_result_known_error = True
-
-

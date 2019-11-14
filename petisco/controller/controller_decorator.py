@@ -5,8 +5,10 @@ from typing import Callable, Tuple, Dict
 
 from meiga import Result
 
-from petisco.controller.errors.known_result_failure_handler import \
-    KnownResultFailureHandler
+from petisco.controller.errors.bad_request_http_error import BadRequestHttpError
+from petisco.controller.errors.known_result_failure_handler import (
+    KnownResultFailureHandler,
+)
 from petisco.controller.tokens.jwt_decorator import jwt
 from petisco.logger.logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
@@ -51,18 +53,21 @@ class ControllerDecorator(object):
 
             try:
                 log_message.message = "Start"
-                self.logger.log(INFO, log_message.to_json())
+                if self.logger:
+                    self.logger.log(INFO, log_message.to_json())
                 result = run_controller(*args, **kwargs)
                 log_message.message = f"{result}"
                 if result.is_success:
-                    self.logger.log(INFO, log_message.to_json())
+                    if self.logger:
+                        self.logger.log(INFO, log_message.to_json())
                     return (
                         self.success_handler(result)
                         if self.success_handler
                         else DEFAULT_SUCCESS_MESSAGE
                     )
                 else:
-                    self.logger.log(ERROR, log_message.to_json())
+                    if self.logger:
+                        self.logger.log(ERROR, log_message.to_json())
                     known_result_failure_handler = KnownResultFailureHandler(result)
 
                     if not known_result_failure_handler.is_a_result_known_error:
@@ -78,7 +83,9 @@ class ControllerDecorator(object):
                 log_message.message = (
                     f"Error {func.__name__}: {e} | {traceback.print_exc()}"
                 )
-                self.logger.log(ERROR, log_message.to_json())
+                if self.logger:
+                    self.logger.log(ERROR, log_message.to_json())
+                return BadRequestHttpError(suffix=traceback.print_exc()).handle()
 
         def update_correlation_id(kwargs):
             signature = inspect.signature(func)

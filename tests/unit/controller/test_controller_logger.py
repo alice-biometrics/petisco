@@ -142,3 +142,15 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
             message="Result[status: failure | value: Error]",
         ).to_json(),
     )
+
+
+@pytest.mark.unit
+def test_should_execute_successfully_a_empty_controller_without_input_parameters_and_logger():
+
+    @controller()
+    def my_controller():
+        return Success("Hello Petisco")
+
+    http_response = my_controller()
+
+    assert http_response == ({"message": "OK"}, 200)

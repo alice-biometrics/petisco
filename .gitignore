@@ -13,6 +13,7 @@ __pycache__/
 *.mp4
 *.webm
 
+.hypothesis
 output/
 metrics/
 docs/build
