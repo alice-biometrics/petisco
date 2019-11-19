@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 from meiga import Result
 from meiga.decorators import meiga
@@ -9,9 +9,15 @@ from petisco.use_case.use_case import UseCase
 
 
 class UseCaseLogger(object):
-    def __init__(self, logger=None, logging_parameters_whitelist: List[str] = None):
+    def __init__(
+        self,
+        logger=None,
+        logging_parameters_whitelist: List[str] = None,
+        logging_types_blacklist: List[Any] = [bytes],
+    ):
         self.logger = logger
         self.logging_parameters_whitelist = logging_parameters_whitelist
+        self.logging_types_blacklist = logging_types_blacklist
 
     def __call__(self, cls):
         if not issubclass(cls, UseCase):
@@ -20,6 +26,7 @@ class UseCaseLogger(object):
         class UseCaseWrapped(cls):
             logger = self.logger
             logging_parameters_whitelist = self.logging_parameters_whitelist
+            logging_types_blacklist = self.logging_types_blacklist
 
             def execute(self, *args, **kwargs):
                 correlation_id = kwargs.get("correlation_id")
@@ -59,7 +66,12 @@ class UseCaseLogger(object):
                     log_message.message = f"{result} {detail}"
                     self.logger.log(ERROR, log_message.to_json())
                 else:
-                    log_message.message = f"{result.value}"
+                    if isinstance(result.value, tuple(self.logging_types_blacklist)):
+                        log_message.message = (
+                            f"Object of type: {type(result.value).__name__}"
+                        )
+                    else:
+                        log_message.message = f"{result.value}"
                     self.logger.log(INFO, log_message.to_json())
 
                 return result

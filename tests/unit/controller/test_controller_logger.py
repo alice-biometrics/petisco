@@ -153,3 +153,34 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
     http_response = my_controller()
 
     assert http_response == ({"message": "OK"}, 200)
+
+
+@pytest.mark.unit
+def test_should_execute_successfully_a_filtered_object_by_blacklist():
+
+    logger = FakeLogger()
+
+    @controller(logger=logger)
+    def my_controller():
+        return Success(b"This are bytes")
+
+    http_response = my_controller()
+
+    assert http_response == ({"message": "OK"}, 200)
+
+    first_logging_message = logger.get_logging_messages()[0]
+    second_logging_message = logger.get_logging_messages()[1]
+
+    assert first_logging_message == (
+        INFO,
+        LogMessageMother.get_controller(
+            operation="my_controller", message="Start"
+        ).to_json(),
+    )
+    assert second_logging_message == (
+        INFO,
+        LogMessageMother.get_controller(
+            operation="my_controller",
+            message="Success result of type: bytes",
+        ).to_json(),
+    )
