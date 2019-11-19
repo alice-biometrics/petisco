@@ -10,7 +10,7 @@ from petisco.frameworks.flask.flask_extension_is_installed import (
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
 def test_should_return_200_when_call_healthcheck_with_happy_path(client):
-    headers = {"Accept": "application/json"}
+    headers = {"Accept": "toy_app/json"}
     response = client.open("/petisco/healthcheck", method="GET", headers=headers)
     assert response.status_code == 200
 
@@ -22,7 +22,7 @@ def test_should_return_200_when_call_healthcheck_with_happy_path(client):
 def test_should_return_200_when_call_environment_with_happy_path_with_apikey(
     client, given_any_apikey
 ):
-    headers = {"Accept": "application/json", "apikey": given_any_apikey}
+    headers = {"Accept": "toy_app/json", "apikey": given_any_apikey}
     response = client.open("/petisco/environment", method="GET", headers=headers)
     assert response.status_code == 200
 
@@ -32,7 +32,7 @@ def test_should_return_200_when_call_environment_with_happy_path_with_apikey(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
 def test_should_return_401_when_call_environment_with_happy_path_without_apikey(client):
-    headers = {"Accept": "application/json"}
+    headers = {"Accept": "toy_app/json"}
     response = client.open("/petisco/environment", method="GET", headers=headers)
     assert response.status_code == 401
 
@@ -117,18 +117,3 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token_
 
     assert response.status_code == 200
     assert response.json["user_id"] == "any_user_id"
-
-
-@pytest.mark.integration
-@pytest.mark.skipif(
-    not flask_extension_is_installed(), reason="Flask extension is not installed"
-)
-def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token_with_user_and_user_is_not_available(
-    client, given_auth_token_headers_creator
-):
-
-    headers = given_auth_token_headers_creator(type_token="USER_TOKEN")
-
-    response = client.open("/petisco/user", method="GET", headers=headers)
-
-    assert response.status_code == 401

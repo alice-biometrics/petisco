@@ -12,12 +12,14 @@ __pycache__/
 *.avi
 *.mp4
 *.webm
+*.db
 
 .hypothesis
 output/
 metrics/
 docs/build
 docs/source/resources/
+upload_to_pypi.sh
 
 
 # Distribution / packaging

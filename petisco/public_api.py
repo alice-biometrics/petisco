@@ -68,4 +68,15 @@ try:
 except (RuntimeError, ImportError):
     flask = ""
 
-__all__ = classes + constants + flask
+
+# SqlAlchemy
+try:
+    from petisco.persistence.sqlalchemy.sqlalchemy_persistence import (
+        SqlAlchemyPersistence,
+    )
+
+    sqlalchemy = ["SqlAlchemyPersistence"]
+except (RuntimeError, ImportError):
+    sqlalchemy = ""
+
+__all__ = classes + constants + flask + sqlalchemy

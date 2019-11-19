@@ -5,11 +5,16 @@ from meiga.decorators import meiga
 
 from petisco.logger.logger import ERROR, INFO
 from petisco.logger.log_message import LogMessage
+from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.use_case.use_case import UseCase
 
 
 class UseCaseLogger(object):
-    def __init__(self, logger=None, logging_parameters_whitelist: List[str] = None):
+    def __init__(
+        self,
+        logger=NotImplementedLogger(),
+        logging_parameters_whitelist: List[str] = None,
+    ):
         self.logger = logger
         self.logging_parameters_whitelist = logging_parameters_whitelist
 
