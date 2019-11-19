@@ -1,7 +1,7 @@
 import inspect
 from functools import wraps
 import traceback
-from typing import Callable, Tuple, Dict
+from typing import Callable, Tuple, Dict, List, Any
 
 from meiga import Result
 
@@ -31,12 +31,14 @@ class ControllerDecorator(object):
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
         correlation_id_provider: Callable = flask_correlation_id_provider,
+        logging_types_blacklist: List[Any] = [bytes],
     ):
         self.logger = logger
         self.jwt_config = jwt_config
         self.success_handler = success_handler
         self.error_handler = error_handler
         self.correlation_id_provider = correlation_id_provider
+        self.logging_types_blacklist = logging_types_blacklist
 
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
@@ -56,8 +58,13 @@ class ControllerDecorator(object):
                 log_message.message = "Start"
                 self.logger.log(INFO, log_message.to_json())
                 result = run_controller(*args, **kwargs)
-                log_message.message = f"{result}"
                 if result.is_success:
+                    if isinstance(result.value, tuple(self.logging_types_blacklist)):
+                        log_message.message = (
+                            f"Success result of type: {type(result.value).__name__}"
+                        )
+                    else:
+                        log_message.message = f"{result}"
                     self.logger.log(INFO, log_message.to_json())
                     return (
                         self.success_handler(result)
@@ -65,6 +72,7 @@ class ControllerDecorator(object):
                         else DEFAULT_SUCCESS_MESSAGE
                     )
                 else:
+                    log_message.message = f"{result}"
                     self.logger.log(ERROR, log_message.to_json())
                     known_result_failure_handler = KnownResultFailureHandler(result)
 

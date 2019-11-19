@@ -14,7 +14,7 @@ from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
 from petisco.use_case import UseCase
-from petisco.use_case import use_case_logger
+from petisco.use_case import use_case_handler
 from petisco.controller.controller_decorator import controller
 from petisco.controller.correlation_id import CorrelationId
 from petisco.controller.errors.http_error import HttpError
@@ -31,7 +31,7 @@ classes = [
     "Service",
     "Repository",
     "UseCase",
-    "use_case_logger",
+    "use_case_handler",
     "controller",
     "CorrelationId",
     "HttpError",
