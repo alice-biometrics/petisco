@@ -1,10 +1,10 @@
 from typing import Dict, Callable
 
 from petisco.events.event import Event
-from petisco.events.event_manager import EventManager
+from petisco.events.interface_event_manager import IEventManager
 
 
-class FakeEventManager(EventManager):
+class FakeEventManager(IEventManager):
 
     is_subscribed = False
 

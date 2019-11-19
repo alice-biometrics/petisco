@@ -10,7 +10,7 @@ from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
 from petisco.controller.tokens.jwt_decorator import jwt
-from petisco.logger.logger import ERROR, INFO
+from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
 from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.frameworks.flask.correlation_id_provider import (

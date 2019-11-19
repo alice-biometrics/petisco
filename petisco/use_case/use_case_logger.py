@@ -3,7 +3,7 @@ from typing import List
 from meiga import Result
 from meiga.decorators import meiga
 
-from petisco.logger.logger import ERROR, INFO
+from petisco.logger.interface_logger import ERROR, INFO
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.use_case.use_case import UseCase

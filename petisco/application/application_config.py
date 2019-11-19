@@ -5,15 +5,15 @@ from dataclasses import dataclass
 from petisco.application.repository import Repository
 from petisco.application.service import Service
 from petisco.application.singleton import Singleton
-from petisco.events.event_manager import EventManager
-from petisco.logger.logger import Logger, INFO, ERROR
+from petisco.events.interface_event_manager import IEventManager
+from petisco.logger.interface_logger import ILogger, INFO, ERROR
 
 
 @dataclass
 class ApplicationConfig(metaclass=Singleton):
     services_provider: Callable[[], Dict[str, Service]]
     repositories_provider: Callable[[], Dict[str, Repository]]
-    event_manager: EventManager
+    event_manager: IEventManager
     options: Dict[str, Any]
     info: Dict
 
@@ -24,12 +24,12 @@ class ApplicationConfig(metaclass=Singleton):
     def __init__(
         self,
         mode: str,
-        logger: Logger = None,
+        logger: ILogger = None,
         config_dependencies: Callable = None,
         config_persistence: Callable = None,
         services_mode_mapper: Dict[str, Callable] = None,
         repositories_mode_mapper: Dict[str, Callable] = None,
-        event_manager: EventManager = None,
+        event_manager: IEventManager = None,
         options: Dict[str, Any] = None,
     ):
         """

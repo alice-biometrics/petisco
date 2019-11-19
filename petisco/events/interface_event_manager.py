@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 from petisco.events.event import Event
 
 
-class EventManager:
+class IEventManager:
 
     __metaclass__ = ABCMeta
 

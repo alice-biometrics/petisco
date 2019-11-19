@@ -1,6 +1,6 @@
-from petisco.logger.logger import Logger
+from petisco.logger.interface_logger import ILogger
 
 
-class NotImplementedLogger(Logger):
+class NotImplementedLogger(ILogger):
     def log(self, logging_level, message):
         pass

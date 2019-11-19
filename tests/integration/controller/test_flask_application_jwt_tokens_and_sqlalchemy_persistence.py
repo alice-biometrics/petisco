@@ -3,14 +3,21 @@ import pytest
 from petisco.frameworks.flask.flask_extension_is_installed import (
     flask_extension_is_installed,
 )
+from petisco.persistence.sqlalchemy.sqlalchemy_extension_is_installed import (
+    sqlalchemy_extension_is_installed,
+)
 
 
 @pytest.mark.integration
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
+@pytest.mark.skipif(
+    not sqlalchemy_extension_is_installed(),
+    reason="SQLAlchemy extension is not installed",
+)
 def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token(
-    client, given_auth_token_headers_creator, given_any_name
+    client, database, given_auth_token_headers_creator, given_any_name
 ):
 
     headers = given_auth_token_headers_creator(type_token="ADMIN_TOKEN")
@@ -25,8 +32,12 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token(
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
+@pytest.mark.skipif(
+    not sqlalchemy_extension_is_installed(),
+    reason="SQLAlchemy extension is not installed",
+)
 def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token(
-    client, given_auth_token_headers_creator, given_any_name
+    client, database, given_auth_token_headers_creator, given_any_name
 ):
 
     headers = given_auth_token_headers_creator(type_token="INVALID_TOKEN")
@@ -42,12 +53,12 @@ def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token(
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
+@pytest.mark.skipif(
+    not sqlalchemy_extension_is_installed(),
+    reason="SQLAlchemy extension is not installed",
+)
 def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token_and_user_id(
-    client,
-    database,
-    given_auth_token_headers_creator,
-    given_any_user_id,
-    given_any_name,
+    client, database, given_auth_token_headers_creator, given_any_name
 ):
     headers = given_auth_token_headers_creator(type_token="ADMIN_TOKEN")
     response = client.open(
@@ -66,12 +77,16 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token_
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
+@pytest.mark.skipif(
+    not sqlalchemy_extension_is_installed(),
+    reason="SQLAlchemy extension is not installed",
+)
 def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token_with_user_and_user_is_not_available(
-    client, given_auth_token_headers_creator
+    client, database, given_auth_token_headers_creator
 ):
 
     headers = given_auth_token_headers_creator(type_token="USER_TOKEN")
 
-    response = client.open("/petisco/user", method="GET", headers=headers)
+    response = client.open("/petisco/user/name", method="GET", headers=headers)
 
     assert response.status_code == 401
