@@ -10,7 +10,7 @@ DEBUG = 10
 NOTSET = 0
 
 
-class Logger:
+class ILogger:
 
     __metaclass__ = ABCMeta
 

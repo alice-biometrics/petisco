@@ -4,7 +4,7 @@ from setuptools import setup
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 PACKAGE_NAME = "petisco"
-VERSION = "0.2.3"
+VERSION = "0.3.0"
 
 # The text of the README file
 with open(os.path.join(CURRENT_DIR, "README.md")) as fid:
@@ -28,17 +28,20 @@ setup(
     ],
     packages=[
         "petisco",
-        "petisco/application",
+        "petisco/toy_app",
         "petisco/controller",
         "petisco/controller/errors",
         "petisco/controller/tokens",
         "petisco/events",
         "petisco/events/redis",
         "petisco/frameworks/flask",
-        "petisco/frameworks/flask/application",
+        "petisco/frameworks/flask/toy_app",
         "petisco/logger",
         "petisco/use_case",
     ],
     zip_safe=False,
-    extras_require={"flask": ["connexion==2.2.0", "Flask-Cors==3.0.7"]},
+    extras_require={
+        "flask": ["connexion==2.2.0", "Flask-Cors==3.0.7"],
+        "sqlalchemy": ["sqlalchemy == 1.2.8", "sqlalchemy_utils"],
+    },
 )

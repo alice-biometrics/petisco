@@ -1,8 +1,8 @@
 import logging
 from typing import Callable
 
-from petisco.logger.logger import (
-    Logger,
+from petisco.logger.interface_logger import (
+    ILogger,
     INFO,
     ERROR,
     WARN,
@@ -13,7 +13,7 @@ from petisco.logger.logger import (
 )
 
 
-class LoggingBasedLogger(Logger):
+class LoggingBasedLogger(ILogger):
     def __init__(
         self,
         logger_name: str,

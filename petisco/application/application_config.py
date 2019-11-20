@@ -5,15 +5,15 @@ from dataclasses import dataclass
 from petisco.application.repository import Repository
 from petisco.application.service import Service
 from petisco.application.singleton import Singleton
-from petisco.events.event_manager import EventManager
-from petisco.logger.logger import Logger, INFO, ERROR
+from petisco.events.interface_event_manager import IEventManager
+from petisco.logger.interface_logger import ILogger, INFO, ERROR
 
 
 @dataclass
 class ApplicationConfig(metaclass=Singleton):
     services_provider: Callable[[], Dict[str, Service]]
     repositories_provider: Callable[[], Dict[str, Repository]]
-    event_manager: EventManager
+    event_manager: IEventManager
     options: Dict[str, Any]
     info: Dict
 
@@ -24,12 +24,12 @@ class ApplicationConfig(metaclass=Singleton):
     def __init__(
         self,
         mode: str,
-        logger: Logger,
+        logger: ILogger = None,
         config_dependencies: Callable = None,
         config_persistence: Callable = None,
         services_mode_mapper: Dict[str, Callable] = None,
         repositories_mode_mapper: Dict[str, Callable] = None,
-        event_manager: EventManager = None,
+        event_manager: IEventManager = None,
         options: Dict[str, Any] = None,
     ):
         """
@@ -37,15 +37,15 @@ class ApplicationConfig(metaclass=Singleton):
         Parameters
         ----------
         mode
-            DeploymentMode define the application mode of execution. If you're mapping services and repositories, please
+            DeploymentMode define the toy_app mode of execution. If you're mapping services and repositories, please
             check given mode is mapped in services_mode_mapper and repositories_mode_mapper
         logger
             Pre configured logger
         config_dependencies
             Callable function to configure dependencies (e.g configure credentials in order to connect with a thrid-party
-            application.
+            toy_app.
         config_persistence
-            Callable function to configure application persistence (e.g configure a database)
+            Callable function to configure toy_app persistence (e.g configure a database)
         services_mode_mapper
             A dictionary to map DeploymentMode with a service provider function. This is used as a dependency injector
         repositories_mode_mapper
@@ -53,12 +53,13 @@ class ApplicationConfig(metaclass=Singleton):
         event_manager
             Pre configured event manager. For intance, a event manager that uses Redis for messaging
         options
-            A dictionary with specific application options
+            A dictionary with specific toy_app options
         """
 
         self.mode = mode
         self.logger = logger
-        self.logger.log(INFO, "Deploying in {} mode".format(mode))
+        if self.logger:
+            self.logger.log(INFO, "Deploying in {} mode".format(mode))
 
         if config_dependencies:
             config_dependencies()
@@ -69,10 +70,11 @@ class ApplicationConfig(metaclass=Singleton):
         self.info = {}
         if services_mode_mapper:
             if mode not in services_mode_mapper:
-                self.logger.log(
-                    ERROR,
-                    f"Mode {mode} not found in services_mode_mapper ({services_mode_mapper})",
-                )
+                if self.logger:
+                    self.logger.log(
+                        ERROR,
+                        f"Mode {mode} not found in services_mode_mapper ({services_mode_mapper})",
+                    )
                 raise NotImplementedError(
                     f"Mode {mode} not found in services_mode_mapper ({services_mode_mapper})"
                 )
@@ -88,10 +90,11 @@ class ApplicationConfig(metaclass=Singleton):
 
         if repositories_mode_mapper:
             if mode not in repositories_mode_mapper:
-                self.logger.log(
-                    ERROR,
-                    f"Mode {mode} not found in repositories_mode_mapper ({repositories_mode_mapper})",
-                )
+                if self.logger:
+                    self.logger.log(
+                        ERROR,
+                        f"Mode {mode} not found in repositories_mode_mapper ({repositories_mode_mapper})",
+                    )
                 raise NotImplementedError(
                     f"Mode {mode} not found in repositories_mode_mapper ({repositories_mode_mapper})"
                 )
@@ -108,6 +111,7 @@ class ApplicationConfig(metaclass=Singleton):
         self.event_manager = event_manager
         self.options = options
 
-        self.logger.log(INFO, f"Info: {self.info}")
-        self.logger.log(INFO, f"{self.event_manager}")
-        self.logger.log(INFO, f"Options: {self.options}")
+        if self.logger:
+            self.logger.log(INFO, f"Info: {self.info}")
+            self.logger.log(INFO, f"{self.event_manager}")
+            self.logger.log(INFO, f"Options: {self.options}")

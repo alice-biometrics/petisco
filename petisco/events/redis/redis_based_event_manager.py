@@ -2,10 +2,10 @@ from typing import Dict, Callable
 from redis import Redis
 
 from petisco.events.event import Event
-from petisco.events.event_manager import EventManager
+from petisco.events.interface_event_manager import IEventManager
 
 
-class RedisBasedEventManager(EventManager):
+class RedisBasedEventManager(IEventManager):
     def __init__(self, redis: Redis, subscribers: Dict[str, Callable]):
         super().__init__(subscribers)
         self._redis = redis

@@ -1,13 +1,13 @@
 import os
 
 import pytest
+from sqlalchemy import create_engine
 
-
-from petisco import FlaskApplication
+from petisco import FlaskApplication, SqlAlchemyPersistence
 from petisco.controller.tokens.jwt_token_builder import JwtTokenBuilder
 from tests.integration.controller.key import KEY
 
-SWAGGER_DIR = os.path.dirname(os.path.abspath(__file__)) + "/application/"
+SWAGGER_DIR = os.path.dirname(os.path.abspath(__file__)) + "/toy_app/"
 app = FlaskApplication(application_name="petisco", swagger_dir=SWAGGER_DIR).get_app()
 
 
@@ -18,9 +18,39 @@ def client():
 
 
 @pytest.fixture
+def database():
+
+    connection = "sqlite:///petisco.db"
+    engine = create_engine(connection)
+
+    Base = SqlAlchemyPersistence.get_instance().base
+    Session = SqlAlchemyPersistence.get_instance().session
+
+    Base.metadata.create_all(engine)
+
+    yield
+
+    session = Session()
+    session.rollback()
+    session.close()
+    Base.metadata.drop_all(bind=engine)
+    os.remove("petisco.db")
+
+
+@pytest.fixture
 def given_any_apikey():
     apikey = "apikey"
     return apikey
+
+
+@pytest.fixture
+def given_any_name():
+    return "any_name"
+
+
+@pytest.fixture
+def given_any_user_id():
+    return "12345678910"
 
 
 @pytest.fixture

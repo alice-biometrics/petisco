@@ -10,13 +10,14 @@ from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
 from petisco.controller.tokens.jwt_decorator import jwt
-from petisco.logger.logger import ERROR, INFO
+from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
 from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.frameworks.flask.correlation_id_provider import (
     flask_correlation_id_provider,
 )
 from petisco.logger.log_message import LogMessage
+from petisco.logger.not_implemented_logger import NotImplementedLogger
 
 DEFAULT_SUCCESS_MESSAGE = {"message": "OK"}, 200
 DEFAULT_ERROR_MESSAGE = HttpError().handle()
@@ -25,13 +26,12 @@ DEFAULT_ERROR_MESSAGE = HttpError().handle()
 class ControllerDecorator(object):
     def __init__(
         self,
-        logger=None,
+        logger=NotImplementedLogger(),
         jwt_config: JwtConfig = None,
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
         correlation_id_provider: Callable = flask_correlation_id_provider,
-        logging_types_blacklist: List[Any] = [bytes]
-
+        logging_types_blacklist: List[Any] = [bytes],
     ):
         self.logger = logger
         self.jwt_config = jwt_config
@@ -56,8 +56,7 @@ class ControllerDecorator(object):
 
             try:
                 log_message.message = "Start"
-                if self.logger:
-                    self.logger.log(INFO, log_message.to_json())
+                self.logger.log(INFO, log_message.to_json())
                 result = run_controller(*args, **kwargs)
                 if result.is_success:
                     if isinstance(result.value, tuple(self.logging_types_blacklist)):
@@ -66,17 +65,15 @@ class ControllerDecorator(object):
                         )
                     else:
                         log_message.message = f"{result}"
-                    if self.logger:
-                        self.logger.log(INFO, log_message.to_json())
+                    self.logger.log(INFO, log_message.to_json())
                     return (
                         self.success_handler(result)
                         if self.success_handler
                         else DEFAULT_SUCCESS_MESSAGE
                     )
                 else:
-                    if self.logger:
-                        log_message.message = f"{result}"
-                        self.logger.log(ERROR, log_message.to_json())
+                    log_message.message = f"{result}"
+                    self.logger.log(ERROR, log_message.to_json())
                     known_result_failure_handler = KnownResultFailureHandler(result)
 
                     if not known_result_failure_handler.is_a_result_known_error:
@@ -92,8 +89,7 @@ class ControllerDecorator(object):
                 log_message.message = (
                     f"Error {func.__name__}: {e} | {traceback.print_exc()}"
                 )
-                if self.logger:
-                    self.logger.log(ERROR, log_message.to_json())
+                self.logger.log(ERROR, log_message.to_json())
                 return BadRequestHttpError(suffix=traceback.print_exc()).handle()
 
         def update_correlation_id(kwargs):

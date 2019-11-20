@@ -3,15 +3,16 @@ from typing import List, Any
 from meiga import Result
 from meiga.decorators import meiga
 
-from petisco.logger.logger import ERROR, INFO
+from petisco.logger.interface_logger import ERROR, INFO
 from petisco.logger.log_message import LogMessage
+from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.use_case.use_case import UseCase
 
 
-class UseCaseLogger(object):
+class UseCaseHandler(object):
     def __init__(
         self,
-        logger=None,
+        logger=NotImplementedLogger(),
         logging_parameters_whitelist: List[str] = None,
         logging_types_blacklist: List[Any] = [bytes],
     ):
@@ -66,7 +67,7 @@ class UseCaseLogger(object):
                     log_message.message = f"{result} {detail}"
                     self.logger.log(ERROR, log_message.to_json())
                 else:
-                    if isinstance(result.value, tuple(self.logging_types_blacklist)):
+                    if not self._is_logging_type(result.value):
                         log_message.message = (
                             f"Object of type: {type(result.value).__name__}"
                         )
@@ -76,6 +77,12 @@ class UseCaseLogger(object):
 
                 return result
 
+            def _is_logging_type(self, value):
+                for logging_type in self.logging_types_blacklist:
+                    if isinstance(value, logging_type):
+                        return False
+                return True
+
             @meiga
             def _run_execute(self, *args, **kwargs) -> Result:
                 return super().execute(*args, **kwargs)
@@ -83,4 +90,4 @@ class UseCaseLogger(object):
         return UseCaseWrapped
 
 
-use_case_logger = UseCaseLogger
+use_case_handler = UseCaseHandler
