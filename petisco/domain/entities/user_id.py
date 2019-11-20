@@ -11,12 +11,13 @@ LENGTH = 12
 
 
 class UserId(str):
-    def __new__(cls, user_id):
+    def __new__(cls, user_id, length=LENGTH):
         user_id = None if user_id == "None" else user_id
+        cls.length = length
         return str.__new__(cls, user_id)
 
     def handle(self) -> Result:
-        if self is not None and len(self) > LENGTH:
+        if self is not None and len(self) > self.length:
             return Failure(InputExceedLengthLimitError(message=self))
         else:
             return self

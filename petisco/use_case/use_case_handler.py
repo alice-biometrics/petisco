@@ -67,7 +67,7 @@ class UseCaseHandler(object):
                     log_message.message = f"{result} {detail}"
                     self.logger.log(ERROR, log_message.to_json())
                 else:
-                    if isinstance(result.value, tuple(self.logging_types_blacklist)):
+                    if not self._is_logging_type(result.value):
                         log_message.message = (
                             f"Object of type: {type(result.value).__name__}"
                         )
@@ -76,6 +76,12 @@ class UseCaseHandler(object):
                     self.logger.log(INFO, log_message.to_json())
 
                 return result
+
+            def _is_logging_type(self, value):
+                for logging_type in self.logging_types_blacklist:
+                    if isinstance(value, logging_type):
+                        return False
+                return True
 
             @meiga
             def _run_execute(self, *args, **kwargs) -> Result:
