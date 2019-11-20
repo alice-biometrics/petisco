@@ -38,7 +38,7 @@ setup(
         "petisco/events",
         "petisco/events/redis",
         "petisco/frameworks/flask",
-        "petisco/frameworks/flask/toy_app",
+        "petisco/frameworks/flask/application",
         "petisco/logger",
         "petisco/persistence",
         "petisco/persistence/sqlalchemy",
