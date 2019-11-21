@@ -18,10 +18,12 @@ class UserId(str):
         return str.__new__(cls, user_id)
 
     def to_result(self) -> Result[Any, Error]:
-        if self is not None and len(self) > self.length:
-            return Failure(InputExceedLengthLimitError(message=self))
+        user_id = None if self == "None" else self
+
+        if user_id is not None and len(user_id) > self.length:
+            return Failure(InputExceedLengthLimitError(message=user_id))
         else:
-            return Success(self)
+            return Success(user_id)
 
     @staticmethod
     def generate():

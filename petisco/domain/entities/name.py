@@ -18,10 +18,12 @@ class Name(str):
         return str.__new__(cls, name)
 
     def to_result(self) -> Result[Any, Error]:
-        if self is not None:
+        name = None if self == "None" else self
+
+        if name is not None:
             if len(self) > self.length_limit:
-                return Failure(InputExceedLengthLimitError(message=self))
+                return Failure(InputExceedLengthLimitError(message=name))
             else:
-                if not re.search(r"^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", self):
-                    return Failure(GivenInputIsNotValidError(message=self))
-        return Success(self)
+                if not re.search(r"^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", name):
+                    return Failure(GivenInputIsNotValidError(message=name))
+        return Success(name)

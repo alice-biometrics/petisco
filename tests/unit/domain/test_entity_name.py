@@ -36,3 +36,12 @@ def test_should_declare_a_name_with_js_injection():
     name = Name("<script>evil()</script>")
 
     assert_failure(name.to_result(), value_is_instance_of=GivenInputIsNotValidError)
+
+
+@pytest.mark.unit
+def test_should_declare_a_name_with_none_string():
+    # This is quite typical using frameworks as connexion
+
+    name = Name("None")
+
+    assert_success(name.to_result(), value_is_equal_to=None)

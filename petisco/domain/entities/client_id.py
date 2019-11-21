@@ -18,10 +18,14 @@ class ClientId(str):
         return str.__new__(cls, client_id)
 
     def to_result(self) -> Result[Any, Error]:
-        if self is not None:
-            if len(self) > self.length:
-                return Failure(InputExceedLengthLimitError(message=self))
+        client_id = None if self == "None" else self
+
+        if client_id is not None:
+            if len(client_id) > self.length:
+                return Failure(InputExceedLengthLimitError(message=client_id))
             else:
-                if not re.search(r"^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", self):
-                    return Failure(GivenInputIsNotValidError(message=self))
-        return Success(self)
+                if not re.search(
+                    r"^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", client_id
+                ):
+                    return Failure(GivenInputIsNotValidError(message=client_id))
+        return Success(client_id)
