@@ -1,7 +1,8 @@
 import base64
 import os
+from typing import Any
 
-from meiga import Result, Failure
+from meiga import Result, Failure, Error, Success
 
 from petisco.domain.errors.input_exceed_lenght_limit_error import (
     InputExceedLengthLimitError,
@@ -16,11 +17,11 @@ class UserId(str):
         cls.length = length
         return str.__new__(cls, user_id)
 
-    def handle(self) -> Result:
+    def to_result(self) -> Result[Any, Error]:
         if self is not None and len(self) > self.length:
             return Failure(InputExceedLengthLimitError(message=self))
         else:
-            return self
+            return Success(self)
 
     @staticmethod
     def generate():

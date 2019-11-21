@@ -4,6 +4,7 @@ import traceback
 from typing import Callable, Tuple, Dict, List, Any
 
 from meiga import Result
+from meiga.decorators import meiga
 
 from petisco.controller.errors.bad_request_http_error import BadRequestHttpError
 from petisco.controller.errors.known_result_failure_handler import (
@@ -43,6 +44,7 @@ class ControllerDecorator(object):
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
         def wrapper(*args, **kwargs):
+            @meiga
             @jwt(jwt_config=self.jwt_config)
             def run_controller(*args, **kwargs) -> Result:
                 return func(*args, **kwargs)
@@ -77,11 +79,17 @@ class ControllerDecorator(object):
                     known_result_failure_handler = KnownResultFailureHandler(result)
 
                     if not known_result_failure_handler.is_a_result_known_error:
-                        return (
-                            self.error_handler(result).handle()
-                            if self.error_handler
-                            else DEFAULT_ERROR_MESSAGE
-                        )
+                        if not self.error_handler:
+                            return DEFAULT_ERROR_MESSAGE
+
+                        http_error = self.error_handler(result)
+
+                        if not issubclass(http_error.__class__, HttpError):
+                            raise TypeError(
+                                "Returned object from error_handler must be subclasses of HttpError"
+                            )
+
+                        return http_error.handle()
                     else:
                         return known_result_failure_handler.http_error.handle()
 

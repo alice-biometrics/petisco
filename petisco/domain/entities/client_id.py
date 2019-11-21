@@ -1,6 +1,7 @@
 import re
+from typing import Any
 
-from meiga import Result, Error, Failure
+from meiga import Result, Error, Failure, Success
 
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
@@ -16,11 +17,11 @@ class ClientId(str):
         cls.length = length
         return str.__new__(cls, client_id)
 
-    def handle(self) -> Result[bool, Error]:
+    def to_result(self) -> Result[Any, Error]:
         if self is not None:
             if len(self) > self.length:
                 return Failure(InputExceedLengthLimitError(message=self))
             else:
                 if not re.search(r"^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", self):
                     return Failure(GivenInputIsNotValidError(message=self))
-        return self
+        return Success(self)

@@ -9,5 +9,6 @@ if flask_extension_is_installed():
         given_any_apikey,
         given_auth_token_headers_creator,
         given_any_name,
+        given_code_injection_name,
         given_any_user_id,
     )

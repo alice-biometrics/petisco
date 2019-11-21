@@ -15,7 +15,7 @@ class CreateUser(UseCase):
         self.user_repository = user_repository
 
     def execute(self, client_id: ClientId, name: Name) -> Result[UserId, Error]:
-        user_id = UserId.generate().handle()
+        user_id = UserId.generate().to_result().handle()
         self.user_repository.save(
             client_id=client_id, user_id=user_id, name=name
         ).handle()

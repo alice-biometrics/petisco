@@ -14,7 +14,7 @@ class UseCaseHandler(object):
         self,
         logger=NotImplementedLogger(),
         logging_parameters_whitelist: List[str] = None,
-        logging_types_blacklist: List[Any] = [bytes],
+        logging_types_blacklist: List[Any] = None,
     ):
         self.logger = logger
         self.logging_parameters_whitelist = logging_parameters_whitelist
@@ -78,9 +78,10 @@ class UseCaseHandler(object):
                 return result
 
             def _is_logging_type(self, value):
-                for logging_type in self.logging_types_blacklist:
-                    if isinstance(value, logging_type):
-                        return False
+                if self.logging_types_blacklist:
+                    for logging_type in self.logging_types_blacklist:
+                        if isinstance(value, logging_type):
+                            return False
                 return True
 
             @meiga

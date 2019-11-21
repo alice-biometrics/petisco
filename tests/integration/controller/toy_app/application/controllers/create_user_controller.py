@@ -1,6 +1,10 @@
 from meiga import Result
 
-from petisco import controller, JwtConfig
+from petisco import controller, JwtConfig, HttpError
+from petisco.domain.entities.name import Name
+from petisco.domain.errors.given_input_is_not_valid_error import (
+    GivenInputIsNotValidError,
+)
 from tests.integration.controller.toy_app.application.use_cases.use_case_builder import (
     UseCaseBuilder,
 )
@@ -10,10 +14,23 @@ def success_handler(result: Result):
     return {"user_id": result.value}, 200
 
 
+class GivenInputIsNotValidHttpError(HttpError):
+    def __init__(self, message: str = "Given input is not valid", code: int = 409):
+        super(GivenInputIsNotValidHttpError, self).__init__(message=message, code=code)
+
+
+def error_handler(result: Result):
+    domain_error = result.value
+    if isinstance(domain_error, GivenInputIsNotValidError):
+        return GivenInputIsNotValidHttpError()
+
+
 @controller(
-    success_handler=success_handler, jwt_config=JwtConfig(token_type="ADMIN_TOKEN")
+    success_handler=success_handler,
+    error_handler=error_handler,
+    jwt_config=JwtConfig(token_type="ADMIN_TOKEN"),
 )
 def create_user(client_id, body, *args, **kwargs):  # noqa: E501
-    name = body.get("name")
+    name = Name(body.get("name")).to_result().handle()
     use_case = UseCaseBuilder.create_user()
     return use_case.execute(client_id=client_id, name=name)

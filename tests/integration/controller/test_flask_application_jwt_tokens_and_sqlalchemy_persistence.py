@@ -90,3 +90,26 @@ def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token_
     response = client.open("/petisco/user/name", method="GET", headers=headers)
 
     assert response.status_code == 401
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not flask_extension_is_installed(), reason="Flask extension is not installed"
+)
+@pytest.mark.skipif(
+    not sqlalchemy_extension_is_installed(),
+    reason="SQLAlchemy extension is not installed",
+)
+def test_should_return_409_when_call_create_user_with_invalid_name(
+    client, database, given_auth_token_headers_creator, given_code_injection_name
+):
+
+    headers = given_auth_token_headers_creator(type_token="ADMIN_TOKEN")
+
+    response = client.open(
+        "/petisco/user",
+        method="POST",
+        headers=headers,
+        data=dict(name=given_code_injection_name),
+    )
+    assert response.status_code == 409

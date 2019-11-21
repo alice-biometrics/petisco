@@ -180,7 +180,6 @@ def test_should_execute_successfully_a_filtered_object_by_blacklist():
     assert second_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller",
-            message="Success result of type: bytes",
+            operation="my_controller", message="Success result of type: bytes"
         ).to_json(),
     )
