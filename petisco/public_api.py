@@ -10,6 +10,9 @@ from petisco.application.repository import Repository
 from petisco.application.service import Service
 from petisco.application.singleton import Singleton
 from petisco.controller.tokens.jwt_config import JwtConfig
+from petisco.domain.entities.client_id import ClientId
+from petisco.domain.entities.name import Name
+from petisco.domain.entities.user_id import UserId
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
@@ -46,6 +49,9 @@ classes = [
     "Singleton",
     "JwtConfig",
     "IPersistenceConnector",
+    "Name",
+    "ClientId",
+    "UserId",
 ]
 
 # Constants
