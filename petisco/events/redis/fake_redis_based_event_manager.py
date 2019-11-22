@@ -1,12 +1,16 @@
 from typing import Dict, Callable
+
+from fakeredis import FakeRedis
 from redis import Redis
 
 from petisco.events.event import Event
 from petisco.events.interface_event_manager import IEventManager
 
 
-class RedisBasedEventManager(IEventManager):
-    def __init__(self, redis: Redis, subscribers: Dict[str, Callable]):
+class FakeRedisBasedEventManager(IEventManager):
+    def __init__(
+        self, redis: Redis = FakeRedis(), subscribers: Dict[str, Callable] = None
+    ):
         super().__init__(subscribers)
         self._redis = redis
         self._pubsub = self._redis.pubsub()
@@ -17,10 +21,9 @@ class RedisBasedEventManager(IEventManager):
 
     def _subscribe(self):
         self._pubsub.subscribe(**self.subscribers)
-        self._thread = self._pubsub.run_in_thread(sleep_time=0.001)
 
     def unsubscribe_all(self):
-        self._thread.stop()
+        pass
 
     def send(self, topic: str, event: Event):
         self._redis.publish(topic, event.to_json())

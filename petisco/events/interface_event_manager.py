@@ -15,6 +15,10 @@ class IEventManager:
         return f"EventManager: [subscribers: {self.subscribers}]"
 
     @abstractmethod
+    def info(self) -> Dict:
+        raise NotImplementedError
+
+    @abstractmethod
     def unsubscribe_all(self):
         raise NotImplementedError
 

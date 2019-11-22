@@ -13,6 +13,9 @@ from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.domain.entities.client_id import ClientId
 from petisco.domain.entities.name import Name
 from petisco.domain.entities.user_id import UserId
+from petisco.events.redis.fake_redis_based_event_manager import (
+    FakeRedisBasedEventManager,
+)
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
@@ -24,10 +27,8 @@ from petisco.controller.errors.http_error import HttpError
 from petisco.events.event import Event
 from petisco.events.event_id import EventId
 from petisco.events.interface_event_manager import IEventManager
-from petisco.events.fake_event_manager import FakeEventManager
 from petisco.events.redis.redis_based_event_handler import redis_based_event_handler
 from petisco.events.redis.redis_based_event_manager import RedisBasedEventManager
-
 
 classes = [
     "ApplicationConfig",
@@ -43,8 +44,8 @@ classes = [
     "Event",
     "EventId",
     "IEventManager",
-    "FakeEventManager",
     "RedisBasedEventManager",
+    "FakeRedisBasedEventManager",
     "redis_based_event_handler",
     "Singleton",
     "JwtConfig",

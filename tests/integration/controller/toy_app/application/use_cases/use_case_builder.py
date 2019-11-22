@@ -12,13 +12,13 @@ class UseCaseBuilder:
     def create_user():
 
         config = ApplicationConfig.get_instance()
-        repositories = config.repositories_provider()
-
-        return CreateUser(user_repository=repositories["user"])
+        user_repository = config.repositories_provider()["user"]
+        event_manager = config.event_manager_provider()["fake"]
+        return CreateUser(user_repository=user_repository, event_manager=event_manager)
 
     @staticmethod
     def get_user_name():
         config = ApplicationConfig.get_instance()
-        repositories = config.repositories_provider()
+        user_repository = config.repositories_provider()["user"]
 
-        return GetUserName(user_repository=repositories["user"])
+        return GetUserName(user_repository=user_repository)

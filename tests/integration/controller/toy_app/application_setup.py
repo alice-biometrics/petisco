@@ -1,9 +1,15 @@
 from petisco.application.application_config import ApplicationConfig
+from petisco.events.redis.fake_redis_based_event_manager import (
+    FakeRedisBasedEventManager,
+)
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence_config import (
     SqlAlchemyPersistenceConfig,
 )
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence_connector import (
     SqlAlchemyPersistenceConnector,
+)
+from tests.integration.controller.toy_app.application.handlers.user_created_handler import (
+    user_created_handler,
 )
 from tests.integration.controller.toy_app.infrastructure.services.sum_service import (
     SumService,
@@ -24,6 +30,14 @@ def services_provider():
     return {"sum": SumService()}
 
 
+def event_managers_provider():
+    return {
+        "fake": FakeRedisBasedEventManager(
+            subscribers={"user_created": user_created_handler}
+        )
+    }
+
+
 def config_persistence():
     def import_database_models():
         from tests.integration.controller.toy_app.infrastructure.repositories.user_model import (
@@ -41,6 +55,8 @@ REPOSITORIES_MODE_MAPPER = {"TEST": repositories_provider}
 
 SERVICES_MODE_MAPPER = {"TEST": services_provider}
 
+EVENT_MANAGERS_MODE_MAPPER = {"TEST": event_managers_provider}
+
 
 def application_setup():
 
@@ -48,5 +64,6 @@ def application_setup():
         mode="TEST",
         repositories_mode_mapper=REPOSITORIES_MODE_MAPPER,
         services_mode_mapper=SERVICES_MODE_MAPPER,
+        event_manager_mapper=EVENT_MANAGERS_MODE_MAPPER,
         config_persistence=config_persistence,
     )
