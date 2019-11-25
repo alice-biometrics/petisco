@@ -4,6 +4,7 @@ from petisco import UseCase, use_case_handler, IEventManager
 from petisco.domain.entities.client_id import ClientId
 from petisco.domain.entities.name import Name
 from petisco.domain.entities.user_id import UserId
+from tests.integration.controller.toy_app.application_setup import EVENT_TOPIC
 from tests.integration.controller.toy_app.domain.events.user_created import UserCreated
 from tests.integration.controller.toy_app.domain.repositories.interface_user_repository import (
     IUserRepository,
@@ -22,5 +23,5 @@ class CreateUser(UseCase):
             client_id=client_id, user_id=user_id, name=name
         ).handle()
 
-        self.event_manager.send("user_created", UserCreated(user_id))
+        self.event_manager.send(EVENT_TOPIC, UserCreated(user_id))
         return Success(user_id)

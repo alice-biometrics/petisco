@@ -24,7 +24,7 @@ DEFAULT_SUCCESS_MESSAGE = {"message": "OK"}, 200
 DEFAULT_ERROR_MESSAGE = HttpError().handle()
 
 
-class ControllerDecorator(object):
+class ControllerDecorator:
     def __init__(
         self,
         logger=NotImplementedLogger(),

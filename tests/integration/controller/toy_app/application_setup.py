@@ -8,14 +8,16 @@ from petisco.persistence.sqlalchemy.sqlalchemy_persistence_config import (
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence_connector import (
     SqlAlchemyPersistenceConnector,
 )
-from tests.integration.controller.toy_app.application.handlers.user_created_handler import (
-    user_created_handler,
+from tests.integration.controller.toy_app.application.handlers import (
+    redis_event_handler,
 )
 from tests.integration.controller.toy_app.infrastructure.services.sum_service import (
     SumService,
 )
 
 AVAILABLE_MODES = {"TEST": ""}
+
+EVENT_TOPIC = "topic"
 
 
 def repositories_provider():
@@ -33,7 +35,7 @@ def services_provider():
 def event_managers_provider():
     return {
         "fake": FakeRedisBasedEventManager(
-            subscribers={"user_created": user_created_handler}
+            subscribers={EVENT_TOPIC: redis_event_handler}
         )
     }
 

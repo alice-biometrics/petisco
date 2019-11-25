@@ -27,7 +27,10 @@ from petisco.controller.errors.http_error import HttpError
 from petisco.events.event import Event
 from petisco.events.event_id import EventId
 from petisco.events.interface_event_manager import IEventManager
-from petisco.events.redis.redis_based_event_handler import redis_based_event_handler
+from petisco.events.redis.event_from_redis_message import (
+    event_from_redis_message,
+    EventFromRedisMessageConversionError,
+)
 from petisco.events.redis.redis_based_event_manager import RedisBasedEventManager
 
 classes = [
@@ -46,7 +49,8 @@ classes = [
     "IEventManager",
     "RedisBasedEventManager",
     "FakeRedisBasedEventManager",
-    "redis_based_event_handler",
+    "event_from_redis_message",
+    "EventFromRedisMessageConversionError",
     "Singleton",
     "JwtConfig",
     "IPersistenceConnector",

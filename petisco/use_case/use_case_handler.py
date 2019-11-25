@@ -9,7 +9,7 @@ from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.use_case.use_case import UseCase
 
 
-class UseCaseHandler(object):
+class UseCaseHandler:
     def __init__(
         self,
         logger=NotImplementedLogger(),
