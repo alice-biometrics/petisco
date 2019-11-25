@@ -75,7 +75,7 @@ try:
 
     flask = ["FlaskApplication"]
 except (RuntimeError, ImportError):
-    flask = ""
+    flask = []
 
 
 # SqlAlchemy
@@ -102,6 +102,6 @@ try:
         "SqlAlchemyOperationalDatabaseError",
     ]
 except (RuntimeError, ImportError):
-    sqlalchemy = ""
+    sqlalchemy = []
 
 __all__ = classes + constants + flask + sqlalchemy
