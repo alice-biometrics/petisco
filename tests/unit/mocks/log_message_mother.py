@@ -25,3 +25,14 @@ class LogMessageMother:
             correlation_id=correlation_id,
             message=message,
         )
+
+    @staticmethod
+    def get_command(
+        operation: str = None, correlation_id: str = None, message: str = None
+    ) -> LogMessage:
+        return LogMessage(
+            layer="command",
+            operation=operation,
+            correlation_id=correlation_id,
+            message=message,
+        )

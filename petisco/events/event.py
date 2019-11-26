@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Dict
 
+from petisco.controller.correlation_id import CorrelationId
 from petisco.events.event_id import EventId
 
 import json
@@ -8,9 +9,10 @@ import json
 
 class Event:
     id: EventId = None
-    version: str = None
     name: str = None
     occurred_on: str = None
+    version: str = None
+    correlation_id: CorrelationId = None
 
     def __init__(self, dictionary=None):
         if dictionary:

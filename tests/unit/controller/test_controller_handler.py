@@ -3,7 +3,7 @@ import json
 import pytest
 from meiga import Success, isFailure
 
-from petisco import controller, CorrelationId, ERROR, INFO
+from petisco import controller_handler, CorrelationId, ERROR, INFO
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
 
@@ -13,7 +13,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 
     logger = FakeLogger()
 
-    @controller(logger=logger)
+    @controller_handler(logger=logger)
     def my_controller():
         return Success("Hello Petisco")
 
@@ -44,7 +44,7 @@ def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_o
 
     logger = FakeLogger()
 
-    @controller(logger=logger)
+    @controller_handler(logger=logger)
     def my_controller(correlation_id: CorrelationId):
         return Success("Hello Petisco")
 
@@ -78,7 +78,7 @@ def test_should_execute_with_a_failure_a_empty_controller_without_input_paramete
 
     logger = FakeLogger()
 
-    @controller(logger=logger)
+    @controller_handler(logger=logger)
     def my_controller():
         return isFailure
 
@@ -112,7 +112,7 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
 
     logger = FakeLogger()
 
-    @controller(logger=logger)
+    @controller_handler(logger=logger)
     def my_controller(correlation_id: CorrelationId):
         return isFailure
 
@@ -146,7 +146,7 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
 
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_without_input_parameters_and_logger():
-    @controller()
+    @controller_handler()
     def my_controller():
         return Success("Hello Petisco")
 
@@ -160,7 +160,7 @@ def test_should_execute_successfully_a_filtered_object_by_blacklist():
 
     logger = FakeLogger()
 
-    @controller(logger=logger)
+    @controller_handler(logger=logger)
     def my_controller():
         return Success(b"This are bytes")
 

@@ -1,7 +1,7 @@
 import pytest
 from meiga import Success
 
-from petisco import controller, INFO, ERROR
+from petisco import controller_handler, INFO, ERROR
 from petisco.controller.tokens.jwt_config import JwtConfig
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
@@ -60,7 +60,7 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     logger = FakeLogger()
     jwt_config = JwtConfig(token_type=given_any_token_type)
 
-    @controller(logger=logger, jwt_config=jwt_config)
+    @controller_handler(logger=logger, jwt_config=jwt_config)
     def my_controller(token_info):
         return Success("Hello Petisco")
 
@@ -94,7 +94,7 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     logger = FakeLogger()
     jwt_config = JwtConfig(token_type=given_any_token_type_with_user, require_user=True)
 
-    @controller(logger=logger, jwt_config=jwt_config)
+    @controller_handler(logger=logger, jwt_config=jwt_config)
     def my_controller(token_info, user_id):
         return Success("Hello Petisco")
 
@@ -128,7 +128,7 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
     logger = FakeLogger()
     jwt_config = JwtConfig(token_type=given_other_token_type)
 
-    @controller(logger=logger, jwt_config=jwt_config)
+    @controller_handler(logger=logger, jwt_config=jwt_config)
     def my_controller(token_info):
         return Success("Hello Petisco")
 
@@ -170,7 +170,7 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
     logger = FakeLogger()
     jwt_config = JwtConfig(token_type=given_any_token_type, require_user=True)
 
-    @controller(logger=logger, jwt_config=jwt_config)
+    @controller_handler(logger=logger, jwt_config=jwt_config)
     def my_controller(token_info):
         return Success("Hello Petisco")
 

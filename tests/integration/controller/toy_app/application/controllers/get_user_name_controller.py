@@ -1,6 +1,6 @@
 from meiga import Result
 
-from petisco import controller, JwtConfig
+from petisco import controller_handler, JwtConfig
 from tests.integration.controller.toy_app.application.use_cases.use_case_builder import (
     UseCaseBuilder,
 )
@@ -10,7 +10,7 @@ def success_handler(result: Result):
     return {"name": result.value}, 200
 
 
-@controller(
+@controller_handler(
     success_handler=success_handler,
     jwt_config=JwtConfig(token_type="USER_TOKEN", require_user=True),
 )

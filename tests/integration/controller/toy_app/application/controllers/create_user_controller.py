@@ -1,6 +1,6 @@
 from meiga import Result
 
-from petisco import controller, JwtConfig, HttpError
+from petisco import controller_handler, JwtConfig, HttpError
 from petisco.domain.entities.name import Name
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
@@ -25,7 +25,7 @@ def error_handler(result: Result):
         return GivenInputIsNotValidHttpError()
 
 
-@controller(
+@controller_handler(
     success_handler=success_handler,
     error_handler=error_handler,
     jwt_config=JwtConfig(token_type="ADMIN_TOKEN"),

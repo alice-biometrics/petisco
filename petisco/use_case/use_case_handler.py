@@ -9,7 +9,7 @@ from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.use_case.use_case import UseCase
 
 
-class UseCaseHandler:
+class _UseCaseHandler:
     def __init__(
         self,
         logger=NotImplementedLogger(),
@@ -22,7 +22,7 @@ class UseCaseHandler:
 
     def __call__(self, cls):
         if not issubclass(cls, UseCase):
-            raise TypeError("UseCaseHandler only decorates UseCase subclasses")
+            raise TypeError("@use_case_handler only decorates UseCase subclasses")
 
         class UseCaseWrapped(cls):
             logger = self.logger
@@ -91,4 +91,4 @@ class UseCaseHandler:
         return UseCaseWrapped
 
 
-use_case_handler = UseCaseHandler
+use_case_handler = _UseCaseHandler

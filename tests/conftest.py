@@ -12,3 +12,5 @@ if flask_extension_is_installed():
         given_code_injection_name,
         given_any_user_id,
     )
+
+    from .unit.fixtures import *

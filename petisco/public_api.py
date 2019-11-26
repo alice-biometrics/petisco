@@ -9,6 +9,8 @@ from petisco.application.application_config import ApplicationConfig
 from petisco.application.repository import Repository
 from petisco.application.service import Service
 from petisco.application.singleton import Singleton
+from petisco.commands.command_handler import command_handler
+from petisco.controller.correlation_id import CorrelationId
 from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.domain.entities.client_id import ClientId
 from petisco.domain.entities.name import Name
@@ -21,8 +23,7 @@ from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
 from petisco.use_case import UseCase
 from petisco.use_case import use_case_handler
-from petisco.controller.controller_decorator import controller
-from petisco.controller.correlation_id import CorrelationId
+from petisco.controller.controller_handler import controller_handler
 from petisco.controller.errors.http_error import HttpError
 from petisco.events.event import Event
 from petisco.events.event_id import EventId
@@ -33,13 +34,15 @@ from petisco.events.redis.event_from_redis_message import (
 )
 from petisco.events.redis.redis_based_event_manager import RedisBasedEventManager
 
+
 classes = [
     "ApplicationConfig",
     "Service",
     "Repository",
     "UseCase",
     "use_case_handler",
-    "controller",
+    "controller_handler",
+    "command_handler",
     "CorrelationId",
     "HttpError",
     "LoggingBasedLogger",
