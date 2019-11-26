@@ -17,7 +17,8 @@ def test_should_execute_successfully_a_empty_command_without_input_parameters(
     def my_command(event: Event):
         return Success("Hello Petisco")
 
-    my_command(event=Event({"correlation_id": given_any_correlation_id}))
+    event = Event({"correlation_id": given_any_correlation_id})
+    my_command(event=event)
 
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
@@ -25,7 +26,7 @@ def test_should_execute_successfully_a_empty_command_without_input_parameters(
         INFO,
         LogMessageMother.get_command(
             operation="my_command",
-            message="Start",
+            message=f"Event received: {event}",
             correlation_id=given_any_correlation_id,
         ).to_json(),
     )

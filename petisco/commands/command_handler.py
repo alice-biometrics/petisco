@@ -34,7 +34,7 @@ class _CommandHandler:
             )
 
             try:
-                log_message.message = "Start"
+                log_message.message = f"Event received: {event}"
                 self.logger.log(INFO, log_message.to_json())
                 result = run_command(*args, **kwargs)
                 if result.is_success:
