@@ -1,37 +1,64 @@
 from datetime import datetime
-from typing import Dict, Any
-
-from dataclasses import dataclass, field
-from dataclasses_json import dataclass_json, config
-from marshmallow import fields
-from backports.datetime_fromisoformat import MonkeyPatch
+from typing import Dict
 
 from petisco.events.event_id import EventId
 
-MonkeyPatch.patch_fromisoformat()
+import json
 
 
-@dataclass_json
-@dataclass
 class Event:
-    event_id: EventId = None
-    event_name: str = None
-    occurred_on: datetime = field(
-        default=None,
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        ),
-    )
-    data: Dict[str, Any] = None
+    id: EventId = None
+    version: str = None
+    name: str = None
+    occurred_on: str = None
 
-    def __init__(self, *args, **kwargs):
-        self.occurred_on = kwargs.get("occurred_on", datetime.utcnow())
-        self.data = kwargs
-        self.event_id = EventId.generate(str(kwargs))
-        self.event_name = self.get_event_name()
+    def __init__(self, dictionary=None):
+        if dictionary:
+            self.__dict__.update(dictionary)
 
-    @classmethod
-    def get_event_name(cls):
-        return "{}.{}".format(cls.__module__, cls.__name__)
+        self.id = EventId.generate(str(dictionary)) if not self.id else self.id
+        self.name = self.__class__.__name__ if not self.name else self.name
+        self.occurred_on = (
+            datetime.utcnow() if not self.occurred_on else self.occurred_on
+        )
+
+    def __repr__(self):
+        return f"[{self.name}: {self.to_dict()}]"
+
+    def __eq__(self, other):
+        if (
+            isinstance(other, self.__class__)
+            or issubclass(other.__class__, self.__class__)
+            or issubclass(self.__class__, other.__class__)
+        ):
+            return self.to_dict() == other.to_dict()
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def to_dict(self) -> Dict:
+        return self.__dict__
+
+    @staticmethod
+    def from_dict(dictionary: Dict):
+        if "id" in dictionary and isinstance(dictionary["id"], str):
+            dictionary["id"] = EventId(dictionary["id"])
+        if "occurred_on" in dictionary and isinstance(dictionary["occurred_on"], str):
+            dictionary["occurred_on"] = datetime.strptime(
+                dictionary["occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
+            )
+        return Event(dictionary)
+
+    def to_json(self):
+        return json.dumps(self.to_dict(), default=self._datetime_to_str)
+
+    def _datetime_to_str(self, o):
+        if isinstance(o, datetime):
+            return o.__str__()
+
+    @staticmethod
+    def from_json(event_json):
+        event_dict = json.loads(event_json)
+        return Event.from_dict(event_dict)

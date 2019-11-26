@@ -1,9 +1,10 @@
 from typing import NamedTuple
 
 import pytest
+from meiga.assertions import assert_failure, assert_success
 
-from petisco import UseCase, use_case_handler, INFO
-from meiga import Result, Success
+from petisco import UseCase, use_case_handler, INFO, ERROR
+from meiga import Success, Failure, isFailure, isSuccess, Error
 
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
@@ -17,7 +18,7 @@ def test_should_log_successfully_a_non_error_use_case_without_input_parameters_a
     @use_case_handler(logger=logger)
     class MyUseCase(UseCase):
         def execute(self):
-            return Result("Hello Petisco")
+            return Success("Hello Petisco")
 
     MyUseCase().execute()
 
@@ -44,7 +45,7 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters_but_
     @use_case_handler(logger=logger)
     class MyUseCase(UseCase):
         def execute(self, client_id: str, user_id: str):
-            return Result("Hello Petisco")
+            return Success("Hello Petisco")
 
     MyUseCase().execute(client_id="client_id", user_id="user_id")
 
@@ -73,9 +74,11 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters():
     )
     class MyUseCase(UseCase):
         def execute(self, client_id: str, user_id: str):
-            return Result("Hello Petisco")
+            return Success("Hello Petisco")
 
-    MyUseCase().execute(client_id="client_id", user_id="user_id")
+    result = MyUseCase().execute(client_id="client_id", user_id="user_id")
+
+    assert_success(result)
 
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
@@ -110,7 +113,9 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_python_type
         def execute(self):
             return Success(b"This are bytes")
 
-    MyUseCase().execute()
+    result = MyUseCase().execute()
+
+    assert_success(result)
 
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
@@ -142,7 +147,9 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_own_named_t
             binary_info = BinaryInfo(name="my_data", data=b"This are bytes")
             return Success(binary_info)
 
-    MyUseCase().execute()
+    result = MyUseCase().execute()
+
+    assert_success(result)
 
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
@@ -170,7 +177,9 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_a_tuple():
             binary_info = ("my_data", b"This are bytes")
             return Success(binary_info)
 
-    MyUseCase().execute()
+    result = MyUseCase().execute()
+
+    assert_success(result)
 
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
@@ -205,7 +214,9 @@ def test_should_log_successfully_a_large_type_with_its_repr():
             binary_info = BinaryInfo(name="my_data", data=b"This are bytes")
             return Success(binary_info)
 
-    MyUseCase().execute()
+    result = MyUseCase().execute()
+
+    assert_success(result)
 
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
@@ -218,5 +229,68 @@ def test_should_log_successfully_a_large_type_with_its_repr():
         INFO,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="<BinaryInfo my_data, len(data)=14>"
+        ).to_json(),
+    )
+
+
+@pytest.mark.unit
+def test_should_log_successfully_an_error_returned_on_a_use_case():
+
+    logger = FakeLogger()
+
+    @use_case_handler(logger=logger)
+    class MyUseCase(UseCase):
+        def execute(self):
+            return isFailure
+
+    result = MyUseCase().execute()
+
+    assert_failure(result, value_is_instance_of=Error)
+
+    first_logging_message = logger.get_logging_messages()[0]
+    second_logging_message = logger.get_logging_messages()[1]
+
+    assert first_logging_message == (
+        INFO,
+        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+    )
+    assert second_logging_message == (
+        ERROR,
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Result[status: failure | value: Error] "
+        ).to_json(),
+    )
+
+
+@pytest.mark.unit
+def test_should_log_successfully_an_error_raised_by_a_meiga_handler():
+
+    logger = FakeLogger()
+
+    class UserNotFoundError(Error):
+        pass
+
+    @use_case_handler(logger=logger)
+    class MyUseCase(UseCase):
+        def execute(self):
+            Failure(UserNotFoundError()).handle()
+            return isSuccess
+
+    result = MyUseCase().execute()
+
+    assert_failure(result, value_is_instance_of=UserNotFoundError)
+
+    first_logging_message = logger.get_logging_messages()[0]
+    second_logging_message = logger.get_logging_messages()[1]
+
+    assert first_logging_message == (
+        INFO,
+        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+    )
+    assert second_logging_message == (
+        ERROR,
+        LogMessageMother.get_use_case(
+            operation="MyUseCase",
+            message="Result[status: failure | value: UserNotFoundError] ",
         ).to_json(),
     )

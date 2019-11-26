@@ -22,7 +22,7 @@ class UseCaseHandler:
 
     def __call__(self, cls):
         if not issubclass(cls, UseCase):
-            raise TypeError("UseCaseLogger only decorates UseCase subclasses")
+            raise TypeError("UseCaseHandler only decorates UseCase subclasses")
 
         class UseCaseWrapped(cls):
             logger = self.logger
