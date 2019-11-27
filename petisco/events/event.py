@@ -25,7 +25,7 @@ class Event:
         )
 
     def __repr__(self):
-        return f"[{self.name}: {self.to_dict()}]"
+        return f"[{self.name}: {json.loads(self.to_json())}]"
 
     def __eq__(self, other):
         if (

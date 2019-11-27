@@ -20,7 +20,12 @@ class ApplicationConfig(metaclass=Singleton):
 
     @staticmethod
     def get_instance():
-        return ApplicationConfig()
+        try:
+            return ApplicationConfig()
+        except:  # noqa E722
+            raise ImportError(
+                "ApplicationConfig has been requested before its initial configuration"
+            )
 
     def __init__(
         self,
@@ -30,7 +35,7 @@ class ApplicationConfig(metaclass=Singleton):
         config_persistence: Callable = None,
         services_mode_mapper: Dict[str, Callable] = None,
         repositories_mode_mapper: Dict[str, Callable] = None,
-        event_manager_mapper: Dict[str, Callable] = None,
+        event_manager: IEventManager = None,
         options: Dict[str, Any] = None,
     ):
         """
@@ -51,8 +56,8 @@ class ApplicationConfig(metaclass=Singleton):
             A dictionary to map DeploymentMode with a service provider function. This is used as a dependency injector
         repositories_mode_mapper
             A dictionary to map DeploymentMode with a repository provider function. This is used as a dependency injector
-        event_manager_mapper
-            A dictionary to map DeploymentMode with a event manager provider function. This is used as a dependency injector
+        event_manager
+            A IEventManager valid implementation
         options
             A dictionary with specific toy_app options
         """
@@ -99,20 +104,12 @@ class ApplicationConfig(metaclass=Singleton):
                     raise TypeError(f"{key} repository must implement info")
             self.info["repositories"] = info_repositories
 
-        if event_manager_mapper:
-            if mode not in event_manager_mapper:
-                error_message = f"Mode {mode} not found in event_manager_mapper ({event_manager_mapper})"
-                self.logger.log(ERROR, error_message)
-                raise NotImplementedError(error_message)
-            self.event_manager_provider = event_manager_mapper[mode]
-
-            info_event_managers = {}
-            for key, event_manager in self.event_manager_provider().items():
-                if hasattr(event_manager, "info"):
-                    info_event_managers[key] = event_manager.info()
-                else:
-                    raise TypeError(f"{key} event_manager must implement info")
-            self.info["event_managers"] = info_event_managers
+        if event_manager:
+            self.event_manager = event_manager
+            if hasattr(event_manager, "info"):
+                self.info["event_managers"] = event_manager.info()
+            else:
+                raise TypeError(f"Given event_manager must implement info")
 
         self.options = options
 

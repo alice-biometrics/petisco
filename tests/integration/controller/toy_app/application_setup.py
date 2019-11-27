@@ -32,14 +32,6 @@ def services_provider():
     return {"sum": SumService()}
 
 
-def event_managers_provider():
-    return {
-        "fake": FakeRedisBasedEventManager(
-            subscribers={EVENT_TOPIC: redis_event_handler}
-        )
-    }
-
-
 def config_persistence():
     def import_database_models():
         from tests.integration.controller.toy_app.infrastructure.repositories.user_model import (
@@ -57,15 +49,17 @@ REPOSITORIES_MODE_MAPPER = {"TEST": repositories_provider}
 
 SERVICES_MODE_MAPPER = {"TEST": services_provider}
 
-EVENT_MANAGERS_MODE_MAPPER = {"TEST": event_managers_provider}
-
 
 def application_setup():
+
+    event_manager = FakeRedisBasedEventManager(
+        subscribers={EVENT_TOPIC: redis_event_handler}
+    )
 
     ApplicationConfig(
         mode="TEST",
         repositories_mode_mapper=REPOSITORIES_MODE_MAPPER,
         services_mode_mapper=SERVICES_MODE_MAPPER,
-        event_manager_mapper=EVENT_MANAGERS_MODE_MAPPER,
+        event_manager=event_manager,
         config_persistence=config_persistence,
     )

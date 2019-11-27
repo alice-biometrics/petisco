@@ -13,8 +13,9 @@ class UseCaseBuilder:
 
         config = ApplicationConfig.get_instance()
         user_repository = config.repositories_provider()["user"]
-        event_manager = config.event_manager_provider()["fake"]
-        return CreateUser(user_repository=user_repository, event_manager=event_manager)
+        return CreateUser(
+            user_repository=user_repository, event_manager=config.event_manager
+        )
 
     @staticmethod
     def get_user_name():
