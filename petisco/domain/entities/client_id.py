@@ -25,7 +25,7 @@ class ClientId(str):
                 return Failure(InputExceedLengthLimitError(message=client_id))
             else:
                 if not re.search(
-                    r"^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", client_id
+                    r"^[a-zA-Z]*(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", client_id
                 ):
                     return Failure(GivenInputIsNotValidError(message=client_id))
         return Success(client_id)

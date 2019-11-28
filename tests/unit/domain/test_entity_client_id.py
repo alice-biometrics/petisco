@@ -12,7 +12,6 @@ from petisco.domain.errors.input_exceed_lenght_limit_error import (
 
 @pytest.mark.unit
 def test_should_declare_a_valid_client_id():
-
     client_id = ClientId("Acme")
 
     assert_success(
@@ -21,8 +20,16 @@ def test_should_declare_a_valid_client_id():
 
 
 @pytest.mark.unit
-def test_should_declare_a_name_that_exceeds_default_length_limits():
+def test_should_declare_a_client_id_with_empty_string():
+    client_id = ClientId("")
 
+    assert_success(
+        client_id.to_result(), value_is_instance_of=str, value_is_equal_to=""
+    )
+
+
+@pytest.mark.unit
+def test_should_declare_a_name_that_exceeds_default_length_limits():
     client_id = ClientId(
         "La Corporación Acme es una empresa ficticia, que existe en el universo de los Looney Tunes. Apareció la mayor cantidad de veces en las caricaturas de El Coyote y el Correcaminos, que hicieron famosa a Acme por sus productos peligrosos y poco reales, los cuales fallaban catastróficamente de las peores maneras."
     )
@@ -34,7 +41,6 @@ def test_should_declare_a_name_that_exceeds_default_length_limits():
 
 @pytest.mark.unit
 def test_should_declare_a_name_with_js_injection():
-
     client_id = ClientId("<script>evil()</script>")
 
     assert_failure(

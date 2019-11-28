@@ -45,3 +45,11 @@ def test_should_declare_a_name_with_none_string():
     name = Name("None")
 
     assert_success(name.to_result(), value_is_equal_to=None)
+
+
+@pytest.mark.unit
+def test_should_declare_a_name_with_empty_string():
+
+    name = Name("")
+
+    assert_success(name.to_result(), value_is_instance_of=str, value_is_equal_to="")
