@@ -1,7 +1,7 @@
 from functools import wraps
 import traceback
 
-from meiga import Result
+from meiga import Result, isFailure
 from meiga.decorators import meiga
 
 from petisco.events.event import Event
@@ -43,12 +43,12 @@ class _CommandHandler:
                 else:
                     log_message.message = f"{result}"
                     self.logger.log(ERROR, log_message.to_json())
+                return result
 
             except Exception as e:
-                log_message.message = (
-                    f"Error {func.__name__}: {e} | {traceback.print_exc()}"
-                )
+                log_message.message = f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}"
                 self.logger.log(ERROR, log_message.to_json())
+                return isFailure
 
         return wrapper
 

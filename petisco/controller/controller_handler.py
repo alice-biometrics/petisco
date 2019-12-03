@@ -51,7 +51,7 @@ class _ControllerHandler:
 
             correlation_id, kwargs = update_correlation_id(kwargs)
             log_message = LogMessage(
-                layer="flask_app",
+                layer="controller",
                 operation=f"{func.__name__}",
                 correlation_id=correlation_id,
             )
@@ -96,7 +96,7 @@ class _ControllerHandler:
             except Exception as e:
                 log_message.message = f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}"
                 self.logger.log(ERROR, log_message.to_json())
-                return InternalHttpError(suffix=traceback.print_exc()).handle()
+                return InternalHttpError().handle()
 
         def update_correlation_id(kwargs):
             signature = inspect.signature(func)
