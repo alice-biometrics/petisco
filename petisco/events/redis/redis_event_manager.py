@@ -5,7 +5,7 @@ from petisco.events.event import Event
 from petisco.events.interface_event_manager import IEventManager
 
 
-class RedisBasedEventManager(IEventManager):
+class RedisEventManager(IEventManager):
     def __init__(self, redis: Redis, subscribers: Dict[str, Callable]):
         super().__init__(subscribers)
         self._redis = redis

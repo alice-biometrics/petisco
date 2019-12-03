@@ -6,7 +6,7 @@ from petisco.application.repository import Repository
 from petisco.domain.entities.client_id import ClientId
 from petisco.domain.entities.name import Name
 from petisco.domain.entities.user_id import UserId
-from tests.integration.controller.toy_app.domain.repositories.user_not_found_error import (
+from tests.integration.flask_app.toy_app.domain.repositories.user_not_found_error import (
     UserNotFoundError,
 )
 

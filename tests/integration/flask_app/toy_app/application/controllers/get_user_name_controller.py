@@ -1,7 +1,7 @@
 from meiga import Result
 
 from petisco import controller_handler, JwtConfig
-from tests.integration.controller.toy_app.application.use_cases.use_case_builder import (
+from tests.integration.flask_app.toy_app.application.use_cases.use_case_builder import (
     UseCaseBuilder,
 )
 

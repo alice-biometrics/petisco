@@ -5,7 +5,7 @@ from petisco.domain.entities.name import Name
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
 )
-from tests.integration.controller.toy_app.application.use_cases.use_case_builder import (
+from tests.integration.flask_app.toy_app.application.use_cases.use_case_builder import (
     UseCaseBuilder,
 )
 

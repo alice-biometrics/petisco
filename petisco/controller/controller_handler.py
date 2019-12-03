@@ -6,7 +6,7 @@ from typing import Callable, Tuple, Dict, List, Any
 from meiga import Result
 from meiga.decorators import meiga
 
-from petisco.controller.errors.bad_request_http_error import BadRequestHttpError
+from petisco.controller.errors.internal_http_error import InternalHttpError
 from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
@@ -51,7 +51,7 @@ class _ControllerHandler:
 
             correlation_id, kwargs = update_correlation_id(kwargs)
             log_message = LogMessage(
-                layer="controller",
+                layer="flask_app",
                 operation=f"{func.__name__}",
                 correlation_id=correlation_id,
             )
@@ -98,7 +98,7 @@ class _ControllerHandler:
                     f"Error {func.__name__}: {e} | {traceback.print_exc()}"
                 )
                 self.logger.log(ERROR, log_message.to_json())
-                return BadRequestHttpError(suffix=traceback.print_exc()).handle()
+                return InternalHttpError(suffix=traceback.print_exc()).handle()
 
         def update_correlation_id(kwargs):
             signature = inspect.signature(func)

@@ -12,7 +12,7 @@ paths:
   /healthcheck:
     get:
       summary: Returns healthcheck information.
-      operationId: tests.integration.controller.toy_app.application.controllers.healthcheck_controller.get_healthcheck
+      operationId: tests.integration.flask_app.toy_app.application.controllers.healthcheck_controller.get_healthcheck
       responses:
         200:
           description: The healthcheck was successful.
@@ -24,7 +24,7 @@ paths:
   /environment:
     get:
       summary: Returns environment information.
-      operationId: tests.integration.controller.toy_app.application.controllers.environment_controller.get_environment
+      operationId: tests.integration.flask_app.toy_app.application.controllers.environment_controller.get_environment
       security:
         - ApiKeyAuth: []
       responses:
@@ -39,7 +39,7 @@ paths:
   /sum:
     post:
       summary: Returns sum value.
-      operationId: tests.integration.controller.toy_app.application.controllers.sum_controller.sum
+      operationId: tests.integration.flask_app.toy_app.application.controllers.sum_controller.sum
       requestBody:
         content:
           multipart/form-data:
@@ -64,7 +64,7 @@ paths:
   /user:
     post:
       summary: Creates a user (dummy)
-      operationId: tests.integration.controller.toy_app.application.controllers.create_user_controller.create_user
+      operationId: tests.integration.flask_app.toy_app.application.controllers.create_user_controller.create_user
       security:
         - BearerAuth: []
       requestBody:
@@ -89,7 +89,7 @@ paths:
   /user/name:
     get:
       summary: Get user name
-      operationId: tests.integration.controller.toy_app.application.controllers.get_user_name_controller.get_user_name
+      operationId: tests.integration.flask_app.toy_app.application.controllers.get_user_name_controller.get_user_name
       security:
         - BearerAuth: []
       responses:

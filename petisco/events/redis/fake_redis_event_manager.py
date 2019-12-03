@@ -7,7 +7,7 @@ from petisco.events.event import Event
 from petisco.events.interface_event_manager import IEventManager
 
 
-class FakeRedisBasedEventManager(IEventManager):
+class FakeRedisEventManager(IEventManager):
     def __init__(
         self, redis: Redis = FakeRedis(), subscribers: Dict[str, Callable] = None
     ):

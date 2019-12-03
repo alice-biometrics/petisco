@@ -9,7 +9,7 @@ class LogMessageMother:
         operation: str = None, correlation_id: str = None, message: str = None
     ) -> LogMessage:
         return LogMessage(
-            layer="controller",
+            layer="flask_app",
             operation=operation,
             correlation_id=correlation_id,
             message=message,

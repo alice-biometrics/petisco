@@ -1,8 +1,8 @@
 from petisco.application.application_config import ApplicationConfig
-from tests.integration.controller.toy_app.application.use_cases.create_user import (
+from tests.integration.flask_app.toy_app.application.use_cases.create_user import (
     CreateUser,
 )
-from tests.integration.controller.toy_app.application.use_cases.get_user_name import (
+from tests.integration.flask_app.toy_app.application.use_cases.get_user_name import (
     GetUserName,
 )
 

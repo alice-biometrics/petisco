@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 
 from petisco import FlaskApplication, SqlAlchemyPersistence
 from petisco.controller.tokens.jwt_token_builder import JwtTokenBuilder
-from tests.integration.controller.key import KEY
+from tests.integration.flask_app.key import KEY
 
 SWAGGER_DIR = os.path.dirname(os.path.abspath(__file__)) + "/toy_app/"
 app = FlaskApplication(application_name="petisco", swagger_dir=SWAGGER_DIR).get_app()

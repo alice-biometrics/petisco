@@ -2,7 +2,7 @@ from typing import Dict
 
 from meiga import Result, Error, Success
 
-from tests.integration.controller.toy_app.domain.services.interface_sum_service import (
+from tests.integration.flask_app.toy_app.domain.services.interface_sum_service import (
     ISumService,
 )
 

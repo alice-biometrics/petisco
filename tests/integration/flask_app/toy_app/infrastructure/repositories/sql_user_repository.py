@@ -7,13 +7,13 @@ from petisco.domain.entities.client_id import ClientId
 from petisco.domain.entities.name import Name
 from petisco.domain.entities.user_id import UserId
 from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import session_scope
-from tests.integration.controller.toy_app.domain.repositories.user_already_exist_error import (
+from tests.integration.flask_app.toy_app.domain.repositories.user_already_exist_error import (
     UserAlreadyExistError,
 )
-from tests.integration.controller.toy_app.domain.repositories.user_not_found_error import (
+from tests.integration.flask_app.toy_app.domain.repositories.user_not_found_error import (
     UserNotFoundError,
 )
-from tests.integration.controller.toy_app.infrastructure.repositories.user_model import (
+from tests.integration.flask_app.toy_app.infrastructure.repositories.user_model import (
     UserModel,
 )
 

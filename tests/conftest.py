@@ -1,9 +1,10 @@
 from petisco.frameworks.flask.flask_extension_is_installed import (
     flask_extension_is_installed,
 )
+from .fixtures import *
 
 if flask_extension_is_installed():
-    from .integration.controller.fixtures import (
+    from .integration.flask_app.fixtures import (
         client,
         database,
         given_any_apikey,
@@ -12,5 +13,3 @@ if flask_extension_is_installed():
         given_code_injection_name,
         given_any_user_id,
     )
-
-    from .unit.fixtures import *

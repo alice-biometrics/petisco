@@ -4,7 +4,7 @@ from setuptools import setup
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 PACKAGE_NAME = "petisco"
-VERSION = "0.8.2"
+VERSION = "0.9.0"
 
 # The text of the README file
 with open(os.path.join(CURRENT_DIR, "README.md")) as fid:
@@ -38,6 +38,7 @@ setup(
         "petisco/domain/errors",
         "petisco/events",
         "petisco/events/redis",
+        "petisco/events/rabbitmq",
         "petisco/frameworks/flask",
         "petisco/frameworks/flask/application",
         "petisco/logger",
@@ -49,5 +50,7 @@ setup(
     extras_require={
         "flask": ["connexion==2.2.0", "Flask-Cors==3.0.7"],
         "sqlalchemy": ["sqlalchemy>=1.3.11", "sqlalchemy_utils"],
+        "redis": ["redis >= 3.3.11", "fakeredis >= 1.0.5"],
+        "rabbitmq": ["pika==1.1.0"],
     },
 )

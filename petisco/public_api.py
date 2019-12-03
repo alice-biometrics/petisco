@@ -3,7 +3,6 @@
 
 """Public API of ALiCE Petisco Framework"""
 
-
 # Classes
 from petisco.application.application_config import ApplicationConfig
 from petisco.application.repository import Repository
@@ -15,9 +14,6 @@ from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.domain.entities.client_id import ClientId
 from petisco.domain.entities.name import Name
 from petisco.domain.entities.user_id import UserId
-from petisco.events.redis.fake_redis_based_event_manager import (
-    FakeRedisBasedEventManager,
-)
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
@@ -28,12 +24,6 @@ from petisco.controller.errors.http_error import HttpError
 from petisco.events.event import Event
 from petisco.events.event_id import EventId
 from petisco.events.interface_event_manager import IEventManager
-from petisco.events.redis.event_from_redis_message import (
-    event_from_redis_message,
-    EventFromRedisMessageConversionError,
-)
-from petisco.events.redis.redis_based_event_manager import RedisBasedEventManager
-
 
 classes = [
     "ApplicationConfig",
@@ -50,10 +40,6 @@ classes = [
     "Event",
     "EventId",
     "IEventManager",
-    "RedisBasedEventManager",
-    "FakeRedisBasedEventManager",
-    "event_from_redis_message",
-    "EventFromRedisMessageConversionError",
     "Singleton",
     "JwtConfig",
     "IPersistenceConnector",
@@ -84,7 +70,6 @@ try:
 except (RuntimeError, ImportError):
     flask = []
 
-
 # SqlAlchemy
 try:
     from petisco.persistence.sqlalchemy.sqlalchemy_persistence import (
@@ -111,4 +96,30 @@ try:
 except (RuntimeError, ImportError):
     sqlalchemy = []
 
-__all__ = classes + constants + flask + sqlalchemy
+# Redis
+try:
+    from petisco.events.redis.redis_event_manager import RedisEventManager
+    from petisco.events.redis.fake_redis_event_manager import FakeRedisEventManager
+    from petisco.events.redis.event_from_redis_message import (
+        event_from_redis_message,
+        EventFromRedisMessageConversionError,
+    )
+
+    redis = [
+        "RedisEventManager",
+        "FakeRedisEventManager",
+        "event_from_redis_message",
+        "EventFromRedisMessageConversionError",
+    ]
+except (RuntimeError, ImportError):
+    redis = []
+
+# RabbitMq
+try:
+    from petisco.events.rabbitmq.rabbitmq_event_manager import RabbitMQEventManager
+
+    rabbitmq = ["RabbitMQEventManager"]
+except (RuntimeError, ImportError):
+    rabbitmq = []
+
+__all__ = classes + constants + flask + sqlalchemy + redis + rabbitmq
