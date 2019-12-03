@@ -94,9 +94,7 @@ class _ControllerHandler:
                         return known_result_failure_handler.http_error.handle()
 
             except Exception as e:
-                log_message.message = (
-                    f"Error {func.__name__}: {e} | {traceback.print_exc()}"
-                )
+                log_message.message = f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}"
                 self.logger.log(ERROR, log_message.to_json())
                 return InternalHttpError(suffix=traceback.print_exc()).handle()
 

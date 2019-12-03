@@ -183,3 +183,35 @@ def test_should_execute_successfully_a_filtered_object_by_blacklist():
             operation="my_controller", message="Success result of type: bytes"
         ).to_json(),
     )
+
+
+@pytest.mark.unit
+def test_should_log_an_exception_occurred_on_the_controller():
+
+    logger = FakeLogger()
+
+    @controller_handler(logger=logger)
+    def my_controller():
+        raise RuntimeError("my_controller exception")
+
+    http_response = my_controller()
+
+    assert http_response == (
+        {"error": {"message": "Internal Error.", "type": "InternalHttpError"}},
+        500,
+    )
+
+    first_logging_message = logger.get_logging_messages()[0]
+    second_logging_message = logger.get_logging_messages()[1]
+
+    assert first_logging_message == (
+        INFO,
+        LogMessageMother.get_controller(
+            operation="my_controller", message="Start"
+        ).to_json(),
+    )
+
+    assert second_logging_message[0] == ERROR
+    assert "line" in second_logging_message[1]
+    assert "RuntimeError" in second_logging_message[1]
+    assert "my_controller exception" in second_logging_message[1]
