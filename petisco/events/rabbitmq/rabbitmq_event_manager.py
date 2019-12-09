@@ -11,17 +11,22 @@ class RabbitMQEventManager(IEventManager):
     def __init__(
         self,
         connection_parameters: ConnectionParameters,
-        subscribers: Dict[str, Callable],
+        subscribers: Dict[str, Callable] = None,
     ):
         super().__init__(subscribers)
         self.connection_parameters = connection_parameters
 
-        # Run the worker into a thread
-        self._thread = threading.Thread(target=self._subscribe)
-        self._thread.start()
+        if self.subscribers:
+            # Run the worker into a thread
+            self._thread = threading.Thread(target=self._subscribe)
+            self._thread.start()
 
     def info(self) -> Dict:
-        return {"name": self.__class__.__name__}
+        return {
+            "name": self.__class__.__name__,
+            "host": self.connection_parameters._host,
+            "port": self.connection_parameters._port,
+        }
 
     def _subscribe(self):
         self._connection_subscriber = BlockingConnection(self.connection_parameters)
@@ -40,8 +45,9 @@ class RabbitMQEventManager(IEventManager):
         def kill():
             self._channel_subscriber.stop_consuming()
 
-        self._connection_subscriber.call_later(0, kill)
-        self._thread.join()
+        if self.subscribers:
+            self._connection_subscriber.call_later(0, kill)
+            self._thread.join()
 
     def send(self, topic: str, event: Event):
         connection_publisher = BlockingConnection(self.connection_parameters)

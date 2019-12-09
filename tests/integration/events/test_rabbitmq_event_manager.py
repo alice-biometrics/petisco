@@ -89,3 +89,21 @@ def test_should_unsubscribe_all_successfully(make_user_created_event):
     await_for_events()
 
     assert len(received_events) >= 1
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
+)
+def test_should_create_a_rabbitmq_event_manager_without_subscribers_and_publish_a_event(
+    make_user_created_event, given_any_topic
+):
+    given_rabbitmq_local_connection_parameters = ConnectionParameters(host="localhost")
+
+    event_manager = RabbitMQEventManager(
+        connection_parameters=given_rabbitmq_local_connection_parameters
+    )
+
+    event_manager.send(given_any_topic, make_user_created_event())
+
+    event_manager.unsubscribe_all()
