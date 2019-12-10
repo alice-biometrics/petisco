@@ -47,9 +47,18 @@ class SqlAlchemyPersistenceConnector(IPersistenceConnector):
 
         if connection:
             if self.config.server == "sqlite":
-                engine = create_engine(connection)
+                engine = create_engine(
+                    connection,
+                    json_serializer=lambda obj: obj,
+                    json_deserializer=lambda obj: obj,
+                )
             else:
-                engine = create_engine(connection, pool_pre_ping=True)
+                engine = create_engine(
+                    connection,
+                    pool_pre_ping=True,
+                    json_serializer=lambda obj: obj,
+                    json_deserializer=lambda obj: obj,
+                )
 
             if not database_exists(engine.url):
                 create_database(engine.url)
