@@ -9,7 +9,7 @@ def await_for_events():
     sleep(0.2)
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_should_create_a_redis_event_manager_and_publish_two_different_events(
     make_user_created_event, make_first_name_added_event, given_any_topic
 ):
@@ -53,7 +53,7 @@ def test_should_create_a_redis_event_manager_and_publish_two_different_events(
     assert len(received_events) == 2
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_should_unsubscribe_all_successfully(make_user_created_event):
     given_any_user_id_1 = UserId("user_id_1")
     given_any_user_id_2 = UserId("user_id_2")
@@ -83,3 +83,18 @@ def test_should_unsubscribe_all_successfully(make_user_created_event):
     await_for_events()
 
     assert len(received_events) == 2
+
+
+@pytest.mark.integration
+def test_should_create_a_redis_event_manager_without_subscribers_and_publish_a_event(
+    make_user_created_event, given_any_topic
+):
+    given_any_user_id = "user_id"
+
+    event_manager = RedisEventManager(redis=FakeRedis())
+
+    event_manager.send(
+        given_any_topic, make_user_created_event(user_id=given_any_user_id)
+    )
+
+    event_manager.unsubscribe_all()

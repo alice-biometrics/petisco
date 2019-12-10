@@ -24,6 +24,8 @@ from petisco.controller.errors.http_error import HttpError
 from petisco.events.event import Event
 from petisco.events.event_id import EventId
 from petisco.events.interface_event_manager import IEventManager
+from petisco.events.not_implemented_event_manager import NotImplementedEventManager
+
 
 classes = [
     "ApplicationConfig",
@@ -40,6 +42,7 @@ classes = [
     "Event",
     "EventId",
     "IEventManager",
+    "NotImplementedEventManager",
     "Singleton",
     "JwtConfig",
     "IPersistenceConnector",
@@ -99,7 +102,6 @@ except (RuntimeError, ImportError):
 # Redis
 try:
     from petisco.events.redis.redis_event_manager import RedisEventManager
-    from petisco.events.redis.fake_redis_event_manager import FakeRedisEventManager
     from petisco.events.redis.event_from_redis_message import (
         event_from_redis_message,
         EventFromRedisMessageConversionError,
@@ -107,7 +109,6 @@ try:
 
     redis = [
         "RedisEventManager",
-        "FakeRedisEventManager",
         "event_from_redis_message",
         "EventFromRedisMessageConversionError",
     ]

@@ -6,11 +6,13 @@ from petisco.events.interface_event_manager import IEventManager
 
 
 class RedisEventManager(IEventManager):
-    def __init__(self, redis: Redis, subscribers: Dict[str, Callable]):
+    def __init__(self, redis: Redis, subscribers: Dict[str, Callable] = None):
         super().__init__(subscribers)
         self._redis = redis
-        self._pubsub = self._redis.pubsub()
-        self._subscribe()
+
+        if self.subscribers:
+            self._pubsub = self._redis.pubsub()
+            self._subscribe()
 
     def info(self) -> Dict:
         return {"name": self.__class__.__name__}
@@ -20,7 +22,8 @@ class RedisEventManager(IEventManager):
         self._thread = self._pubsub.run_in_thread(sleep_time=0.001)
 
     def unsubscribe_all(self):
-        self._thread.stop()
+        if self.subscribers:
+            self._thread.stop()
 
     def send(self, topic: str, event: Event):
         self._redis.publish(topic, event.to_json())

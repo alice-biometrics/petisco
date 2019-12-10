@@ -1,12 +1,16 @@
+from fakeredis import FakeRedis
+
 from petisco.application.application_config import ApplicationConfig
-from petisco.events.redis.fake_redis_event_manager import FakeRedisEventManager
+from petisco.events.redis.redis_event_manager import RedisEventManager
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence_config import (
     SqlAlchemyPersistenceConfig,
 )
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence_connector import (
     SqlAlchemyPersistenceConnector,
 )
-from tests.integration.flask_app.toy_app.application.handlers import redis_event_handler
+from tests.integration.flask_app.toy_app.application.handlers.redis_event_handler import (
+    redis_event_handler,
+)
 from tests.integration.flask_app.toy_app.infrastructure.services.sum_service import (
     SumService,
 )
@@ -30,9 +34,7 @@ def services_provider():
 
 def config_persistence():
     def import_database_models():
-        from tests.integration.flask_app.toy_app.infrastructure.repositories.user_model import (
-            UserModel,
-        )
+        pass
 
     config = SqlAlchemyPersistenceConfig(server="sqlite", database="petisco.db")
     persistence_connector = SqlAlchemyPersistenceConnector(
@@ -48,8 +50,8 @@ SERVICES_MODE_MAPPER = {"TEST": services_provider}
 
 def application_setup():
 
-    event_manager = FakeRedisEventManager(
-        subscribers={EVENT_TOPIC: redis_event_handler}
+    event_manager = RedisEventManager(
+        redis=FakeRedis(), subscribers={EVENT_TOPIC: redis_event_handler}
     )
 
     ApplicationConfig(
