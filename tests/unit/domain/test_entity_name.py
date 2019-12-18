@@ -67,6 +67,7 @@ def test_should_declare_a_name_with_empty_string():
         "María-Jose Carreño Quiñones",
         "Борис Николаевич Ельцин",
         "John Q. Public",
+        "John F.",
         "Nguyễn Tấn Dũng",
         "Øåąćłńśź",
         "öêãàõâôñ",
