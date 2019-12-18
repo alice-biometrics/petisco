@@ -53,3 +53,30 @@ def test_should_declare_a_name_with_empty_string():
     name = Name("")
 
     assert_success(name.to_result(), value_is_instance_of=str, value_is_equal_to="")
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "input_name",
+    [
+        "毛泽东",
+        "Milošević",
+        "Müller",
+        "Conceição",
+        "Björk Guðmundsdóttir",
+        "María-Jose Carreño Quiñones",
+        "Борис Николаевич Ельцин",
+        "John Q. Public",
+        "Nguyễn Tấn Dũng",
+        "Øåąćłńśź",
+        "öêãàõâôñ",
+        "แมว",  # not working with thai marks ม้
+        "Tōkairin",
+    ],
+)
+def test_should_declare_a_valid_name_parametrizable(input_name):
+    name = Name(input_name)
+
+    assert_success(
+        name.to_result(), value_is_instance_of=str, value_is_equal_to=input_name
+    )

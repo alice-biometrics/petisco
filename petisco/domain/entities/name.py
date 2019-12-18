@@ -24,6 +24,6 @@ class Name(str):
             if len(self) > self.length_limit:
                 return Failure(InputExceedLengthLimitError(message=name))
             else:
-                if not re.search(r"^[a-zA-Z]*(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", name):
+                if not re.search(r"^[\w]*(([',. -][\s]?[\w])?[\w]*)*$", name):
                     return Failure(GivenInputIsNotValidError(message=name))
         return Success(name)
