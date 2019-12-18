@@ -1,7 +1,9 @@
-petisco
+petisco 
 =======
 
 Petisco is a framework for helping Python developers to build clean Applications
+
+:warning: disclaimer: not stable yet
 
 #### Installation 
 

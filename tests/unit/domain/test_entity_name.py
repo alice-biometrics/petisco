@@ -2,9 +2,7 @@ import pytest
 from meiga.assertions import assert_failure, assert_success
 
 from petisco.domain.entities.name import Name
-from petisco.domain.errors.given_input_is_not_valid_error import (
-    GivenInputIsNotValidError,
-)
+from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
 from petisco.domain.errors.input_exceed_lenght_limit_error import (
     InputExceedLengthLimitError,
 )
@@ -35,7 +33,7 @@ def test_should_declare_a_name_with_js_injection():
 
     name = Name("<script>evil()</script>")
 
-    assert_failure(name.to_result(), value_is_instance_of=GivenInputIsNotValidError)
+    assert_failure(name.to_result(), value_is_instance_of=GivenNameIsNotValidError)
 
 
 @pytest.mark.unit

@@ -3,9 +3,7 @@ from typing import Any
 
 from meiga import Result, Error, Failure, Success
 
-from petisco.domain.errors.given_input_is_not_valid_error import (
-    GivenInputIsNotValidError,
-)
+from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
 from petisco.domain.errors.input_exceed_lenght_limit_error import (
     InputExceedLengthLimitError,
 )
@@ -25,5 +23,5 @@ class Name(str):
                 return Failure(InputExceedLengthLimitError(message=name))
             else:
                 if not re.search(r"^[\w]*(([',. -][\s]?[\w]?)?[\w]*)*$", name):
-                    return Failure(GivenInputIsNotValidError(message=name))
+                    return Failure(GivenNameIsNotValidError(message=name))
         return Success(name)
