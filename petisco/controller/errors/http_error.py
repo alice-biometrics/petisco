@@ -12,6 +12,9 @@ class HttpError:
         self.message = message
         self.code = code
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}: {self.code} | {self.message}"
+
     def handle(self) -> Tuple[dict, int]:
         return (
             {"error": {"type": self.__class__.__name__, "message": self.message}},

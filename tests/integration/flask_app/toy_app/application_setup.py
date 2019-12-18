@@ -1,6 +1,7 @@
 from fakeredis import FakeRedis
 
 from petisco.application.application_config import ApplicationConfig
+from petisco.events.not_implemented_event_manager import NotImplementedEventManager
 from petisco.events.redis.redis_event_manager import RedisEventManager
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence_config import (
     SqlAlchemyPersistenceConfig,
@@ -50,9 +51,7 @@ SERVICES_MODE_MAPPER = {"TEST": services_provider}
 
 def application_setup():
 
-    event_manager = RedisEventManager(
-        redis=FakeRedis(), subscribers={EVENT_TOPIC: redis_event_handler}
-    )
+    event_manager = NotImplementedEventManager()
 
     ApplicationConfig(
         mode="TEST",

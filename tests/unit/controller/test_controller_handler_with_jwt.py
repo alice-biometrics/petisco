@@ -157,7 +157,7 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
         ERROR,
         LogMessageMother.get_controller(
             operation="my_controller",
-            message="Result[status: failure | value: InvalidTokenError]",
+            message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid REQUIRED_TOKEN Token]",
         ).to_json(),
     )
 
@@ -199,6 +199,6 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
         ERROR,
         LogMessageMother.get_controller(
             operation="my_controller",
-            message="Result[status: failure | value: InvalidTokenError]",
+            message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid TOKEN Token]",
         ).to_json(),
     )
