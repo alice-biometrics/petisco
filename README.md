@@ -1,48 +1,34 @@
-petisco 
+petisco :green_apple:
 =======
 
-Petisco is a framework for helping Python developers to build clean Applications
+Petisco is a framework for helping Python developers to build clean Applications in Python.
 
 :warning: disclaimer: not stable yet
 
 #### Installation 
 
+
+
 ```console
 pip install petisco
 ```
 
-###### Extras 
+Installation with Extras 
 
 ```console
 pip install petisco[flask]
 pip install petisco[sqlalchemy]
 pip install petisco[redis]
 pip install petisco[rabbitmq]
+pip install petisco[flask,sqlalchemy,redis,rabbitmq]
 ```
 
 #### Getting Started
 
 **petisco** provides us some sort of interfaces and decorators to help on the development of clean architecture Applications.
 
-## Developers
 
-##### Install requirements
-
-```console
-pip install -r requirements/dev.txt
-```
-
-##### Test
-
-```console
-pip install -e . && pytest
-```
-
-or if you are using flask extensions
-
-```console
-pip install -e .[flask] && pytest
-```
+#### Extras
 
 ###### RabbitMQ
 
@@ -96,12 +82,4 @@ event_manager.send(
 sleep(0.5)  # wait for the callback
 
 event_manager.unsubscribe_all()
-```
-
-##### Upload to PyPi 
-
-```console
-python setup.py sdist bdist_wheel
-twine check dist/*
-twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
 ```
