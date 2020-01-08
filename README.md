@@ -1,4 +1,4 @@
-petisco :green_apple:
+petisco :cookie:
 =======
 
 Petisco is a framework for helping Python developers to build clean Applications in Python.
