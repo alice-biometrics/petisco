@@ -5,7 +5,7 @@ Petisco is a framework for helping Python developers to build clean Applications
 
 :warning: disclaimer: not stable yet
 
-#### Installation 
+## Installation :computer:
 
 
 
@@ -23,7 +23,7 @@ pip install petisco[rabbitmq]
 pip install petisco[flask,sqlalchemy,redis,rabbitmq]
 ```
 
-#### Getting Started
+## Getting Started :chart_with_upwards_trend:	
 
 **petisco** provides us some sort of interfaces and decorators to help on the development of clean architecture Applications.
 
