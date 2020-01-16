@@ -2,10 +2,16 @@ name: ci
 
 on:
   pull_request:
+    paths-ignore:
+      - '*.md'
+      - 'VERSION'
     branches: 
       - master
   push:
-    branches: 
+    paths-ignore:
+      - '*.md'
+      - 'VERSION'
+    branches:
       - master
 
 jobs:
