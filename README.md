@@ -1,4 +1,4 @@
-petisco :cookie: [![ci](https://github.com/alice-biometrics/petisco/workflows/ci/badge.svg)](https://github.com/alice-biometrics/petisco/actions)  [![ci](https://github.com/alice-biometrics/petisco/workflows/pypi/badge.svg)](https://github.com/alice-biometrics/petisco/actions) [![pypi](https://img.shields.io/pypi/dm/petisco)](https://pypi.org/project/petisco/)
+petisco :cookie: [![ci](https://github.com/alice-biometrics/petisco/workflows/ci/badge.svg)](https://github.com/alice-biometrics/petisco/actions) [![pypi](https://img.shields.io/pypi/dm/petisco)](https://pypi.org/project/petisco/)
 =======
 
 Petisco is a framework for helping Python developers to build clean Applications in Python.
