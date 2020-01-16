@@ -16,7 +16,7 @@ jobs:
     - name: Set RELEASE_VERSION
       run: |
         echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11})
-    -name: Update VERSION file
+    - name: Update VERSION file
       run: |
         echo ${RELEASE_VERSION} > VERSION
         git add VERSION
