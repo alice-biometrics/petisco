@@ -19,6 +19,7 @@ jobs:
     - name: Update VERSION file
       run: |
         echo ${RELEASE_VERSION} > VERSION
+        git add VERSION
     - name: Commit files
       run: |
         git config --global user.email "dev@alicebiometrics.com"
