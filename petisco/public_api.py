@@ -27,6 +27,11 @@ from petisco.events.interface_event_manager import IEventManager
 from petisco.events.not_implemented_event_manager import NotImplementedEventManager
 
 
+# Modules
+from . import test_tools
+
+modules = ["test_tools"]
+
 classes = [
     "ApplicationConfig",
     "Service",
@@ -123,4 +128,4 @@ try:
 except (RuntimeError, ImportError):
     rabbitmq = []
 
-__all__ = classes + constants + flask + sqlalchemy + redis + rabbitmq
+__all__ = modules + classes + constants + flask + sqlalchemy + redis + rabbitmq
