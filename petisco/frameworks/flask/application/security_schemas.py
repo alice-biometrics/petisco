@@ -30,6 +30,9 @@ def bearer_info_func(token):
     :rtype: dict | None
     """
     token_payload = decode_token_payload(token)
+    if not token_payload:
+        raise PermissionError("Required token cannot be decoded")
+
     token_info = {
         "user_id": token_payload.get("sub"),
         "client_id": token_payload.get("cli"),
