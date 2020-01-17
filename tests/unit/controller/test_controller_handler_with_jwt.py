@@ -202,3 +202,37 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
             message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid TOKEN Token]",
         ).to_json(),
     )
+
+
+@pytest.mark.unit
+def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_without_user_without_defining_token_info_arg(
+    given_any_token_type, given_any_decoded_token_info
+):
+
+    logger = FakeLogger()
+    jwt_config = JwtConfig(token_type=given_any_token_type)
+
+    @controller_handler(logger=logger, jwt_config=jwt_config)
+    def my_controller():
+        return Success("Hello Petisco")
+
+    http_response = my_controller(token_info=given_any_decoded_token_info)
+
+    assert http_response == ({"message": "OK"}, 200)
+
+    first_logging_message = logger.get_logging_messages()[0]
+    second_logging_message = logger.get_logging_messages()[1]
+
+    assert first_logging_message == (
+        INFO,
+        LogMessageMother.get_controller(
+            operation="my_controller", message="Start"
+        ).to_json(),
+    )
+    assert second_logging_message == (
+        INFO,
+        LogMessageMother.get_controller(
+            operation="my_controller",
+            message="Result[status: success | value: Hello Petisco]",
+        ).to_json(),
+    )

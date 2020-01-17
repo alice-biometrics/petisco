@@ -45,6 +45,8 @@ class JwtDecorator(object):
                 )
 
             del kwargs["token_info"]
+
+            # TODO something here
             if self.jwt_config.require_user:
                 return func(client_id, user_id, *args, **kwargs)
             else:
