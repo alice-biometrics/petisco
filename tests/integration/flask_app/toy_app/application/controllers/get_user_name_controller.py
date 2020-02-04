@@ -14,6 +14,6 @@ def success_handler(result: Result):
     success_handler=success_handler,
     jwt_config=JwtConfig(token_type="USER_TOKEN", require_user=True),
 )
-def get_user_name(client_id, user_id, *args, **kwargs):  # noqa: E501
+def get_user_name(client_id, user_id, headers=None, *args, **kwargs):  # noqa: E501
     use_case = UseCaseBuilder.get_user_name()
     return use_case.execute(client_id=client_id, user_id=user_id)

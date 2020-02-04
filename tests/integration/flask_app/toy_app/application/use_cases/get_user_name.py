@@ -17,5 +17,5 @@ class GetUserName(UseCase):
     def execute(self, client_id: ClientId, user_id: UserId) -> Result[Name, Error]:
         name = self.user_repository.find_name(
             client_id=client_id, user_id=user_id
-        ).handle()
+        ).unwrap_or_return()
         return Success(name)

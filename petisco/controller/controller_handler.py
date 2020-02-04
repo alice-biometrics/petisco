@@ -11,6 +11,7 @@ from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
 from petisco.controller.tokens.jwt_decorator import jwt
+from petisco.frameworks.flask.headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
 from petisco.controller.tokens.jwt_config import JwtConfig
@@ -32,6 +33,7 @@ class _ControllerHandler:
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
         correlation_id_provider: Callable = flask_correlation_id_provider,
+        headers_provider: Callable = flask_headers_provider,
         logging_types_blacklist: List[Any] = [bytes],
     ):
         self.logger = logger
@@ -39,6 +41,7 @@ class _ControllerHandler:
         self.success_handler = success_handler
         self.error_handler = error_handler
         self.correlation_id_provider = correlation_id_provider
+        self.headers_provider = headers_provider
         self.logging_types_blacklist = logging_types_blacklist
 
     def __call__(self, func, *args, **kwargs):
@@ -49,6 +52,7 @@ class _ControllerHandler:
             def run_controller(*args, **kwargs) -> Result:
                 return func(*args, **kwargs)
 
+            kwargs = get_headers_id(kwargs)
             correlation_id, kwargs = update_correlation_id(kwargs)
             log_message = LogMessage(
                 layer="controller",
@@ -109,6 +113,12 @@ class _ControllerHandler:
             else:
                 correlation_id = None
             return correlation_id, kwargs
+
+        def get_headers_id(kwargs):
+            headers = self.headers_provider()
+            kwargs = dict(kwargs, headers=headers)
+
+            return kwargs
 
         return wrapper
 

@@ -44,8 +44,7 @@ setup(
         "petisco/logger",
         "petisco/persistence",
         "petisco/persistence/sqlalchemy",
-        "petisco/use_case",
-        "petisco/test_tools",
+        "petisco/use_case"
     ],
     zip_safe=False,
     extras_require={
