@@ -14,7 +14,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
     logger = FakeLogger()
 
     @controller_handler(logger=logger)
-    def my_controller(headers):
+    def my_controller(headers=None):
         return Success("Hello Petisco")
 
     http_response = my_controller()
@@ -45,7 +45,7 @@ def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_o
     logger = FakeLogger()
 
     @controller_handler(logger=logger)
-    def my_controller(headers, correlation_id: CorrelationId):
+    def my_controller(correlation_id: CorrelationId, headers=None):
         return Success("Hello Petisco")
 
     http_response = my_controller()
