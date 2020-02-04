@@ -31,7 +31,7 @@ def error_handler(result: Result):
     error_handler=error_handler,
     jwt_config=JwtConfig(token_type="ADMIN_TOKEN"),
 )
-def create_user(client_id, body, *args, **kwargs):  # noqa: E501
-    name = Name(body.get("name")).to_result().handle()
+def create_user(client_id, body, headers=None):  # noqa: E501
+    name = Name(body.get("name")).to_result().unwrap_or_return()
     use_case = UseCaseBuilder.create_user()
     return use_case.execute(client_id=client_id, name=name)

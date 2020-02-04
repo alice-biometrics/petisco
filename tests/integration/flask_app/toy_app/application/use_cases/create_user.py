@@ -18,10 +18,10 @@ class CreateUser(UseCase):
         self.event_manager = event_manager
 
     def execute(self, client_id: ClientId, name: Name) -> Result[UserId, Error]:
-        user_id = UserId.generate().to_result().handle()
+        user_id = UserId.generate().to_result().unwrap_or_return()
         self.user_repository.save(
             client_id=client_id, user_id=user_id, name=name
-        ).handle()
+        ).unwrap_or_return()
 
         self.event_manager.send(EVENT_TOPIC, UserCreated(user_id))
         return Success(user_id)

@@ -42,7 +42,9 @@ def test_should_return_401_when_call_environment_with_happy_path_without_apikey(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
 def test_should_return_200_when_call_sum_with_valid_values(client):
-    headers = {"Content-Type": "multipart/form-data"}
+    headers = {"Content-Type": "multipart/form-data",
+               "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"}
+
     multipart_data = dict(value_1=2, value_2=3)
     response = client.open(
         "/petisco/sum",

@@ -61,7 +61,7 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     jwt_config = JwtConfig(token_type=given_any_token_type)
 
     @controller_handler(logger=logger, jwt_config=jwt_config)
-    def my_controller(token_info):
+    def my_controller(token_info, headers=None):
         return Success("Hello Petisco")
 
     http_response = my_controller(token_info=given_any_decoded_token_info)
@@ -95,7 +95,7 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     jwt_config = JwtConfig(token_type=given_any_token_type_with_user, require_user=True)
 
     @controller_handler(logger=logger, jwt_config=jwt_config)
-    def my_controller(token_info, user_id):
+    def my_controller(token_info, user_id, headers=None):
         return Success("Hello Petisco")
 
     http_response = my_controller(token_info=given_any_decoded_token_info_with_user)
@@ -129,7 +129,7 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
     jwt_config = JwtConfig(token_type=given_other_token_type)
 
     @controller_handler(logger=logger, jwt_config=jwt_config)
-    def my_controller(token_info):
+    def my_controller(token_info, headers=None):
         return Success("Hello Petisco")
 
     http_response = my_controller(token_info=given_any_decoded_token_info)
@@ -171,7 +171,7 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
     jwt_config = JwtConfig(token_type=given_any_token_type, require_user=True)
 
     @controller_handler(logger=logger, jwt_config=jwt_config)
-    def my_controller(token_info):
+    def my_controller(token_info, headers=None):
         return Success("Hello Petisco")
 
     http_response = my_controller(token_info=given_any_decoded_token_info)

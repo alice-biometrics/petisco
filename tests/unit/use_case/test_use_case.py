@@ -273,7 +273,7 @@ def test_should_log_successfully_an_error_raised_by_a_meiga_handler():
     @use_case_handler(logger=logger)
     class MyUseCase(UseCase):
         def execute(self):
-            Failure(UserNotFoundError()).handle()
+            Failure(UserNotFoundError()).unwrap_or_return()
             return isSuccess
 
     result = MyUseCase().execute()
