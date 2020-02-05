@@ -46,6 +46,7 @@ setup(
         "petisco/persistence/sqlalchemy",
         "petisco/use_case",
     ],
+    include_package_data=True,
     zip_safe=False,
     extras_require={
         "flask": ["connexion==2.2.0", "Flask-Cors==3.0.7"],
