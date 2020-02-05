@@ -4,7 +4,7 @@ from setuptools import setup
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 PACKAGE_NAME = "petisco"
-VERSION = open("VERSION", "r").read()
+VERSION = open("petisco/VERSION", "r").read()
 
 # The text of the README file
 with open(os.path.join(CURRENT_DIR, "README.md")) as fid:
@@ -44,7 +44,7 @@ setup(
         "petisco/logger",
         "petisco/persistence",
         "petisco/persistence/sqlalchemy",
-        "petisco/use_case"
+        "petisco/use_case",
     ],
     zip_safe=False,
     extras_require={
