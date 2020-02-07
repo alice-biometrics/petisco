@@ -49,7 +49,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     extras_require={
-        "flask": ["connexion==2.2.0", "connexion[swagger-ui]", "Flask-Cors==3.0.7"],
+        "flask": ["connexion==2.6.0", "connexion[swagger-ui]", "Flask-Cors==3.0.7"],
         "sqlalchemy": ["sqlalchemy>=1.3.11", "sqlalchemy_utils", "PyMySQL==0.9.2"],
         "redis": ["redis >= 3.3.11", "fakeredis>=1.0.5"],
         "rabbitmq": ["pika==1.1.0"],
