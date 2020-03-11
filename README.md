@@ -1,13 +1,20 @@
-petisco :cookie:  [![version](https://img.shields.io/github/release/alice-biometrics/petisco/all.svg)](https://github.com/alice-biometrics/petisco/releases) [![ci](https://github.com/alice-biometrics/petisco/workflows/ci/badge.svg)](https://github.com/alice-biometrics/petisco/actions) [![pypi](https://img.shields.io/pypi/dm/petisco)](https://pypi.org/project/petisco/)
-=======
+# petisco :cookie:  [![version](https://img.shields.io/github/release/alice-biometrics/petisco/all.svg)](https://github.com/alice-biometrics/petisco/releases) [![ci](https://github.com/alice-biometrics/petisco/workflows/ci/badge.svg)](https://github.com/alice-biometrics/petisco/actions) [![pypi](https://img.shields.io/pypi/dm/petisco)](https://pypi.org/project/petisco/)
+
+<img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png" width=auto>
 
 Petisco is a framework for helping Python developers to build clean Applications in Python.
 
 :warning: disclaimer: not stable yet
 
+
+## Table of Contents
+- [Installation :computer:](#installation-computer)
+- [Getting Started :chart_with_upwards_trend:](#getting-started-chart_with_upwards_trend)
+- [Extras](#extras)
+- [Contact :mailbox_with_mail:](#contact-mailbox_with_mail)
+
+
 ## Installation :computer:
-
-
 
 ```console
 pip install petisco
@@ -83,3 +90,8 @@ sleep(0.5)  # wait for the callback
 
 event_manager.unsubscribe_all()
 ```
+
+
+## Contact :mailbox_with_mail:
+
+support@alicebiometrics.com
