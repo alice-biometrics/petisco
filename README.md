@@ -91,6 +91,20 @@ sleep(0.5)  # wait for the callback
 event_manager.unsubscribe_all()
 ```
 
+## Development
+
+### Using lume
+
+```console
+pip install lume
+```
+
+Then:
+
+```console 
+lume -install -all
+```
+
 
 ## Contact :mailbox_with_mail:
 

@@ -1,0 +1,21 @@
+name: petisco
+
+install:
+  run:
+  - pip install -r requirements/dev.txt
+
+steps:
+  clean:
+    run:
+    - rm -rf output
+    - find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+  build:
+    run:
+    - pip install -e .[flask,sqlalchemy,redis,rabbitmq]
+  lint:
+    run:
+    - black .
+    - flake8 petisco
+  test:
+    run:
+    - pytest -v

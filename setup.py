@@ -53,6 +53,6 @@ setup(
         "sqlalchemy": ["sqlalchemy>=1.3.11", "sqlalchemy_utils", "PyMySQL==0.9.2"],
         "redis": ["redis >= 3.3.11", "fakeredis>=1.0.5"],
         "rabbitmq": ["pika==1.1.0"],
-        "gunicorn": ["gunicorn", "json-logging-py==0.2"]
+        "gunicorn": ["gunicorn", "json-logging-py==0.2"],
     },
 )
