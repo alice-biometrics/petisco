@@ -4,6 +4,9 @@ import pytest
 from meiga import Success, isFailure
 
 from petisco import controller_handler, CorrelationId, ERROR, INFO
+from petisco.events.request_responded import RequestResponded
+from petisco.events.event_config import EventConfig
+from tests.unit.mocks.fake_event_manager import FakeEventManager
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
 
@@ -11,9 +14,16 @@ from tests.unit.mocks.log_message_mother import LogMessageMother
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_without_input_parameters():
 
-    logger = FakeLogger()
+    fake_logger = FakeLogger()
+    fake_event_manager = FakeEventManager()
+    event_topic = "controller"
 
-    @controller_handler(logger=logger)
+    @controller_handler(
+        logger=fake_logger,
+        event_config=EventConfig(
+            event_manager=fake_event_manager, event_topic=event_topic
+        ),
+    )
     def my_controller(headers=None):
         return Success("Hello Petisco")
 
@@ -21,8 +31,8 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 
     assert http_response == ({"message": "OK"}, 200)
 
-    first_logging_message = logger.get_logging_messages()[0]
-    second_logging_message = logger.get_logging_messages()[1]
+    first_logging_message = fake_logger.get_logging_messages()[0]
+    second_logging_message = fake_logger.get_logging_messages()[1]
 
     assert first_logging_message == (
         INFO,
@@ -37,6 +47,68 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
             message="Result[status: success | value: Hello Petisco]",
         ).to_json(),
     )
+
+    request_responded = fake_event_manager.get_sent_events(event_topic)[0]
+    assert isinstance(request_responded, RequestResponded)
+    assert request_responded.application == "app-undefined"
+    assert request_responded.controller == "my_controller"
+    assert request_responded.is_success is True
+    assert request_responded.content == {"message": "OK"}
+    assert request_responded.status_code == 200
+    assert request_responded.additional_info is None
+
+
+@pytest.mark.unit
+def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_id_inputs():
+
+    fake_logger = FakeLogger()
+    fake_event_manager = FakeEventManager()
+    event_topic = "controller"
+    event_additional_info = ["client_id", "user_id"]
+
+    @controller_handler(
+        logger=fake_logger,
+        event_config=EventConfig(
+            event_manager=fake_event_manager,
+            event_topic=event_topic,
+            event_additional_info=event_additional_info,
+        ),
+    )
+    def my_controller(client_id, user_id, headers=None):
+        return Success("Hello Petisco")
+
+    http_response = my_controller(client_id="client-id", user_id="user-id")
+
+    assert http_response == ({"message": "OK"}, 200)
+
+    first_logging_message = fake_logger.get_logging_messages()[0]
+    second_logging_message = fake_logger.get_logging_messages()[1]
+
+    assert first_logging_message == (
+        INFO,
+        LogMessageMother.get_controller(
+            operation="my_controller", message="Start"
+        ).to_json(),
+    )
+    assert second_logging_message == (
+        INFO,
+        LogMessageMother.get_controller(
+            operation="my_controller",
+            message="Result[status: success | value: Hello Petisco]",
+        ).to_json(),
+    )
+
+    request_responded = fake_event_manager.get_sent_events(event_topic)[0]
+    assert isinstance(request_responded, RequestResponded)
+    assert request_responded.application == "app-undefined"
+    assert request_responded.controller == "my_controller"
+    assert request_responded.is_success is True
+    assert request_responded.content == {"message": "OK"}
+    assert request_responded.status_code == 200
+    assert request_responded.additional_info == {
+        "client_id": "client-id",
+        "user_id": "user-id",
+    }
 
 
 @pytest.mark.unit

@@ -1,3 +1,5 @@
+import inspect
+
 from typing import Dict, Callable, Any
 
 from dataclasses import dataclass
@@ -12,6 +14,9 @@ from petisco.logger.not_implemented_logger import NotImplementedLogger
 
 @dataclass
 class ApplicationConfig(metaclass=Singleton):
+    name: str
+    mode: str
+    logger = ILogger
     services_provider: Callable[[], Dict[str, Service]]
     repositories_provider: Callable[[], Dict[str, Repository]]
     event_manager: IEventManager
@@ -24,11 +29,12 @@ class ApplicationConfig(metaclass=Singleton):
             return ApplicationConfig()
         except:  # noqa E722
             raise ImportError(
-                "ApplicationConfig has been requested before its initial configuration"
+                f"ApplicationConfig must be configured when the application starts. ApplicationConfig has been requested before its initial configuration. Incorrectly called by {inspect.stack()[1][3]}"
             )
 
     def __init__(
         self,
+        app_name: str,
         mode: str,
         logger: ILogger = NotImplementedLogger(),
         config_dependencies: Callable = None,
@@ -39,9 +45,10 @@ class ApplicationConfig(metaclass=Singleton):
         options: Dict[str, Any] = None,
     ):
         """
-
         Parameters
         ----------
+        app_name
+            Application name
         mode
             DeploymentMode define the toy_app mode of execution. If you're mapping services and repositories, please
             check given mode is mapped in services_mode_mapper and repositories_mode_mapper
@@ -62,10 +69,13 @@ class ApplicationConfig(metaclass=Singleton):
             A dictionary with specific toy_app options
         """
 
+        self.app_name = app_name
         self.mode = mode
         self.logger = logger
-        if self.logger:
-            self.logger.log(INFO, "Deploying in {} mode".format(mode))
+
+        self.logger.log(
+            INFO, f"Deploying {self.app_name} application in {self.mode} mode"
+        )
 
         if config_dependencies:
             config_dependencies()
@@ -113,6 +123,5 @@ class ApplicationConfig(metaclass=Singleton):
 
         self.options = options
 
-        if self.logger:
-            self.logger.log(INFO, f"Info: {self.info}")
-            self.logger.log(INFO, f"Options: {self.options}")
+        self.logger.log(INFO, f"Info: {self.info}")
+        self.logger.log(INFO, f"Options: {self.options}")
