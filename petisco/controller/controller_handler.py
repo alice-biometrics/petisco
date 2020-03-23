@@ -11,6 +11,7 @@ from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
 from petisco.controller.tokens.jwt_decorator import jwt
+from petisco.events.controller.request_responded import RequestResponded
 from petisco.frameworks.flask.headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
@@ -20,6 +21,7 @@ from petisco.frameworks.flask.correlation_id_provider import (
 )
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
+from petisco.tools.timer import timer
 
 DEFAULT_SUCCESS_MESSAGE = {"message": "OK"}, 200
 DEFAULT_ERROR_MESSAGE = HttpError().handle()
@@ -47,6 +49,7 @@ class _ControllerHandler:
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
         def wrapper(*args, **kwargs):
+            @timer
             @meiga
             @jwt(jwt_config=self.jwt_config)
             def run_controller(*args, **kwargs) -> Result:
@@ -63,7 +66,17 @@ class _ControllerHandler:
             try:
                 log_message.message = "Start"
                 self.logger.log(INFO, log_message.to_json())
-                result = run_controller(*args, **kwargs)
+                result, elapsed_time = run_controller(*args, **kwargs)
+
+                service = "TODO"
+                _ = RequestResponded(
+                    result=result,
+                    controller=f"{func.__name__}",
+                    service=service,
+                    correlation_id=correlation_id,
+                    elapsed_time=elapsed_time,
+                )
+
                 if result.is_success:
                     if isinstance(result.value, tuple(self.logging_types_blacklist)):
                         log_message.message = (
