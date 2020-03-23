@@ -10,6 +10,7 @@ Petisco is a framework for helping Python developers to build clean Applications
 ## Table of Contents
 - [Installation :computer:](#installation-computer)
 - [Getting Started :chart_with_upwards_trend:](#getting-started-chart_with_upwards_trend)
+    * [Handlers](#handlers)
 - [Extras](#extras)
 - [Contact :mailbox_with_mail:](#contact-mailbox_with_mail)
 
