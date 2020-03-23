@@ -12,6 +12,7 @@ from petisco.controller.errors.known_result_failure_handler import (
 )
 from petisco.controller.tokens.jwt_decorator import jwt
 from petisco.events.controller.request_responded import RequestResponded
+from petisco.events.not_implemented_event_manager import NotImplementedEventManager
 from petisco.frameworks.flask.headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
@@ -31,6 +32,7 @@ class _ControllerHandler:
     def __init__(
         self,
         logger=NotImplementedLogger(),
+        event_manager=NotImplementedEventManager(),
         jwt_config: JwtConfig = None,
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
@@ -39,6 +41,7 @@ class _ControllerHandler:
         logging_types_blacklist: List[Any] = [bytes],
     ):
         self.logger = logger
+        self.event_manager = event_manager
         self.jwt_config = jwt_config
         self.success_handler = success_handler
         self.error_handler = error_handler
@@ -63,19 +66,13 @@ class _ControllerHandler:
                 correlation_id=correlation_id,
             )
 
+            http_response = DEFAULT_ERROR_MESSAGE
+            is_success = False
+            elapsed_time = None
             try:
                 log_message.message = "Start"
                 self.logger.log(INFO, log_message.to_json())
                 result, elapsed_time = run_controller(*args, **kwargs)
-
-                service = "TODO"
-                _ = RequestResponded(
-                    result=result,
-                    controller=f"{func.__name__}",
-                    service=service,
-                    correlation_id=correlation_id,
-                    elapsed_time=elapsed_time,
-                )
 
                 if result.is_success:
                     if isinstance(result.value, tuple(self.logging_types_blacklist)):
@@ -85,35 +82,50 @@ class _ControllerHandler:
                     else:
                         log_message.message = f"{result}"
                     self.logger.log(INFO, log_message.to_json())
-                    return (
+                    http_response = (
                         self.success_handler(result)
                         if self.success_handler
                         else DEFAULT_SUCCESS_MESSAGE
                     )
+                    is_success = True
                 else:
                     log_message.message = f"{result}"
                     self.logger.log(ERROR, log_message.to_json())
                     known_result_failure_handler = KnownResultFailureHandler(result)
 
                     if not known_result_failure_handler.is_a_result_known_error:
-                        if not self.error_handler:
-                            return DEFAULT_ERROR_MESSAGE
+                        if self.error_handler:
+                            http_error = self.error_handler(result)
 
-                        http_error = self.error_handler(result)
+                            if not issubclass(http_error.__class__, HttpError):
+                                raise TypeError(
+                                    "Returned object from error_handler must be subclasses of HttpError"
+                                )
 
-                        if not issubclass(http_error.__class__, HttpError):
-                            raise TypeError(
-                                "Returned object from error_handler must be subclasses of HttpError"
-                            )
-
-                        return http_error.handle()
+                            http_response = http_error.handle()
                     else:
-                        return known_result_failure_handler.http_error.handle()
+                        http_response = known_result_failure_handler.http_error.handle()
 
             except Exception as e:
                 log_message.message = f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}"
                 self.logger.log(ERROR, log_message.to_json())
-                return InternalHttpError().handle()
+                http_response = InternalHttpError().handle()
+
+            service = "TODO"
+
+            self.event_manager.send(
+                topic="controller",
+                event=RequestResponded(
+                    is_success=is_success,
+                    http_response=http_response,
+                    controller=f"{func.__name__}",
+                    service=service,
+                    correlation_id=correlation_id,
+                    elapsed_time=elapsed_time,
+                ),
+            )
+
+            return http_response
 
         def update_correlation_id(kwargs):
             signature = inspect.signature(func)
