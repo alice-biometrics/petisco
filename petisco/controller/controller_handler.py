@@ -12,7 +12,7 @@ from petisco.controller.errors.known_result_failure_handler import (
 )
 from petisco.controller.tokens.jwt_decorator import jwt
 from petisco.events.controller.request_responded import RequestResponded
-from petisco.events.not_implemented_event_manager import NotImplementedEventManager
+from petisco.events.event_config import EventConfig
 from petisco.frameworks.flask.headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
@@ -33,8 +33,7 @@ class _ControllerHandler:
         self,
         application: str = "app-undefined",
         logger=NotImplementedLogger(),
-        event_manager=NotImplementedEventManager(),
-        event_topic="controller",
+        event_config: EventConfig = EventConfig(),
         jwt_config: JwtConfig = None,
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
@@ -49,10 +48,8 @@ class _ControllerHandler:
             Application name
         logger
             A ILogger implementation. Default NotImplementedLogger
-        event_manager
-            A IEventManager implementation. Default NotImplementedEventManager
-        event_topic
-            Event Topic. By default controller.
+        event_config
+            EventConfig object. Here, you can define event management.
         jwt_config
             JwtConfig object. Here, you can define how to deal with JWT Tokens
         success_handler
@@ -68,8 +65,7 @@ class _ControllerHandler:
         """
         self.application = application
         self.logger = logger
-        self.event_manager = event_manager
-        self.event_topic = event_topic
+        self.event_config = event_config
         self.jwt_config = jwt_config
         self.success_handler = success_handler
         self.error_handler = error_handler
@@ -88,6 +84,7 @@ class _ControllerHandler:
 
             kwargs = get_headers_id(kwargs)
             correlation_id, kwargs = update_correlation_id(kwargs)
+
             log_message = LogMessage(
                 layer="controller",
                 operation=f"{func.__name__}",
@@ -139,8 +136,8 @@ class _ControllerHandler:
                 self.logger.log(ERROR, log_message.to_json())
                 http_response = InternalHttpError().handle()
 
-            self.event_manager.send(
-                topic=self.event_topic,
+            self.event_config.event_manager.send(
+                topic=self.event_config.event_topic,
                 event=RequestResponded(
                     application=self.application,
                     controller=f"{func.__name__}",
@@ -148,6 +145,7 @@ class _ControllerHandler:
                     http_response=http_response,
                     correlation_id=correlation_id,
                     elapsed_time=elapsed_time,
+                    additional_info=self.event_config.get_additional_info(kwargs),
                 ),
             )
 

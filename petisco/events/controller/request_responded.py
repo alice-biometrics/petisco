@@ -11,6 +11,7 @@ class RequestResponded(Event):
     content: dict
     correlation_id: str
     elapsed_time: float
+    additional_info: Dict[str, str]
 
     def __init__(
         self,
@@ -20,6 +21,7 @@ class RequestResponded(Event):
         http_response: Tuple[Dict, int],
         correlation_id: str,
         elapsed_time: float,
+        additional_info: Dict[str, str],
     ):
         self.application = application
         self.controller = controller
@@ -28,5 +30,6 @@ class RequestResponded(Event):
         self.status_code = http_response[1]
         self.correlation_id = correlation_id
         self.elapsed_time = elapsed_time
+        self.additional_info = additional_info
 
         super().__init__()
