@@ -86,6 +86,8 @@ Add it to your entry point controller and manage the behaviour:
 ```
 *controller_handler parameters:*
 
+    Parameters
+    ----------
     app_name
         Application name
     logger
