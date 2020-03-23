@@ -4,6 +4,8 @@ import pytest
 from meiga import Success, isFailure
 
 from petisco import controller_handler, CorrelationId, ERROR, INFO
+from petisco.events.controller.request_responded import RequestResponded
+from tests.unit.mocks.fake_event_manager import FakeEventManager
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
 
@@ -11,9 +13,10 @@ from tests.unit.mocks.log_message_mother import LogMessageMother
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_without_input_parameters():
 
-    logger = FakeLogger()
+    fake_logger = FakeLogger()
+    fake_event_manager = FakeEventManager()
 
-    @controller_handler(logger=logger)
+    @controller_handler(logger=fake_logger, event_manager=fake_event_manager)
     def my_controller(headers=None):
         return Success("Hello Petisco")
 
@@ -21,8 +24,8 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 
     assert http_response == ({"message": "OK"}, 200)
 
-    first_logging_message = logger.get_logging_messages()[0]
-    second_logging_message = logger.get_logging_messages()[1]
+    first_logging_message = fake_logger.get_logging_messages()[0]
+    second_logging_message = fake_logger.get_logging_messages()[1]
 
     assert first_logging_message == (
         INFO,
@@ -37,6 +40,14 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
             message="Result[status: success | value: Hello Petisco]",
         ).to_json(),
     )
+
+    request_responded = fake_event_manager.get_sent_events("controller")[0]
+    assert isinstance(request_responded, RequestResponded)
+    assert request_responded.application == "app-undefined"
+    assert request_responded.controller == "my_controller"
+    assert request_responded.is_success is True
+    assert request_responded.content == {"message": "OK"}
+    assert request_responded.status_code == 200
 
 
 @pytest.mark.unit
