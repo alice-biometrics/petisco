@@ -127,7 +127,7 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_python_type
     assert second_logging_message == (
         INFO,
         LogMessageMother.get_use_case(
-            operation="MyUseCase", message="Object of type: bytes"
+            operation="MyUseCase", message="Success result of type: bytes"
         ).to_json(),
     )
 
@@ -161,7 +161,7 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_own_named_t
     assert second_logging_message == (
         INFO,
         LogMessageMother.get_use_case(
-            operation="MyUseCase", message="Object of type: BinaryInfo"
+            operation="MyUseCase", message="Success result of type: BinaryInfo"
         ).to_json(),
     )
 
@@ -191,7 +191,7 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_a_tuple():
     assert second_logging_message == (
         INFO,
         LogMessageMother.get_use_case(
-            operation="MyUseCase", message="Object of type: tuple"
+            operation="MyUseCase", message="Success result of type: tuple"
         ).to_json(),
     )
 

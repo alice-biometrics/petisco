@@ -44,6 +44,7 @@ setup(
         "petisco/logger",
         "petisco/persistence",
         "petisco/persistence/sqlalchemy",
+        "petisco/tools",
         "petisco/use_case",
     ],
     include_package_data=True,

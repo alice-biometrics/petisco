@@ -11,7 +11,7 @@ from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
 from petisco.controller.tokens.jwt_decorator import jwt
-from petisco.events.controller.request_responded import RequestResponded
+from petisco.events.request_responded import RequestResponded
 from petisco.events.event_config import EventConfig
 from petisco.frameworks.flask.headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO
@@ -31,7 +31,7 @@ DEFAULT_ERROR_MESSAGE = HttpError().handle()
 class _ControllerHandler:
     def __init__(
         self,
-        application: str = "app-undefined",
+        app_name: str = "app-undefined",
         logger=NotImplementedLogger(),
         event_config: EventConfig = EventConfig(),
         jwt_config: JwtConfig = None,
@@ -44,7 +44,7 @@ class _ControllerHandler:
         """
         Parameters
         ----------
-        application
+        app_name
             Application name
         logger
             A ILogger implementation. Default NotImplementedLogger
@@ -63,7 +63,7 @@ class _ControllerHandler:
         logging_types_blacklist
             Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
         """
-        self.application = application
+        self.app_name = app_name
         self.logger = logger
         self.event_config = event_config
         self.jwt_config = jwt_config
@@ -136,17 +136,17 @@ class _ControllerHandler:
                 self.logger.log(ERROR, log_message.to_json())
                 http_response = InternalHttpError().handle()
 
+            request_responded = RequestResponded(
+                application=self.app_name,
+                controller=f"{func.__name__}",
+                is_success=is_success,
+                http_response=http_response,
+                correlation_id=correlation_id,
+                elapsed_time=elapsed_time,
+                additional_info=self.event_config.get_additional_info(kwargs),
+            )
             self.event_config.event_manager.send(
-                topic=self.event_config.event_topic,
-                event=RequestResponded(
-                    application=self.application,
-                    controller=f"{func.__name__}",
-                    is_success=is_success,
-                    http_response=http_response,
-                    correlation_id=correlation_id,
-                    elapsed_time=elapsed_time,
-                    additional_info=self.event_config.get_additional_info(kwargs),
-                ),
+                topic=self.event_config.event_topic, event=request_responded
             )
 
             return http_response

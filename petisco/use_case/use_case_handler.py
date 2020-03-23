@@ -69,7 +69,7 @@ class _UseCaseHandler:
                 else:
                     if not self._is_logging_type(result.value):
                         log_message.message = (
-                            f"Object of type: {type(result.value).__name__}"
+                            f"Success result of type: {type(result.value).__name__}"
                         )
                     else:
                         log_message.message = f"{result.value}"

@@ -4,7 +4,7 @@ import pytest
 from meiga import Success, isFailure
 
 from petisco import controller_handler, CorrelationId, ERROR, INFO
-from petisco.events.controller.request_responded import RequestResponded
+from petisco.events.request_responded import RequestResponded
 from petisco.events.event_config import EventConfig
 from tests.unit.mocks.fake_event_manager import FakeEventManager
 from tests.unit.mocks.fake_logger import FakeLogger

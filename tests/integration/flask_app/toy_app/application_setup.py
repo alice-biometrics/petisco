@@ -1,17 +1,12 @@
-from fakeredis import FakeRedis
-
 from petisco.application.application_config import ApplicationConfig
 from petisco.events.not_implemented_event_manager import NotImplementedEventManager
-from petisco.events.redis.redis_event_manager import RedisEventManager
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence_config import (
     SqlAlchemyPersistenceConfig,
 )
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence_connector import (
     SqlAlchemyPersistenceConnector,
 )
-from tests.integration.flask_app.toy_app.application.handlers.redis_event_handler import (
-    redis_event_handler,
-)
+
 from tests.integration.flask_app.toy_app.infrastructure.services.sum_service import (
     SumService,
 )
@@ -49,12 +44,12 @@ REPOSITORIES_MODE_MAPPER = {"TEST": repositories_provider}
 SERVICES_MODE_MAPPER = {"TEST": services_provider}
 
 
-def application_setup():
+def application_setup(app_name):
 
     event_manager = NotImplementedEventManager()
 
     ApplicationConfig(
-        name="toy_app",
+        app_name=app_name,
         mode="TEST",
         repositories_mode_mapper=REPOSITORIES_MODE_MAPPER,
         services_mode_mapper=SERVICES_MODE_MAPPER,

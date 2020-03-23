@@ -34,7 +34,7 @@ class ApplicationConfig(metaclass=Singleton):
 
     def __init__(
         self,
-        name: str,
+        app_name: str,
         mode: str,
         logger: ILogger = NotImplementedLogger(),
         config_dependencies: Callable = None,
@@ -45,10 +45,9 @@ class ApplicationConfig(metaclass=Singleton):
         options: Dict[str, Any] = None,
     ):
         """
-
         Parameters
         ----------
-        name
+        app_name
             Application name
         mode
             DeploymentMode define the toy_app mode of execution. If you're mapping services and repositories, please
@@ -70,11 +69,13 @@ class ApplicationConfig(metaclass=Singleton):
             A dictionary with specific toy_app options
         """
 
-        self.name = name
+        self.app_name = app_name
         self.mode = mode
         self.logger = logger
-        if self.logger:
-            self.logger.log(INFO, "Deploying in {} mode".format(mode))
+
+        self.logger.log(
+            INFO, f"Deploying {self.app_name} application in {self.mode} mode"
+        )
 
         if config_dependencies:
             config_dependencies()
@@ -122,6 +123,5 @@ class ApplicationConfig(metaclass=Singleton):
 
         self.options = options
 
-        if self.logger:
-            self.logger.log(INFO, f"Info: {self.info}")
-            self.logger.log(INFO, f"Options: {self.options}")
+        self.logger.log(INFO, f"Info: {self.info}")
+        self.logger.log(INFO, f"Options: {self.options}")

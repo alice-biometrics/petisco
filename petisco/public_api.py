@@ -14,6 +14,7 @@ from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.domain.entities.client_id import ClientId
 from petisco.domain.entities.name import Name
 from petisco.domain.entities.user_id import UserId
+from petisco.events.event_config import EventConfig
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
@@ -25,7 +26,6 @@ from petisco.events.event import Event
 from petisco.events.event_id import EventId
 from petisco.events.interface_event_manager import IEventManager
 from petisco.events.not_implemented_event_manager import NotImplementedEventManager
-
 
 classes = [
     "ApplicationConfig",
@@ -49,6 +49,7 @@ classes = [
     "Name",
     "ClientId",
     "UserId",
+    "EventConfig",
 ]
 
 # Constants
