@@ -15,8 +15,11 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 
     fake_logger = FakeLogger()
     fake_event_manager = FakeEventManager()
+    event_topic = "controller"
 
-    @controller_handler(logger=fake_logger, event_manager=fake_event_manager)
+    @controller_handler(
+        logger=fake_logger, event_manager=fake_event_manager, event_topic=event_topic
+    )
     def my_controller(headers=None):
         return Success("Hello Petisco")
 
@@ -41,7 +44,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
         ).to_json(),
     )
 
-    request_responded = fake_event_manager.get_sent_events("controller")[0]
+    request_responded = fake_event_manager.get_sent_events(event_topic)[0]
     assert isinstance(request_responded, RequestResponded)
     assert request_responded.application == "app-undefined"
     assert request_responded.controller == "my_controller"

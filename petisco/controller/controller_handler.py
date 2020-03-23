@@ -34,6 +34,7 @@ class _ControllerHandler:
         application: str = "app-undefined",
         logger=NotImplementedLogger(),
         event_manager=NotImplementedEventManager(),
+        event_topic="controller",
         jwt_config: JwtConfig = None,
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
@@ -50,6 +51,8 @@ class _ControllerHandler:
             A ILogger implementation. Default NotImplementedLogger
         event_manager
             A IEventManager implementation. Default NotImplementedEventManager
+        event_topic
+            Event Topic. By default controller.
         jwt_config
             JwtConfig object. Here, you can define how to deal with JWT Tokens
         success_handler
@@ -66,6 +69,7 @@ class _ControllerHandler:
         self.application = application
         self.logger = logger
         self.event_manager = event_manager
+        self.event_topic = event_topic
         self.jwt_config = jwt_config
         self.success_handler = success_handler
         self.error_handler = error_handler
@@ -136,7 +140,7 @@ class _ControllerHandler:
                 http_response = InternalHttpError().handle()
 
             self.event_manager.send(
-                topic="controller",
+                topic=self.event_topic,
                 event=RequestResponded(
                     application=self.application,
                     controller=f"{func.__name__}",
