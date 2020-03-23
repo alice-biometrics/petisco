@@ -31,6 +31,7 @@ DEFAULT_ERROR_MESSAGE = HttpError().handle()
 class _ControllerHandler:
     def __init__(
         self,
+        application: str = "app-undefined",
         logger=NotImplementedLogger(),
         event_manager=NotImplementedEventManager(),
         jwt_config: JwtConfig = None,
@@ -40,6 +41,29 @@ class _ControllerHandler:
         headers_provider: Callable = flask_headers_provider,
         logging_types_blacklist: List[Any] = [bytes],
     ):
+        """
+        Parameters
+        ----------
+        application
+            Application name
+        logger
+            A ILogger implementation. Default NotImplementedLogger
+        event_manager
+            A IEventManager implementation. Default NotImplementedEventManager
+        jwt_config
+            JwtConfig object. Here, you can define how to deal with JWT Tokens
+        success_handler
+            Handler to deal with Success Results
+        error_handler
+            Handler to deal with Failure Results
+        correlation_id_provider
+            Injectable function to provide correlation_id. By default is used flask_correlation_id_provider
+        headers_provider
+            Injectable function to provide headers. By default is used headers_provider
+        logging_types_blacklist
+            Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
+        """
+        self.application = application
         self.logger = logger
         self.event_manager = event_manager
         self.jwt_config = jwt_config
@@ -111,15 +135,13 @@ class _ControllerHandler:
                 self.logger.log(ERROR, log_message.to_json())
                 http_response = InternalHttpError().handle()
 
-            service = "TODO"
-
             self.event_manager.send(
                 topic="controller",
                 event=RequestResponded(
+                    application=self.application,
+                    controller=f"{func.__name__}",
                     is_success=is_success,
                     http_response=http_response,
-                    controller=f"{func.__name__}",
-                    service=service,
                     correlation_id=correlation_id,
                     elapsed_time=elapsed_time,
                 ),

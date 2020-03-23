@@ -54,6 +54,7 @@ def application_setup():
     event_manager = NotImplementedEventManager()
 
     ApplicationConfig(
+        name="toy_app",
         mode="TEST",
         repositories_mode_mapper=REPOSITORIES_MODE_MAPPER,
         services_mode_mapper=SERVICES_MODE_MAPPER,
