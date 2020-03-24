@@ -53,8 +53,8 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
     assert request_responded.application == "app-undefined"
     assert request_responded.controller == "my_controller"
     assert request_responded.is_success is True
-    assert request_responded.content == {"message": "OK"}
-    assert request_responded.status_code == 200
+    assert request_responded.http_response["content"] == '{"message": "OK"}'
+    assert request_responded.http_response["status_code"] == 200
     assert request_responded.additional_info is None
 
 
@@ -103,8 +103,8 @@ def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_
     assert request_responded.application == "app-undefined"
     assert request_responded.controller == "my_controller"
     assert request_responded.is_success is True
-    assert request_responded.content == {"message": "OK"}
-    assert request_responded.status_code == 200
+    assert request_responded.http_response["content"] == '{"message": "OK"}'
+    assert request_responded.http_response["status_code"] == 200
     assert request_responded.additional_info == {
         "client_id": "client-id",
         "user_id": "user-id",
