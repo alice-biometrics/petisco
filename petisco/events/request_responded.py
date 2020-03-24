@@ -53,7 +53,7 @@ class RequestResponded(Event):
                 from flask import Response
 
                 if isinstance(http_response, Response):
-                    content = "binary"
+                    content = {"message": "flask response"}
                     status_code = http_response.status_code
             except (RuntimeError, ImportError):
                 pass
