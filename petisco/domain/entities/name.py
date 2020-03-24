@@ -3,13 +3,14 @@ from typing import Any
 
 from meiga import Result, Error, Failure, Success
 
+from petisco.domain.entities.value_object import ValueObject
 from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
 from petisco.domain.errors.input_exceed_lenght_limit_error import (
     InputExceedLengthLimitError,
 )
 
 
-class Name(str):
+class Name(str, ValueObject):
     def __new__(cls, name, length_limit: int = 50):
         name = None if name == "None" else name
         cls.length_limit = length_limit

@@ -1,5 +1,7 @@
 import pytest
+from meiga import Success
 from meiga.assertions import assert_failure, assert_success
+from meiga.decorators import meiga
 
 from petisco.domain.entities.client_id import ClientId
 from petisco.domain.errors.given_input_is_not_valid_error import (
@@ -46,3 +48,14 @@ def test_should_declare_a_name_with_js_injection():
     assert_failure(
         client_id.to_result(), value_is_instance_of=GivenInputIsNotValidError
     )
+
+
+@pytest.mark.unit
+def test_should_fail_when_declare_a_non_valid_client_id_call_guard():
+    @meiga
+    def controller():
+        user_id = ClientId("<script>evil()</script>").guard()
+        return Success(user_id)
+
+    result = controller()
+    assert_failure(result, value_is_instance_of=GivenInputIsNotValidError)

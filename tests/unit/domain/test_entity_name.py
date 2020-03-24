@@ -1,5 +1,7 @@
 import pytest
+from meiga import Success
 from meiga.assertions import assert_failure, assert_success
+from meiga.decorators import meiga
 
 from petisco.domain.entities.name import Name
 from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
@@ -79,3 +81,16 @@ def test_should_declare_a_valid_name_parametrizable(input_name):
     assert_success(
         name.to_result(), value_is_instance_of=str, value_is_equal_to=input_name
     )
+
+
+@pytest.mark.unit
+def test_should_fail_when_declare_an_empty_name_and_call_guard():
+    @meiga
+    def controller():
+        user_id = Name(
+            'Rosalia de Castro: "Adios rios adios fontes; adios, regatos pequenos; adios, vista dos meus ollos: non sei cando nos veremos."'
+        ).guard()
+        return Success(user_id)
+
+    result = controller()
+    assert_failure(result, value_is_instance_of=InputExceedLengthLimitError)

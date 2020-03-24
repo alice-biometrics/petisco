@@ -14,6 +14,7 @@ from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.domain.entities.client_id import ClientId
 from petisco.domain.entities.name import Name
 from petisco.domain.entities.user_id import UserId
+from petisco.domain.entities.value_object import ValueObject
 from petisco.events.event_config import EventConfig
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
@@ -46,6 +47,7 @@ classes = [
     "Singleton",
     "JwtConfig",
     "IPersistenceConnector",
+    "ValueObject",
     "Name",
     "ClientId",
     "UserId",

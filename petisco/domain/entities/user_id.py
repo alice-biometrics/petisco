@@ -4,6 +4,7 @@ from typing import Any
 
 from meiga import Result, Failure, Error, Success
 
+from petisco.domain.entities.value_object import ValueObject
 from petisco.domain.errors.input_exceed_lenght_limit_error import (
     InputExceedLengthLimitError,
 )
@@ -11,7 +12,7 @@ from petisco.domain.errors.input_exceed_lenght_limit_error import (
 LENGTH = 12
 
 
-class UserId(str):
+class UserId(str, ValueObject):
     def __new__(cls, user_id, length=LENGTH):
         user_id = None if user_id == "None" else user_id
         cls.length = length
