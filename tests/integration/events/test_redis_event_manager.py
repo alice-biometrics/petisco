@@ -36,10 +36,10 @@ def test_should_create_a_redis_event_manager_and_publish_two_different_events(
         redis=FakeRedis(), subscribers={given_any_topic: redis_event_handler}
     )
 
-    event_manager.send(
+    event_manager.publish(
         given_any_topic, make_user_created_event(user_id=given_any_user_id)
     )
-    event_manager.send(
+    event_manager.publish(
         given_any_topic,
         make_first_name_added_event(
             user_id=given_any_user_id, first_name=given_any_first_name
@@ -72,11 +72,11 @@ def test_should_unsubscribe_all_successfully(make_user_created_event):
         redis=FakeRedis(), subscribers={given_any_topic: redis_event_handler}
     )
 
-    event_manager.send(
+    event_manager.publish(
         given_any_topic, make_user_created_event(user_id=given_any_user_id_1)
     )
     event_manager.unsubscribe_all()
-    event_manager.send(
+    event_manager.publish(
         given_any_topic, make_user_created_event(user_id=given_any_user_id_2)
     )
 
@@ -93,7 +93,7 @@ def test_should_create_a_redis_event_manager_without_subscribers_and_publish_a_e
 
     event_manager = RedisEventManager(redis=FakeRedis())
 
-    event_manager.send(
+    event_manager.publish(
         given_any_topic, make_user_created_event(user_id=given_any_user_id)
     )
 

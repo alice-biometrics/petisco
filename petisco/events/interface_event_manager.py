@@ -1,7 +1,10 @@
-from typing import Dict, Callable
+from typing import Dict, Callable, List
 from abc import ABCMeta, abstractmethod
 
+import deprecation
+
 from petisco.events.event import Event
+from petisco import __version__
 
 
 class IEventManager:
@@ -23,5 +26,18 @@ class IEventManager:
         raise NotImplementedError
 
     @abstractmethod
-    def send(self, topic: str, event: Event):
+    def publish(self, topic: str, event: Event):
         raise NotImplementedError
+
+    def publish_list(self, topic: str, events: List[Event]):
+        for event in events:
+            self.publish(topic, event)
+
+    @deprecation.deprecated(
+        deprecated_in="0.14.4",
+        removed_in="1.0.0",
+        current_version=__version__,
+        details="Use the publish function instead",
+    )
+    def send(self, topic: str, event: Event):
+        self.publish(topic, event)

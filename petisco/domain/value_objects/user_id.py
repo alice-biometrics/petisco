@@ -4,7 +4,7 @@ from typing import Any
 
 from meiga import Result, Failure, Error, Success
 
-from petisco.domain.entities.value_object import ValueObject
+from petisco.domain.value_objects.value_object import ValueObject
 from petisco.domain.errors.input_exceed_lenght_limit_error import (
     InputExceedLengthLimitError,
 )

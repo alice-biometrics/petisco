@@ -8,24 +8,28 @@ import json
 
 
 class Event:
-    id: EventId = None
-    name: str = None
-    occurred_on: str = None
-    version: str = None
-    correlation_id: CorrelationId = None
+    event_id: EventId = None
+    event_name: str = None
+    event_occurred_on: str = None
+    event_version: str = None
+    event_correlation_id: CorrelationId = None
 
     def __init__(self, dictionary=None):
         if dictionary:
             self.__dict__.update(dictionary)
 
-        self.id = EventId.generate(str(dictionary)) if not self.id else self.id
-        self.name = self.__class__.__name__ if not self.name else self.name
-        self.occurred_on = (
-            datetime.utcnow() if not self.occurred_on else self.occurred_on
+        self.event_id = (
+            EventId.generate(str(dictionary)) if not self.event_id else self.event_id
+        )
+        self.event_name = (
+            self.__class__.__name__ if not self.event_name else self.event_name
+        )
+        self.event_occurred_on = (
+            datetime.utcnow() if not self.event_occurred_on else self.event_occurred_on
         )
 
     def __repr__(self):
-        return f"[{self.name}: {json.loads(self.to_json())}]"
+        return f"[{self.event_name}: {json.loads(self.to_json())}]"
 
     def __eq__(self, other):
         if (
@@ -45,11 +49,13 @@ class Event:
 
     @staticmethod
     def from_dict(dictionary: Dict):
-        if "id" in dictionary and isinstance(dictionary["id"], str):
-            dictionary["id"] = EventId(dictionary["id"])
-        if "occurred_on" in dictionary and isinstance(dictionary["occurred_on"], str):
-            dictionary["occurred_on"] = datetime.strptime(
-                dictionary["occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
+        if "event_id" in dictionary and isinstance(dictionary["event_id"], str):
+            dictionary["event_id"] = EventId(dictionary["event_id"])
+        if "event_occurred_on" in dictionary and isinstance(
+            dictionary["event_occurred_on"], str
+        ):
+            dictionary["event_occurred_on"] = datetime.strptime(
+                dictionary["event_occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
             )
         return Event(dictionary)
 

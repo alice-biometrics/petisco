@@ -1,8 +1,8 @@
 import pytest
 
 from petisco import CorrelationId, Event
-from petisco.domain.entities.client_id import ClientId
-from petisco.domain.entities.user_id import UserId
+from petisco.domain.value_objects.client_id import ClientId
+from petisco.domain.value_objects.user_id import UserId
 
 
 @pytest.fixture

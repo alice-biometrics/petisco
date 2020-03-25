@@ -49,7 +49,7 @@ class RabbitMQEventManager(IEventManager):
             self._connection_subscriber.call_later(0, kill)
             self._thread.join()
 
-    def send(self, topic: str, event: Event):
+    def publish(self, topic: str, event: Event):
         connection_publisher = BlockingConnection(self.connection_parameters)
         channel = connection_publisher.channel()
         channel.queue_declare(queue=topic, durable=True)

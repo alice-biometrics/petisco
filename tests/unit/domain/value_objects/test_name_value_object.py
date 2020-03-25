@@ -3,7 +3,7 @@ from meiga import Success
 from meiga.assertions import assert_failure, assert_success
 from meiga.decorators import meiga
 
-from petisco.domain.entities.name import Name
+from petisco.domain.value_objects.name import Name
 from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
 from petisco.domain.errors.input_exceed_lenght_limit_error import (
     InputExceedLengthLimitError,

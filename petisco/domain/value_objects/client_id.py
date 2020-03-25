@@ -3,7 +3,7 @@ from typing import Any
 
 from meiga import Result, Error, Failure, Success
 
-from petisco.domain.entities.value_object import ValueObject
+from petisco.domain.value_objects.value_object import ValueObject
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
 )
