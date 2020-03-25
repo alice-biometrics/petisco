@@ -11,10 +11,11 @@ from petisco.application.singleton import Singleton
 from petisco.commands.command_handler import command_handler
 from petisco.controller.correlation_id import CorrelationId
 from petisco.controller.tokens.jwt_config import JwtConfig
-from petisco.domain.entities.client_id import ClientId
-from petisco.domain.entities.name import Name
-from petisco.domain.entities.user_id import UserId
-from petisco.domain.entities.value_object import ValueObject
+from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
+from petisco.domain.value_objects.client_id import ClientId
+from petisco.domain.value_objects.name import Name
+from petisco.domain.value_objects.user_id import UserId
+from petisco.domain.value_objects.value_object import ValueObject
 from petisco.events.event_config import EventConfig
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
@@ -52,8 +53,8 @@ classes = [
     "ClientId",
     "UserId",
     "EventConfig",
+    "AggregateRoot",
 ]
-
 # Constants
 from petisco.logger.interface_logger import (
     CRITICAL,

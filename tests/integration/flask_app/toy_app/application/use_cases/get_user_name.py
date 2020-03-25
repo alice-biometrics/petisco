@@ -1,9 +1,9 @@
 from meiga import Result, Error, Success
 
 from petisco import UseCase, use_case_handler
-from petisco.domain.entities.client_id import ClientId
-from petisco.domain.entities.name import Name
-from petisco.domain.entities.user_id import UserId
+from petisco.domain.value_objects.client_id import ClientId
+from petisco.domain.value_objects.name import Name
+from petisco.domain.value_objects.user_id import UserId
 from tests.integration.flask_app.toy_app.domain.repositories.interface_user_repository import (
     IUserRepository,
 )
@@ -15,7 +15,7 @@ class GetUserName(UseCase):
         self.user_repository = user_repository
 
     def execute(self, client_id: ClientId, user_id: UserId) -> Result[Name, Error]:
-        name = self.user_repository.find_name(
+        user = self.user_repository.find(
             client_id=client_id, user_id=user_id
         ).unwrap_or_return()
-        return Success(name)
+        return Success(user.name)

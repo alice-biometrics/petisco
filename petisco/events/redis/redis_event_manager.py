@@ -25,5 +25,5 @@ class RedisEventManager(IEventManager):
         if self.subscribers:
             self._thread.stop()
 
-    def send(self, topic: str, event: Event):
+    def publish(self, topic: str, event: Event):
         self._redis.publish(topic, event.to_json())

@@ -3,7 +3,7 @@ from meiga import Success
 from meiga.assertions import assert_failure, assert_success
 from meiga.decorators import meiga
 
-from petisco.domain.entities.client_id import ClientId
+from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
 )

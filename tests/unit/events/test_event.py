@@ -1,16 +1,16 @@
 import pytest
 
 from petisco import CorrelationId
-from petisco.domain.entities.client_id import ClientId
-from petisco.domain.entities.user_id import UserId
+from petisco.domain.value_objects.client_id import ClientId
+from petisco.domain.value_objects.user_id import UserId
 from petisco.events.event import Event
 
 
 class UserCreated(Event):
     user_id: UserId
     client_id: ClientId
-    version: str
-    correlation_id: CorrelationId = None
+    event_version: str
+    event_correlation_id: CorrelationId = None
 
     def __init__(
         self,
