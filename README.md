@@ -10,7 +10,12 @@ Petisco is a framework for helping Python developers to build clean Applications
 ## Table of Contents
 - [Installation :computer:](#installation-computer)
 - [Getting Started :chart_with_upwards_trend:](#getting-started-chart_with_upwards_trend)
+    * [ApplicationConfig](#applicationconfig)
     * [Handlers](#handlers)
+    * [Model your Domain](#model-your-domain)
+      - [Value Objects](#value-objects)
+      - [Events](#events)
+      - [Aggregate Root](#aggregate-root)
 - [Extras](#extras)
 - [Contact :mailbox_with_mail:](#contact-mailbox_with_mail)
 
@@ -108,8 +113,7 @@ Add it to your entry point controller and manage the behaviour:
         Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
 
 
-#### Modeling Domain
-
+### Model your Domain
 
 
 #### Value Objects
