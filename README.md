@@ -10,7 +10,12 @@ Petisco is a framework for helping Python developers to build clean Applications
 ## Table of Contents
 - [Installation :computer:](#installation-computer)
 - [Getting Started :chart_with_upwards_trend:](#getting-started-chart_with_upwards_trend)
+    * [ApplicationConfig](#applicationconfig)
     * [Handlers](#handlers)
+    * [Model your Domain](#model-your-domain)
+      - [Value Objects](#value-objects)
+      - [Events](#events)
+      - [Aggregate Root](#aggregate-root)
 - [Extras](#extras)
 - [Contact :mailbox_with_mail:](#contact-mailbox_with_mail)
 
@@ -108,6 +113,61 @@ Add it to your entry point controller and manage the behaviour:
         Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
 
 
+### Model your Domain
+
+
+#### Value Objects
+
+Extend `ValueObject` to model your Value Objects.
+
+Find some examples in [petisco/domain/value_objects](petisco/domain/value_objects)
+
+#### Events
+
+Extend `Event` to model your domain events.
+
+```python
+from petisco import Event, UserId, Name
+
+class UserCreated(Event):
+    user_id: UserId
+    name: Name
+
+    def __init__(self, user_id: UserId, name: Name):
+        self.user_id = user_id
+        self.name = name
+        super().__init__()
+```
+
+#### Aggregate Root
+
+Extend `AggregateRoot` to model your Aggregate Roots
+ 
+```python
+from petisco import AggregateRoot, UserId, Name
+from my_code import UserCreated
+
+class User(AggregateRoot):
+
+    def __init__(self, name: Name, user_id: UserId):
+        self.name = name
+        self.user_id = user_id
+        super().__init__()
+
+    @staticmethod
+    def create(name: Name):
+        user = User(name, UserId.generate())
+        user.record(UserCreated(user.user_id, user.name))
+        return user
+```
+
+Use semantic constructors and `record` domain `Event`s very easy.
+
+```python 
+user = User.create(Name("Petisco"))
+events = user.pull_domain_events() # Events ready to be published
+```
+
 #### Extras
 
 ###### RabbitMQ
@@ -155,7 +215,7 @@ event_manager = RabbitMQEventManager(
     subscribers={topic: callback},
 )
 
-event_manager.send(
+event_manager.publish(
     topic, UserCreated(user_id=UserId.generate())
 )
 

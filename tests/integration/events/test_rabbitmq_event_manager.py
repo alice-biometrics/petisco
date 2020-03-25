@@ -43,8 +43,8 @@ def test_should_create_a_rabbitmq_event_manager_and_publish_two_different_events
         subscribers={given_any_topic: callback},
     )
 
-    event_manager.send(given_any_topic, make_user_created_event())
-    event_manager.send(given_any_topic, make_first_name_added_event())
+    event_manager.publish(given_any_topic, make_user_created_event())
+    event_manager.publish(given_any_topic, make_first_name_added_event())
 
     await_for_events()
 
@@ -76,13 +76,13 @@ def test_should_unsubscribe_all_successfully(make_user_created_event):
         subscribers={given_any_topic: callback},
     )
 
-    event_manager.send(
+    event_manager.publish(
         given_any_topic, make_user_created_event(user_id=given_any_user_id_1)
     )
     event_manager.unsubscribe_all()
     sleep(0.8)
 
-    event_manager.send(
+    event_manager.publish(
         given_any_topic, make_user_created_event(user_id=given_any_user_id_2)
     )
 
@@ -104,6 +104,6 @@ def test_should_create_a_rabbitmq_event_manager_without_subscribers_and_publish_
         connection_parameters=given_rabbitmq_local_connection_parameters
     )
 
-    event_manager.send(given_any_topic, make_user_created_event())
+    event_manager.publish(given_any_topic, make_user_created_event())
 
     event_manager.unsubscribe_all()

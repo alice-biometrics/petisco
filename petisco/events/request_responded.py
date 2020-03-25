@@ -39,10 +39,10 @@ class RequestResponded(Event):
     controller: str
     is_success: bool
     http_response: Dict
-    correlation_id: str
+    event_correlation_id: str
     elapsed_time: float
     additional_info: Dict[str, str]
-    version: str = None
+    event_version: str = None
 
     def __init__(
         self,

@@ -14,5 +14,5 @@ class NotImplementedEventManager(IEventManager):
     def unsubscribe_all(self):
         pass
 
-    def send(self, topic: str, event: Event):
+    def publish(self, topic: str, event: Event):
         pass
