@@ -3,7 +3,7 @@ import json
 import pytest
 from meiga import Success, isFailure
 
-from petisco import controller_handler, CorrelationId, ERROR, INFO
+from petisco import controller_handler, CorrelationId, ERROR, INFO, __version__
 from petisco.events.request_responded import RequestResponded
 from petisco.events.event_config import EventConfig
 from tests.unit.mocks.fake_event_manager import FakeEventManager
@@ -19,6 +19,8 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
     event_topic = "controller"
 
     @controller_handler(
+        app_name="petisco",
+        app_version=__version__,
         logger=fake_logger,
         event_config=EventConfig(
             event_manager=fake_event_manager, event_topic=event_topic
@@ -50,7 +52,8 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 
     request_responded = fake_event_manager.get_sent_events(event_topic)[0]
     assert isinstance(request_responded, RequestResponded)
-    assert request_responded.application == "app-undefined"
+    assert request_responded.app_name == "petisco"
+    assert request_responded.app_version == __version__
     assert request_responded.controller == "my_controller"
     assert request_responded.is_success is True
     assert request_responded.http_response["content"] == '{"message": "OK"}'
@@ -100,7 +103,8 @@ def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_
 
     request_responded = fake_event_manager.get_sent_events(event_topic)[0]
     assert isinstance(request_responded, RequestResponded)
-    assert request_responded.application == "app-undefined"
+    assert request_responded.app_name == "app-undefined"
+    assert request_responded.app_version is None
     assert request_responded.controller == "my_controller"
     assert request_responded.is_success is True
     assert request_responded.http_response["content"] == '{"message": "OK"}'

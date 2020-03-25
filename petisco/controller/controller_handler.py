@@ -32,6 +32,7 @@ class _ControllerHandler:
     def __init__(
         self,
         app_name: str = "app-undefined",
+        app_version: str = None,
         logger=NotImplementedLogger(),
         event_config: EventConfig = EventConfig(),
         jwt_config: JwtConfig = None,
@@ -45,7 +46,9 @@ class _ControllerHandler:
         Parameters
         ----------
         app_name
-            Application name
+            Application Name
+        app_version
+            Application Version
         logger
             A ILogger implementation. Default NotImplementedLogger
         event_config
@@ -64,6 +67,7 @@ class _ControllerHandler:
             Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
         """
         self.app_name = app_name
+        self.app_version = app_version
         self.logger = logger
         self.event_config = event_config
         self.jwt_config = jwt_config
@@ -137,7 +141,8 @@ class _ControllerHandler:
                 http_response = InternalHttpError().handle()
 
             request_responded = RequestResponded(
-                application=self.app_name,
+                app_name=self.app_name,
+                app_version=self.app_version,
                 controller=f"{func.__name__}",
                 is_success=is_success,
                 http_response=http_response,

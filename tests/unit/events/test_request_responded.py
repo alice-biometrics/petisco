@@ -25,7 +25,8 @@ def test_should_construct_request_responded_from_a_tuple_http_response(
 ):
 
     request_responded = RequestResponded(
-        application="petisco",
+        app_name="petisco",
+        app_version="1.0.0",
         controller="my-controller",
         is_success=True,
         http_response=given_tuple_http_response,
@@ -44,7 +45,8 @@ def test_should_construct_request_responded_from_a_tuple_flask_http_response(
 ):
 
     request_responded = RequestResponded(
-        application="petisco",
+        app_name="petisco",
+        app_version="1.0.0",
         controller="my-controller",
         is_success=True,
         http_response=given_tuple_flask_http_response,
@@ -63,7 +65,8 @@ def test_should_construct_request_responded_from_flask_http_response(
 ):
 
     request_responded = RequestResponded(
-        application="petisco",
+        app_name="petisco",
+        app_version="1.0.0",
         controller="my-controller",
         is_success=True,
         http_response=given_tuple_flask_response,

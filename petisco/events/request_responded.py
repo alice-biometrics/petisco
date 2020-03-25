@@ -12,7 +12,7 @@ REQUEST_RESPONDED_UNWRAP_ERROR = (
     },
 )
 
-REQUEST_RESPONDED_VERSION = "1.2.0"
+REQUEST_RESPONDED_VERSION = "1.3.0"
 
 
 def is_flask_response(value):
@@ -34,7 +34,8 @@ def get_content(value):
 
 
 class RequestResponded(Event):
-    application: str
+    app_name: str
+    app_version: str
     controller: str
     is_success: bool
     http_response: Dict
@@ -45,23 +46,25 @@ class RequestResponded(Event):
 
     def __init__(
         self,
-        application: str,
+        app_name: str,
+        app_version: str,
         controller: str,
         is_success: bool,
         http_response: Tuple[Dict, int],
         correlation_id: str,
         elapsed_time: float,
         additional_info: Dict[str, str],
-        version: str = REQUEST_RESPONDED_VERSION,
+        event_version: str = REQUEST_RESPONDED_VERSION,
     ):
-        self.application = application
+        self.app_name = app_name
+        self.app_version = app_version
         self.controller = controller
         self.is_success = is_success
         self.correlation_id = correlation_id
         self.elapsed_time = elapsed_time
         self.additional_info = additional_info
         self.set_http_response(http_response)
-        self.version = version
+        self.event_version = event_version
         super().__init__()
 
     def set_http_response(self, http_response):
