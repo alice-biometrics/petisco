@@ -18,7 +18,7 @@ def test_should_execute_successfully_a_empty_command_without_input_parameters(
     def my_command(event: Event):
         return Success("Hello Petisco")
 
-    event = Event({"correlation_id": given_any_correlation_id})
+    event = Event({"event_correlation_id": given_any_correlation_id})
     result = my_command(event=event)
 
     assert_success(result)
@@ -80,7 +80,7 @@ def test_should_return_failure_result_when_an_exception_raises_within_command(
     def my_command(event: Event):
         raise RuntimeError("my_command exception")
 
-    event = Event({"correlation_id": given_any_correlation_id})
+    event = Event({"event_correlation_id": given_any_correlation_id})
     result = my_command(event=event)
 
     assert_failure(result)

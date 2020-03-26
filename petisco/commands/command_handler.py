@@ -30,7 +30,7 @@ class _CommandHandler:
             log_message = LogMessage(
                 layer="command",
                 operation=f"{func.__name__}",
-                correlation_id=event.correlation_id,
+                correlation_id=event.event_correlation_id,
             )
 
             try:

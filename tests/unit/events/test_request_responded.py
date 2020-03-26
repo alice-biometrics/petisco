@@ -35,6 +35,7 @@ def test_should_construct_request_responded_from_a_tuple_http_response(
         additional_info=None,
     )
 
+    assert request_responded.event_name == "RequestResponded"
     assert request_responded.http_response["content"] == '{"message": "ok"}'
     assert request_responded.http_response["status_code"] == 200
 
