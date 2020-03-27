@@ -35,7 +35,8 @@ class _ControllerHandler:
             self.app_name = application_config.app_name
             self.app_version = application_config.app_version
             self.logger = application_config.logger
-            self.event_config.event_manager = application_config.event_manager
+            if self.event_config.is_configured:
+                self.event_config.event_manager = application_config.event_manager
 
     def __init__(
         self,
