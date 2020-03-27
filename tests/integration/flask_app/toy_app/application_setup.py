@@ -44,12 +44,13 @@ REPOSITORIES_MODE_MAPPER = {"TEST": repositories_provider}
 SERVICES_MODE_MAPPER = {"TEST": services_provider}
 
 
-def application_setup(app_name):
+def application_setup(app_name, app_version):
 
     event_manager = NotImplementedEventManager()
 
     ApplicationConfig(
         app_name=app_name,
+        app_version=app_version,
         mode="TEST",
         repositories_mode_mapper=REPOSITORIES_MODE_MAPPER,
         services_mode_mapper=SERVICES_MODE_MAPPER,

@@ -9,7 +9,7 @@ from petisco.domain.errors.input_exceed_lenght_limit_error import (
     InputExceedLengthLimitError,
 )
 
-LENGTH = 12
+LENGTH = 16
 
 
 class UserId(str, ValueObject):

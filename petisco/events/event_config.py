@@ -8,7 +8,7 @@ class EventConfig:
     def __init__(
         self,
         event_manager: IEventManager = NotImplementedEventManager(),
-        event_topic: str = "petisco",
+        event_topic: str = "event-topic-undefined",
         event_additional_info: List[str] = None,
     ):
         """
@@ -17,7 +17,7 @@ class EventConfig:
         event_manager
             A IEventManager implementation. Default NotImplementedEventManager
         event_topic
-            Event Topic. By default petisco.
+            Event Topic. By default event-topic-undefined.
         event_additional_info
             A list of additional info to get from function argument and add to RequestResponded Event
         """

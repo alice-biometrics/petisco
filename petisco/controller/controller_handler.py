@@ -6,6 +6,7 @@ from typing import Callable, Tuple, Dict, List, Any
 from meiga import Result
 from meiga.decorators import meiga
 
+from petisco.application.application_config import ApplicationConfig
 from petisco.controller.errors.internal_http_error import InternalHttpError
 from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
@@ -29,6 +30,13 @@ DEFAULT_ERROR_MESSAGE = HttpError().handle()
 
 
 class _ControllerHandler:
+    def set_application_config(self, application_config: ApplicationConfig):
+        if application_config:
+            self.app_name = application_config.app_name
+            self.app_version = application_config.app_version
+            self.logger = application_config.logger
+            self.event_config.event_manager = application_config.event_manager
+
     def __init__(
         self,
         app_name: str = "app-undefined",
@@ -41,6 +49,7 @@ class _ControllerHandler:
         correlation_id_provider: Callable = flask_correlation_id_provider,
         headers_provider: Callable = flask_headers_provider,
         logging_types_blacklist: List[Any] = [bytes],
+        application_config: ApplicationConfig = None,
     ):
         """
         Parameters
@@ -65,6 +74,8 @@ class _ControllerHandler:
             Injectable function to provide headers. By default is used headers_provider
         logging_types_blacklist
             Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
+        application_config
+            Use ApplicationConfig to set params as: app_name, app_version, logger, or event_manager (EventConfig)
         """
         self.app_name = app_name
         self.app_version = app_version
@@ -76,6 +87,7 @@ class _ControllerHandler:
         self.correlation_id_provider = correlation_id_provider
         self.headers_provider = headers_provider
         self.logging_types_blacklist = logging_types_blacklist
+        self.set_application_config(application_config)
 
     def __call__(self, func, *args, **kwargs):
         @wraps(func)

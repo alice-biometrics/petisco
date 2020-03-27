@@ -30,7 +30,7 @@ def test_should_declare_a_user_id_generated_automatically():
     user_id = UserId.generate()
 
     assert_success(user_id.to_result(), value_is_instance_of=str)
-    assert len(user_id.to_result().value) == 12
+    assert len(user_id.to_result().value) == 16
 
 
 @pytest.mark.unit

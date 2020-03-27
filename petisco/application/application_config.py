@@ -14,7 +14,8 @@ from petisco.logger.not_implemented_logger import NotImplementedLogger
 
 @dataclass
 class ApplicationConfig(metaclass=Singleton):
-    name: str
+    app_name: str
+    app_version: str
     mode: str
     logger = ILogger
     services_provider: Callable[[], Dict[str, Service]]
@@ -35,6 +36,7 @@ class ApplicationConfig(metaclass=Singleton):
     def __init__(
         self,
         app_name: str,
+        app_version: str,
         mode: str,
         logger: ILogger = NotImplementedLogger(),
         config_dependencies: Callable = None,
@@ -48,7 +50,9 @@ class ApplicationConfig(metaclass=Singleton):
         Parameters
         ----------
         app_name
-            Application name
+            Application Name
+        app_version
+            Application Version
         mode
             DeploymentMode define the toy_app mode of execution. If you're mapping services and repositories, please
             check given mode is mapped in services_mode_mapper and repositories_mode_mapper
@@ -70,6 +74,7 @@ class ApplicationConfig(metaclass=Singleton):
         """
 
         self.app_name = app_name
+        self.app_version = app_version
         self.mode = mode
         self.logger = logger
 
