@@ -49,7 +49,9 @@ Before to run your app, you should configure it with `ApplicationConfig` object.
     Parameters
     ----------
     app_name
-        Application name
+        Application Name
+    app_version
+        Application Version
     mode
         DeploymentMode define the toy_app mode of execution. If you're mapping services and repositories, please
         check given mode is mapped in services_mode_mapper and repositories_mode_mapper
@@ -94,7 +96,9 @@ Add it to your entry point controller and manage the behaviour:
     Parameters
     ----------
     app_name
-        Application name
+        Application Name
+    app_version
+        Application Version
     logger
         A ILogger implementation. Default NotImplementedLogger
     event_config
@@ -111,7 +115,8 @@ Add it to your entry point controller and manage the behaviour:
         Injectable function to provide headers. By default is used headers_provider
     logging_types_blacklist
         Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
-
+    application_config
+        Use ApplicationConfig to set params as: app_name, app_version, logger, or event_manager (EventConfig)
 
 ### Model your Domain
 
