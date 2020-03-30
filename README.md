@@ -146,6 +146,12 @@ class UserCreated(Event):
         super().__init__()
 ```
 
+To prevent the propagation of Id parameters throughout your domain, you can compose your Event with a [`InfoId`](petisco/domain/aggregate_roots/info_id.py)
+
+```python
+user_created = UserCreated(user_id, name).add_info_id(info_id)
+```
+
 #### Aggregate Root
 
 Extend `AggregateRoot` to model your Aggregate Roots

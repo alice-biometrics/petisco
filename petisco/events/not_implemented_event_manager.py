@@ -1,5 +1,6 @@
 from typing import Dict, Callable
 
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.events.event import Event
 from petisco.events.interface_event_manager import IEventManager
 
@@ -14,5 +15,5 @@ class NotImplementedEventManager(IEventManager):
     def unsubscribe_all(self):
         pass
 
-    def publish(self, topic: str, event: Event):
+    def publish(self, topic: str, event: Event, info_id: InfoId = None):
         pass

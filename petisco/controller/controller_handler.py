@@ -150,10 +150,9 @@ class _ControllerHandler:
                 controller=f"{func.__name__}",
                 is_success=is_success,
                 http_response=http_response,
-                info_id=info_id,
                 elapsed_time=elapsed_time,
                 additional_info=self.event_config.get_additional_info(kwargs),
-            )
+            ).add_info_id(info_id)
             self.event_config.event_manager.publish(
                 topic=self.event_config.event_topic, event=request_responded
             )

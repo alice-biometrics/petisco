@@ -1,6 +1,7 @@
 from typing import Dict, Callable
 from redis import Redis
 
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.events.event import Event
 from petisco.events.interface_event_manager import IEventManager
 
@@ -25,5 +26,5 @@ class RedisEventManager(IEventManager):
         if self.subscribers:
             self._thread.stop()
 
-    def publish(self, topic: str, event: Event):
+    def publish(self, topic: str, event: Event, info_id: InfoId = None):
         self._redis.publish(topic, event.to_json())
