@@ -3,6 +3,7 @@ from typing import List, Any
 from meiga import Result
 from meiga.decorators import meiga
 
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
@@ -35,7 +36,7 @@ class _UseCaseHandler:
                 log_message = LogMessage(
                     layer="use_case",
                     operation=f"{cls.__name__}",
-                    correlation_id=correlation_id,
+                    info_id=InfoId.from_strings(correlation_id=correlation_id),
                 )
 
                 log_message.message = f"Start"

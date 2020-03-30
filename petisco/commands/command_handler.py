@@ -4,6 +4,7 @@ import traceback
 from meiga import Result, isFailure
 from meiga.decorators import meiga
 
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.events.event import Event
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.logger.log_message import LogMessage
@@ -30,7 +31,7 @@ class _CommandHandler:
             log_message = LogMessage(
                 layer="command",
                 operation=f"{func.__name__}",
-                correlation_id=event.event_correlation_id,
+                info_id=InfoId.from_strings(correlation_id=event.event_correlation_id),
             )
 
             try:

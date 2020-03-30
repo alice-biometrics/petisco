@@ -131,7 +131,7 @@ def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_o
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
 
-    correlation_id = json.loads(first_logging_message[1])["correlation_id"]
+    correlation_id = json.loads(first_logging_message[1])["info_id"]["correlation_id"]
 
     assert first_logging_message == (
         INFO,
@@ -202,7 +202,7 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
 
-    correlation_id = json.loads(first_logging_message[1])["correlation_id"]
+    correlation_id = json.loads(first_logging_message[1])["info_id"]["correlation_id"]
 
     assert first_logging_message == (
         INFO,

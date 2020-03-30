@@ -13,16 +13,16 @@ from petisco.domain.errors.input_exceed_lenght_limit_error import (
 
 
 class ClientId(str, ValueObject):
-    def __new__(cls, client_id, length: int = 50):
+    def __new__(cls, client_id, max_length: int = 50):
         client_id = None if client_id == "None" else client_id
-        cls.length = length
+        cls.max_length = max_length
         return str.__new__(cls, client_id)
 
     def to_result(self) -> Result[Any, Error]:
         client_id = None if self == "None" else self
 
         if client_id is not None:
-            if len(client_id) > self.length:
+            if len(client_id) > self.max_length:
                 return Failure(InputExceedLengthLimitError(message=client_id))
             else:
                 if not re.search(

@@ -5,9 +5,9 @@ from datetime import datetime
 
 
 class CorrelationId(str):
-    def __init__(self, value):
-        super(CorrelationId, self).__init__()
-        self.value = value
+    def __new__(cls, correlation_id):
+        correlation_id = None if correlation_id == "None" else correlation_id
+        return str.__new__(cls, correlation_id)
 
     @staticmethod
     def generate(func_name: str = ""):

@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
@@ -32,11 +32,25 @@ class InfoId(AggregateRoot):
         return f"[InfoId: [client_id: {self.client_id} | user_id: {self.user_id} | correlation_id: {self.correlation_id}]]"
 
     @staticmethod
+    def from_headers(headers: Dict[str, str]):
+        if headers:
+            info_id = InfoId.from_strings(
+                headers.get("X-Onboarding-ClientId"),
+                headers.get("X-Onboarding-UserId"),
+                headers.get("X-Correlation-Id"),
+            )
+        else:
+            info_id = InfoId()
+        return info_id
+
+    @staticmethod
     def from_strings(
         client_id: str = None, user_id: str = None, correlation_id: str = None
     ):
         return InfoId(
-            ClientId(client_id), UserId(user_id), CorrelationId(correlation_id)
+            ClientId(client_id) if client_id else None,
+            UserId(user_id) if user_id else None,
+            CorrelationId(correlation_id) if correlation_id else None,
         )
 
     @meiga

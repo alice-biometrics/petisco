@@ -12,13 +12,14 @@ from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
 from petisco.controller.tokens.jwt_decorator import jwt
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.events.request_responded import RequestResponded
 from petisco.events.event_config import EventConfig
-from petisco.frameworks.flask.headers_provider import flask_headers_provider
+from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
 from petisco.controller.tokens.jwt_config import JwtConfig
-from petisco.frameworks.flask.correlation_id_provider import (
+from petisco.frameworks.flask.flask_correlation_id_provider import (
     flask_correlation_id_provider,
 )
 from petisco.logger.log_message import LogMessage
@@ -99,13 +100,14 @@ class _ControllerHandler:
             def run_controller(*args, **kwargs) -> Result:
                 return func(*args, **kwargs)
 
-            kwargs = get_headers_id(kwargs)
+            kwargs = add_headers(kwargs)
+
+            info_id = InfoId.from_headers(kwargs.get("headers"))
+
             correlation_id, kwargs = update_correlation_id(kwargs)
 
             log_message = LogMessage(
-                layer="controller",
-                operation=f"{func.__name__}",
-                correlation_id=correlation_id,
+                layer="controller", operation=f"{func.__name__}", info_id=info_id
             )
 
             http_response = DEFAULT_ERROR_MESSAGE
@@ -181,7 +183,7 @@ class _ControllerHandler:
                 correlation_id = None
             return correlation_id, kwargs
 
-        def get_headers_id(kwargs):
+        def add_headers(kwargs):
             headers = self.headers_provider()
             kwargs = dict(kwargs, headers=headers)
 

@@ -1,5 +1,6 @@
 from typing import Any
 
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.logger.log_message import LogMessage
 
 
@@ -11,7 +12,7 @@ class LogMessageMother:
         return LogMessage(
             layer="controller",
             operation=operation,
-            correlation_id=correlation_id,
+            info_id=InfoId.from_strings(correlation_id=correlation_id),
             message=message,
         )
 
@@ -22,7 +23,7 @@ class LogMessageMother:
         return LogMessage(
             layer="use_case",
             operation=operation,
-            correlation_id=correlation_id,
+            info_id=InfoId.from_strings(correlation_id=correlation_id),
             message=message,
         )
 
@@ -33,6 +34,6 @@ class LogMessageMother:
         return LogMessage(
             layer="command",
             operation=operation,
-            correlation_id=correlation_id,
+            info_id=InfoId.from_strings(correlation_id=correlation_id),
             message=message,
         )
