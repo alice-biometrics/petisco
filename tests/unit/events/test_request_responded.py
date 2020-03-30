@@ -30,10 +30,9 @@ def test_should_construct_request_responded_from_a_tuple_http_response(
         controller="my-controller",
         is_success=True,
         http_response=given_tuple_http_response,
-        info_id=given_any_info_id,
         elapsed_time=1.0,
         additional_info=None,
-    )
+    ).add_info_id(given_any_info_id)
 
     assert request_responded.event_name == "RequestResponded"
     assert request_responded.http_response["content"] == '{"message": "ok"}'
@@ -51,10 +50,9 @@ def test_should_construct_request_responded_from_a_tuple_flask_http_response(
         controller="my-controller",
         is_success=True,
         http_response=given_tuple_flask_http_response,
-        info_id=given_any_info_id,
         elapsed_time=1.0,
         additional_info=None,
-    )
+    ).add_info_id(given_any_info_id)
 
     assert request_responded.http_response["content"] == "flask response"
     assert request_responded.http_response["status_code"] == 200
@@ -71,10 +69,9 @@ def test_should_construct_request_responded_from_flask_http_response(
         controller="my-controller",
         is_success=True,
         http_response=given_tuple_flask_response,
-        info_id=given_any_info_id,
         elapsed_time=1.0,
         additional_info=None,
-    )
+    ).add_info_id(given_any_info_id)
 
     assert request_responded.http_response["content"] == "flask response"
     assert request_responded.http_response["status_code"] == 200

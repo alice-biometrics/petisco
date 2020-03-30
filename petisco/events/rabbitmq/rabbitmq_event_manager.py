@@ -3,6 +3,7 @@ from typing import Dict, Callable
 
 from pika import BlockingConnection, ConnectionParameters, BasicProperties
 
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.events.event import Event
 from petisco.events.interface_event_manager import IEventManager
 
@@ -49,14 +50,16 @@ class RabbitMQEventManager(IEventManager):
             self._connection_subscriber.call_later(0, kill)
             self._thread.join()
 
-    def publish(self, topic: str, event: Event):
-        connection_publisher = BlockingConnection(self.connection_parameters)
-        channel = connection_publisher.channel()
-        channel.queue_declare(queue=topic, durable=True)
-        channel.basic_publish(
-            exchange="",
-            routing_key=topic,
-            body=event.to_json(),
-            properties=BasicProperties(delivery_mode=2),  # make message persistent
-        )
-        connection_publisher.close()
+    def publish(self, topic: str, event: Event, info_id: InfoId = None):
+        if event:
+            event = event.add_info_id(info_id) if info_id else event
+            connection_publisher = BlockingConnection(self.connection_parameters)
+            channel = connection_publisher.channel()
+            channel.queue_declare(queue=topic, durable=True)
+            channel.basic_publish(
+                exchange="",
+                routing_key=topic,
+                body=event.to_json(),
+                properties=BasicProperties(delivery_mode=2),  # make message persistent
+            )
+            connection_publisher.close()

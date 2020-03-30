@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 
 import deprecation
 
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.events.event import Event
 from petisco import __version__
 
@@ -26,12 +27,12 @@ class IEventManager:
         raise NotImplementedError
 
     @abstractmethod
-    def publish(self, topic: str, event: Event):
+    def publish(self, topic: str, event: Event, info_id: InfoId = None):
         raise NotImplementedError
 
-    def publish_list(self, topic: str, events: List[Event]):
+    def publish_list(self, topic: str, events: List[Event], info_id: InfoId = None):
         for event in events:
-            self.publish(topic, event)
+            self.publish(topic, event, info_id)
 
     @deprecation.deprecated(
         deprecated_in="0.14.4",

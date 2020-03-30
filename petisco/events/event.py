@@ -11,6 +11,7 @@ class Event:
     event_name: str = None
     event_occurred_on: str = None
     event_version: str = None
+    event_info_id: Dict = None
 
     def __init__(self, dictionary=None):
         if dictionary:
@@ -68,3 +69,13 @@ class Event:
     def from_json(event_json):
         event_dict = json.loads(event_json)
         return Event.from_dict(event_dict)
+
+    def add_info_id(self, info_id):
+        from petisco.domain.aggregate_roots.info_id import (
+            InfoId,
+        )  # internal import to avoid circular dependency
+
+        if not isinstance(info_id, InfoId):
+            raise TypeError("Event.add_info_id() expect a InfoId class (from petisco)")
+        self.event_info_id = info_id.to_dict()
+        return self

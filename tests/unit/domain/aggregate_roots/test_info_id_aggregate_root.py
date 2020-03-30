@@ -12,6 +12,19 @@ def test_should_check_info_id_to_result_method(given_any_info_id):
 
 
 @pytest.mark.unit
+def test_should_check_info_id_to_dict_method(
+    given_any_info_id, given_any_client_id, given_any_user_id, given_any_correlation_id
+):
+    info_id = given_any_info_id
+
+    assert info_id.to_dict() == {
+        "client_id": given_any_client_id,
+        "user_id": given_any_user_id,
+        "correlation_id": given_any_correlation_id,
+    }
+
+
+@pytest.mark.unit
 def test_should_check_info_id_get_http_headers_method(given_any_info_id):
     info_id = given_any_info_id
 
