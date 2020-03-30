@@ -69,9 +69,9 @@ class InfoId(AggregateRoot):
         headers = {}
 
         if self.client_id:
-            headers["X-Onboarding-ClientId"] = self.client_id
+            headers["X-Onboarding-Clientid"] = self.client_id
         if self.user_id:
-            headers["X-Onboarding-UserId"] = self.user_id
+            headers["X-Onboarding-Userid"] = self.user_id
         if self.correlation_id:
             headers["X-Correlation-Id"] = self.correlation_id
 

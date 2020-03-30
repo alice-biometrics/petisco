@@ -17,8 +17,8 @@ def test_should_check_info_id_get_http_headers_method(given_any_info_id):
 
     headers = info_id.get_http_headers()
 
-    assert headers["X-Onboarding-ClientId"] == str(info_id.client_id)
-    assert headers["X-Onboarding-UserId"] == str(info_id.user_id)
+    assert headers["X-Onboarding-Clientid"] == str(info_id.client_id)
+    assert headers["X-Onboarding-Userid"] == str(info_id.user_id)
     assert headers["X-Correlation-Id"] == str(info_id.correlation_id)
 
 
@@ -27,15 +27,15 @@ def test_should_create_from_headers(
     given_any_client_id, given_any_user_id, given_any_correlation_id
 ):
     headers = {
-        "X-Onboarding-ClientId": str(given_any_client_id),
-        "X-Onboarding-UserId": str(given_any_user_id),
+        "X-Onboarding-Clientid": str(given_any_client_id),
+        "X-Onboarding-Userid": str(given_any_user_id),
         "X-Correlation-Id": str(given_any_correlation_id),
     }
 
     info_id = InfoId.from_headers(headers)
 
-    assert headers["X-Onboarding-ClientId"] == str(info_id.client_id)
-    assert headers["X-Onboarding-UserId"] == str(info_id.user_id)
+    assert headers["X-Onboarding-Clientid"] == str(info_id.client_id)
+    assert headers["X-Onboarding-Userid"] == str(info_id.user_id)
     assert headers["X-Correlation-Id"] == str(info_id.correlation_id)
 
 
