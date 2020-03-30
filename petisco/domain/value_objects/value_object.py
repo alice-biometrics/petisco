@@ -1,16 +1,3 @@
-from abc import ABCMeta, abstractmethod
-from typing import Any
+from petisco.domain.base_object import BaseObject
 
-from meiga import Result, Error, NotImplementedMethodError
-
-
-class ValueObject:
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def to_result(self) -> Result[Any, Error]:
-        return NotImplementedMethodError
-
-    def guard(self):
-        return self.to_result().unwrap_or_return()
+ValueObject = BaseObject

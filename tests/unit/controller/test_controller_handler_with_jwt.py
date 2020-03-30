@@ -54,13 +54,19 @@ def given_any_decoded_token_info_with_user(
 
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_without_user(
-    given_any_token_type, given_any_decoded_token_info
+    given_any_token_type,
+    given_any_decoded_token_info,
+    given_any_info_id,
+    given_headers_provider,
 ):
 
     logger = FakeLogger()
-    jwt_config = JwtConfig(token_type=given_any_token_type)
 
-    @controller_handler(logger=logger, jwt_config=jwt_config)
+    @controller_handler(
+        logger=logger,
+        jwt_config=JwtConfig(token_type=given_any_token_type),
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
     def my_controller(token_info, headers=None):
         return Success("Hello Petisco")
 
@@ -74,7 +80,7 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
     assert second_logging_message == (
@@ -82,19 +88,28 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: success | value: Hello Petisco]",
+            info_id=given_any_info_id,
         ).to_json(),
     )
 
 
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_with_user(
-    given_any_token_type_with_user, given_any_decoded_token_info_with_user
+    given_any_token_type_with_user,
+    given_any_decoded_token_info_with_user,
+    given_any_info_id,
+    given_headers_provider,
 ):
 
     logger = FakeLogger()
-    jwt_config = JwtConfig(token_type=given_any_token_type_with_user, require_user=True)
 
-    @controller_handler(logger=logger, jwt_config=jwt_config)
+    @controller_handler(
+        logger=logger,
+        jwt_config=JwtConfig(
+            token_type=given_any_token_type_with_user, require_user=True
+        ),
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
     def my_controller(token_info, user_id, headers=None):
         return Success("Hello Petisco")
 
@@ -108,7 +123,7 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
     assert second_logging_message == (
@@ -116,19 +131,26 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: success | value: Hello Petisco]",
+            info_id=given_any_info_id,
         ).to_json(),
     )
 
 
 @pytest.mark.unit
 def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_jwt_token(
-    given_other_token_type, given_any_decoded_token_info
+    given_other_token_type,
+    given_any_decoded_token_info,
+    given_any_info_id,
+    given_headers_provider,
 ):
 
     logger = FakeLogger()
-    jwt_config = JwtConfig(token_type=given_other_token_type)
 
-    @controller_handler(logger=logger, jwt_config=jwt_config)
+    @controller_handler(
+        logger=logger,
+        jwt_config=JwtConfig(token_type=given_other_token_type),
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
     def my_controller(token_info, headers=None):
         return Success("Hello Petisco")
 
@@ -150,7 +172,7 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
     assert second_logging_message == (
@@ -158,19 +180,25 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid REQUIRED_TOKEN Token]",
+            info_id=given_any_info_id,
         ).to_json(),
     )
 
 
 @pytest.mark.unit
 def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_token_but_missing_user(
-    given_any_token_type, given_any_decoded_token_info
+    given_any_token_type,
+    given_any_decoded_token_info,
+    given_any_info_id,
+    given_headers_provider,
 ):
-
     logger = FakeLogger()
-    jwt_config = JwtConfig(token_type=given_any_token_type, require_user=True)
 
-    @controller_handler(logger=logger, jwt_config=jwt_config)
+    @controller_handler(
+        logger=logger,
+        jwt_config=JwtConfig(token_type=given_any_token_type, require_user=True),
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
     def my_controller(token_info, headers=None):
         return Success("Hello Petisco")
 
@@ -192,7 +220,7 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
     assert second_logging_message == (
@@ -200,5 +228,6 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid TOKEN Token]",
+            info_id=given_any_info_id,
         ).to_json(),
     )

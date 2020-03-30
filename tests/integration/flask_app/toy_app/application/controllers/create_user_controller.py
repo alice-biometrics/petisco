@@ -1,6 +1,13 @@
 from meiga import Result
 
-from petisco import controller_handler, JwtConfig, HttpError, ApplicationConfig
+from petisco import (
+    controller_handler,
+    JwtConfig,
+    HttpError,
+    ApplicationConfig,
+    InfoId,
+    UserId,
+)
 from petisco.domain.value_objects.name import Name
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
@@ -33,6 +40,11 @@ def error_handler(result: Result):
     application_config=ApplicationConfig.get_instance(),
 )
 def create_user(client_id, body, headers=None, *args, **kwargs):  # noqa: E501
+
+    info_id = InfoId.from_strings(
+        client_id, UserId.generate(), headers.get("X-Correlation-Id")
+    )
     name = Name(body.get("name")).guard()
+
     use_case = UseCaseBuilder.create_user()
-    return use_case.execute(client_id=client_id, name=name)
+    return use_case.execute(info_id=info_id, name=name)

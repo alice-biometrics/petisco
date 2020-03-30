@@ -21,7 +21,7 @@ def given_tuple_flask_response():
 
 @pytest.mark.unit
 def test_should_construct_request_responded_from_a_tuple_http_response(
-    given_tuple_http_response
+    given_tuple_http_response, given_any_info_id
 ):
 
     request_responded = RequestResponded(
@@ -30,7 +30,7 @@ def test_should_construct_request_responded_from_a_tuple_http_response(
         controller="my-controller",
         is_success=True,
         http_response=given_tuple_http_response,
-        correlation_id="correlation-id",
+        info_id=given_any_info_id,
         elapsed_time=1.0,
         additional_info=None,
     )
@@ -42,7 +42,7 @@ def test_should_construct_request_responded_from_a_tuple_http_response(
 
 @pytest.mark.unit
 def test_should_construct_request_responded_from_a_tuple_flask_http_response(
-    given_tuple_flask_http_response
+    given_tuple_flask_http_response, given_any_info_id
 ):
 
     request_responded = RequestResponded(
@@ -51,7 +51,7 @@ def test_should_construct_request_responded_from_a_tuple_flask_http_response(
         controller="my-controller",
         is_success=True,
         http_response=given_tuple_flask_http_response,
-        correlation_id="correlation-id",
+        info_id=given_any_info_id,
         elapsed_time=1.0,
         additional_info=None,
     )
@@ -62,7 +62,7 @@ def test_should_construct_request_responded_from_a_tuple_flask_http_response(
 
 @pytest.mark.unit
 def test_should_construct_request_responded_from_flask_http_response(
-    given_tuple_flask_response
+    given_tuple_flask_response, given_any_info_id
 ):
 
     request_responded = RequestResponded(
@@ -71,7 +71,7 @@ def test_should_construct_request_responded_from_flask_http_response(
         controller="my-controller",
         is_success=True,
         http_response=given_tuple_flask_response,
-        correlation_id="correlation-id",
+        info_id=given_any_info_id,
         elapsed_time=1.0,
         additional_info=None,
     )

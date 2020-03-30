@@ -16,6 +16,7 @@ Petisco is a framework for helping Python developers to build clean Applications
       - [Value Objects](#value-objects)
       - [Events](#events)
       - [Aggregate Root](#aggregate-root)
+- [Testing :white_check_mark:](#testing-white_check_mark)
 - [Extras](#extras)
 - [Contact :mailbox_with_mail:](#contact-mailbox_with_mail)
 
@@ -33,7 +34,8 @@ pip install petisco[flask]
 pip install petisco[sqlalchemy]
 pip install petisco[redis]
 pip install petisco[rabbitmq]
-pip install petisco[flask,sqlalchemy,redis,rabbitmq]
+pip install petisco[fixtures]
+pip install petisco[flask,sqlalchemy,redis,rabbitmq,fixtures]
 ```
 
 ## Getting Started :chart_with_upwards_trend:	
@@ -172,6 +174,16 @@ Use semantic constructors and `record` domain `Event`s very easy.
 user = User.create(Name("Petisco"))
 events = user.pull_domain_events() # Events ready to be published
 ```
+### Testing :white_check_mark:
+
+###### Petisco Fixtures
+
+Import useful petisco fixtures with :
+
+```python
+from petisco.fixtures import *
+```
+
 
 #### Extras
 

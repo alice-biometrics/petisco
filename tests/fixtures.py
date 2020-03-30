@@ -1,33 +1,12 @@
 import pytest
 
-from petisco import CorrelationId, Event
-from petisco.domain.value_objects.client_id import ClientId
+from petisco import Event
 from petisco.domain.value_objects.user_id import UserId
-
-
-@pytest.fixture
-def given_any_user_id():
-    return UserId("user_id")
-
-
-@pytest.fixture
-def given_any_client_id():
-    return ClientId("Any User")
-
-
-@pytest.fixture
-def given_any_first_name():
-    return "Any User"
 
 
 @pytest.fixture
 def given_any_topic():
     return "topic"
-
-
-@pytest.fixture
-def given_any_correlation_id():
-    return CorrelationId("correlation_id")
 
 
 @pytest.fixture
@@ -46,7 +25,7 @@ def make_user_created_event(given_any_user_id):
 
 
 @pytest.fixture
-def make_first_name_added_event(given_any_user_id, given_any_first_name):
+def make_first_name_added_event(given_any_user_id, given_any_name):
     class FirstNameAdded(Event):
         user_id: UserId
         first_name: str
@@ -57,7 +36,7 @@ def make_first_name_added_event(given_any_user_id, given_any_first_name):
             super().__init__()
 
     def _make_any_first_name_added_event(
-        user_id=given_any_user_id, first_name=given_any_first_name
+        user_id=given_any_user_id, first_name=given_any_name
     ):
         return FirstNameAdded(user_id=user_id, first_name=first_name)
 

@@ -27,11 +27,7 @@ class _CommandHandler:
                     "@command_handler only decorates function with at least one event as input"
                 )
 
-            log_message = LogMessage(
-                layer="command",
-                operation=f"{func.__name__}",
-                correlation_id=event.event_correlation_id,
-            )
+            log_message = LogMessage(layer="command", operation=f"{func.__name__}")
 
             try:
                 log_message.message = f"Event received: {event}"

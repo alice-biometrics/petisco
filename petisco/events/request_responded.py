@@ -1,6 +1,7 @@
 import json
 from typing import Tuple, Dict
 
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.events.event import Event
 
 REQUEST_RESPONDED_UNWRAP_ERROR = (
@@ -39,7 +40,7 @@ class RequestResponded(Event):
     controller: str
     is_success: bool
     http_response: Dict
-    event_correlation_id: str
+    info_id: InfoId
     elapsed_time: float
     additional_info: Dict[str, str]
     event_version: str = None
@@ -51,7 +52,7 @@ class RequestResponded(Event):
         controller: str,
         is_success: bool,
         http_response: Tuple[Dict, int],
-        correlation_id: str,
+        info_id: InfoId,
         elapsed_time: float,
         additional_info: Dict[str, str],
         event_version: str = REQUEST_RESPONDED_VERSION,
@@ -60,7 +61,7 @@ class RequestResponded(Event):
         self.app_version = app_version
         self.controller = controller
         self.is_success = is_success
-        self.correlation_id = correlation_id
+        self.info_id = info_id
         self.elapsed_time = elapsed_time
         self.additional_info = additional_info
         self.set_http_response(http_response)

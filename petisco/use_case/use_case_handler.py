@@ -30,12 +30,10 @@ class _UseCaseHandler:
             logging_types_blacklist = self.logging_types_blacklist
 
             def execute(self, *args, **kwargs):
-                correlation_id = kwargs.get("correlation_id")
+                info_id = kwargs.get("info_id")
 
                 log_message = LogMessage(
-                    layer="use_case",
-                    operation=f"{cls.__name__}",
-                    correlation_id=correlation_id,
+                    layer="use_case", operation=f"{cls.__name__}", info_id=info_id
                 )
 
                 log_message.message = f"Start"

@@ -1,61 +1,45 @@
+from typing import Dict
+
 import pytest
 
-from petisco import CorrelationId
-from petisco.domain.value_objects.client_id import ClientId
-from petisco.domain.value_objects.user_id import UserId
+from petisco import Name
 from petisco.events.event import Event
 
 
 class UserCreated(Event):
-    user_id: UserId
-    client_id: ClientId
+    info_id: Dict[str, str]
+    name: Name
     event_version: str
-    event_correlation_id: CorrelationId = None
 
-    def __init__(
-        self,
-        user_id: UserId,
-        client_id: ClientId,
-        correlation_id: CorrelationId,
-        version: str = "1.0.0",
-    ):
-        self.user_id = user_id
-        self.client_id = client_id
-        self.correlation_id = correlation_id
-        self.version = version
+    def __init__(self, info_id: Dict[str, str], name: Name, version: str = "1.0.0"):
+        self.info_id = info_id
+        self.name = name
+        self.event_version = version
         super().__init__()
 
 
 @pytest.mark.unit
 def test_should_create_an_event_and_check_to_dict_from_dict(
-    given_any_user_id, given_any_client_id, given_any_correlation_id
+    given_any_info_id, given_any_name
 ):
 
-    event = UserCreated(
-        user_id=given_any_user_id,
-        client_id=given_any_client_id,
-        correlation_id=given_any_correlation_id,
-    )
+    event = UserCreated(info_id=given_any_info_id.to_dict(), name=given_any_name)
 
     event_dict = event.to_dict()
 
     retrieved_event = UserCreated.from_dict(event_dict)
 
     assert event == retrieved_event
-    assert event.user_id == given_any_user_id
-    assert event.client_id == given_any_client_id
+    assert event.info_id == given_any_info_id.to_dict()
+    assert event.name == given_any_name
 
 
 @pytest.mark.unit
 def test_should_create_an_event_and_check_to_json_from_json(
-    given_any_user_id, given_any_client_id, given_any_correlation_id
+    given_any_info_id, given_any_name
 ):
 
-    event = UserCreated(
-        user_id=given_any_user_id,
-        client_id=given_any_client_id,
-        correlation_id=given_any_correlation_id,
-    )
+    event = UserCreated(info_id=given_any_info_id.to_dict(), name=given_any_name)
 
     event_json = event.to_json()
     retrieved_event = UserCreated.from_json(event_json)
@@ -64,15 +48,9 @@ def test_should_create_an_event_and_check_to_json_from_json(
 
 
 @pytest.mark.unit
-def test_should_load_an_event_agnostically(
-    given_any_user_id, given_any_client_id, given_any_correlation_id
-):
+def test_should_load_an_event_agnostically(given_any_info_id, given_any_name):
 
-    event = UserCreated(
-        user_id=given_any_user_id,
-        client_id=given_any_client_id,
-        correlation_id=given_any_correlation_id,
-    )
+    event = UserCreated(info_id=given_any_info_id.to_dict(), name=given_any_name)
 
     event_json = event.to_json()
     agnostic_event = Event.from_json(event_json)

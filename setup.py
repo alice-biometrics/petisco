@@ -40,6 +40,7 @@ setup(
         "petisco/events",
         "petisco/events/redis",
         "petisco/events/rabbitmq",
+        "petisco/fixtures",
         "petisco/frameworks/flask",
         "petisco/frameworks/flask/application",
         "petisco/logger",
@@ -56,5 +57,6 @@ setup(
         "redis": ["redis >= 3.3.11", "fakeredis>=1.0.5"],
         "rabbitmq": ["pika==1.1.0"],
         "gunicorn": ["gunicorn", "json-logging-py==0.2"],
+        "fixtures": ["pytest"],
     },
 )

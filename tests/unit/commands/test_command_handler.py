@@ -28,9 +28,7 @@ def test_should_execute_successfully_a_empty_command_without_input_parameters(
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_command(
-            operation="my_command",
-            message=f"Event received: {event}",
-            correlation_id=given_any_correlation_id,
+            operation="my_command", message=f"Event received: {event}"
         ).to_json(),
     )
     assert second_logging_message == (
@@ -38,7 +36,6 @@ def test_should_execute_successfully_a_empty_command_without_input_parameters(
         LogMessageMother.get_command(
             operation="my_command",
             message="Result[status: success | value: Hello Petisco]",
-            correlation_id=given_any_correlation_id,
         ).to_json(),
     )
 
@@ -90,9 +87,7 @@ def test_should_return_failure_result_when_an_exception_raises_within_command(
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_command(
-            operation="my_command",
-            message=f"Event received: {event}",
-            correlation_id=given_any_correlation_id,
+            operation="my_command", message=f"Event received: {event}"
         ).to_json(),
     )
     assert "line" in second_logging_message[1]
