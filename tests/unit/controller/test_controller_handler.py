@@ -3,7 +3,7 @@ import json
 import pytest
 from meiga import Success, isFailure
 
-from petisco import controller_handler, CorrelationId, ERROR, INFO, __version__
+from petisco import controller_handler, ERROR, INFO, __version__
 from petisco.events.request_responded import RequestResponded
 from petisco.events.event_config import EventConfig
 from tests.unit.mocks.fake_event_manager import FakeEventManager
@@ -121,7 +121,7 @@ def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_o
     logger = FakeLogger()
 
     @controller_handler(logger=logger)
-    def my_controller(correlation_id: CorrelationId, headers=None):
+    def my_controller(headers=None):
         return Success("Hello Petisco")
 
     http_response = my_controller()
@@ -189,7 +189,7 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
     logger = FakeLogger()
 
     @controller_handler(logger=logger)
-    def my_controller(correlation_id: CorrelationId, headers=None):
+    def my_controller(headers=None):
         return isFailure
 
     http_response = my_controller()

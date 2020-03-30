@@ -1,4 +1,3 @@
-import inspect
 from functools import wraps
 import traceback
 from typing import Callable, Tuple, Dict, List, Any
@@ -19,9 +18,6 @@ from petisco.frameworks.flask.flask_headers_provider import flask_headers_provid
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
 from petisco.controller.tokens.jwt_config import JwtConfig
-from petisco.frameworks.flask.flask_correlation_id_provider import (
-    flask_correlation_id_provider,
-)
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.tools.timer import timer
@@ -48,7 +44,6 @@ class _ControllerHandler:
         jwt_config: JwtConfig = None,
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
-        correlation_id_provider: Callable = flask_correlation_id_provider,
         headers_provider: Callable = flask_headers_provider,
         logging_types_blacklist: List[Any] = [bytes],
         application_config: ApplicationConfig = None,
@@ -70,8 +65,6 @@ class _ControllerHandler:
             Handler to deal with Success Results
         error_handler
             Handler to deal with Failure Results
-        correlation_id_provider
-            Injectable function to provide correlation_id. By default is used flask_correlation_id_provider
         headers_provider
             Injectable function to provide headers. By default is used headers_provider
         logging_types_blacklist
@@ -86,7 +79,6 @@ class _ControllerHandler:
         self.jwt_config = jwt_config
         self.success_handler = success_handler
         self.error_handler = error_handler
-        self.correlation_id_provider = correlation_id_provider
         self.headers_provider = headers_provider
         self.logging_types_blacklist = logging_types_blacklist
         self.set_application_config(application_config)
@@ -101,10 +93,7 @@ class _ControllerHandler:
                 return func(*args, **kwargs)
 
             kwargs = add_headers(kwargs)
-
             info_id = InfoId.from_headers(kwargs.get("headers"))
-
-            correlation_id, kwargs = update_correlation_id(kwargs)
 
             log_message = LogMessage(
                 layer="controller", operation=f"{func.__name__}", info_id=info_id
@@ -161,7 +150,7 @@ class _ControllerHandler:
                 controller=f"{func.__name__}",
                 is_success=is_success,
                 http_response=http_response,
-                correlation_id=correlation_id,
+                info_id=info_id,
                 elapsed_time=elapsed_time,
                 additional_info=self.event_config.get_additional_info(kwargs),
             )
@@ -170,18 +159,6 @@ class _ControllerHandler:
             )
 
             return http_response
-
-        def update_correlation_id(kwargs):
-            signature = inspect.signature(func)
-            if (
-                "correlation_id" in signature.parameters
-                and "correlation_id" not in kwargs
-            ):
-                correlation_id = self.correlation_id_provider(func.__name__)
-                kwargs = dict(kwargs, correlation_id=correlation_id)
-            else:
-                correlation_id = None
-            return correlation_id, kwargs
 
         def add_headers(kwargs):
             headers = self.headers_provider()
