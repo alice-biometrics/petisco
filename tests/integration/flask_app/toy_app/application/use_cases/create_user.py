@@ -1,7 +1,6 @@
 from meiga import Result, Success, Error
 
-from petisco import UseCase, use_case_handler, IEventManager
-from petisco.domain.value_objects.client_id import ClientId
+from petisco import UseCase, use_case_handler, IEventManager, InfoId
 from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.user_id import UserId
 from tests.integration.flask_app.toy_app.application_setup import EVENT_TOPIC
@@ -17,8 +16,8 @@ class CreateUser(UseCase):
         self.user_repository = user_repository
         self.event_manager = event_manager
 
-    def execute(self, client_id: ClientId, name: Name) -> Result[UserId, Error]:
-        user = User.create(name, client_id)
+    def execute(self, info_id: InfoId, name: Name) -> Result[UserId, Error]:
+        user = User.create(info_id, name)
         self.user_repository.save(user).unwrap_or_return()
         self.event_manager.publish_list(EVENT_TOPIC, user.pull_domain_events())
         return Success(user.user_id)

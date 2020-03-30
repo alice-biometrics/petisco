@@ -25,7 +25,9 @@ class InfoId(AggregateRoot):
     ):
         self.client_id = client_id
         self.user_id = user_id
-        self.correlation_id = correlation_id
+        self.correlation_id = (
+            correlation_id if correlation_id else CorrelationId.generate()
+        )
         super().__init__()
 
     def __repr__(self):

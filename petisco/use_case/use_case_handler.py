@@ -3,7 +3,6 @@ from typing import List, Any
 from meiga import Result
 from meiga.decorators import meiga
 
-from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
@@ -31,12 +30,10 @@ class _UseCaseHandler:
             logging_types_blacklist = self.logging_types_blacklist
 
             def execute(self, *args, **kwargs):
-                correlation_id = kwargs.get("correlation_id")
+                info_id = kwargs.get("info_id")
 
                 log_message = LogMessage(
-                    layer="use_case",
-                    operation=f"{cls.__name__}",
-                    info_id=InfoId.from_strings(correlation_id=correlation_id),
+                    layer="use_case", operation=f"{cls.__name__}", info_id=info_id
                 )
 
                 log_message.message = f"Start"

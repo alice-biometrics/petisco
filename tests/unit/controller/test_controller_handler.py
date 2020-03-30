@@ -1,5 +1,3 @@
-import json
-
 import pytest
 from meiga import Success, isFailure
 
@@ -12,19 +10,20 @@ from tests.unit.mocks.log_message_mother import LogMessageMother
 
 
 @pytest.mark.unit
-def test_should_execute_successfully_a_empty_controller_without_input_parameters():
+def test_should_execute_successfully_a_empty_controller_without_input_parameters(
+    given_any_info_id, given_headers_provider
+):
 
-    fake_logger = FakeLogger()
-    fake_event_manager = FakeEventManager()
+    logger = FakeLogger()
+    event_manager = FakeEventManager()
     event_topic = "controller"
 
     @controller_handler(
         app_name="petisco",
         app_version=__version__,
-        logger=fake_logger,
-        event_config=EventConfig(
-            event_manager=fake_event_manager, event_topic=event_topic
-        ),
+        logger=logger,
+        event_config=EventConfig(event_manager=event_manager, event_topic=event_topic),
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
     )
     def my_controller(headers=None):
         return Success("Hello Petisco")
@@ -33,13 +32,13 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 
     assert http_response == ({"message": "OK"}, 200)
 
-    first_logging_message = fake_logger.get_logging_messages()[0]
-    second_logging_message = fake_logger.get_logging_messages()[1]
+    first_logging_message = logger.get_logging_messages()[0]
+    second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
     assert second_logging_message == (
@@ -47,10 +46,11 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: success | value: Hello Petisco]",
+            info_id=given_any_info_id,
         ).to_json(),
     )
 
-    request_responded = fake_event_manager.get_sent_events(event_topic)[0]
+    request_responded = event_manager.get_sent_events(event_topic)[0]
     assert isinstance(request_responded, RequestResponded)
     assert request_responded.app_name == "petisco"
     assert request_responded.app_version == __version__
@@ -62,7 +62,9 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 
 
 @pytest.mark.unit
-def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_id_inputs():
+def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_id_inputs(
+    given_any_info_id, given_headers_provider
+):
 
     fake_logger = FakeLogger()
     fake_event_manager = FakeEventManager()
@@ -76,6 +78,7 @@ def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_
             event_topic=event_topic,
             event_additional_info=event_additional_info,
         ),
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
     )
     def my_controller(client_id, user_id, headers=None):
         return Success("Hello Petisco")
@@ -90,7 +93,7 @@ def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
     assert second_logging_message == (
@@ -98,6 +101,7 @@ def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: success | value: Hello Petisco]",
+            info_id=given_any_info_id,
         ).to_json(),
     )
 
@@ -116,11 +120,16 @@ def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_
 
 
 @pytest.mark.unit
-def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_only_input_parameter():
+def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_only_input_parameter(
+    given_any_info_id, given_headers_provider
+):
 
     logger = FakeLogger()
 
-    @controller_handler(logger=logger)
+    @controller_handler(
+        logger=logger,
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
     def my_controller(headers=None):
         return Success("Hello Petisco")
 
@@ -131,30 +140,33 @@ def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_o
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
 
-    correlation_id = json.loads(first_logging_message[1])["info_id"]["correlation_id"]
-
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", correlation_id=correlation_id, message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
     assert second_logging_message == (
         INFO,
         LogMessageMother.get_controller(
             operation="my_controller",
-            correlation_id=correlation_id,
             message="Result[status: success | value: Hello Petisco]",
+            info_id=given_any_info_id,
         ).to_json(),
     )
 
 
 @pytest.mark.unit
-def test_should_execute_with_a_failure_a_empty_controller_without_input_parameters():
+def test_should_execute_with_a_failure_a_empty_controller_without_input_parameters(
+    given_any_info_id, given_headers_provider
+):
 
     logger = FakeLogger()
 
-    @controller_handler(logger=logger)
+    @controller_handler(
+        logger=logger,
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
     def my_controller(headers=None):
         return isFailure
 
@@ -171,24 +183,31 @@ def test_should_execute_with_a_failure_a_empty_controller_without_input_paramete
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
 
     assert second_logging_message == (
         ERROR,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Result[status: failure | value: Error]"
+            operation="my_controller",
+            message="Result[status: failure | value: Error]",
+            info_id=given_any_info_id,
         ).to_json(),
     )
 
 
 @pytest.mark.unit
-def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as_only_input_parameter():
+def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as_only_input_parameter(
+    given_any_info_id, given_headers_provider
+):
 
     logger = FakeLogger()
 
-    @controller_handler(logger=logger)
+    @controller_handler(
+        logger=logger,
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
     def my_controller(headers=None):
         return isFailure
 
@@ -202,20 +221,18 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
 
-    correlation_id = json.loads(first_logging_message[1])["info_id"]["correlation_id"]
-
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", correlation_id=correlation_id, message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
     assert second_logging_message == (
         ERROR,
         LogMessageMother.get_controller(
             operation="my_controller",
-            correlation_id=correlation_id,
             message="Result[status: failure | value: Error]",
+            info_id=given_any_info_id,
         ).to_json(),
     )
 
@@ -232,11 +249,16 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 
 
 @pytest.mark.unit
-def test_should_execute_successfully_a_filtered_object_by_blacklist():
+def test_should_execute_successfully_a_filtered_object_by_blacklist(
+    given_any_info_id, given_headers_provider
+):
 
     logger = FakeLogger()
 
-    @controller_handler(logger=logger)
+    @controller_handler(
+        logger=logger,
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
     def my_controller(headers=None):
         return Success(b"This are bytes")
 
@@ -250,23 +272,30 @@ def test_should_execute_successfully_a_filtered_object_by_blacklist():
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
     assert second_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Success result of type: bytes"
+            operation="my_controller",
+            message="Success result of type: bytes",
+            info_id=given_any_info_id,
         ).to_json(),
     )
 
 
 @pytest.mark.unit
-def test_should_log_an_exception_occurred_on_the_controller():
+def test_should_log_an_exception_occurred_on_the_controller(
+    given_any_info_id, given_headers_provider
+):
 
     logger = FakeLogger()
 
-    @controller_handler(logger=logger)
+    @controller_handler(
+        logger=logger,
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
     def my_controller(headers=None):
         raise RuntimeError("my_controller exception")
 
@@ -283,7 +312,7 @@ def test_should_log_an_exception_occurred_on_the_controller():
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start"
+            operation="my_controller", message="Start", info_id=given_any_info_id
         ).to_json(),
     )
 
