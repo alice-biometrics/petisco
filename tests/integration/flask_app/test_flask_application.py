@@ -1,5 +1,7 @@
 import pytest
 
+from petisco.domain.value_objects.correlation_id import CorrelationId
+from petisco.domain.value_objects.user_id import UserId
 from petisco.frameworks.flask.flask_extension_is_installed import (
     flask_extension_is_installed,
 )
@@ -45,6 +47,33 @@ def test_should_return_200_when_call_sum_with_valid_values(client):
     headers = {
         "Content-Type": "multipart/form-data",
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
+    }
+
+    multipart_data = dict(value_1=2, value_2=3)
+    response = client.open(
+        "/petisco/sum",
+        method="POST",
+        headers=headers,
+        data=multipart_data,
+        content_type="multipart/form-data",
+    )
+    assert response.status_code == 200
+    assert response.json["result"] == 5
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not flask_extension_is_installed(), reason="Flask extension is not installed"
+)
+def test_should_return_200_when_call_sum_with_valid_values_with_external_headers(
+    client
+):
+    headers = {
+        "Content-Type": "multipart/form-data",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
+        "X-Correlation-Id": CorrelationId.generate(),
+        "X-Onboarding-Clientid": "petisco",
+        "X-Onboarding-Userid": UserId.generate(),
     }
 
     multipart_data = dict(value_1=2, value_2=3)

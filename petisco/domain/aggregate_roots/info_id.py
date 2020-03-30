@@ -37,8 +37,8 @@ class InfoId(AggregateRoot):
     def from_headers(headers: Dict[str, str]):
         if headers:
             info_id = InfoId.from_strings(
-                headers.get("X-Onboarding-ClientId"),
-                headers.get("X-Onboarding-UserId"),
+                headers.get("X-Onboarding-Clientid"),
+                headers.get("X-Onboarding-Userid"),
                 headers.get("X-Correlation-Id"),
             )
         else:
