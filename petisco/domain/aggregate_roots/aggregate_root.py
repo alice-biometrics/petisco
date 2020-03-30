@@ -1,9 +1,10 @@
 from typing import List
 
+from petisco.domain.base_object import BaseObject
 from petisco.events.event import Event
 
 
-class AggregateRoot:
+class AggregateRoot(BaseObject):
     def __init__(self):
         self.domain_events: List[Event] = []
 

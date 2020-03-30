@@ -44,18 +44,8 @@ def given_any_apikey():
 
 
 @pytest.fixture
-def given_any_name():
-    return "Any Name"
-
-
-@pytest.fixture
 def given_code_injection_name():
     return "<script>evil()</script>"
-
-
-@pytest.fixture
-def given_any_user_id():
-    return "12345678910"
 
 
 @pytest.fixture

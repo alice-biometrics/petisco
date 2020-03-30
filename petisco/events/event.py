@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict
 
-from petisco.controller.correlation_id import CorrelationId
+from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.events.event_id import EventId
 
 import json
