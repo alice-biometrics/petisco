@@ -14,6 +14,6 @@ def success_handler(result: Result):
     success_handler=success_handler,
     token_manager=TokenManager(token_type="USER_TOKEN", require_user=True),
 )
-def get_user_name(info_id: InfoId):  # noqa: E501
+def get_user_name(info_id: InfoId):
     use_case = UseCaseBuilder.get_user_name()
     return use_case.execute(info_id)

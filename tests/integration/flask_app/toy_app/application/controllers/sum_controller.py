@@ -8,7 +8,7 @@ def success_handler(result: Result):
 
 
 @controller_handler(success_handler=success_handler)
-def sum(body):  # noqa: E501
+def sum(body):
 
     value_1 = body.get("value_1")
     value_2 = body.get("value_2")

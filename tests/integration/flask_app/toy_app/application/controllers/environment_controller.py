@@ -8,5 +8,5 @@ def success_handler(result: Result):
 
 
 @controller_handler(success_handler=success_handler)
-def get_environment():  # noqa: E501
+def get_environment():
     return Success({"uname": "Darwin"})

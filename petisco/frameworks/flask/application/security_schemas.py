@@ -18,6 +18,10 @@ def api_key_info_func(api_key, required_scopes):
     return {"uid": api_key}
 
 
+def not_implemented_bearer_info_func(token):
+    return {}
+
+
 def bearer_info_func(token):
     """
     Check and retrieve authentication information from custom bearer token.

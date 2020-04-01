@@ -65,8 +65,8 @@ paths:
     post:
       summary: Creates a user (dummy)
       operationId: tests.integration.flask_app.toy_app.application.controllers.create_user_controller.create_user
-#      security:
-#        - BearerAuth: []
+      security:
+        - BearerAuth: []
       requestBody:
         content:
           multipart/form-data:
@@ -90,8 +90,8 @@ paths:
     get:
       summary: Get user name
       operationId: tests.integration.flask_app.toy_app.application.controllers.get_user_name_controller.get_user_name
-#      security:
-#        - BearerAuth: []
+      security:
+        - BearerAuth: []
       responses:
         200:
           description: The information has been returned.
@@ -108,11 +108,11 @@ servers:
 
 components:
   securitySchemes:
-#    BearerAuth:
-#      type: http
-#      scheme: bearer
-#      bearerFormat: JWT
-#      x-bearerInfoFunc: petisco.frameworks.flask.application.security_schemas.bearer_info_func
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: petisco.frameworks.flask.application.security_schemas.not_implemented_bearer_info_func
     ApiKeyAuth:
       type: apiKey
       in: header

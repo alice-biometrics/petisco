@@ -8,5 +8,5 @@ def success_handler(result: Result):
 
 
 @controller_handler(success_handler=success_handler)
-def get_healthcheck():  # noqa: E501
+def get_healthcheck():
     return isSuccess
