@@ -10,16 +10,17 @@ from petisco.controller.errors.internal_http_error import InternalHttpError
 from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
-from petisco.controller.tokens.not_implemented_token_manager import (
-    NotImplementedTokenManager,
-)
+
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.events.request_responded import RequestResponded
 from petisco.events.event_config import EventConfig
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
-from petisco.controller.tokens.token_manager import TokenManager
+from petisco.security.token_manager.not_implemented_token_manager import (
+    NotImplementedTokenManager,
+)
+from petisco.security.token_manager.token_manager import TokenManager
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.tools.timer import timer

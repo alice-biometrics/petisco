@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 
 from meiga import Result, Error, NotImplementedMethodError
 
-from petisco.security.token import Token
+from petisco.security.token_decoder.token import Token
 
 
 class ITokenDecoder:

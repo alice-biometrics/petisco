@@ -8,7 +8,7 @@ from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
-from petisco.security.token import Token
+from petisco.security.token_decoder.token import Token
 
 
 @dataclass_json

@@ -1,11 +1,11 @@
 from meiga import Result, Error, Success, Failure, isSuccess
 from meiga.decorators import meiga
 
-from petisco.controller.tokens.interface_token_manager import ITokenManager
-from petisco.controller.tokens.jwt_errors import InvalidTokenError
+from petisco.security.token_decoder.invalid_token_error import InvalidTokenError
+from petisco.security.token_manager.interface_token_manager import ITokenManager
 from petisco.domain.aggregate_roots.info_id import InfoId
-from petisco.security.interface_token_decoder import ITokenDecoder
-from petisco.security.token_decoder import TokenDecoder
+from petisco.security.token_decoder.interface_token_decoder import ITokenDecoder
+from petisco.security.token_decoder.token_decoder import TokenDecoder
 
 
 class TokenManager(ITokenManager):

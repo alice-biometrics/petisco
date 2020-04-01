@@ -1,6 +1,6 @@
 from meiga import Result, Error, Success
 
-from petisco.controller.tokens.interface_token_manager import ITokenManager
+from petisco.security.token_manager.interface_token_manager import ITokenManager
 from petisco.domain.aggregate_roots.info_id import InfoId
 
 

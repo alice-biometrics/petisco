@@ -4,9 +4,9 @@ import json
 from meiga import Result, Error, Failure, Success
 from meiga.decorators import meiga
 
-from petisco.controller.tokens.jwt_errors import InvalidTokenError
-from petisco.security.interface_token_decoder import ITokenDecoder
-from petisco.security.token import Token
+from petisco.security.token_decoder.interface_token_decoder import ITokenDecoder
+from petisco.security.token_decoder.invalid_token_error import InvalidTokenError
+from petisco.security.token_decoder.token import Token
 
 
 class TokenDecoder(ITokenDecoder):

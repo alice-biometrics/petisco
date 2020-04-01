@@ -1,7 +1,7 @@
 import pytest
 
 from typing import Dict
-from petisco.controller.tokens.jwt_token_builder import JwtTokenBuilder
+from petisco.security.token_manager.jwt_token_builder import JwtTokenBuilder
 
 
 @pytest.fixture

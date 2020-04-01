@@ -1,6 +1,6 @@
 import pytest
 
-from petisco.security.token_decoder import TokenDecoder
+from petisco.security.token_decoder.token_decoder import TokenDecoder
 
 
 @pytest.mark.unit

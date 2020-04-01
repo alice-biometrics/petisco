@@ -2,7 +2,7 @@ import pytest
 from meiga import Success
 
 from petisco import controller_handler, INFO, ERROR, InfoId
-from petisco.controller.tokens.token_manager import TokenManager
+from petisco.security.token_manager.token_manager import TokenManager
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
 
