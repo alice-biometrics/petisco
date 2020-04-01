@@ -1,6 +1,6 @@
 from meiga import Result, Success
 
-from petisco import controller_handler, InfoId
+from petisco import controller_handler
 
 
 def success_handler(result: Result):
@@ -8,9 +8,7 @@ def success_handler(result: Result):
 
 
 @controller_handler(success_handler=success_handler)
-def sum(headers=None, body=None):  # noqa: E501
-
-    _ = InfoId.from_headers(headers)
+def sum(body):  # noqa: E501
 
     value_1 = body.get("value_1")
     value_2 = body.get("value_2")

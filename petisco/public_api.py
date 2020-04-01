@@ -9,7 +9,7 @@ from petisco.application.repository import Repository
 from petisco.application.service import Service
 from petisco.application.singleton import Singleton
 from petisco.commands.command_handler import command_handler
-from petisco.controller.tokens.jwt_config import JwtConfig
+from petisco.controller.tokens.token_manager import TokenManager
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.domain.value_objects.name import Name
@@ -47,7 +47,7 @@ classes = [
     "IEventManager",
     "NotImplementedEventManager",
     "Singleton",
-    "JwtConfig",
+    "TokenManager",
     "IPersistenceConnector",
     "ValueObject",
     "Name",

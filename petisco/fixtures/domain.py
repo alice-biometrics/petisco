@@ -14,12 +14,12 @@ def given_any_client_id() -> ClientId:
 
 @pytest.fixture
 def given_any_user_id() -> UserId:
-    return UserId.generate()
+    return UserId("userpwlxU3yGsird")
 
 
 @pytest.fixture
 def given_any_correlation_id() -> CorrelationId:
-    return CorrelationId.generate()
+    return CorrelationId("crr1d")
 
 
 @pytest.fixture
@@ -27,6 +27,11 @@ def given_any_info_id(
     given_any_client_id, given_any_user_id, given_any_correlation_id
 ) -> InfoId:
     return InfoId(given_any_client_id, given_any_user_id, given_any_correlation_id)
+
+
+@pytest.fixture
+def given_info_id_only_correlation_id(given_any_correlation_id) -> InfoId:
+    return InfoId(correlation_id=given_any_correlation_id)
 
 
 @pytest.fixture

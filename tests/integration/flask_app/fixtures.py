@@ -4,8 +4,6 @@ import pytest
 from sqlalchemy import create_engine
 
 from petisco import FlaskApplication, SqlAlchemyPersistence
-from petisco.controller.tokens.jwt_token_builder import JwtTokenBuilder
-from tests.integration.flask_app.key import KEY
 
 SWAGGER_DIR = os.path.dirname(os.path.abspath(__file__)) + "/toy_app/"
 app = FlaskApplication(application_name="petisco", swagger_dir=SWAGGER_DIR).get_app()
@@ -46,17 +44,3 @@ def given_any_apikey():
 @pytest.fixture
 def given_code_injection_name():
     return "<script>evil()</script>"
-
-
-@pytest.fixture
-def given_auth_token_headers_creator():
-    def _given_auth_token_headers_creator(
-        type_token=str, client_id="client_id", user_id=None
-    ):
-
-        headers = {
-            "Authorization": f"Bearer {JwtTokenBuilder.build(KEY, type_token, client_id, user_id=user_id)}"
-        }
-        return headers
-
-    return _given_auth_token_headers_creator

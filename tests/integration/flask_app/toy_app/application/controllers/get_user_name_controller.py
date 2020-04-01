@@ -1,6 +1,6 @@
 from meiga import Result
 
-from petisco import controller_handler, JwtConfig
+from petisco import controller_handler, TokenManager, InfoId
 from tests.integration.flask_app.toy_app.application.use_cases.use_case_builder import (
     UseCaseBuilder,
 )
@@ -12,8 +12,8 @@ def success_handler(result: Result):
 
 @controller_handler(
     success_handler=success_handler,
-    jwt_config=JwtConfig(token_type="USER_TOKEN", require_user=True),
+    token_manager=TokenManager(token_type="USER_TOKEN", require_user=True),
 )
-def get_user_name(client_id, user_id, headers=None, *args, **kwargs):  # noqa: E501
+def get_user_name(info_id: InfoId):  # noqa: E501
     use_case = UseCaseBuilder.get_user_name()
-    return use_case.execute(client_id=client_id, user_id=user_id)
+    return use_case.execute(info_id)
