@@ -8,6 +8,7 @@ from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
+from petisco.security.token_decoder.token import Token
 
 
 @dataclass_json
@@ -33,6 +34,27 @@ class InfoId(AggregateRoot):
     def __repr__(self):
         return f"[InfoId: [client_id: {self.client_id} | user_id: {self.user_id} | correlation_id: {self.correlation_id}]]"
 
+    def __eq__(self, other):
+        return (
+            self.__class__ == other.__class__
+            and self.client_id == other.client_id
+            and self.user_id == other.user_id
+            and self.correlation_id == other.correlation_id
+        )
+
+    def update_from_headers(self, headers: Dict[str, str]):
+        if headers:
+            client_id = headers.get("X-Onboarding-Clientid")
+            user_id = headers.get("X-Onboarding-Userid")
+            correlation_id = headers.get("X-Correlation-Id")
+
+            self.client_id = client_id if client_id else self.client_id
+            self.user_id = user_id if user_id else self.user_id
+            self.correlation_id = (
+                correlation_id if correlation_id else self.correlation_id
+            )
+        return self
+
     @staticmethod
     def from_headers(headers: Dict[str, str]):
         if headers:
@@ -41,6 +63,14 @@ class InfoId(AggregateRoot):
                 headers.get("X-Onboarding-Userid"),
                 headers.get("X-Correlation-Id"),
             )
+        else:
+            info_id = InfoId()
+        return info_id
+
+    @staticmethod
+    def from_token(token: Token):
+        if token:
+            info_id = InfoId.from_strings(token.client_id, token.user_id)
         else:
             info_id = InfoId()
         return info_id

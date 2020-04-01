@@ -2,7 +2,7 @@ from meiga import Result
 
 from petisco import (
     controller_handler,
-    JwtConfig,
+    TokenManager,
     HttpError,
     ApplicationConfig,
     InfoId,
@@ -36,14 +36,12 @@ def error_handler(result: Result):
 @controller_handler(
     success_handler=success_handler,
     error_handler=error_handler,
-    jwt_config=JwtConfig(token_type="ADMIN_TOKEN"),
+    token_manager=TokenManager(token_type="ADMIN_TOKEN"),
     application_config=ApplicationConfig.get_instance(),
 )
-def create_user(client_id, body, headers=None, *args, **kwargs):  # noqa: E501
+def create_user(info_id: InfoId, body: dict):  # noqa: E501
+    info_id.user_id = UserId.generate()
 
-    info_id = InfoId.from_strings(
-        client_id, UserId.generate(), headers.get("X-Correlation-Id")
-    )
     name = Name(body.get("name")).guard()
 
     use_case = UseCaseBuilder.create_user()

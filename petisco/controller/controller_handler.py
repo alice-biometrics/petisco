@@ -1,23 +1,26 @@
-from functools import wraps
+import inspect
 import traceback
+
+from functools import wraps
 from typing import Callable, Tuple, Dict, List, Any
-
-from meiga import Result
+from meiga import Result, Error, Success
 from meiga.decorators import meiga
-
 from petisco.application.application_config import ApplicationConfig
 from petisco.controller.errors.internal_http_error import InternalHttpError
 from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
-from petisco.controller.tokens.jwt_decorator import jwt
+
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.events.request_responded import RequestResponded
 from petisco.events.event_config import EventConfig
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
-from petisco.controller.tokens.jwt_config import JwtConfig
+from petisco.security.token_manager.not_implemented_token_manager import (
+    NotImplementedTokenManager,
+)
+from petisco.security.token_manager.token_manager import TokenManager
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.tools.timer import timer
@@ -41,7 +44,7 @@ class _ControllerHandler:
         app_version: str = None,
         logger=NotImplementedLogger(),
         event_config: EventConfig = EventConfig(),
-        jwt_config: JwtConfig = None,
+        token_manager: TokenManager = NotImplementedTokenManager(),
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
         headers_provider: Callable = flask_headers_provider,
@@ -59,8 +62,8 @@ class _ControllerHandler:
             A ILogger implementation. Default NotImplementedLogger
         event_config
             EventConfig object. Here, you can define event management.
-        jwt_config
-            JwtConfig object. Here, you can define how to deal with JWT Tokens
+        token_manager
+            TokenManager object. Here, you can define how to deal with JWT Tokens
         success_handler
             Handler to deal with Success Results
         error_handler
@@ -76,7 +79,7 @@ class _ControllerHandler:
         self.app_version = app_version
         self.logger = logger
         self.event_config = event_config
-        self.jwt_config = jwt_config
+        self.token_manager = token_manager
         self.success_handler = success_handler
         self.error_handler = error_handler
         self.headers_provider = headers_provider
@@ -88,59 +91,55 @@ class _ControllerHandler:
         def wrapper(*args, **kwargs):
             @timer
             @meiga
-            @jwt(jwt_config=self.jwt_config)
             def run_controller(*args, **kwargs) -> Result:
+                params = inspect.getfullargspec(func).args
+                kwargs = {k: v for k, v in kwargs.items() if k in params}
                 return func(*args, **kwargs)
 
-            kwargs = add_headers(kwargs)
-            info_id = InfoId.from_headers(kwargs.get("headers"))
-
-            log_message = LogMessage(
-                layer="controller", operation=f"{func.__name__}", info_id=info_id
-            )
-
-            http_response = DEFAULT_ERROR_MESSAGE
+            info_id = None
             is_success = False
             elapsed_time = None
             try:
-                log_message.message = "Start"
-                self.logger.log(INFO, log_message.to_json())
-                result, elapsed_time = run_controller(*args, **kwargs)
+                kwargs = add_headers(kwargs)
+                result_kwargs = add_info_id(kwargs)
 
-                if result.is_success:
-                    if isinstance(result.value, tuple(self.logging_types_blacklist)):
-                        log_message.message = (
-                            f"Success result of type: {type(result.value).__name__}"
+                log_message = LogMessage(
+                    layer="controller", operation=f"{func.__name__}"
+                )
+                if result_kwargs.is_failure:
+                    http_response = self.handle_failure(log_message, result_kwargs)
+                else:
+                    kwargs, info_id = result_kwargs.value
+                    log_message.info_id = info_id
+                    log_message.message = "Start"
+                    self.logger.log(INFO, log_message.to_json())
+
+                    result_controller, elapsed_time = run_controller(*args, **kwargs)
+
+                    if result_controller.is_failure:
+                        http_response = self.handle_failure(
+                            log_message, result_controller
                         )
                     else:
-                        log_message.message = f"{result}"
-                    self.logger.log(INFO, log_message.to_json())
-                    http_response = (
-                        self.success_handler(result)
-                        if self.success_handler
-                        else DEFAULT_SUCCESS_MESSAGE
-                    )
-                    is_success = True
-                else:
-                    log_message.message = f"{result}"
-                    self.logger.log(ERROR, log_message.to_json())
-                    known_result_failure_handler = KnownResultFailureHandler(result)
-
-                    if not known_result_failure_handler.is_a_result_known_error:
-                        if self.error_handler:
-                            http_error = self.error_handler(result)
-
-                            if not issubclass(http_error.__class__, HttpError):
-                                raise TypeError(
-                                    "Returned object from error_handler must be subclasses of HttpError"
-                                )
-
-                            http_response = http_error.handle()
-                    else:
-                        http_response = known_result_failure_handler.http_error.handle()
-
+                        if isinstance(
+                            result_controller.value, tuple(self.logging_types_blacklist)
+                        ):
+                            log_message.message = f"Success result of type: {type(result_controller.value).__name__}"
+                        else:
+                            log_message.message = f"{result_controller}"
+                        self.logger.log(INFO, log_message.to_json())
+                        http_response = (
+                            self.success_handler(result_controller)
+                            if self.success_handler
+                            else DEFAULT_SUCCESS_MESSAGE
+                        )
+                        is_success = True
             except Exception as e:
-                log_message.message = f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}"
+                log_message = LogMessage(
+                    layer="controller",
+                    operation=f"{func.__name__}",
+                    message=f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}",
+                )
                 self.logger.log(ERROR, log_message.to_json())
                 http_response = InternalHttpError().handle()
 
@@ -152,9 +151,11 @@ class _ControllerHandler:
                 http_response=http_response,
                 elapsed_time=elapsed_time,
                 additional_info=self.event_config.get_additional_info(kwargs),
-            ).add_info_id(info_id)
+            )
             self.event_config.event_manager.publish(
-                topic=self.event_config.event_topic, event=request_responded
+                topic=self.event_config.event_topic,
+                event=request_responded,
+                info_id=info_id,
             )
 
             return http_response
@@ -162,10 +163,39 @@ class _ControllerHandler:
         def add_headers(kwargs):
             headers = self.headers_provider()
             kwargs = dict(kwargs, headers=headers)
-
             return kwargs
 
+        @meiga
+        def add_info_id(kwargs) -> Result[Tuple[str, InfoId], Error]:
+            headers = kwargs.get("headers", {})
+
+            info_id = self.token_manager.execute(headers).unwrap_or_return()
+
+            kwargs = dict(kwargs, info_id=info_id)
+            return Success((kwargs, info_id))
+
         return wrapper
+
+    def handle_failure(
+        self, log_message: LogMessage, result: Result
+    ) -> Tuple[dict, int]:
+        log_message.message = f"{result}"
+        self.logger.log(ERROR, log_message.to_json())
+        known_result_failure_handler = KnownResultFailureHandler(result)
+        http_response = DEFAULT_ERROR_MESSAGE
+        if not known_result_failure_handler.is_a_result_known_error:
+            if self.error_handler:
+                http_error = self.error_handler(result)
+
+                if not issubclass(http_error.__class__, HttpError):
+                    raise TypeError(
+                        "Returned object from error_handler must be subclasses of HttpError"
+                    )
+
+                http_response = http_error.handle()
+        else:
+            http_response = known_result_failure_handler.http_error.handle()
+        return http_response
 
 
 controller_handler = _ControllerHandler

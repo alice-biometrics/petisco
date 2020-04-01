@@ -2,7 +2,7 @@ from meiga import Result
 
 from petisco.controller.errors.http_error import HttpError
 from petisco.controller.errors.invalid_token_http_error import InvalidTokenHttpError
-from petisco.controller.tokens.jwt_errors import InvalidTokenError
+from petisco.security.token_decoder.invalid_token_error import InvalidTokenError
 
 
 class KnownResultFailureHandler:

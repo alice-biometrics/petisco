@@ -4,12 +4,12 @@
 """Public API of ALiCE Petisco Framework"""
 
 # Classes
+
 from petisco.application.application_config import ApplicationConfig
 from petisco.application.repository import Repository
 from petisco.application.service import Service
 from petisco.application.singleton import Singleton
 from petisco.commands.command_handler import command_handler
-from petisco.controller.tokens.jwt_config import JwtConfig
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.domain.value_objects.name import Name
@@ -21,6 +21,13 @@ from petisco.events.event_config import EventConfig
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
+from petisco.security.token_decoder.interface_token_decoder import ITokenDecoder
+from petisco.security.token_decoder.token_decoder import TokenDecoder
+from petisco.security.token_manager.interface_token_manager import ITokenManager
+from petisco.security.token_manager.not_implemented_token_manager import (
+    NotImplementedTokenManager,
+)
+from petisco.security.token_manager.token_manager import TokenManager
 from petisco.use_case import UseCase
 from petisco.use_case import use_case_handler
 from petisco.controller.controller_handler import controller_handler
@@ -47,7 +54,11 @@ classes = [
     "IEventManager",
     "NotImplementedEventManager",
     "Singleton",
-    "JwtConfig",
+    "TokenManager",
+    "NotImplementedTokenManager",
+    "ITokenManager",
+    "TokenDecoder",
+    "ITokenDecoder",
     "IPersistenceConnector",
     "ValueObject",
     "Name",

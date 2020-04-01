@@ -25,7 +25,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
         event_config=EventConfig(event_manager=event_manager, event_topic=event_topic),
         headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
     )
-    def my_controller(headers=None):
+    def my_controller():
         return Success("Hello Petisco")
 
     http_response = my_controller()
