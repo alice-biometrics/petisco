@@ -105,8 +105,8 @@ Add it to your entry point controller and manage the behaviour:
         A ILogger implementation. Default NotImplementedLogger
     event_config
         EventConfig object. Here, you can define event management.
-    jwt_config
-        JwtConfig object. Here, you can define how to deal with JWT Tokens
+    token_manager
+        TokenManager object. Here, you can define how to deal with JWT Tokens
     success_handler
         Handler to deal with Success Results
     error_handler
