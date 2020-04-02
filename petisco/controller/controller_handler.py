@@ -30,14 +30,6 @@ DEFAULT_ERROR_MESSAGE = HttpError().handle()
 
 
 class _ControllerHandler:
-    def set_application_config(self, application_config: ApplicationConfig):
-        if application_config:
-            self.app_name = application_config.app_name
-            self.app_version = application_config.app_version
-            self.logger = application_config.logger
-            if self.event_config.is_configured:
-                self.event_config.event_manager = application_config.event_manager
-
     def __init__(
         self,
         app_name: str = "app-undefined",
@@ -84,7 +76,16 @@ class _ControllerHandler:
         self.error_handler = error_handler
         self.headers_provider = headers_provider
         self.logging_types_blacklist = logging_types_blacklist
-        self.set_application_config(application_config)
+        self.application_config = application_config
+        self.set_application_config_dependencies()
+
+    def set_application_config_dependencies(self):
+        if self.application_config:
+            self.app_name = self.application_config.app_name
+            self.app_version = self.application_config.app_version
+            self.logger = self.application_config.logger
+            if self.event_config.is_configured:
+                self.event_config.event_manager = self.application_config.event_manager
 
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
@@ -100,6 +101,7 @@ class _ControllerHandler:
             is_success = False
             elapsed_time = None
             try:
+                kwargs = add_application_config(kwargs)
                 kwargs = add_headers(kwargs)
                 result_kwargs = add_info_id(kwargs)
 
@@ -163,6 +165,10 @@ class _ControllerHandler:
         def add_headers(kwargs):
             headers = self.headers_provider()
             kwargs = dict(kwargs, headers=headers)
+            return kwargs
+
+        def add_application_config(kwargs):
+            kwargs = dict(kwargs, application_config=self.application_config)
             return kwargs
 
         @meiga

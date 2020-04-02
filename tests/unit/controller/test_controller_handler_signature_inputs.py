@@ -1,7 +1,7 @@
 import pytest
 from meiga import Success
 
-from petisco import controller_handler, TokenManager, InfoId
+from petisco import controller_handler, TokenManager, InfoId, ApplicationConfig
 
 
 @pytest.mark.unit
@@ -82,6 +82,34 @@ def test_should_execute_a_controller_without_receive_any_param(
     )
     def my_controller(info_id: InfoId):
         assert isinstance(info_id, InfoId)
+        return Success("Hello Petisco")
+
+    http_response = my_controller()
+
+    assert http_response == ({"message": "OK"}, 200)
+
+
+@pytest.mark.unit
+def test_should_execute_a_controller_getting_the_application_config(
+    given_any_application_config
+):
+    @controller_handler(application_config=given_any_application_config)
+    def my_controller(application_config):
+        assert isinstance(application_config, ApplicationConfig)
+        return Success("Hello Petisco")
+
+    http_response = my_controller()
+
+    assert http_response == ({"message": "OK"}, 200)
+
+
+@pytest.mark.unit
+def test_should_execute_a_controller_getting_none_application_config(
+    given_any_application_config
+):
+    @controller_handler()
+    def my_controller(application_config):
+        assert application_config is None
         return Success("Hello Petisco")
 
     http_response = my_controller()
