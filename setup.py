@@ -21,6 +21,9 @@ setup(
     author="ALiCE Biometrics",
     author_email="support@alicebiometrics.com",
     license="MIT",
+    entry_points={
+        "console_scripts": ["petisco = petisco.src.application.cli.petisco:main"]
+    },
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
@@ -29,6 +32,7 @@ setup(
     packages=[
         "petisco",
         "petisco/application",
+        "petisco/application/cli",
         "petisco/commands",
         "petisco/controller",
         "petisco/controller/errors",

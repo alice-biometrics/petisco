@@ -19,3 +19,6 @@ steps:
   test:
     run:
     - pytest -v
+  test-command-line:
+    run:
+    - petisco --version
