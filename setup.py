@@ -22,7 +22,7 @@ setup(
     author_email="support@alicebiometrics.com",
     license="MIT",
     entry_points={
-        "console_scripts": ["petisco = petisco.src.application.cli.petisco:main"]
+        "console_scripts": ["petisco = petisco.application.cli.petisco:main"]
     },
     classifiers=[
         "License :: OSI Approved :: MIT License",
