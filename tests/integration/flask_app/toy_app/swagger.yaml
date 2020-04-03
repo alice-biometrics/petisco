@@ -12,7 +12,7 @@ paths:
   /healthcheck:
     get:
       summary: Returns healthcheck information.
-      operationId: tests.integration.flask_app.toy_app.application.controllers.healthcheck_controller.get_healthcheck
+      operationId: petisco.healthcheck
       responses:
         200:
           description: The healthcheck was successful.
@@ -20,11 +20,13 @@ paths:
             application/json:
               schema:
                 type: string
+        503:
+          description: Error connecting with configured persistence (Database Connection)
 
   /environment:
     get:
       summary: Returns environment information.
-      operationId: tests.integration.flask_app.toy_app.application.controllers.environment_controller.get_environment
+      operationId: petisco.environment
       security:
         - ApiKeyAuth: []
       responses:
@@ -36,6 +38,8 @@ paths:
                 type: string
         401:
           description: Access token or API key is missing or invalid.
+        500:
+          description: Unexpected Error obtaining environment info
   /sum:
     post:
       summary: Returns sum value.

@@ -68,6 +68,31 @@ classes = [
     "EventConfig",
     "AggregateRoot",
 ]
+
+# Controllers & Use Cases
+from petisco.modules.environment.application.environment import environment
+from petisco.modules.environment.application.environment_provider import (
+    EnvironmentProvider,
+)
+from petisco.modules.environment.domain.environment_provider_error import (
+    EnvironmentProviderError,
+)
+from petisco.modules.healthcheck.application.healthcheck import healthcheck
+from petisco.modules.healthcheck.application.healthcheck_provider import (
+    HealthcheckProvider,
+)
+from petisco.modules.healthcheck.domain.persistence_error import PersistenceError
+
+controllers_and_use_cases = [
+    "environment",
+    "EnvironmentProvider",
+    "EnvironmentProviderError",
+    "healthcheck",
+    "HealthcheckProvider",
+    "PersistenceError",
+]
+
+
 # Constants
 from petisco.logger.interface_logger import (
     CRITICAL,
@@ -140,4 +165,12 @@ try:
 except (RuntimeError, ImportError):
     rabbitmq = []
 
-__all__ = classes + constants + flask + sqlalchemy + redis + rabbitmq
+__all__ = (
+    classes
+    + controllers_and_use_cases
+    + constants
+    + flask
+    + sqlalchemy
+    + redis
+    + rabbitmq
+)

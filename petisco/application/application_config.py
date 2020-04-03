@@ -62,7 +62,7 @@ class ApplicationConfig(metaclass=Singleton):
             Callable function to configure dependencies (e.g configure credentials in order to connect with a thrid-party
             toy_app.
         config_persistence
-            Callable function to configure toy_app persistence (e.g configure a database)
+            Callable function to configure your app persistence (e.g configure a database)
         services_mode_mapper
             A dictionary to map DeploymentMode with a service provider function. This is used as a dependency injector
         repositories_mode_mapper
@@ -77,6 +77,7 @@ class ApplicationConfig(metaclass=Singleton):
         self.app_version = app_version
         self.mode = mode
         self.logger = logger
+        self.persistence_configured = False
 
         self.logger.log(
             INFO, f"Deploying {self.app_name} application in {self.mode} mode"
@@ -87,6 +88,7 @@ class ApplicationConfig(metaclass=Singleton):
 
         if config_persistence:
             config_persistence()
+            self.persistence_configured = True
 
         self.info = {}
         if services_mode_mapper:

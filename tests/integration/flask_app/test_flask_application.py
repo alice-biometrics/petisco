@@ -14,7 +14,15 @@ from petisco.frameworks.flask.flask_extension_is_installed import (
 def test_should_return_200_when_call_healthcheck_with_happy_path(client):
     headers = {"Accept": "toy_app/json"}
     response = client.open("/petisco/healthcheck", method="GET", headers=headers)
+
     assert response.status_code == 200
+    assert "app_name" in response.json
+    assert "app_version" in response.json
+    assert "mode" in response.json
+    assert (
+        "persistence_available" in response.json
+        and response.json["persistence_available"] is True
+    )
 
 
 @pytest.mark.integration
