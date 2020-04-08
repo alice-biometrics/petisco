@@ -5,7 +5,6 @@ from meiga import Result, Error, Failure, Success
 from petisco.use_case.use_case import UseCase
 from petisco.application.application_config import ApplicationConfig
 from petisco.modules.healthcheck.domain.persistence_error import PersistenceError
-from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import session_scope
 
 
 class HealthcheckProvider(UseCase):
@@ -18,6 +17,10 @@ class HealthcheckProvider(UseCase):
         }
 
         if application_config.persistence_configured:
+            from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import (
+                session_scope,
+            )
+
             with session_scope() as session:
                 try:
                     session.execute("SELECT 1")
