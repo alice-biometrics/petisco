@@ -32,6 +32,7 @@ setup(
     packages=[
         "petisco",
         "petisco/application",
+        "petisco/application/config",
         "petisco/application/cli",
         "petisco/commands",
         "petisco/controller",
@@ -44,6 +45,7 @@ setup(
         "petisco/events/redis",
         "petisco/events/rabbitmq",
         "petisco/fixtures",
+        "petisco/frameworks",
         "petisco/frameworks/flask",
         "petisco/frameworks/flask/application",
         "petisco/logger",

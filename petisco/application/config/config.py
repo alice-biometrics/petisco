@@ -63,7 +63,7 @@ class Config:
         petisco_yml_folder = yaml_dict.get("petisco_yml_folder")
         app_config = yaml_dict.get("app")
         app_name = app_config.get("name")
-        app_version = Config.get_version(app_config.get("version")).unwrap_or_return()
+        app_version = Config.get_version(petisco_yml_folder, app_config.get("version")).unwrap_or_return()
 
         config_framework = ConfigFramework.from_dict(yaml_dict.get("framework"))
 
@@ -90,7 +90,7 @@ class Config:
         )
 
     @staticmethod
-    def get_version(config_version) -> Result[str, Error]:
+    def get_version(petisco_yml_folder, config_version) -> Result[str, Error]:
         if isinstance(config_version, str):
             return Success(config_version)
         else:
@@ -101,6 +101,8 @@ class Config:
                         "If you don't specify the version directly, you must associate a file with from_file key"
                     )
                 )
+
+            version_filename = f"{petisco_yml_folder}/{version_filename}"
             if not os.path.isfile(version_filename):
                 return Failure(
                     ConfigFileNotValidError(
