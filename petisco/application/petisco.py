@@ -5,11 +5,15 @@ from dataclasses import dataclass
 from dotmap import DotMap
 
 from petisco.events.interface_event_manager import IEventManager
+from petisco.events.service_deployed import ServiceDeployed
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import INFO, ILogger
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.logger.not_implemented_logger import NotImplementedLogger
+
+
+DEPLOY_TOPIC = "deploy"
 
 
 @dataclass
@@ -41,6 +45,13 @@ class Petisco(metaclass=Singleton):
 
         if self.options:
             self.logger.log(INFO, f"Options: {self.options}")
+
+        if self.config.config_infrastructure.publish_deploy_event_func:
+            event_manager = self.config.config_infrastructure.event_manager_provider()
+            event = ServiceDeployed(
+                app_name=self.app_name, app_version=self.app_version
+            )
+            event_manager.publish(topic=DEPLOY_TOPIC, event=event)
 
     @staticmethod
     def get_instance():
