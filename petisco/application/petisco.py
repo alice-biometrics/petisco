@@ -2,7 +2,9 @@ import inspect
 from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
+from dotmap import DotMap
 
+from petisco.events.interface_event_manager import IEventManager
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import INFO, ILogger
 from petisco.application.config.config import Config
@@ -115,3 +117,19 @@ class Petisco(metaclass=Singleton):
 
     def get_app(self):
         return self.config.get_application().get_app()
+
+    @staticmethod
+    def services() -> DotMap:
+        return DotMap(Petisco.get_instance().services_provider())
+
+    @staticmethod
+    def repositories() -> DotMap:
+        return DotMap(Petisco.get_instance().repositories_provider())
+
+    @staticmethod
+    def event_manager() -> IEventManager:
+        return Petisco.get_instance().event_manager_provider()
+
+    @staticmethod
+    def providers():
+        return Petisco.services(), Petisco.repositories(), Petisco.event_manager()
