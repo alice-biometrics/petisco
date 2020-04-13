@@ -40,7 +40,6 @@ def error_handler(result: Result):
     application_config=ApplicationConfig.get_instance(),
 )
 def create_user(info_id: InfoId, body: dict):
-
     info_id.user_id = UserId.generate()
 
     name = Name(body.get("name")).guard()

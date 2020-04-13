@@ -3,19 +3,27 @@ import connexion
 from flask_cors import CORS
 
 from petisco.frameworks.flask.application.json_encoder import JSONEncoder
+from petisco.frameworks.interface_application import IApplication
 
 
-class FlaskApplication:
-    def __init__(self, application_name: str, swagger_dir: str, port: int = 8080):
+class FlaskApplication(IApplication):
+    def __init__(
+        self,
+        application_name: str,
+        swagger_dir: str,
+        config_file: str,
+        port: int = 8080,
+    ):
         self.application_name = application_name
         self.app = connexion.App(__name__, specification_dir=swagger_dir)
+        self.config_file = config_file
         self.port = port
         self._configure()
 
     def _configure(self):
         CORS(self.app.app)
         self.app.app.json_encoder = JSONEncoder
-        self.app.add_api("swagger.yaml", arguments={"title": self.application_name})
+        self.app.add_api(self.config_file, arguments={"title": self.application_name})
 
     def start(self):
         self.app.run(port=self.port)

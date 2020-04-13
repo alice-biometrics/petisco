@@ -6,8 +6,9 @@
 # Classes
 
 from petisco.application.application_config import ApplicationConfig
-from petisco.application.repository import Repository
-from petisco.application.service import Service
+from petisco.application.interface_repository import IRepository
+from petisco.application.interface_service import IService
+from petisco.application.petisco import Petisco
 from petisco.application.singleton import Singleton
 from petisco.commands.command_handler import command_handler
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
@@ -18,6 +19,7 @@ from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.value_objects.value_object import ValueObject
 from petisco.events.event_config import EventConfig
+from petisco.frameworks.interface_application import IApplication
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
@@ -39,8 +41,8 @@ from petisco.events.not_implemented_event_manager import NotImplementedEventMana
 
 classes = [
     "ApplicationConfig",
-    "Service",
-    "Repository",
+    "IService",
+    "IRepository",
     "UseCase",
     "use_case_handler",
     "controller_handler",
@@ -67,6 +69,8 @@ classes = [
     "InfoId",
     "EventConfig",
     "AggregateRoot",
+    "Petisco",
+    "IApplication",
 ]
 
 # Controllers & Use Cases

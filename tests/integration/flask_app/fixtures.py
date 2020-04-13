@@ -6,7 +6,9 @@ from sqlalchemy import create_engine
 from petisco import FlaskApplication, SqlAlchemyPersistence
 
 SWAGGER_DIR = os.path.dirname(os.path.abspath(__file__)) + "/toy_app/"
-app = FlaskApplication(application_name="petisco", swagger_dir=SWAGGER_DIR).get_app()
+app = FlaskApplication(
+    application_name="petisco", swagger_dir=SWAGGER_DIR, config_file="swagger.yaml"
+).get_app()
 
 
 @pytest.fixture

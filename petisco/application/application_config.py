@@ -4,8 +4,8 @@ from typing import Dict, Callable, Any
 
 from dataclasses import dataclass
 
-from petisco.application.repository import Repository
-from petisco.application.service import Service
+from petisco.application.interface_repository import IRepository
+from petisco.application.interface_service import IService
 from petisco.application.singleton import Singleton
 from petisco.events.interface_event_manager import IEventManager
 from petisco.logger.interface_logger import ILogger, INFO, ERROR
@@ -18,8 +18,8 @@ class ApplicationConfig(metaclass=Singleton):
     app_version: str
     mode: str
     logger = ILogger
-    services_provider: Callable[[], Dict[str, Service]]
-    repositories_provider: Callable[[], Dict[str, Repository]]
+    services_provider: Callable[[], Dict[str, IService]]
+    repositories_provider: Callable[[], Dict[str, IRepository]]
     event_manager: IEventManager
     options: Dict[str, Any]
     info: Dict
