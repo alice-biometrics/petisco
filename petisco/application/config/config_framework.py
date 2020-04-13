@@ -9,5 +9,5 @@ from dataclasses_json import dataclass_json
 class ConfigFramework:
     selected_framework: str
     config_file: str
-    port: Optional[str]
-    port_env: Optional[str]
+    port: Optional[int] = 8080
+    port_env: Optional[str] = None

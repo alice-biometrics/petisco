@@ -5,7 +5,7 @@ from functools import wraps
 from typing import Callable, Tuple, Dict, List, Any
 from meiga import Result, Error, Success
 from meiga.decorators import meiga
-from petisco.application.application_config import ApplicationConfig
+from petisco.application.petisco import Petisco
 from petisco.controller.errors.internal_http_error import InternalHttpError
 from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
@@ -41,7 +41,7 @@ class _ControllerHandler:
         error_handler: Callable[[Result], HttpError] = None,
         headers_provider: Callable = flask_headers_provider,
         logging_types_blacklist: List[Any] = [bytes],
-        application_config: ApplicationConfig = None,
+        petisco: Petisco = None,
     ):
         """
         Parameters
@@ -64,8 +64,8 @@ class _ControllerHandler:
             Injectable function to provide headers. By default is used headers_provider
         logging_types_blacklist
             Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
-        application_config
-            Use ApplicationConfig to set params as: app_name, app_version, logger, or event_manager (EventConfig)
+        petisco
+            Use Petisco to set params as: app_name, app_version, logger, or event_manager (EventConfig)
         """
         self.app_name = app_name
         self.app_version = app_version
@@ -76,16 +76,16 @@ class _ControllerHandler:
         self.error_handler = error_handler
         self.headers_provider = headers_provider
         self.logging_types_blacklist = logging_types_blacklist
-        self.application_config = application_config
-        self.set_application_config_dependencies()
+        self.petisco = petisco
+        self.set_petisco_dependencies()
 
-    def set_application_config_dependencies(self):
-        if self.application_config:
-            self.app_name = self.application_config.app_name
-            self.app_version = self.application_config.app_version
-            self.logger = self.application_config.logger
+    def set_petisco_dependencies(self):
+        if self.petisco:
+            self.app_name = self.petisco.app_name
+            self.app_version = self.petisco.app_version
+            self.logger = self.petisco.logger
             if self.event_config.is_configured:
-                self.event_config.event_manager = self.application_config.event_manager
+                self.event_config.event_manager = self.petisco.event_manager_provider()
 
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
@@ -101,7 +101,7 @@ class _ControllerHandler:
             is_success = False
             elapsed_time = None
             try:
-                kwargs = add_application_config(kwargs)
+                kwargs = add_petisco(kwargs)
                 kwargs = add_headers(kwargs)
                 result_kwargs = add_info_id(kwargs)
 
@@ -167,8 +167,8 @@ class _ControllerHandler:
             kwargs = dict(kwargs, headers=headers)
             return kwargs
 
-        def add_application_config(kwargs):
-            kwargs = dict(kwargs, application_config=self.application_config)
+        def add_petisco(kwargs):
+            kwargs = dict(kwargs, petisco=self.petisco)
             return kwargs
 
         @meiga

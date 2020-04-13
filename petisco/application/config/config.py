@@ -25,17 +25,17 @@ from petisco.logger.not_implemented_logger import NotImplementedLogger
 class Config:
     def __init__(
         self,
-        petisco_yml_folder: str,
         app_name: str,
         app_version: str,
-        config_framework: ConfigFramework,
-        config_logger: ConfigLogger,
-        config_infrastructure: ConfigInfrastructure,
-        options: Dict,
+        petisco_yml_folder: str = None,
+        config_framework: ConfigFramework = None,
+        config_logger: ConfigLogger = None,
+        config_infrastructure: ConfigInfrastructure = None,
+        options: Dict = None,
     ):
-        self.petisco_yml_folder = petisco_yml_folder
         self.app_name = app_name
         self.app_version = app_version
+        self.petisco_yml_folder = petisco_yml_folder
         self.config_framework = config_framework
         self.config_logger = config_logger
         self.config_infrastructure = config_infrastructure
@@ -66,7 +66,11 @@ class Config:
         app_version = Config.get_version(app_config.get("version")).unwrap_or_return()
 
         config_framework = ConfigFramework.from_dict(yaml_dict.get("framework"))
-        config_logger = ConfigLogger.from_dict(yaml_dict.get("logger"))
+
+        config_logger = Config.get_config_logger(
+            yaml_dict.get("logger")
+        ).unwrap_or_return()
+
         config_infrastructure = ConfigInfrastructure.from_dict(
             yaml_dict.get("infrastructure")
         )
@@ -103,11 +107,19 @@ class Config:
                         f"Version from_file does not exist ({version_filename})"
                     )
                 )
-            version = open(version_filename, "r").read()[:-1]
+            version = open(version_filename, "r").read()
             return Success(version)
 
+    @staticmethod
+    def get_config_logger(config_logger_dict: Dict) -> Result[ConfigLogger, Error]:
+
+        if not config_logger_dict:
+            return Success(ConfigLogger())
+        else:
+            return Success(ConfigLogger.from_dict(config_logger_dict))
+
     def get_logger(self) -> ILogger:
-        if self.config_logger.selected_logger != "logging":
+        if not self.config_logger or self.config_logger.selected_logger != "logging":
             return NotImplementedLogger()
         else:
             return LoggingBasedLogger(
@@ -117,14 +129,23 @@ class Config:
             )
 
     def get_application(self) -> IApplication:
+        if not self.config_framework:
+            return None
+
         if self.config_framework.selected_framework != "flask":
             raise TypeError(
                 f"Selected framework ({self.config_framework.selected_framework}) is not allowed. Try with flask."
             )
         else:
-            port = os.environ.get(self.config_framework.port_env)
-            if not port:
+            if not self.config_framework.port_env:
                 port = self.config_framework.port
+            else:
+                port = (
+                    self.config_framework.port
+                    if not os.environ.get(self.config_framework.port_env)
+                    else os.environ.get(self.config_framework.port_env)
+                )
+
             from petisco.frameworks.flask.application.flask_application import (
                 FlaskApplication,
             )
@@ -141,5 +162,5 @@ class Config:
                 application_name=self.app_name,
                 swagger_dir=swagger_dir,
                 config_file=config_file,
-                port=int(port),
+                port=port,
             )

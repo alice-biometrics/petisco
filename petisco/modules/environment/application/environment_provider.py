@@ -4,11 +4,11 @@ from typing import Dict
 from healthcheck import EnvironmentDump
 from meiga import Result, Error, Success, Failure
 
+from petisco.application.petisco import Petisco
 from petisco.modules.environment.domain.environment_provider_error import (
     EnvironmentProviderError,
 )
 from petisco.use_case.use_case import UseCase
-from petisco.application.application_config import ApplicationConfig
 
 
 class EnvironmentProvider(UseCase):
@@ -22,9 +22,9 @@ class EnvironmentProvider(UseCase):
         self.include_os = include_os
         self.include_process = include_process
 
-    def execute(self, application_config: ApplicationConfig) -> Result[Dict, Error]:
+    def execute(self, petisco: Petisco) -> Result[Dict, Error]:
         try:
-            application_info = {"config": application_config.info}
+            application_info = {"config": petisco.info}
             envdump = EnvironmentDump(
                 include_python=self.include_python,
                 include_os=self.include_os,

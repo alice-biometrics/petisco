@@ -15,6 +15,7 @@ class ConfigInfrastructure:
     repositories_provider_func: Optional[str] = None
     event_manager_provider_func: Optional[str] = None
     publish_deploy_event_func: Optional[bool] = False
+    event_topic: Optional[str] = None
 
     @property
     def config_dependencies(self):

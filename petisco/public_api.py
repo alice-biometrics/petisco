@@ -5,7 +5,7 @@
 
 # Classes
 
-from petisco.application.application_config import ApplicationConfig
+from petisco.application.config.config import Config
 from petisco.application.interface_repository import IRepository
 from petisco.application.interface_service import IService
 from petisco.application.petisco import Petisco
@@ -40,7 +40,6 @@ from petisco.events.interface_event_manager import IEventManager
 from petisco.events.not_implemented_event_manager import NotImplementedEventManager
 
 classes = [
-    "ApplicationConfig",
     "IService",
     "IRepository",
     "UseCase",
@@ -71,6 +70,7 @@ classes = [
     "AggregateRoot",
     "Petisco",
     "IApplication",
+    "Config",
 ]
 
 # Controllers & Use Cases

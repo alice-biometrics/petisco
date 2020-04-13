@@ -18,7 +18,6 @@ def test_should_return_200_when_call_healthcheck_with_happy_path(client):
     assert response.status_code == 200
     assert "app_name" in response.json
     assert "app_version" in response.json
-    assert "mode" in response.json
     assert (
         "persistence_available" in response.json
         and response.json["persistence_available"] is True

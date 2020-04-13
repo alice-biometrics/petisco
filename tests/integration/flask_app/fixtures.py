@@ -2,13 +2,12 @@ import os
 
 import pytest
 from sqlalchemy import create_engine
+from petisco import SqlAlchemyPersistence, Petisco
 
-from petisco import FlaskApplication, SqlAlchemyPersistence
+from tests.integration.flask_app.toy_app import petisco_config
 
-SWAGGER_DIR = os.path.dirname(os.path.abspath(__file__)) + "/toy_app/"
-app = FlaskApplication(
-    application_name="petisco", swagger_dir=SWAGGER_DIR, config_file="swagger.yaml"
-).get_app()
+petisco_config()
+app = Petisco.get_instance().get_app()
 
 
 @pytest.fixture
