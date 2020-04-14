@@ -7,5 +7,9 @@ from tests.integration.flask_app.toy_app.infrastructure.repositories.sql_user_re
 
 
 def repositories_provider() -> Dict[str, IRepository]:
-    return {"user": SqlUserRepository(session_scope=Petisco.persistence_session_scope(),
-                                      user_model=Petisco.persistence_models().get("user"))}
+    return {
+        "user": SqlUserRepository(
+            session_scope=Petisco.persistence_session_scope(),
+            user_model=Petisco.persistence_models().get("user"),
+        )
+    }

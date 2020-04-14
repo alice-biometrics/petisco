@@ -157,13 +157,16 @@ class Petisco(metaclass=Singleton):
         persistence_models = {}
         try:
             persistence_models = Petisco.get_instance()._persistence_models
-        except:
+        except:  # noqa E722
             pass
         return persistence_models
 
     @staticmethod
     def persistence_session_scope():
-        from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import session_scope
+        from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import (
+            session_scope,
+        )
+
         return session_scope
 
     @staticmethod

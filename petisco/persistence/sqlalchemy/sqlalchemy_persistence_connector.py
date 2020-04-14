@@ -1,5 +1,3 @@
-from typing import Callable
-
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence import SqlAlchemyPersistence
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence_config import (
@@ -8,10 +6,7 @@ from petisco.persistence.sqlalchemy.sqlalchemy_persistence_config import (
 
 
 class SqlAlchemyPersistenceConnector(IPersistenceConnector):
-    def __init__(
-        self,
-        config: SqlAlchemyPersistenceConfig,
-    ):
+    def __init__(self, config: SqlAlchemyPersistenceConfig):
         self.config = config
 
     def get_connection(self):

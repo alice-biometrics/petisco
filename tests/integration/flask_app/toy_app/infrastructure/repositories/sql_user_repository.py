@@ -55,7 +55,11 @@ class SqlUserRepository(IUserRepository):
 
     def exists(self, user_id: UserId) -> Result[bool, Error]:
         with self.session_scope() as session:
-            user = session.query(self.UserModel).filter(self.UserModel.user_id == user_id).first()
+            user = (
+                session.query(self.UserModel)
+                .filter(self.UserModel.user_id == user_id)
+                .first()
+            )
             if user:
                 return isSuccess
             return Failure(UserNotFoundError(user_id))
