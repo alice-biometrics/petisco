@@ -2,7 +2,8 @@ import pytest
 
 from typing import Dict
 
-from petisco.application.application_config import ApplicationConfig
+from petisco.application.config.config import Config
+from petisco.application.petisco import Petisco
 from petisco.security.token_manager.jwt_token_builder import JwtTokenBuilder
 
 
@@ -112,5 +113,5 @@ def given_any_header_with_valid_token_with_user_id(
 
 
 @pytest.fixture
-def given_any_application_config():
-    return ApplicationConfig(app_name="petisco", app_version="1.0.0", mode="DEPLOY")
+def given_any_petisco():
+    return Petisco(config=Config(app_name="petisco", app_version="1.0.0"))

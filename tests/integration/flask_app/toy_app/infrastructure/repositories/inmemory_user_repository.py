@@ -24,7 +24,7 @@ class InMemoryUserRepository(IUserRepository):
         self.users[f"{user.client_id}_{user.user_id}"] = user
         return isSuccess
 
-    def find(self, client_id: ClientId, user_id: UserId) -> Result[User, Error]:
+    def retrieve(self, client_id: ClientId, user_id: UserId) -> Result[User, Error]:
         if f"{client_id}_{user_id}" in self.users:
             return Success(self.users[f"{client_id}_{user_id}"])
         else:

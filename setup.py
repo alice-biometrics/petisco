@@ -21,6 +21,9 @@ setup(
     author="ALiCE Biometrics",
     author_email="support@alicebiometrics.com",
     license="MIT",
+    entry_points={
+        "console_scripts": ["petisco = petisco.application.cli.petisco:main"]
+    },
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
@@ -29,6 +32,8 @@ setup(
     packages=[
         "petisco",
         "petisco/application",
+        "petisco/application/config",
+        "petisco/application/cli",
         "petisco/commands",
         "petisco/controller",
         "petisco/controller/errors",
@@ -40,6 +45,7 @@ setup(
         "petisco/events/redis",
         "petisco/events/rabbitmq",
         "petisco/fixtures",
+        "petisco/frameworks",
         "petisco/frameworks/flask",
         "petisco/frameworks/flask/application",
         "petisco/logger",

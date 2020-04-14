@@ -7,8 +7,8 @@ from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
 )
-from petisco.domain.errors.input_exceed_lenght_limit_error import (
-    InputExceedLengthLimitError,
+from petisco.domain.errors.exceed_length_limit_value_error_error import (
+    ExceedLengthLimitValueObjectError,
 )
 
 
@@ -37,7 +37,7 @@ def test_should_declare_a_name_that_exceeds_default_length_limits():
     )
 
     assert_failure(
-        client_id.to_result(), value_is_instance_of=InputExceedLengthLimitError
+        client_id.to_result(), value_is_instance_of=ExceedLengthLimitValueObjectError
     )
 
 

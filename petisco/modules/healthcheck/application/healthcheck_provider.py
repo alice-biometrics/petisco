@@ -2,21 +2,17 @@ from typing import Dict
 
 from meiga import Result, Error, Failure, Success
 
+from petisco.application.petisco import Petisco
 from petisco.use_case.use_case import UseCase
-from petisco.application.application_config import ApplicationConfig
 from petisco.modules.healthcheck.domain.persistence_error import PersistenceError
 
 
 class HealthcheckProvider(UseCase):
-    def execute(self, application_config: ApplicationConfig) -> Result[Dict, Error]:
+    def execute(self, petisco: Petisco) -> Result[Dict, Error]:
 
-        healthcheck = {
-            "app_name": application_config.app_name,
-            "app_version": application_config.app_version,
-            "mode": application_config.mode,
-        }
+        healthcheck = {"app_name": petisco.app_name, "app_version": petisco.app_version}
 
-        if application_config.persistence_configured:
+        if petisco.persistence_configured:
             from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import (
                 session_scope,
             )

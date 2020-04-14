@@ -5,19 +5,25 @@
 
 # Classes
 
-from petisco.application.application_config import ApplicationConfig
-from petisco.application.repository import Repository
-from petisco.application.service import Service
+from petisco.application.config.config import Config
+from petisco.application.interface_repository import IRepository
+from petisco.application.interface_service import IService
+from petisco.application.petisco import Petisco
 from petisco.application.singleton import Singleton
 from petisco.commands.command_handler import command_handler
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.domain.aggregate_roots.info_id import InfoId
+from petisco.domain.errors.empty_value_object_error import EmptyValueObjectError
+from petisco.domain.errors.exceed_length_limit_value_error_error import (
+    ExceedLengthLimitValueObjectError,
+)
 from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.value_objects.value_object import ValueObject
 from petisco.events.event_config import EventConfig
+from petisco.frameworks.interface_application import IApplication
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
@@ -38,9 +44,8 @@ from petisco.events.interface_event_manager import IEventManager
 from petisco.events.not_implemented_event_manager import NotImplementedEventManager
 
 classes = [
-    "ApplicationConfig",
-    "Service",
-    "Repository",
+    "IService",
+    "IRepository",
     "UseCase",
     "use_case_handler",
     "controller_handler",
@@ -67,6 +72,11 @@ classes = [
     "InfoId",
     "EventConfig",
     "AggregateRoot",
+    "Petisco",
+    "IApplication",
+    "Config",
+    "EmptyValueObjectError",
+    "ExceedLengthLimitValueObjectError",
 ]
 
 # Controllers & Use Cases

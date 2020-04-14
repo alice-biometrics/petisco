@@ -1,6 +1,3 @@
-from .application_setup import application_setup
+from tests.integration.flask_app.toy_app.__main__ import petisco_config
 
-__app_name__ = "toy-app"
-__app_version__ = "1.0.0"
-
-application_setup(__app_name__, __app_version__)
+petisco_config()

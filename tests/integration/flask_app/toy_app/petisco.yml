@@ -1,0 +1,19 @@
+app:
+  name: toy-app
+  version: 1.0.0
+framework:
+    selected_framework: flask
+    config_file: swagger.yaml
+    port: 8080
+logger:
+    selected_logger: not_implemented_logger
+persistence:
+  config_func: tests.integration.flask_app.toy_app.config.config_persistence.config_persistence
+  models:
+    user: tests.integration.flask_app.toy_app.infrastructure.repositories.user_model.UserModel
+infrastructure:
+   services_provider_func: tests.integration.flask_app.toy_app.config.services_provider.services_provider
+   repositories_provider_func: tests.integration.flask_app.toy_app.config.repositories_provider.repositories_provider
+   event_manager_provider_func: tests.integration.flask_app.toy_app.config.event_manager_provider.event_manager_provider
+   publish_deploy_event_func: True
+   event_topic: toy-app

@@ -2,7 +2,7 @@ from typing import Dict
 
 from meiga import Result, Error
 
-from petisco.application.application_config import ApplicationConfig
+from petisco.application.petisco import Petisco
 from petisco.controller.controller_handler import controller_handler
 from petisco.controller.errors.http_error import HttpError
 from petisco.modules.environment.application.environment_provider import (
@@ -36,4 +36,4 @@ def error_handler(result: Result) -> HttpError:
     success_handler=lambda result: (result.value, 200), error_handler=error_handler
 )
 def environment() -> Result[Dict, Error]:
-    return EnvironmentProvider().execute(ApplicationConfig.get_instance())
+    return EnvironmentProvider().execute(Petisco.get_instance())

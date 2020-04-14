@@ -3,10 +3,10 @@ from typing import Dict
 
 from meiga import Result, Error, NotImplementedMethodError
 
-from petisco.application.service import Service
+from petisco.application.interface_service import IService
 
 
-class ISumService(Service):
+class ISumService(IService):
     __metaclass__ = ABCMeta
 
     def info(self) -> Dict:

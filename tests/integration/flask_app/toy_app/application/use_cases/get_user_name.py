@@ -13,7 +13,7 @@ class GetUserName(UseCase):
         self.user_repository = user_repository
 
     def execute(self, info_id: InfoId) -> Result[Name, Error]:
-        user = self.user_repository.find(
+        user = self.user_repository.retrieve(
             client_id=info_id.client_id, user_id=info_id.user_id
         ).unwrap_or_return()
         return Success(user.name)
