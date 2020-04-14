@@ -10,6 +10,9 @@ VERSION = open("petisco/VERSION", "r").read()
 with open(os.path.join(CURRENT_DIR, "README.md")) as fid:
     README = fid.read()
 
+with open('requirements/requirements.txt') as f:
+    required = f.read().splitlines()
+
 setup(
     name=PACKAGE_NAME,
     version=VERSION,
@@ -21,6 +24,7 @@ setup(
     author="ALiCE Biometrics",
     author_email="support@alicebiometrics.com",
     license="MIT",
+    install_requires=required,
     entry_points={
         "console_scripts": ["petisco = petisco.application.cli.petisco:main"]
     },
