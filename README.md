@@ -10,8 +10,10 @@ Petisco is a framework for helping Python developers to build clean Applications
 ## Table of Contents
 - [Installation :computer:](#installation-computer)
 - [Getting Started :chart_with_upwards_trend:](#getting-started-chart_with_upwards_trend)
-    * [ApplicationConfig](#applicationconfig)
+    * [Flask Application (by petisco :cookie:)](#flask-application-by-petisco-cookie)
+    * [Configure your Application :rocket:](#configure-your-application-rocket)
     * [Handlers](#handlers)
+      - [Controller Handler](#controller-handler)
     * [Model your Domain](#model-your-domain)
       - [Value Objects](#value-objects)
       - [Events](#events)
@@ -40,42 +42,42 @@ pip install petisco[flask,sqlalchemy,redis,rabbitmq,fixtures]
 
 ## Getting Started :chart_with_upwards_trend:	
 
-**petisco** provides us some sort of interfaces and decorators to help on the development of clean architecture Applications.
+### Flask Application (by Petisco :cookie:)
 
-### ApplicationConfig
+Check the following repo to learn how to use petisco with flask: 
 
-Before to run your app, you should configure it with `ApplicationConfig` object.
+[petisco-task-manager](https://github.com/alice-biometrics/petisco-task-manager)
 
-`ApplicationConfig` is a singleton with the following parameters:
+### Configure your Application :rocket:
 
-    Parameters
-    ----------
-    app_name
-        Application Name
-    app_version
-        Application Version
-    mode
-        DeploymentMode define the toy_app mode of execution. If you're mapping services and repositories, please
-        check given mode is mapped in services_mode_mapper and repositories_mode_mapper
-    logger
-        Pre configured logger
-    config_dependencies
-        Callable function to configure dependencies (e.g configure credentials in order to connect with a thrid-party
-        toy_app.
-    config_persistence
-        Callable function to configure toy_app persistence (e.g configure a database)
-    services_mode_mapper
-        A dictionary to map DeploymentMode with a service provider function. This is used as a dependency injector
-    repositories_mode_mapper
-        A dictionary to map DeploymentMode with a repository provider function. This is used as a dependency injector
-    event_manager
-        A IEventManager valid implementation
-    options
-        A dictionary with specific toy_app options
+Configure your app using the `petisco.yml`
 
-
-Check a configuration example in the [Integration Tests](tests/integration/toy_app/application_setup.py)
-
+```yaml
+app:
+  name: taskmanager
+  version:
+    from_file: VERSION
+framework:
+    selected_framework: flask
+    config_file: swagger.yaml
+    port: 8080
+    port_env: PETISCO_PORT
+logger:
+    selected_logger: logging
+    name: petisco
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    config_func: taskmanager.src.config.logging_config_func.logging_config_func
+persistence:
+  config_func: taskmanager.src.config.config_persistence.config_persistence
+  models:
+    task: taskmanager.src.modules.tasks.infrastructure.persistence.models.task_model.TaskModel
+infrastructure:
+   services_provider_func: taskmanager.src.config.services_provider.services_provider
+   repositories_provider_func: taskmanager.src.config.repositories_provider.repositories_provider
+   event_manager_provider_func: taskmanager.src.config.event_manager_provider.event_manager_provider
+   publish_deploy_event_func: True
+   event_topic: taskmanager
+```
 
 ### Handlers
 
@@ -117,8 +119,8 @@ Add it to your entry point controller and manage the behaviour:
         Injectable function to provide headers. By default is used headers_provider
     logging_types_blacklist
         Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
-    application_config
-        Use ApplicationConfig to set params as: app_name, app_version, logger, or event_manager (EventConfig)
+    petisco
+        Use Petisco to set params as: app_name, app_version, logger, or event_manager (EventConfig)
 
 ### Model your Domain
 
