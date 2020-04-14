@@ -44,9 +44,7 @@ pip install petisco[flask,sqlalchemy,redis,rabbitmq,fixtures]
 
 ### Flask Application (by Petisco :cookie:)
 
-Check the following repo to learn how to use petisco with flask: 
-
-[petisco-task-manager](https://github.com/alice-biometrics/petisco-task-manager)
+Check the following repo to learn how to use petisco with flask: [petisco-task-manager](https://github.com/alice-biometrics/petisco-task-manager)
 
 ### Configure your Application :rocket:
 
