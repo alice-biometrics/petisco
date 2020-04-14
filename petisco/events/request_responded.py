@@ -1,3 +1,4 @@
+import inspect
 import json
 from typing import Tuple, Dict
 
@@ -65,15 +66,24 @@ class RequestResponded(Event):
         super().__init__()
 
     def set_http_response(self, http_response):
-        _http_response = {
-            "content": json.dumps(REQUEST_RESPONDED_UNWRAP_ERROR),
-            "status_code": 500,
-        }
-        if isinstance(http_response, Tuple):
-            _http_response["content"] = get_content(http_response[0])
-            _http_response["status_code"] = http_response[1]
-        else:
-            _http_response["content"] = get_content(http_response)
-            _http_response["status_code"] = http_response.status_code
-
+        try:
+            _http_response = {
+                "content": json.dumps(REQUEST_RESPONDED_UNWRAP_ERROR),
+                "status_code": 500,
+            }
+            if isinstance(http_response, Tuple):
+                _http_response["content"] = get_content(http_response[0])
+                _http_response["status_code"] = http_response[1]
+            else:
+                _http_response["content"] = get_content(http_response)
+                _http_response["status_code"] = http_response.status_code
+        except Exception as e:  # noqa E722
+            frame_info = inspect.stack()[1]
+            raise ImportError(
+                f"Error parsing response on Petisco RequestResponded Event\n"
+                f"\tfilename: {frame_info.filename}\n"
+                f"\tlineno: {frame_info.lineno}\n"
+                f"\tfunction: {frame_info.function}\n"
+                f"\tcode_context: {frame_info.code_context}"
+            )
         self.http_response = _http_response
