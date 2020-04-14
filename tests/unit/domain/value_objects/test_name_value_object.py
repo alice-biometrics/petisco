@@ -5,8 +5,8 @@ from meiga.decorators import meiga
 
 from petisco.domain.value_objects.name import Name
 from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
-from petisco.domain.errors.input_exceed_lenght_limit_error import (
-    InputExceedLengthLimitError,
+from petisco.domain.errors.exceed_length_limit_value_error_error import (
+    ExceedLengthLimitValueObjectError,
 )
 
 
@@ -27,7 +27,9 @@ def test_should_declare_a_name_that_exceeds_default_length_limits():
         'Rosalia de Castro: "Adios rios adios fontes; adios, regatos pequenos; adios, vista dos meus ollos: non sei cando nos veremos."'
     )
 
-    assert_failure(name.to_result(), value_is_instance_of=InputExceedLengthLimitError)
+    assert_failure(
+        name.to_result(), value_is_instance_of=ExceedLengthLimitValueObjectError
+    )
 
 
 @pytest.mark.unit
@@ -93,4 +95,4 @@ def test_should_fail_when_declare_an_empty_name_and_call_guard():
         return Success(user_id)
 
     result = controller()
-    assert_failure(result, value_is_instance_of=InputExceedLengthLimitError)
+    assert_failure(result, value_is_instance_of=ExceedLengthLimitValueObjectError)

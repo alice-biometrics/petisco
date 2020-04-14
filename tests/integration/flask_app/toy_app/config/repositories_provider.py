@@ -1,11 +1,11 @@
 from typing import Dict
 
-from petisco import IRepository
+from petisco import IRepository, Petisco
+from tests.integration.flask_app.toy_app.infrastructure.repositories.sql_user_repository import (
+    SqlUserRepository,
+)
 
 
 def repositories_provider() -> Dict[str, IRepository]:
-    from tests.integration.flask_app.toy_app.infrastructure.repositories.sql_user_repository import (
-        SqlUserRepository,
-    )
-
-    return {"user": SqlUserRepository()}
+    return {"user": SqlUserRepository(session_scope=Petisco.persistence_session_scope(),
+                                      user_model=Petisco.persistence_models().get("user"))}

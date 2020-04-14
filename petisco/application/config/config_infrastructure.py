@@ -10,7 +10,6 @@ from petisco.application.config.get_funtion_from_string import get_function_from
 @dataclass
 class ConfigInfrastructure:
     config_dependencies_func: Optional[str] = None
-    config_persistence_func: Optional[str] = None
     services_provider_func: Optional[str] = None
     repositories_provider_func: Optional[str] = None
     event_manager_provider_func: Optional[str] = None

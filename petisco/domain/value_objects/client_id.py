@@ -7,8 +7,8 @@ from petisco.domain.value_objects.value_object import ValueObject
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
 )
-from petisco.domain.errors.input_exceed_lenght_limit_error import (
-    InputExceedLengthLimitError,
+from petisco.domain.errors.exceed_length_limit_value_error_error import (
+    ExceedLengthLimitValueObjectError,
 )
 
 
@@ -23,7 +23,7 @@ class ClientId(str, ValueObject):
 
         if client_id is not None:
             if len(client_id) > self.max_length:
-                return Failure(InputExceedLengthLimitError(message=client_id))
+                return Failure(ExceedLengthLimitValueObjectError(message=client_id))
             else:
                 if not re.search(
                     r"^[a-zA-Z]*(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", client_id

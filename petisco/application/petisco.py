@@ -12,7 +12,6 @@ from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.logger.not_implemented_logger import NotImplementedLogger
 
-
 DEPLOY_TOPIC = "deploy"
 
 
@@ -27,6 +26,7 @@ class Petisco(metaclass=Singleton):
     event_manager_provider: Callable = None
     options: Dict[str, Any] = None
     info: Dict = None
+    _persistence_models: Dict[str, Any] = False
     persistence_configured: bool = False
     config: Config = None
     event_topic: str = None
@@ -37,6 +37,7 @@ class Petisco(metaclass=Singleton):
         self.app_version = config.app_version
         self.logger = config.get_logger()
         self.info = {}
+        self.set_persistence(config)
         self.set_infrastructure(config)
         self.options = config.options
 
@@ -83,15 +84,22 @@ class Petisco(metaclass=Singleton):
 
         return Petisco(config=config)
 
+    def set_persistence(self, config):
+        config_persistence = config.config_persistence
+
+        if config_persistence.config:
+            config_persistence.config()
+            self.persistence_configured = True
+
+        self._persistence_models = config_persistence.get_models()
+
     def set_infrastructure(self, config):
         config_infrastructure = config.config_infrastructure
         if not config_infrastructure:
             return
         if config_infrastructure.config_dependencies:
             config_infrastructure.config_dependencies()
-        if config_infrastructure.config_persistence:
-            config_infrastructure.config_persistence()
-            self.persistence_configured = True
+
         if config_infrastructure.services_provider:
             self.services_provider = config_infrastructure.services_provider
 
@@ -100,7 +108,9 @@ class Petisco(metaclass=Singleton):
                 if hasattr(service, "info"):
                     info_services[key] = service.info()
                 else:
-                    raise TypeError(f"{key} must implement info")
+                    raise TypeError(
+                        f"Service with key {key} ({type(service)}) must implement info"
+                    )
             self.info["services"] = info_services
         if config_infrastructure.repositories_provider:
             self.repositories_provider = config_infrastructure.repositories_provider
@@ -110,7 +120,10 @@ class Petisco(metaclass=Singleton):
                 if hasattr(repository, "info"):
                     info_repositories[key] = repository.info()
                 else:
-                    raise TypeError(f"{key} must implement info")
+                    raise TypeError(
+                        f"Repository with key {key} ({type(repository)}) must implement info"
+                    )
+
             self.info["repositories"] = info_repositories
         if config_infrastructure.event_manager_provider:
             self.event_manager_provider = config_infrastructure.event_manager_provider
@@ -118,7 +131,9 @@ class Petisco(metaclass=Singleton):
             if hasattr(event_manager, "info"):
                 self.info["event_managers"] = event_manager.info()
             else:
-                raise TypeError(f"Given event_manager must implement info")
+                raise TypeError(
+                    f"Given event_manager ({type(event_manager)}) must implement info"
+                )
 
         if config_infrastructure.event_topic:
             self.event_topic = config_infrastructure.event_topic
@@ -136,6 +151,20 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def repositories() -> DotMap:
         return DotMap(Petisco.get_instance().repositories_provider())
+
+    @staticmethod
+    def persistence_models() -> DotMap:
+        persistence_models = {}
+        try:
+            persistence_models = Petisco.get_instance()._persistence_models
+        except:
+            pass
+        return persistence_models
+
+    @staticmethod
+    def persistence_session_scope():
+        from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import session_scope
+        return session_scope
 
     @staticmethod
     def event_manager() -> IEventManager:

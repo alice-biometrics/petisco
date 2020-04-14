@@ -15,5 +15,5 @@ class IUserRepository(IRepository):
     def save(self, user: User) -> Result[bool, Error]:
         return NotImplementedMethodError
 
-    def find(self, client_id: ClientId, user_id: UserId) -> Result[User, Error]:
+    def retrieve(self, client_id: ClientId, user_id: UserId) -> Result[User, Error]:
         return NotImplementedMethodError

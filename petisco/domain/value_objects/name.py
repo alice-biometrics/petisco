@@ -5,8 +5,8 @@ from meiga import Result, Error, Failure, Success
 
 from petisco.domain.value_objects.value_object import ValueObject
 from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
-from petisco.domain.errors.input_exceed_lenght_limit_error import (
-    InputExceedLengthLimitError,
+from petisco.domain.errors.exceed_length_limit_value_error_error import (
+    ExceedLengthLimitValueObjectError,
 )
 
 
@@ -21,7 +21,7 @@ class Name(str, ValueObject):
 
         if name is not None:
             if len(self) > self.length_limit:
-                return Failure(InputExceedLengthLimitError(message=name))
+                return Failure(ExceedLengthLimitValueObjectError(message=name))
             else:
                 if not re.search(r"^[\w]*(([',. -][\s]?[\w]?)?[\w]*)*$", name):
                     return Failure(GivenNameIsNotValidError(message=name))

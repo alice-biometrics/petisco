@@ -7,6 +7,7 @@ from meiga import Result, Error, Failure, Success
 from meiga.decorators import meiga
 from yaml.parser import ParserError, ScannerError
 
+from petisco.application.config.config_persistence import ConfigPersistence
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import ILogger
 from petisco.logger.logging_based_logger import LoggingBasedLogger
@@ -30,6 +31,7 @@ class Config:
         petisco_yml_folder: str = None,
         config_framework: ConfigFramework = None,
         config_logger: ConfigLogger = None,
+        config_persistence: ConfigPersistence = None,
         config_infrastructure: ConfigInfrastructure = None,
         options: Dict = None,
     ):
@@ -38,6 +40,7 @@ class Config:
         self.petisco_yml_folder = petisco_yml_folder
         self.config_framework = config_framework
         self.config_logger = config_logger
+        self.config_persistence = config_persistence
         self.config_infrastructure = config_infrastructure
         self.options = options
 
@@ -63,13 +66,17 @@ class Config:
         petisco_yml_folder = yaml_dict.get("petisco_yml_folder")
         app_config = yaml_dict.get("app")
         app_name = app_config.get("name")
-        app_version = Config.get_version(petisco_yml_folder, app_config.get("version")).unwrap_or_return()
+        app_version = Config.get_version(
+            petisco_yml_folder, app_config.get("version")
+        ).unwrap_or_return()
 
         config_framework = ConfigFramework.from_dict(yaml_dict.get("framework"))
 
         config_logger = Config.get_config_logger(
             yaml_dict.get("logger")
         ).unwrap_or_return()
+
+        config_persistence = ConfigPersistence.from_dict(yaml_dict.get("persistence"))
 
         config_infrastructure = ConfigInfrastructure.from_dict(
             yaml_dict.get("infrastructure")
@@ -85,6 +92,7 @@ class Config:
                 config_framework=config_framework,
                 config_logger=config_logger,
                 config_infrastructure=config_infrastructure,
+                config_persistence=config_persistence,
                 options=options,
             )
         )

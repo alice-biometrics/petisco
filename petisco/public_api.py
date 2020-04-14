@@ -13,6 +13,10 @@ from petisco.application.singleton import Singleton
 from petisco.commands.command_handler import command_handler
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.domain.aggregate_roots.info_id import InfoId
+from petisco.domain.errors.empty_value_object_error import EmptyValueObjectError
+from petisco.domain.errors.exceed_length_limit_value_error_error import (
+    ExceedLengthLimitValueObjectError,
+)
 from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.value_objects.user_id import UserId
@@ -71,6 +75,8 @@ classes = [
     "Petisco",
     "IApplication",
     "Config",
+    "EmptyValueObjectError",
+    "ExceedLengthLimitValueObjectError",
 ]
 
 # Controllers & Use Cases
