@@ -7,10 +7,11 @@ from petisco.persistence.sqlalchemy.sqlalchemy_persistence_config import (
 
 
 class SqlAlchemyPersistenceConnector(IPersistenceConnector):
-    def __init__(self,
-                 config: SqlAlchemyPersistenceConfig,
-                 import_database_models: Callable = None,
-):
+    def __init__(
+        self,
+        config: SqlAlchemyPersistenceConfig,
+        import_database_models: Callable = None,
+    ):
         self.config = config
         self.import_database_models = import_database_models
 
