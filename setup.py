@@ -10,7 +10,7 @@ VERSION = open("petisco/VERSION", "r").read()
 with open(os.path.join(CURRENT_DIR, "README.md")) as fid:
     README = fid.read()
 
-with open('requirements/requirements.txt') as f:
+with open("requirements/requirements.txt") as f:
     required = f.read().splitlines()
 
 setup(
