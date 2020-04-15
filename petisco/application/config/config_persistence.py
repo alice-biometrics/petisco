@@ -32,3 +32,4 @@ class ConfigPersistence:
                 __import__(mod_name, fromlist=[model_name])
 
         return _import_database_models_func
+

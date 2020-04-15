@@ -8,4 +8,5 @@ def config_persistence(import_database_models: Callable):
     persistence_connector = SqlAlchemyPersistenceConnector(
         config=config, import_database_models=import_database_models
     )
+
     persistence_connector.execute()
