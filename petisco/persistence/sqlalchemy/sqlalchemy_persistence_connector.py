@@ -7,8 +7,13 @@ from petisco.persistence.sqlalchemy.sqlalchemy_persistence_config import (
 
 
 class SqlAlchemyPersistenceConnector(IPersistenceConnector):
-    def __init__(self, config: SqlAlchemyPersistenceConfig):
+    def __init__(
+        self,
+        config: SqlAlchemyPersistenceConfig,
+        import_database_models: Callable = None,
+    ):
         self.config = config
+        self.import_database_models = import_database_models
 
     def get_connection(self):
         connection = None
@@ -36,6 +41,8 @@ class SqlAlchemyPersistenceConnector(IPersistenceConnector):
         connection = self.get_connection()
 
         persistence = SqlAlchemyPersistence(base=declarative_base())
+
+        self.import_database_models()
 
         if connection:
             if self.config.server == "sqlite":
