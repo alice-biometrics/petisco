@@ -16,7 +16,6 @@ class CreateUser(UseCase):
         self.event_manager = event_manager
 
     def execute(self, info_id: InfoId, name: Name) -> Result[UserId, Error]:
-
         user = User.create(info_id, name)
         self.user_repository.save(user).unwrap_or_return()
         self.event_manager.publish_list(

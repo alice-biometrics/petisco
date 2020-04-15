@@ -24,3 +24,11 @@ class ConfigPersistence:
             mod = importlib.import_module(mod_name)
             loaded_models[name] = getattr(mod, model_name)
         return loaded_models
+
+    def get_import_database_models_func(self):
+        def _import_database_models_func():
+            for name, model_string in self.models.items():
+                mod_name, model_name = model_string.rsplit(".", 1)
+                __import__(mod_name, fromlist=[model_name])
+
+        return _import_database_models_func
