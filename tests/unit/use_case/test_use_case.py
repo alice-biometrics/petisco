@@ -92,7 +92,7 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters():
         INFO,
         LogMessageMother.get_use_case(
             operation="MyUseCase",
-            message={"client_id": "client_id", "user_id": "user_id"},
+            message='{"client_id": "client_id", "user_id": "user_id"}',
         ).to_json(),
     )
     assert third_logging_message == (

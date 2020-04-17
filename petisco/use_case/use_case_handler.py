@@ -1,4 +1,5 @@
 from typing import List, Any
+import json
 
 from meiga import Result
 from meiga.decorators import meiga
@@ -47,7 +48,7 @@ class _UseCaseHandler:
                     ]
 
                     if loggable_kwargs:
-                        log_message.message = dict(loggable_kwargs)
+                        log_message.message = json.dumps(dict(loggable_kwargs))
                         self.logger.log(INFO, log_message.to_json())
 
                 result = self._run_execute(*args, **kwargs)
