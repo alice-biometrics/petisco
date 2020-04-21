@@ -43,10 +43,20 @@ def main():
         "-v", "--version", action="store_true", help="show petisco version number."
     )
     parser.add_argument(
-        "-rt", "--rename-template", action="store", dest="rename_template_replacement", default=None, help="Rename a petisco service template."
+        "-rt",
+        "--rename-template",
+        action="store",
+        dest="rename_template_replacement",
+        default=None,
+        help="Rename a petisco service template.",
     )
     parser.add_argument(
-        "-tn", "--original-template-name", action="store", dest="original_template_name", default="taskmanager", help="Rename a petisco service template."
+        "-tn",
+        "--original-template-name",
+        action="store",
+        dest="original_template_name",
+        default="taskmanager",
+        help="Rename a petisco service template.",
     )
 
     args = parser.parse_args()
@@ -59,6 +69,10 @@ def main():
             return
 
         if args.rename_template_replacement:
-            print(f"petisco 🍪 => Changing {args.original_template_name} for {args.rename_template_replacement}...")
-            rename_template(args.original_template_name, args.rename_template_replacement)
+            print(
+                f"petisco 🍪 => Changing {args.original_template_name} for {args.rename_template_replacement}..."
+            )
+            rename_template(
+                args.original_template_name, args.rename_template_replacement
+            )
             return

@@ -45,8 +45,10 @@ class SqlAlchemyPersistenceConnector(IPersistenceConnector):
         self.import_database_models()
 
         if not connection:
-            raise ConnectionError("Petisco SqlAlchemyPersistenceConnector is not configured. "
-                                  "Please check SqlAlchemyPersistenceConfig and add required values")
+            raise ConnectionError(
+                "Petisco SqlAlchemyPersistenceConnector is not configured. "
+                "Please check SqlAlchemyPersistenceConfig and add required values"
+            )
 
         if self.config.server == "sqlite":
             engine = create_engine(

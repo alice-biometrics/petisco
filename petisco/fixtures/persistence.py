@@ -2,10 +2,13 @@ import os
 
 import pytest
 
+
 @pytest.fixture
 def petisco_sql_database(execution_path):
     from sqlalchemy import create_engine
-    from petisco.persistence.sqlalchemy.sqlalchemy_persistence import SqlAlchemyPersistence
+    from petisco.persistence.sqlalchemy.sqlalchemy_persistence import (
+        SqlAlchemyPersistence,
+    )
 
     sql_database = os.environ.get("SQL_DATABASE")
     if not sql_database:
@@ -26,4 +29,3 @@ def petisco_sql_database(execution_path):
     session.close()
     Base.metadata.drop_all(bind=engine)
     os.remove(os.path.join(execution_path, sql_database))
-
