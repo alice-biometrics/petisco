@@ -44,23 +44,26 @@ class SqlAlchemyPersistenceConnector(IPersistenceConnector):
 
         self.import_database_models()
 
-        if connection:
-            if self.config.server == "sqlite":
-                engine = create_engine(
-                    connection,
-                    json_serializer=lambda obj: obj,
-                    json_deserializer=lambda obj: obj,
-                )
-            else:
-                engine = create_engine(
-                    connection,
-                    pool_pre_ping=True,
-                    json_serializer=lambda obj: obj,
-                    json_deserializer=lambda obj: obj,
-                )
+        if not connection:
+            raise ConnectionError("Petisco SqlAlchemyPersistenceConnector is not configured. "
+                                  "Please check SqlAlchemyPersistenceConfig and add required values")
 
-            if not database_exists(engine.url):
-                create_database(engine.url)
-                persistence.base.metadata.create_all(engine)
+        if self.config.server == "sqlite":
+            engine = create_engine(
+                connection,
+                json_serializer=lambda obj: obj,
+                json_deserializer=lambda obj: obj,
+            )
+        else:
+            engine = create_engine(
+                connection,
+                pool_pre_ping=True,
+                json_serializer=lambda obj: obj,
+                json_deserializer=lambda obj: obj,
+            )
 
-            persistence.session = sessionmaker(bind=engine)
+        if not database_exists(engine.url):
+            create_database(engine.url)
+            persistence.base.metadata.create_all(engine)
+
+        persistence.session = sessionmaker(bind=engine)
