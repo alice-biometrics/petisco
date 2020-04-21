@@ -76,7 +76,10 @@ class Config:
             yaml_dict.get("logger")
         ).unwrap_or_return()
 
-        config_persistence = ConfigPersistence.from_dict(yaml_dict.get("persistence"))
+        if yaml_dict.get("persistence"):
+            config_persistence = ConfigPersistence.from_dict(yaml_dict.get("persistence"))
+        else:
+            config_persistence = ConfigPersistence()
 
         config_infrastructure = ConfigInfrastructure.from_dict(
             yaml_dict.get("infrastructure")
