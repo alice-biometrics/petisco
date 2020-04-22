@@ -14,7 +14,7 @@ from petisco.modules.healthcheck.application.healthcheck_provider import (
 class PersistenceHttpError(HttpError):
     def __init__(
         self,
-        message: str = "Cannot connect with configured persistence",
+        message: str = "Cannot connect with configured persistence. If you are not using persistence, just delete it from petisco.yml",
         code: int = 503,
     ):
         self.message = message

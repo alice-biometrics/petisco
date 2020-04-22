@@ -1,4 +1,4 @@
-meiga>=1.2.4
+meiga>=1.2.7
 dataclasses==0.7;python_version<"3.7"
 dataclasses-json==0.3.8
 backports-datetime-fromisoformat>=1.0.0;python_version<"3.7"
