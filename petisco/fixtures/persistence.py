@@ -6,10 +6,10 @@ from petisco.application.petisco import Petisco
 
 
 @pytest.fixture
-def petisco_sql_database(execution_path="."):
-
-    if Petisco.get_instance().persistence_configured:
-
+def petisco_sql_database():
+    if not Petisco.get_instance().persistence_configured:
+        yield
+    else:
         from sqlalchemy import create_engine
         from petisco.persistence.sqlalchemy.sqlalchemy_persistence import (
             SqlAlchemyPersistence,
@@ -33,4 +33,4 @@ def petisco_sql_database(execution_path="."):
         session.rollback()
         session.close()
         Base.metadata.drop_all(bind=engine)
-        os.remove(os.path.join(execution_path, sql_database))
+        os.remove(sql_database)
