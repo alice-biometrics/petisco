@@ -77,6 +77,30 @@ infrastructure:
    event_topic: taskmanager
 ```
 
+If your app don't need persistence and repositories, you can remove it from the `petisco.yml`:
+
+```yaml
+app:
+  name: taskmanager-nopersistence
+  version:
+    from_file: VERSION
+framework:
+    selected_framework: flask
+    config_file: swagger.yaml
+    port: 8080
+    port_env: PETISCO_PORT
+logger:
+    selected_logger: logging
+    name: petisco
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    config_func: taskmanager.src.config.logging_config_func.logging_config_func
+infrastructure:
+   services_provider_func: taskmanager.src.config.services_provider.services_provider
+   event_manager_provider_func: taskmanager.src.config.event_manager_provider.event_manager_provider
+   publish_deploy_event_func: True
+   event_topic: taskmanager
+```
+
 ### Handlers
 
 **petisco** implement a sort of decorator to handle common behaviour of application elements.
