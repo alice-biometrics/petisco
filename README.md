@@ -190,6 +190,22 @@ Import useful petisco fixtures with :
 from petisco.fixtures import *
 ```
 
+We can use [petisco_client](petisco/fixtures/client.py) to simulate our client in acceptance tests
+
+```python
+import pytest
+
+@pytest.mark.acceptance
+def test_should_return_200_when_call_healthcheck(
+    petisco_client
+):
+    response = petisco_client.get("/petisco/environment")
+    assert response.status_code == 200
+```
+
+Included in *petisco_client* we can find [petisco_sql_database](petisco/fixtures/persistence.py).
+This fixture will create and connect a database and after the test this will be deleted.
+
 
 #### Extras
 
