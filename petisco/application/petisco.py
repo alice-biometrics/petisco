@@ -36,7 +36,7 @@ class Petisco(metaclass=Singleton):
         self.app_name = config.app_name
         self.app_version = config.app_version
         self.logger = config.get_logger()
-        self.info = {}
+        self.info = {"app_name": self.app_name, "app_version": self.app_version}
         self.set_persistence(config)
         self.set_infrastructure(config)
         self.options = config.options

@@ -77,7 +77,9 @@ class Config:
         ).unwrap_or_return()
 
         if yaml_dict.get("persistence"):
-            config_persistence = ConfigPersistence.from_dict(yaml_dict.get("persistence"))
+            config_persistence = ConfigPersistence.from_dict(
+                yaml_dict.get("persistence")
+            )
         else:
             config_persistence = ConfigPersistence()
 
@@ -121,7 +123,7 @@ class Config:
                     )
                 )
             version = open(version_filename, "r").read()
-            return Success(version)
+            return Success(version.rstrip("\n"))
 
     @staticmethod
     def get_config_logger(config_logger_dict: Dict) -> Result[ConfigLogger, Error]:
