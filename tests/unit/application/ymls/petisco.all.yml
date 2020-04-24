@@ -2,11 +2,11 @@ app:
   name: toy-app
   version: 1.0.0
 framework:
-    selected_framework: flask
-    config_file: swagger.yaml
-    port: 8080
+  selected_framework: flask
+  config_file: swagger.yaml
+  port: 8080
 logger:
-    selected_logger: not_implemented_logger
+  selected_logger: not_implemented_logger
 persistence:
   config: tests.integration.flask_app.toy_app.config.config_persistence.config_persistence
   models:

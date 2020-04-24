@@ -38,7 +38,8 @@ class Petisco(metaclass=Singleton):
         self.logger = config.get_logger()
         self.info = {"app_name": self.app_name, "app_version": self.app_version}
         self.set_persistence(config)
-        self.set_infrastructure(config)
+        self.set_providers(config)
+        self.set_event_manager(config)
         self.options = config.options
 
         if self.info:
@@ -47,8 +48,8 @@ class Petisco(metaclass=Singleton):
         if self.options:
             self.logger.log(INFO, f"Options: {self.options}")
 
-        if self.config.config_infrastructure.publish_deploy_event_func:
-            event_manager = self.config.config_infrastructure.event_manager_provider()
+        if self.config.config_event_manager.publish_deploy_event:
+            event_manager = self.config.config_event_manager.event_manager_provider()
             event = ServiceDeployed(
                 app_name=self.app_name, app_version=self.app_version
             )
@@ -95,15 +96,15 @@ class Petisco(metaclass=Singleton):
 
             self._persistence_models = config_persistence.get_models()
 
-    def set_infrastructure(self, config):
-        config_infrastructure = config.config_infrastructure
-        if not config_infrastructure:
+    def set_providers(self, config):
+        config_providers = config.config_providers
+        if not config_providers:
             return
-        if config_infrastructure.config_dependencies:
-            config_infrastructure.config_dependencies()
+        if config_providers.config_dependencies:
+            config_providers.config_dependencies()
 
-        if config_infrastructure.services_provider:
-            self.services_provider = config_infrastructure.services_provider
+        if config_providers.services_provider:
+            self.services_provider = config_providers.services_provider
 
             info_services = {}
             for key, service in self.services_provider().items():
@@ -114,8 +115,8 @@ class Petisco(metaclass=Singleton):
                         f"Service with key {key} ({type(service)}) must implement info"
                     )
             self.info["services"] = info_services
-        if config_infrastructure.repositories_provider:
-            self.repositories_provider = config_infrastructure.repositories_provider
+        if config_providers.repositories_provider:
+            self.repositories_provider = config_providers.repositories_provider
 
             info_repositories = {}
             for key, repository in self.repositories_provider().items():
@@ -127,8 +128,13 @@ class Petisco(metaclass=Singleton):
                     )
 
             self.info["repositories"] = info_repositories
-        if config_infrastructure.event_manager_provider:
-            self.event_manager_provider = config_infrastructure.event_manager_provider
+
+    def set_event_manager(self, config):
+        config_event_manager = config.config_event_manager
+        if not config_event_manager:
+            return
+        if config_event_manager.event_manager_provider:
+            self.event_manager_provider = config_event_manager.event_manager_provider
             event_manager = self.event_manager_provider()
             if hasattr(event_manager, "info"):
                 self.info["event_managers"] = event_manager.info()
@@ -137,8 +143,8 @@ class Petisco(metaclass=Singleton):
                     f"Given event_manager ({type(event_manager)}) must implement info"
                 )
 
-        if config_infrastructure.event_topic:
-            self.event_topic = config_infrastructure.event_topic
+        if config_event_manager.event_topic:
+            self.event_topic = config_event_manager.event_topic
 
     def start(self):
         self.config.get_application().start()

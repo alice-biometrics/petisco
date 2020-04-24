@@ -2,16 +2,20 @@ import importlib
 from typing import Optional, Dict, Any
 
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
 
 from petisco.application.config.get_funtion_from_string import get_function_from_string
 
 
-@dataclass_json
 @dataclass
 class ConfigPersistence:
     config_func: Optional[str] = None
     models: Optional[Dict[str, Any]] = None
+
+    @staticmethod
+    def from_dict(kdict):
+        return ConfigPersistence(
+            config_func=kdict.get("config"), models=kdict.get("models")
+        )
 
     @property
     def config(self):

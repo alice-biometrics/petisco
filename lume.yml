@@ -2,7 +2,7 @@ name: petisco
 
 install:
   run:
-  - pip install -r requirements/dev.txt
+  - pip install -U -r requirements/dev.txt
 
 steps:
   clean:

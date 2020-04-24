@@ -8,10 +8,11 @@ from meiga.decorators import meiga
 from yaml.parser import ParserError, ScannerError
 
 from petisco.application.config.config_persistence import ConfigPersistence
+from petisco.application.config.config_providers import ConfigProviders
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import ILogger
 from petisco.logger.logging_based_logger import LoggingBasedLogger
-from petisco.application.config.config_infrastructure import ConfigInfrastructure
+from petisco.application.config.config_event_manager import ConfigEventManager
 from petisco.application.config.config_file_not_found_error import (
     ConfigFileNotFoundError,
 )
@@ -32,7 +33,8 @@ class Config:
         config_framework: ConfigFramework = None,
         config_logger: ConfigLogger = None,
         config_persistence: ConfigPersistence = None,
-        config_infrastructure: ConfigInfrastructure = None,
+        config_providers: ConfigProviders = None,
+        config_event_manager: ConfigEventManager = None,
         options: Dict = None,
     ):
         self.app_name = app_name
@@ -41,7 +43,8 @@ class Config:
         self.config_framework = config_framework
         self.config_logger = config_logger
         self.config_persistence = config_persistence
-        self.config_infrastructure = config_infrastructure
+        self.config_providers = config_providers
+        self.config_event_manager = config_event_manager
         self.options = options
 
     @staticmethod
@@ -83,8 +86,10 @@ class Config:
         else:
             config_persistence = ConfigPersistence()
 
-        config_infrastructure = ConfigInfrastructure.from_dict(
-            yaml_dict.get("infrastructure")
+        config_providers = ConfigProviders.from_dict(yaml_dict.get("providers"))
+
+        config_event_manager = ConfigEventManager.from_dict(
+            yaml_dict.get("event_manager")
         )
 
         options = app_config.get("options")
@@ -96,7 +101,8 @@ class Config:
                 app_version=app_version,
                 config_framework=config_framework,
                 config_logger=config_logger,
-                config_infrastructure=config_infrastructure,
+                config_providers=config_providers,
+                config_event_manager=config_event_manager,
                 config_persistence=config_persistence,
                 options=options,
             )
