@@ -23,6 +23,10 @@ class Event:
         self.event_name = (
             self.__class__.__name__ if not self.event_name else self.event_name
         )
+
+        # TODO: when refactor event class
+        # self.event_name = re.sub(r'(?<!^)(?=[A-Z])', '_', self.event_name).lower().replace("_", ".")
+
         self.event_occurred_on = (
             datetime.utcnow() if not self.event_occurred_on else self.event_occurred_on
         )
@@ -71,6 +75,9 @@ class Event:
         return Event.from_dict(event_dict)
 
     def add_info_id(self, info_id):
+        if not info_id:
+            return self
+
         from petisco.domain.aggregate_roots.info_id import (
             InfoId,
         )  # internal import to avoid circular dependency

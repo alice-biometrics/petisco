@@ -4,7 +4,7 @@ from meiga import Success, isFailure
 from petisco import controller_handler, ERROR, INFO, __version__
 from petisco.events.request_responded import RequestResponded
 from petisco.events.event_config import EventConfig
-from tests.unit.mocks.fake_event_manager import FakeEventManager
+from tests.unit.mocks.fake_event_publisher import FakeEventPublisher
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
 
@@ -15,14 +15,13 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 ):
 
     logger = FakeLogger()
-    event_manager = FakeEventManager()
-    event_topic = "controller"
+    event_manager = FakeEventPublisher()
 
     @controller_handler(
         app_name="petisco",
         app_version=__version__,
         logger=logger,
-        event_config=EventConfig(event_manager=event_manager, event_topic=event_topic),
+        event_config=EventConfig(publisher=event_manager),
         headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
     )
     def my_controller():
@@ -50,7 +49,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
         ).to_json(),
     )
 
-    request_responded = event_manager.get_sent_events(event_topic)[0]
+    request_responded = event_manager.get_sent_events()[0]
     assert isinstance(request_responded, RequestResponded)
     assert request_responded.app_name == "petisco"
     assert request_responded.app_version == __version__
@@ -67,16 +66,13 @@ def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_
 ):
 
     fake_logger = FakeLogger()
-    fake_event_manager = FakeEventManager()
-    event_topic = "controller"
+    fake_event_publisher = FakeEventPublisher()
     event_additional_info = ["client_id", "user_id"]
 
     @controller_handler(
         logger=fake_logger,
         event_config=EventConfig(
-            event_manager=fake_event_manager,
-            event_topic=event_topic,
-            event_additional_info=event_additional_info,
+            publisher=fake_event_publisher, additional_info=event_additional_info
         ),
         headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
     )
@@ -105,7 +101,7 @@ def test_should_execute_successfully_a_empty_controller_with_client_id_and_user_
         ).to_json(),
     )
 
-    request_responded = fake_event_manager.get_sent_events(event_topic)[0]
+    request_responded = fake_event_publisher.get_sent_events()[0]
     assert isinstance(request_responded, RequestResponded)
     assert request_responded.app_name == "app-undefined"
     assert request_responded.app_version is None

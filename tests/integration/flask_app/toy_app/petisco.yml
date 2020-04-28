@@ -14,7 +14,16 @@ persistence:
 providers:
    services_provider: tests.integration.flask_app.toy_app.config.services_provider.services_provider
    repositories_provider: tests.integration.flask_app.toy_app.config.repositories_provider.repositories_provider
-event_manager:
-   provider: tests.integration.flask_app.toy_app.config.event_manager_provider.event_manager_provider
-   publish_deploy_event: True
-   event_topic: toy-app
+events:
+  publisher:
+    provider: tests.integration.flask_app.toy_app.config.events.event_publisher_provider
+  subscriber:
+    provider: tests.integration.flask_app.toy_app.config.events.event_subscriber_provider
+    subscribers:
+      sub:
+        organization: "acme"
+        service: "toy-app"
+        topic: "toy-app-events"
+        dead_letter: True
+        handler: tests.integration.flask_app.toy_app.application.handlers.store_event.store_event
+

@@ -10,9 +10,9 @@ from tests.integration.flask_app.toy_app.application.use_cases.get_user_name imp
 class UseCaseBuilder:
     @staticmethod
     def create_user():
-        _, repositories, event_manager = Petisco.providers()
+        _, repositories = Petisco.providers()
         return CreateUser(
-            user_repository=repositories.user, event_manager=event_manager
+            user_repository=repositories.user, publisher=Petisco.get_event_publisher()
         )
 
     @staticmethod
