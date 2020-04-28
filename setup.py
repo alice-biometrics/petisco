@@ -37,6 +37,7 @@ setup(
         "petisco",
         "petisco/application",
         "petisco/application/config",
+        "petisco/application/config/events",
         "petisco/application/cli",
         "petisco/commands",
         "petisco/controller",

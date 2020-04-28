@@ -162,8 +162,13 @@ try:
     from petisco.events.subscriber.infrastructure.rabbitmq_event_subscriber import (
         RabbitMQEventSubscriber,
     )
+    from petisco.events.rabbitmq.rabbitmq_env_config import RabbitMQEnvConfig
 
-    rabbitmq = ["RabbitMQEventPublisher", "RabbitMQEventSubscriber"]
+    rabbitmq = [
+        "RabbitMQEventPublisher",
+        "RabbitMQEventSubscriber",
+        "RabbitMQEnvConfig",
+    ]
 except (RuntimeError, ImportError):
     rabbitmq = []
 
