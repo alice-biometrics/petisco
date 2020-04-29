@@ -19,12 +19,12 @@ class LoggingBasedLogger(ILogger):
         logger_name: str,
         logging_level=logging.INFO,
         format: str = "%(name)s - %(levelname)s - %(message)s",
-        config_func: Callable = None,
+        config: Callable = None,
     ):
 
         logging.basicConfig(format=format, level=logging_level)
-        if config_func:
-            config_func()
+        if config:
+            config()
         self.logger = logging.getLogger(logger_name)
 
     def log(self, logging_level, message):

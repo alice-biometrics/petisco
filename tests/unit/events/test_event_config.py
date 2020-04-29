@@ -2,11 +2,10 @@ import pytest
 
 from petisco import EventConfig
 from petisco.events.event_config import (
-    EVENT_MANAGER_DEFAULT,
-    EVENT_TOPIC_DEFAULT,
+    EVENT_PUBLISHER_DEFAULT,
     EVENT_ADDITIONAL_DEFAULT,
 )
-from tests.unit.mocks.fake_event_manager import FakeEventManager
+from tests.unit.mocks.fake_event_publisher import FakeEventPublisher
 
 
 @pytest.mark.unit
@@ -19,21 +18,16 @@ def test_should_check_default_event_config_is_non_configured():
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "event_manager,event_topic,event_additional_info",
+    "event_publisher,event_additional_info",
     [
-        (FakeEventManager(), EVENT_TOPIC_DEFAULT, EVENT_ADDITIONAL_DEFAULT),
-        (EVENT_MANAGER_DEFAULT, "my-event-topic", EVENT_ADDITIONAL_DEFAULT),
-        (EVENT_MANAGER_DEFAULT, EVENT_TOPIC_DEFAULT, ["user_id"]),
-        (EVENT_MANAGER_DEFAULT, "my-event-topic", ["user_id"]),
-        (FakeEventManager(), EVENT_TOPIC_DEFAULT, ["user_id"]),
-        (FakeEventManager(), "my-event-topic", EVENT_ADDITIONAL_DEFAULT),
-        (FakeEventManager(), "my-event-topic", ["user_id"]),
+        (FakeEventPublisher(), EVENT_ADDITIONAL_DEFAULT),
+        (EVENT_PUBLISHER_DEFAULT, EVENT_ADDITIONAL_DEFAULT),
+        (EVENT_PUBLISHER_DEFAULT, ["user_id"]),
+        (EVENT_PUBLISHER_DEFAULT, ["user_id"]),
+        (FakeEventPublisher(), ["user_id"]),
+        (FakeEventPublisher(), EVENT_ADDITIONAL_DEFAULT),
+        (FakeEventPublisher(), ["user_id"]),
     ],
 )
-def test_should_check_event_config_is_configured(
-    event_manager, event_topic, event_additional_info
-):
-
-    event_config = EventConfig(event_manager, event_topic, event_additional_info)
-
-    assert event_config.is_configured
+def test_should_check_event_config_constructor(event_publisher, event_additional_info):
+    _ = EventConfig(event_publisher, event_additional_info)

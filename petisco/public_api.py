@@ -23,6 +23,18 @@ from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.value_objects.value_object import ValueObject
 from petisco.events.event_config import EventConfig
+from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
+from petisco.events.publisher.infrastructure.not_implemented_event_publisher import (
+    NotImplementedEventPublisher,
+)
+from petisco.events.subscriber.domain.config_event_subscriber import (
+    ConfigEventSubscriber,
+)
+from petisco.events.subscriber.domain.interface_event_subscriber import IEventSubscriber
+from petisco.events.subscriber.domain.subscriber_handler import subscriber_handler
+from petisco.events.subscriber.infrastructure.not_implemented_event_subscriber import (
+    NotImplementedEventSubscriber,
+)
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
@@ -40,8 +52,7 @@ from petisco.controller.controller_handler import controller_handler
 from petisco.controller.errors.http_error import HttpError
 from petisco.events.event import Event
 from petisco.events.event_id import EventId
-from petisco.events.interface_event_manager import IEventManager
-from petisco.events.not_implemented_event_manager import NotImplementedEventManager
+
 
 classes = [
     "IService",
@@ -56,8 +67,6 @@ classes = [
     "ILogger",
     "Event",
     "EventId",
-    "IEventManager",
-    "NotImplementedEventManager",
     "Singleton",
     "TokenManager",
     "NotImplementedTokenManager",
@@ -77,6 +86,12 @@ classes = [
     "Config",
     "EmptyValueObjectError",
     "ExceedLengthLimitValueObjectError",
+    "subscriber_handler",
+    "ConfigEventSubscriber",
+    "IEventPublisher",
+    "IEventSubscriber",
+    "NotImplementedEventPublisher",
+    "NotImplementedEventSubscriber",
 ]
 
 # Controllers & Use Cases
@@ -151,36 +166,24 @@ try:
 except (RuntimeError, ImportError):
     sqlalchemy = []
 
-# Redis
+# RabbitMQ
 try:
-    from petisco.events.redis.redis_event_manager import RedisEventManager
-    from petisco.events.redis.event_from_redis_message import (
-        event_from_redis_message,
-        EventFromRedisMessageConversionError,
+    from petisco.events.publisher.infrastructure.rabbitmq_event_publisher import (
+        RabbitMQEventPublisher,
     )
+    from petisco.events.subscriber.infrastructure.rabbitmq_event_subscriber import (
+        RabbitMQEventSubscriber,
+    )
+    from petisco.events.rabbitmq.rabbitmq_env_config import RabbitMQEnvConfig
 
-    redis = [
-        "RedisEventManager",
-        "event_from_redis_message",
-        "EventFromRedisMessageConversionError",
+    rabbitmq = [
+        "RabbitMQEventPublisher",
+        "RabbitMQEventSubscriber",
+        "RabbitMQEnvConfig",
     ]
-except (RuntimeError, ImportError):
-    redis = []
-
-# RabbitMq
-try:
-    from petisco.events.rabbitmq.rabbitmq_event_manager import RabbitMQEventManager
-
-    rabbitmq = ["RabbitMQEventManager"]
 except (RuntimeError, ImportError):
     rabbitmq = []
 
 __all__ = (
-    classes
-    + controllers_and_use_cases
-    + constants
-    + flask
-    + sqlalchemy
-    + redis
-    + rabbitmq
+    classes + controllers_and_use_cases + constants + flask + sqlalchemy + rabbitmq
 )

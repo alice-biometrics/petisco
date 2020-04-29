@@ -1,8 +1,7 @@
 name: petisco
 
 install:
-  run:
-  - pip install -r requirements/dev.txt
+  run: pip install -U -r requirements/dev.txt
 
 steps:
   clean:
@@ -10,15 +9,27 @@ steps:
     - rm -rf output
     - find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
   build:
-    run:
-    - pip install -e .[flask,sqlalchemy,redis,rabbitmq]
+    run: pip install -e .[flask,sqlalchemy,redis,rabbitmq]
   lint:
     run:
     - black .
     - flake8 petisco
   test:
-    run:
-    - pytest -v
+    run: pytest
+  test-with-rabbitmq:
+    setup: docker run -d --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+    run: pytest -k test_should_create_a_rabbitmq_event_publisher_and_publish_two_different_events
+    teardown: docker stop rabbitmq
   test-command-line:
+    run: petisco --version
+
+  example-pubsub:
+    setup_detach:
+      log_filename: pubsub.log
+      run:
+        - python examples/pubsub/sub.py
     run:
-    - petisco --version
+      - python examples/pubsub/pub.py
+      - sleep 2
+    teardown: cat pubsub.log
+

@@ -4,15 +4,14 @@ from typing import Callable, Dict, Any
 from dataclasses import dataclass
 from dotmap import DotMap
 
-from petisco.events.interface_event_manager import IEventManager
+from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.service_deployed import ServiceDeployed
+from petisco.events.subscriber.domain.interface_event_subscriber import IEventSubscriber
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import INFO, ILogger
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.logger.not_implemented_logger import NotImplementedLogger
-
-DEPLOY_TOPIC = "deploy"
 
 
 @dataclass
@@ -23,13 +22,13 @@ class Petisco(metaclass=Singleton):
     application: IApplication = None
     services_provider: Callable = None
     repositories_provider: Callable = None
-    event_manager_provider: Callable = None
     options: Dict[str, Any] = None
     info: Dict = None
     _persistence_models: Dict[str, Any] = False
     persistence_configured: bool = False
     config: Config = None
-    event_topic: str = None
+    event_publisher: IEventPublisher = None
+    event_subscriber: IEventSubscriber = None
 
     def __init__(self, config: Config):
         self.config = config
@@ -38,7 +37,8 @@ class Petisco(metaclass=Singleton):
         self.logger = config.get_logger()
         self.info = {"app_name": self.app_name, "app_version": self.app_version}
         self.set_persistence(config)
-        self.set_infrastructure(config)
+        self.set_providers(config)
+        self.set_events(config)
         self.options = config.options
 
         if self.info:
@@ -47,12 +47,11 @@ class Petisco(metaclass=Singleton):
         if self.options:
             self.logger.log(INFO, f"Options: {self.options}")
 
-        if self.config.config_infrastructure.publish_deploy_event_func:
-            event_manager = self.config.config_infrastructure.event_manager_provider()
+        if self.config.config_events.publish_deploy_event:
             event = ServiceDeployed(
                 app_name=self.app_name, app_version=self.app_version
             )
-            event_manager.publish(topic=DEPLOY_TOPIC, event=event)
+            self.event_publisher.publish(event)
 
     @staticmethod
     def get_instance():
@@ -85,6 +84,7 @@ class Petisco(metaclass=Singleton):
         return Petisco(config=config)
 
     def set_persistence(self, config):
+        self._persistence_models = {}
         config_persistence = config.config_persistence
         if config_persistence.config:
             import_database_models_func = (
@@ -92,18 +92,17 @@ class Petisco(metaclass=Singleton):
             )
             config_persistence.config(import_database_models_func)
             self.persistence_configured = True
-
             self._persistence_models = config_persistence.get_models()
 
-    def set_infrastructure(self, config):
-        config_infrastructure = config.config_infrastructure
-        if not config_infrastructure:
+    def set_providers(self, config):
+        config_providers = config.config_providers
+        if not config_providers:
             return
-        if config_infrastructure.config_dependencies:
-            config_infrastructure.config_dependencies()
+        if config_providers.config_dependencies:
+            config_providers.config_dependencies()
 
-        if config_infrastructure.services_provider:
-            self.services_provider = config_infrastructure.services_provider
+        if config_providers.services_provider:
+            self.services_provider = config_providers.services_provider
 
             info_services = {}
             for key, service in self.services_provider().items():
@@ -114,8 +113,8 @@ class Petisco(metaclass=Singleton):
                         f"Service with key {key} ({type(service)}) must implement info"
                     )
             self.info["services"] = info_services
-        if config_infrastructure.repositories_provider:
-            self.repositories_provider = config_infrastructure.repositories_provider
+        if config_providers.repositories_provider:
+            self.repositories_provider = config_providers.repositories_provider
 
             info_repositories = {}
             for key, repository in self.repositories_provider().items():
@@ -127,18 +126,32 @@ class Petisco(metaclass=Singleton):
                     )
 
             self.info["repositories"] = info_repositories
-        if config_infrastructure.event_manager_provider:
-            self.event_manager_provider = config_infrastructure.event_manager_provider
-            event_manager = self.event_manager_provider()
-            if hasattr(event_manager, "info"):
-                self.info["event_managers"] = event_manager.info()
+
+    def set_events(self, config):
+        config_events = config.config_events
+        if not config_events:
+            return
+
+        if config_events.config_event_publisher.provider:
+            self.event_publisher = config_events.config_event_publisher.provider()
+            if hasattr(self.event_publisher, "info"):
+                self.info["event_publisher"] = self.event_publisher.info()
             else:
                 raise TypeError(
-                    f"Given event_manager ({type(event_manager)}) must implement info"
+                    f"Given event_publisher ({type(self.event_publisher)}) must implement info"
                 )
 
-        if config_infrastructure.event_topic:
-            self.event_topic = config_infrastructure.event_topic
+        if config_events.config_event_subscriber.provider:
+            subscribers = config_events.config_event_subscriber.subscribers
+            self.event_subscriber = config_events.config_event_subscriber.provider(
+                subscribers
+            )
+            if hasattr(self.event_subscriber, "info"):
+                self.info["event_subscriber"] = self.event_subscriber.info()
+            else:
+                raise TypeError(
+                    f"Given event_subscriber ({type(self.event_subscriber)}) must implement info"
+                )
 
     def start(self):
         self.config.get_application().start()
@@ -172,9 +185,13 @@ class Petisco(metaclass=Singleton):
         return session_scope
 
     @staticmethod
-    def event_manager() -> IEventManager:
-        return Petisco.get_instance().event_manager_provider()
+    def providers():
+        return Petisco.services(), Petisco.repositories()
 
     @staticmethod
-    def providers():
-        return Petisco.services(), Petisco.repositories(), Petisco.event_manager()
+    def get_event_publisher():
+        return Petisco.get_instance().event_publisher
+
+    @staticmethod
+    def get_event_subscriber():
+        return Petisco.get_instance().event_subscriber

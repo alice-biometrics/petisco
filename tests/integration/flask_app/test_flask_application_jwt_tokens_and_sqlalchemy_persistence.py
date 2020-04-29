@@ -22,8 +22,8 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token(
 
     headers = given_auth_token_headers_creator(type_token="ADMIN_TOKEN")
 
-    response = petisco_client.open(
-        "/petisco/user", method="POST", headers=headers, data=dict(name=given_any_name)
+    response = petisco_client.post(
+        "/petisco/user", headers=headers, data=dict(name=given_any_name)
     )
     assert response.status_code == 200
 
@@ -42,8 +42,8 @@ def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token(
 
     headers = given_auth_token_headers_creator(type_token="INVALID_TOKEN")
 
-    response = petisco_client.open(
-        "/petisco/user", method="POST", headers=headers, data=dict(name=given_any_name)
+    response = petisco_client.post(
+        "/petisco/user", headers=headers, data=dict(name=given_any_name)
     )
     assert response.status_code == 401
     assert response.json["error"]["type"] == "InvalidTokenHttpError"
@@ -61,15 +61,15 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token_
     petisco_client, given_auth_token_headers_creator, given_any_name
 ):
     headers = given_auth_token_headers_creator(type_token="ADMIN_TOKEN")
-    response = petisco_client.open(
-        "/petisco/user", method="POST", headers=headers, data=dict(name=given_any_name)
+    response = petisco_client.post(
+        "/petisco/user", headers=headers, data=dict(name=given_any_name)
     )
     assert response.status_code == 200
     user_id = response.json["user_id"]
 
     headers = given_auth_token_headers_creator(type_token="USER_TOKEN", user_id=user_id)
 
-    response = petisco_client.open("/petisco/user/name", method="GET", headers=headers)
+    response = petisco_client.get("/petisco/user/name", headers=headers)
     assert response.json["name"] == given_any_name
 
 
@@ -87,7 +87,7 @@ def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token_
 
     headers = given_auth_token_headers_creator(type_token="USER_TOKEN")
 
-    response = petisco_client.open("/petisco/user/name", method="GET", headers=headers)
+    response = petisco_client.get("/petisco/user/name", headers=headers)
 
     assert response.status_code == 401
 
@@ -106,10 +106,7 @@ def test_should_return_409_when_call_create_user_with_invalid_name(
 
     headers = given_auth_token_headers_creator(type_token="ADMIN_TOKEN")
 
-    response = petisco_client.open(
-        "/petisco/user",
-        method="POST",
-        headers=headers,
-        data=dict(name=given_code_injection_name),
+    response = petisco_client.post(
+        "/petisco/user", headers=headers, data=dict(name=given_code_injection_name)
     )
     assert response.status_code == 409

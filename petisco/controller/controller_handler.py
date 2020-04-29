@@ -84,8 +84,6 @@ class _ControllerHandler:
             self.app_name = self.petisco.app_name
             self.app_version = self.petisco.app_version
             self.logger = self.petisco.logger
-            if self.event_config.is_configured:
-                self.event_config.event_manager = self.petisco.event_manager_provider()
 
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
@@ -154,10 +152,8 @@ class _ControllerHandler:
                 elapsed_time=elapsed_time,
                 additional_info=self.event_config.get_additional_info(kwargs),
             )
-            self.event_config.event_manager.publish(
-                topic=self.event_config.event_topic,
-                event=request_responded,
-                info_id=info_id,
+            self.event_config.publisher.publish(
+                event=request_responded.add_info_id(info_id)
             )
 
             return http_response

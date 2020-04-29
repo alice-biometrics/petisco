@@ -1,21 +1,30 @@
 import importlib
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Callable
 
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
 
 from petisco.application.config.get_funtion_from_string import get_function_from_string
+from petisco.application.config.raise_petisco_config_error import (
+    raise_petisco_config_exception,
+)
 
 
-@dataclass_json
 @dataclass
 class ConfigPersistence:
-    config_func: Optional[str] = None
+    config: Optional[Callable] = None
     models: Optional[Dict[str, Any]] = None
 
-    @property
-    def config(self):
-        return get_function_from_string(self.config_func)
+    @staticmethod
+    def from_dict(kdict):
+        config = (
+            get_function_from_string(kdict.get("config"))
+            .handle(
+                on_failure=raise_petisco_config_exception,
+                failure_args=(kdict, "persistence:config"),
+            )
+            .unwrap()
+        )
+        return ConfigPersistence(config=config, models=kdict.get("models"))
 
     def get_models(self):
         loaded_models = {}
