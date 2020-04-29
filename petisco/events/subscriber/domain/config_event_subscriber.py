@@ -3,6 +3,9 @@ from typing import Callable, Dict
 from dataclasses import dataclass
 
 from petisco.application.config.get_funtion_from_string import get_function_from_string
+from petisco.application.config.raise_petisco_config_error import (
+    raise_petisco_config_exception,
+)
 
 
 def get_param(kdict: Dict, key: str):
@@ -27,9 +30,17 @@ class ConfigEventSubscriber:
     def from_dict(kdict: Dict):
         organization = get_param(kdict, "organization")
         service = get_param(kdict, "service")
-        handler = get_function_from_string(get_param(kdict, "handler"))
         topic = get_param(kdict, "topic")
         dead_letter = kdict.get("dead_letter", False)
+
+        handler = (
+            get_function_from_string(get_param(kdict, "handler"))
+            .handle(
+                on_failure=raise_petisco_config_exception,
+                failure_args=(kdict, "events:subscriber:subscriber"),
+            )
+            .unwrap()
+        )
 
         return ConfigEventSubscriber(
             organization=organization,

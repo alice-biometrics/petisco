@@ -19,14 +19,14 @@ class ConfigEvents:
     @staticmethod
     def from_dict(kdict):
 
-        config_event_publisher = None
+        config_event_publisher = ConfigEventsPublisher()
         config_event_publisher_dict = kdict.get("publisher")
         if config_event_publisher_dict:
             config_event_publisher = ConfigEventsPublisher.from_dict(
                 config_event_publisher_dict
             )
 
-        config_event_subscriber = None
+        config_event_subscriber = ConfigEventsSubscriber()
         config_event_subscriber_dict = kdict.get("subscriber")
         if config_event_subscriber_dict:
             config_event_subscriber = ConfigEventsSubscriber.from_dict(

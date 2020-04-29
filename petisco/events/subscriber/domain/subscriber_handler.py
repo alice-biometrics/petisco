@@ -1,15 +1,21 @@
+import json
 import time
 import random
 
+from petisco.logger.interface_logger import INFO
 from petisco.events.event import Event
 from functools import wraps
 from meiga import Result
 from meiga.decorators import meiga
 
+from petisco.logger.log_message import LogMessage
+from petisco.logger.not_implemented_logger import NotImplementedLogger
+
 
 class _SubscriberHandler:
     def __init__(
         self,
+        logger=NotImplementedLogger(),
         message_broker: str = "rabbitmq",
         filter_routing_key: str = None,
         delay_after: float = 0,
@@ -18,6 +24,8 @@ class _SubscriberHandler:
         """
         Parameters
         ----------
+        logger
+            A ILogger implementation. Default NotImplementedLogger
         message_broker:
             Select Message Brokent. For now, only available rabbitmq
         filter_routing_key:
@@ -28,6 +36,7 @@ class _SubscriberHandler:
             Percentage of simulate rejection when the result is a success. [0.0 -> 1.0]. Where 1.0 rejects all the events.
 
         """
+        self.logger = logger
         if message_broker != "rabbitmq":
             raise TypeError(
                 f"Petisco Subscriber: message broker {message_broker} is not implemented. Try with rabbitmq"
@@ -44,6 +53,12 @@ class _SubscriberHandler:
                 return func(*args, **kwargs)
 
             ch, method, properties, body = args
+
+            log_message = LogMessage(layer="subscriber", operation=f"{func.__name__}")
+            log_message.message = json.dump(
+                {"ch": ch, "method": method, "properties": properties, "body": body}
+            )
+            self.logger.log(INFO, log_message.to_json())
 
             if (
                 self.filter_routing_key

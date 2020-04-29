@@ -19,3 +19,7 @@ class IRepository:
     @abstractmethod
     def retrieve(self, *args, **kwargs) -> Result:
         return NotImplementedMethodError
+
+    @abstractmethod
+    def remove(self, *args, **kwargs) -> Result:
+        return NotImplementedMethodError

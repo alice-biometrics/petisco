@@ -3,6 +3,9 @@ from typing import Optional, Dict, Callable
 from dataclasses import dataclass
 
 from petisco.application.config.get_funtion_from_string import get_function_from_string
+from petisco.application.config.raise_petisco_config_error import (
+    raise_petisco_config_exception,
+)
 from petisco.events.subscriber.domain.config_event_subscriber import (
     ConfigEventSubscriber,
 )
@@ -26,7 +29,14 @@ class ConfigEventsSubscriber:
             raise TypeError(
                 f"ConfigEventsSubscriber: {provider} is a required parameter"
             )
-        provider = get_function_from_string(provider)
+        provider = (
+            get_function_from_string(provider)
+            .handle(
+                on_failure=raise_petisco_config_exception,
+                failure_args=(kdict, "events:subscriber:provider"),
+            )
+            .unwrap()
+        )
 
         subscribers = {}
         subscribers_dict = kdict.get("subscribers")

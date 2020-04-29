@@ -23,10 +23,18 @@ from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.value_objects.value_object import ValueObject
 from petisco.events.event_config import EventConfig
+from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
+from petisco.events.publisher.infrastructure.not_implemented_event_publisher import (
+    NotImplementedEventPublisher,
+)
 from petisco.events.subscriber.domain.config_event_subscriber import (
     ConfigEventSubscriber,
 )
+from petisco.events.subscriber.domain.interface_event_subscriber import IEventSubscriber
 from petisco.events.subscriber.domain.subscriber_handler import subscriber_handler
+from petisco.events.subscriber.infrastructure.not_implemented_event_subscriber import (
+    NotImplementedEventSubscriber,
+)
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
@@ -80,6 +88,10 @@ classes = [
     "ExceedLengthLimitValueObjectError",
     "subscriber_handler",
     "ConfigEventSubscriber",
+    "IEventPublisher",
+    "IEventSubscriber",
+    "NotImplementedEventPublisher",
+    "NotImplementedEventSubscriber",
 ]
 
 # Controllers & Use Cases

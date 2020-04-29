@@ -147,7 +147,7 @@ class Config:
             return LoggingBasedLogger(
                 logger_name=self.config_logger.name,
                 format=self.config_logger.format,
-                config_func=self.config_logger.get_config_func(),
+                config=self.config_logger.config,
             )
 
     def get_application(self) -> IApplication:

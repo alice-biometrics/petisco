@@ -3,7 +3,7 @@ import os
 from dataclasses import dataclass
 from pika import BlockingConnection, ConnectionParameters, PlainCredentials
 
-from petisco import Singleton
+from petisco.application.singleton import Singleton
 
 
 @dataclass

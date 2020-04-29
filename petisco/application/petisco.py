@@ -84,6 +84,7 @@ class Petisco(metaclass=Singleton):
         return Petisco(config=config)
 
     def set_persistence(self, config):
+        self._persistence_models = {}
         config_persistence = config.config_persistence
         if config_persistence.config:
             import_database_models_func = (
@@ -91,7 +92,6 @@ class Petisco(metaclass=Singleton):
             )
             config_persistence.config(import_database_models_func)
             self.persistence_configured = True
-
             self._persistence_models = config_persistence.get_models()
 
     def set_providers(self, config):
