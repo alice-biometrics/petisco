@@ -55,8 +55,8 @@ class _SubscriberHandler:
             ch, method, properties, body = args
 
             log_message = LogMessage(layer="subscriber", operation=f"{func.__name__}")
-            log_message.message = json.dump(
-                {"ch": ch, "method": method, "properties": properties, "body": body}
+            log_message.message = json.dumps(
+                {"routing_key": method.routing_key, "body": json.loads(body)}
             )
             self.logger.log(INFO, log_message.to_json())
 

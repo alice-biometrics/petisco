@@ -9,6 +9,7 @@ from yaml.parser import ParserError, ScannerError
 
 from petisco.application.config.config_persistence import ConfigPersistence
 from petisco.application.config.config_providers import ConfigProviders
+from petisco.application.config.cron.config_cron import ConfigCron
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import ILogger
 from petisco.logger.logging_based_logger import LoggingBasedLogger
@@ -30,6 +31,7 @@ class Config:
         app_name: str,
         app_version: str,
         petisco_yml_folder: str = None,
+        config_cron: ConfigCron = None,
         config_framework: ConfigFramework = None,
         config_logger: ConfigLogger = None,
         config_persistence: ConfigPersistence = None,
@@ -40,6 +42,7 @@ class Config:
         self.app_name = app_name
         self.app_version = app_version
         self.petisco_yml_folder = petisco_yml_folder
+        self.config_cron = config_cron
         self.config_framework = config_framework
         self.config_logger = config_logger
         self.config_persistence = config_persistence
@@ -73,25 +76,19 @@ class Config:
             petisco_yml_folder, app_config.get("version")
         ).unwrap_or_return()
 
+        config_cron = ConfigCron.from_dict(yaml_dict.get("cron"))
+
         config_framework = ConfigFramework.from_dict(yaml_dict.get("framework"))
 
         config_logger = Config.get_config_logger(
             yaml_dict.get("logger")
         ).unwrap_or_return()
 
-        if yaml_dict.get("persistence"):
-            config_persistence = ConfigPersistence.from_dict(
-                yaml_dict.get("persistence")
-            )
-        else:
-            config_persistence = ConfigPersistence()
+        config_persistence = ConfigPersistence.from_dict(yaml_dict.get("persistence"))
 
         config_providers = ConfigProviders.from_dict(yaml_dict.get("providers"))
 
-        if yaml_dict.get("events"):
-            config_events = ConfigEvents.from_dict(yaml_dict.get("events"))
-        else:
-            config_events = ConfigEvents()
+        config_events = ConfigEvents.from_dict(yaml_dict.get("events"))
 
         options = app_config.get("options")
 
@@ -100,6 +97,7 @@ class Config:
                 petisco_yml_folder=petisco_yml_folder,
                 app_name=app_name,
                 app_version=app_version,
+                config_cron=config_cron,
                 config_framework=config_framework,
                 config_logger=config_logger,
                 config_providers=config_providers,

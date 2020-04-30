@@ -5,6 +5,6 @@ backports-datetime-fromisoformat>=1.0.0;python_version<"3.7"
 pyjwt>=1.7.1
 cryptography>=2.1.4
 py-healthcheck==1.7.2
+APScheduler==3.6.3
 pyyaml
 deprecation
-dotmap

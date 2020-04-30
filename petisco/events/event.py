@@ -5,6 +5,8 @@ from petisco.events.event_id import EventId
 
 import json
 
+from typing import List
+
 
 class Event:
     event_id: EventId = None
@@ -86,3 +88,6 @@ class Event:
             raise TypeError("Event.add_info_id() expect a InfoId class (from petisco)")
         self.event_info_id = info_id.to_dict()
         return self
+
+
+Events = List[Event]

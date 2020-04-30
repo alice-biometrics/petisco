@@ -1,12 +1,10 @@
-from typing import List
-
 from petisco.domain.base_object import BaseObject
-from petisco.events.event import Event
+from petisco.events.event import Event, Events
 
 
 class AggregateRoot(BaseObject):
     def __init__(self):
-        self.domain_events: List[Event] = []
+        self.domain_events: Events = []
 
     def record(self, event: Event):
         self.domain_events.append(event)
@@ -14,7 +12,7 @@ class AggregateRoot(BaseObject):
     def clear_domain_events(self):
         self.domain_events = []
 
-    def pull_domain_events(self) -> List[Event]:
+    def pull_domain_events(self) -> Events:
         return self.domain_events
 
     def pull_first_domain_event(self) -> Event:

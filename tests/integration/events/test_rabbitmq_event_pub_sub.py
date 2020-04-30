@@ -50,7 +50,7 @@ def test_should_work_successfully_a_happy_path_pub_sub(make_user_created_event):
         topic="pubsub-events",
     )
 
-    publisher.publish_list([event, event])
+    publisher.publish_events([event, event])
 
     subscriber = RabbitMQEventSubscriber(
         connection=connection,
@@ -63,6 +63,7 @@ def test_should_work_successfully_a_happy_path_pub_sub(make_user_created_event):
             )
         },
     )
+    subscriber.subscribe_all()
 
     await_for_events()
 
@@ -125,6 +126,7 @@ def test_should_publish_reject_and_requeue_from_dead_letter_exchange(
             ),
         },
     )
+    subscriber.subscribe_all()
 
     await_for_events()
 

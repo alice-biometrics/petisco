@@ -12,12 +12,12 @@ from tests.integration.flask_app.toy_app.domain.repositories.interface_user_repo
 
 @use_case_handler()
 class CreateUser(UseCase):
-    def __init__(self, user_repository: IUserRepository, publisher: IEventPublisher):
-        self.user_repository = user_repository
+    def __init__(self, repository: IUserRepository, publisher: IEventPublisher):
+        self.repository = repository
         self.publisher = publisher
 
     def execute(self, info_id: InfoId, name: Name) -> Result[UserId, Error]:
         user = User.create(info_id, name)
-        self.user_repository.save(user).unwrap_or_return()
-        self.publisher.publish_list(user.pull_domain_events())
+        self.repository.save(user).unwrap_or_return()
+        self.publisher.publish_events(user.pull_domain_events())
         return Success(user.user_id)

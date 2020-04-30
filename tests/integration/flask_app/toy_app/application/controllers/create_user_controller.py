@@ -6,8 +6,9 @@ from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
 )
 from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
-from tests.integration.flask_app.toy_app.application.use_cases.use_case_builder import (
-    UseCaseBuilder,
+
+from tests.integration.flask_app.toy_app.application.use_cases.create_user import (
+    CreateUser,
 )
 
 
@@ -38,5 +39,8 @@ def create_user(info_id: InfoId, body: dict):
 
     name = Name(body.get("name")).guard()
 
-    use_case = UseCaseBuilder.create_user()
+    use_case = CreateUser(
+        repository=Petisco.get_repository("user"),
+        publisher=Petisco.get_event_publisher(),
+    )
     return use_case.execute(info_id=info_id, name=name)

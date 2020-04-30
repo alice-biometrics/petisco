@@ -10,6 +10,6 @@ def repositories_provider() -> Dict[str, IRepository]:
     return {
         "user": SqlUserRepository(
             session_scope=Petisco.persistence_session_scope(),
-            user_model=Petisco.persistence_models().get("user"),
+            user_model=Petisco.get_persistence_model("user"),
         )
     }
