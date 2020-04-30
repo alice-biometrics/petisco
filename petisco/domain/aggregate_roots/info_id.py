@@ -17,22 +17,25 @@ class InfoId(AggregateRoot):
     client_id: ClientId = None
     user_id: UserId = None
     correlation_id: CorrelationId = None
+    ip: str = None
 
     def __init__(
         self,
         client_id: ClientId = None,
         user_id: UserId = None,
         correlation_id: CorrelationId = None,
+        ip: str = None,
     ):
         self.client_id = client_id
         self.user_id = user_id
         self.correlation_id = (
             correlation_id if correlation_id else CorrelationId.generate()
         )
+        self.ip = ip
         super().__init__()
 
     def __repr__(self):
-        return f"[InfoId: [client_id: {self.client_id} | user_id: {self.user_id} | correlation_id: {self.correlation_id}]]"
+        return f"[InfoId: [client_id: {self.client_id} | user_id: {self.user_id} | correlation_id: {self.correlation_id} | ip: {self.ip}]]"
 
     def __eq__(self, other):
         return (
@@ -40,6 +43,7 @@ class InfoId(AggregateRoot):
             and self.client_id == other.client_id
             and self.user_id == other.user_id
             and self.correlation_id == other.correlation_id
+            and self.ip == other.ip
         )
 
     def update_from_headers(self, headers: Dict[str, str]):
@@ -47,12 +51,14 @@ class InfoId(AggregateRoot):
             client_id = headers.get("X-Onboarding-Clientid")
             user_id = headers.get("X-Onboarding-Userid")
             correlation_id = headers.get("X-Correlation-Id")
+            ip = headers.get("X-Forwarded-For")
 
             self.client_id = client_id if client_id else self.client_id
             self.user_id = user_id if user_id else self.user_id
             self.correlation_id = (
                 correlation_id if correlation_id else self.correlation_id
             )
+            self.ip = ip if ip else self.ip
         return self
 
     @staticmethod
@@ -62,6 +68,7 @@ class InfoId(AggregateRoot):
                 headers.get("X-Onboarding-Clientid"),
                 headers.get("X-Onboarding-Userid"),
                 headers.get("X-Correlation-Id"),
+                headers.get("X-Forwarded-For"),
             )
         else:
             info_id = InfoId()
@@ -77,12 +84,16 @@ class InfoId(AggregateRoot):
 
     @staticmethod
     def from_strings(
-        client_id: str = None, user_id: str = None, correlation_id: str = None
+        client_id: str = None,
+        user_id: str = None,
+        correlation_id: str = None,
+        ip: str = None,
     ):
         return InfoId(
             ClientId(client_id) if client_id else None,
             UserId(user_id) if user_id else None,
             CorrelationId(correlation_id) if correlation_id else None,
+            ip,
         )
 
     @meiga
