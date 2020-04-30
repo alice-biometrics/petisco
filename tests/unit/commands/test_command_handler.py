@@ -2,15 +2,14 @@ import pytest
 from meiga import Success
 from meiga.assertions import assert_success, assert_failure
 
-from petisco import INFO, command_handler, Event
+from petisco import INFO, command_handler, Event, Name
+from tests.unit.events.test_event import UserCreated
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
 
 
 @pytest.mark.unit
-def test_should_execute_successfully_a_empty_command_without_input_parameters(
-    given_any_correlation_id
-):
+def test_should_execute_successfully_a_empty_command_without_input_parameters():
 
     logger = FakeLogger()
 
@@ -18,7 +17,7 @@ def test_should_execute_successfully_a_empty_command_without_input_parameters(
     def my_command(event: Event):
         return Success("Hello Petisco")
 
-    event = Event({"event_correlation_id": given_any_correlation_id})
+    event = UserCreated(Name("Name"))
     result = my_command(event=event)
 
     assert_success(result)
@@ -67,9 +66,7 @@ def test_should_raise_a_type_error_when_a_command_do_not_receive_a_event_but_fro
 
 
 @pytest.mark.unit
-def test_should_return_failure_result_when_an_exception_raises_within_command(
-    given_any_correlation_id
-):
+def test_should_return_failure_result_when_an_exception_raises_within_command():
 
     logger = FakeLogger()
 
@@ -77,7 +74,7 @@ def test_should_return_failure_result_when_an_exception_raises_within_command(
     def my_command(event: Event):
         raise RuntimeError("my_command exception")
 
-    event = Event({"event_correlation_id": given_any_correlation_id})
+    event = UserCreated(Name("Name"))
     result = my_command(event=event)
 
     assert_failure(result)

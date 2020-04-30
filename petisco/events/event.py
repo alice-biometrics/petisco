@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from typing import Dict
 
@@ -25,16 +26,16 @@ class Event:
         self.event_name = (
             self.__class__.__name__ if not self.event_name else self.event_name
         )
-
-        # TODO: when refactor event class
-        # self.event_name = re.sub(r'(?<!^)(?=[A-Z])', '_', self.event_name).lower().replace("_", ".")
+        self.event_name = (
+            re.sub(r"(?<!^)(?=[A-Z])", "_", self.event_name).lower().replace("_", ".")
+        )
 
         self.event_occurred_on = (
             datetime.utcnow() if not self.event_occurred_on else self.event_occurred_on
         )
 
     def __repr__(self):
-        return f"[{self.event_name}: {json.loads(self.to_json())}]"
+        return f"{json.loads(self.to_json())}"
 
     def __eq__(self, other):
         if (
@@ -50,19 +51,71 @@ class Event:
         return not self.__eq__(other)
 
     def to_dict(self) -> Dict:
-        return self.__dict__
+
+        raw_dict = self.__dict__.copy()
+
+        data = {
+            "data": {
+                "id": str(raw_dict.pop("event_id")),
+                "type": raw_dict.pop("event_name"),
+                "version": raw_dict.pop("event_version"),
+                "occurred_on": raw_dict.pop("event_occurred_on").strftime(
+                    "%Y-%m-%d %H:%M:%S.%f"
+                ),
+                "attributes": {},
+                "meta": {},
+            }
+        }
+
+        if "event_info_id" in raw_dict:
+            if raw_dict.get("event_info_id"):
+                data["data"]["meta"]["info_id"] = raw_dict.get("event_info_id")
+            raw_dict.pop("event_info_id")
+
+        data["data"]["attributes"] = raw_dict
+
+        return data
 
     @staticmethod
-    def from_dict(dictionary: Dict):
-        if "event_id" in dictionary and isinstance(dictionary["event_id"], str):
-            dictionary["event_id"] = EventId(dictionary["event_id"])
-        if "event_occurred_on" in dictionary and isinstance(
-            dictionary["event_occurred_on"], str
-        ):
-            dictionary["event_occurred_on"] = datetime.strptime(
-                dictionary["event_occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
+    def from_dict(jsonapi: Dict):
+
+        data = jsonapi.get("data")
+
+        event_dictionary = {}
+
+        if "id" in data and isinstance(data["id"], str):
+            event_dictionary["event_id"] = EventId(data["id"])
+
+        if "type" in data and isinstance(data["type"], str):
+            event_dictionary["event_name"] = EventId(data["type"])
+
+        if "version" in data and isinstance(data["version"], str):
+            event_dictionary["event_version"] = data["version"]
+
+        if "occurred_on" in data and isinstance(data["occurred_on"], str):
+            event_dictionary["event_occurred_on"] = datetime.strptime(
+                data["occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
             )
-        return Event(dictionary)
+
+        event_dictionary["event_info_id"] = data.get("meta", {}).get("info_id")
+
+        event_dictionary.update(data.get("attributes"))
+
+        return Event(event_dictionary)
+
+    @staticmethod
+    def from_deprecated_dict(deprecated_dict: Dict):
+        if "event_id" in deprecated_dict and isinstance(
+            deprecated_dict["event_id"], str
+        ):
+            deprecated_dict["event_id"] = EventId(deprecated_dict["event_id"])
+        if "event_occurred_on" in deprecated_dict and isinstance(
+            deprecated_dict["event_occurred_on"], str
+        ):
+            deprecated_dict["event_occurred_on"] = datetime.strptime(
+                deprecated_dict["event_occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
+            )
+        return Event(deprecated_dict)
 
     def to_json(self):
         return json.dumps(self.to_dict(), default=self._datetime_to_str)
@@ -75,6 +128,11 @@ class Event:
     def from_json(event_json):
         event_dict = json.loads(event_json)
         return Event.from_dict(event_dict)
+
+    @staticmethod
+    def from_deprecated_json(event_json):
+        event_dict = json.loads(event_json)
+        return Event.from_deprecated_dict(event_dict)
 
     def add_info_id(self, info_id):
         if not info_id:

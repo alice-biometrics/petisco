@@ -14,5 +14,6 @@ class User(AggregateRoot):
     @staticmethod
     def create(info_id: InfoId, name: Name):
         user = User(name, info_id.client_id, info_id.user_id)
-        user.record(UserCreated(info_id=info_id.to_dict(), name=name))
+        user_created = UserCreated(name=name).add_info_id(info_id)
+        user.record(user_created)
         return user
