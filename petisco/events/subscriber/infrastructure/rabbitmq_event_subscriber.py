@@ -50,7 +50,7 @@ class RabbitMQEventSubscriber(IEventSubscriber):
                 else f"dl-{subscriber_config.topic}"
             )
             self._channel.basic_consume(
-                queue=queue, on_message_callback=subscriber_config.handler
+                queue=queue, on_message_callback=subscriber_config.get_handler()
             )
 
         self._channel.start_consuming()

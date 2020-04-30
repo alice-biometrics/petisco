@@ -1,8 +1,8 @@
-from typing import Dict, List
+from typing import Dict
 from abc import ABCMeta, abstractmethod
 
 
-from petisco.events.event import Event
+from petisco.events.event import Event, Events
 
 
 class IEventPublisher:
@@ -20,6 +20,6 @@ class IEventPublisher:
     def publish(self, event: Event):
         raise NotImplementedError
 
-    def publish_list(self, events: List[Event]):
+    def publish_events(self, events: Events):
         for event in events:
             self.publish(event)

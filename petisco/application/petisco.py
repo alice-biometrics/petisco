@@ -2,7 +2,6 @@ import inspect
 from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
-from dotmap import DotMap
 
 from petisco.cron.infrastructure.apscheduler_cron_executor import (
     APSchedulerCronExecutor,
@@ -16,6 +15,8 @@ from petisco.logger.interface_logger import INFO, ILogger
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.logger.not_implemented_logger import NotImplementedLogger
+from petisco.application.interface_repository import IRepository
+from petisco.application.interface_service import IService
 
 
 @dataclass
@@ -40,23 +41,16 @@ class Petisco(metaclass=Singleton):
         self.app_version = config.app_version
         self.logger = config.get_logger()
         self.info = {"app_name": self.app_name, "app_version": self.app_version}
-        self.set_cron(config)
-        self.set_persistence(config)
-        self.set_providers(config)
-        self.set_events(config)
+        self.set_persistence()
+        self.set_providers()
+        self.set_events()
         self.options = config.options
-
         if self.info:
             self.logger.log(INFO, f"Info: {self.info}")
 
         if self.options:
             self.logger.log(INFO, f"Options: {self.options}")
-
-        if self.config.config_events.publish_deploy_event:
-            event = ServiceDeployed(
-                app_name=self.app_name, app_version=self.app_version
-            )
-            self.event_publisher.publish(event)
+        self.publish_deploy_event()
 
     @staticmethod
     def get_instance():
@@ -88,15 +82,22 @@ class Petisco(metaclass=Singleton):
 
         return Petisco(config=config)
 
-    def set_cron(self, config):
-        config_cron = config.config_cron
+    def publish_deploy_event(self):
+        if self.config.config_events.publish_deploy_event:
+            event = ServiceDeployed(
+                app_name=self.app_name, app_version=self.app_version
+            )
+            self.event_publisher.publish(event)
+
+    def set_cron(self):
+        config_cron = self.config.config_cron
         if config_cron.jobs:
             cron_executor = APSchedulerCronExecutor()
             cron_executor.start(config_cron)
 
-    def set_persistence(self, config):
+    def set_persistence(self):
         self._persistence_models = {}
-        config_persistence = config.config_persistence
+        config_persistence = self.config.config_persistence
         if config_persistence.config:
             import_database_models_func = (
                 config_persistence.get_import_database_models_func()
@@ -105,8 +106,8 @@ class Petisco(metaclass=Singleton):
             self.persistence_configured = True
             self._persistence_models = config_persistence.get_models()
 
-    def set_providers(self, config):
-        config_providers = config.config_providers
+    def set_providers(self):
+        config_providers = self.config.config_providers
         if not config_providers:
             return
         if config_providers.config_dependencies:
@@ -138,8 +139,8 @@ class Petisco(metaclass=Singleton):
 
             self.info["repositories"] = info_repositories
 
-    def set_events(self, config):
-        config_events = config.config_events
+    def set_events(self):
+        config_events = self.config.config_events
         if not config_events:
             return
 
@@ -163,30 +164,55 @@ class Petisco(metaclass=Singleton):
                 raise TypeError(
                     f"Given event_subscriber ({type(self.event_subscriber)}) must implement info"
                 )
-            self.event_subscriber.subscribe_all()
 
     def start(self):
+        self.event_subscriber.subscribe_all()
+        self.set_cron()
         self.config.get_application().start()
 
     def get_app(self):
+        self.event_subscriber.subscribe_all()
+        self.set_cron()
         return self.config.get_application().get_app()
 
     @staticmethod
-    def services() -> DotMap:
-        return DotMap(Petisco.get_instance().services_provider())
+    def services() -> Dict[str, IRepository]:
+        return Petisco.get_instance().services_provider()
 
     @staticmethod
-    def repositories() -> DotMap:
-        return DotMap(Petisco.get_instance().repositories_provider())
+    def repositories() -> Dict[str, IRepository]:
+        return Petisco.get_instance().repositories_provider()
 
     @staticmethod
-    def persistence_models() -> DotMap:
+    def get_service(key: str) -> IService:
+        service = Petisco.services().get(key)
+        if not service:
+            raise ValueError(
+                f"Petisco: {key} service is not defined. Please, add it to petisco.yml"
+            )
+        return service
+
+    @staticmethod
+    def get_repository(key: str) -> IRepository:
+        repository = Petisco.repositories().get(key)
+        if not repository:
+            raise ValueError(
+                f"Petisco: {key} repository is not defined. Please, add it to petisco.yml"
+            )
+        return repository
+
+    @staticmethod
+    def persistence_models() -> Dict[str, str]:
         persistence_models = {}
         try:
             persistence_models = Petisco.get_instance()._persistence_models
         except:  # noqa E722
             pass
         return persistence_models
+
+    @staticmethod
+    def get_persistence_model(key: str) -> Any:
+        return Petisco.persistence_models().get(key)
 
     @staticmethod
     def persistence_session_scope():
