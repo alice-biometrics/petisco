@@ -35,7 +35,6 @@ class RabbitMQEventSubscriber(IEventSubscriber):
             self._thread.start()
             self._is_subscribed = True
 
-
     def _subscribe(self):
         self._channel = self.connection.channel()
         # This uses the basic.qos protocol method to tell RabbitMQ not to give more than one message to a worker at a

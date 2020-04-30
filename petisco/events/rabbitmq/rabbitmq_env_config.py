@@ -17,7 +17,6 @@ class RabbitMQEnvConfig(metaclass=Singleton):
     mode: str
     connections: Dict[str, BlockingConnection]
 
-
     def __init__(self):
         self.user = os.environ.get("RABBITMQ_USER", "guest")
         self.password = os.environ.get("RABBITMQ_PASSWORD", "guest")
@@ -42,4 +41,3 @@ class RabbitMQEnvConfig(metaclass=Singleton):
         rabbitmq_env_config = RabbitMQEnvConfig()
         rabbitmq_env_config.create_connection(key)
         return rabbitmq_env_config.connections.get(key)
-
