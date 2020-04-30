@@ -33,6 +33,8 @@ def test_should_create_a_rabbitmq_event_subscriber_and_then_unsubscribe_all():
 
     subscriber.unsubscribe_all()
 
+    subscriber.unsubscribe_all()
+
 
 @pytest.mark.integration
 def test_should_fail_subscriber_when_connection_parameter_are_not_valid():

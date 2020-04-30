@@ -4,6 +4,9 @@ from typing import Callable, Dict, Any
 from dataclasses import dataclass
 from dotmap import DotMap
 
+from petisco.cron.infrastructure.apscheduler_cron_executor import (
+    APSchedulerCronExecutor,
+)
 from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.service_deployed import ServiceDeployed
 from petisco.events.subscriber.domain.interface_event_subscriber import IEventSubscriber
@@ -36,6 +39,7 @@ class Petisco(metaclass=Singleton):
         self.app_version = config.app_version
         self.logger = config.get_logger()
         self.info = {"app_name": self.app_name, "app_version": self.app_version}
+        self.set_cron(config)
         self.set_persistence(config)
         self.set_providers(config)
         self.set_events(config)
@@ -82,6 +86,12 @@ class Petisco(metaclass=Singleton):
         config = Config.from_filename(filename).unwrap_or_throw()
 
         return Petisco(config=config)
+
+    def set_cron(self, config):
+        config_cron = config.config_cron
+        if config_cron.jobs:
+            cron_executor = APSchedulerCronExecutor()
+            cron_executor.start(config_cron)
 
     def set_persistence(self, config):
         self._persistence_models = {}
@@ -152,6 +162,7 @@ class Petisco(metaclass=Singleton):
                 raise TypeError(
                     f"Given event_subscriber ({type(self.event_subscriber)}) must implement info"
                 )
+            self.event_subscriber.subscribe_all()
 
     def start(self):
         self.config.get_application().start()

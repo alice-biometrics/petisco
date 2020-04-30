@@ -18,6 +18,8 @@ class ConfigEvents:
 
     @staticmethod
     def from_dict(kdict):
+        if not kdict or not isinstance(kdict, dict):
+            return ConfigEvents()
 
         config_event_publisher = ConfigEventsPublisher()
         config_event_publisher_dict = kdict.get("publisher")

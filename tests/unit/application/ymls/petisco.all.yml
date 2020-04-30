@@ -1,6 +1,10 @@
 app:
   name: toy-app
   version: 1.0.0
+cron:
+  date_time:
+    seconds: 10
+    handler: tests.integration.flask_app.toy_app.application.cron.print_date_time.print_date_time
 framework:
   selected_framework: flask
   config_file: swagger.yaml

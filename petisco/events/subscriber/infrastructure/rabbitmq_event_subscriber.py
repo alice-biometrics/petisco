@@ -25,11 +25,15 @@ class RabbitMQEventSubscriber(IEventSubscriber):
                 f'RabbitMQEventSubscriber: Invalid Given Connection. Please, check with something similar to BlockingConnection(ConnectionParameters(host="localhost"))'
             )
         self.connection = connection
+        self._is_subscribed = False
         super().__init__(subscribers)
+
+    def subscribe_all(self):
         if self.subscribers:
             # Run the worker into a thread
             self._thread = threading.Thread(target=self._subscribe)
             self._thread.start()
+            self._is_subscribed = True
 
     def _subscribe(self):
         self._channel = self.connection.channel()
@@ -76,7 +80,7 @@ class RabbitMQEventSubscriber(IEventSubscriber):
         def kill():
             self._channel.stop_consuming()
 
-        if self.subscribers:
+        if self._is_subscribed:
             self.connection.call_later(0, kill)
             self._thread.join()
 
