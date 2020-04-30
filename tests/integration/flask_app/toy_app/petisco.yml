@@ -29,5 +29,5 @@ events:
         service: "toy-app"
         topic: "toy-app-events"
         dead_letter: True
-        handler: tests.integration.flask_app.toy_app.config.config_persistence.config_persistence
+        handler: tests.integration.flask_app.toy_app.application.handlers.store_event.store_event
 

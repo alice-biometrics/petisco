@@ -41,14 +41,17 @@ class _UseCaseHandler:
                 self.logger.log(INFO, log_message.to_json())
 
                 if self.logging_parameters_whitelist:
-                    loggable_kwargs = [
-                        (k, v)
-                        for k, v in kwargs.items()
-                        if k in self.logging_parameters_whitelist
-                    ]
+                    loggable_kwargs = {}
+                    for key, value in kwargs.items():
+                        if key not in self.logging_parameters_whitelist:
+                            continue
+                        if getattr(value, "to_json", None):
+                            loggable_kwargs[key] = value.to_json()
+                        else:
+                            loggable_kwargs[key] = value
 
                     if loggable_kwargs:
-                        log_message.message = json.dumps(dict(loggable_kwargs))
+                        log_message.message = json.dumps(loggable_kwargs)
                         self.logger.log(INFO, log_message.to_json())
 
                 result = self._run_execute(*args, **kwargs)

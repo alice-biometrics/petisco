@@ -1,6 +1,7 @@
 import os
 
 from typing import Dict
+
 from dataclasses import dataclass
 from pika import BlockingConnection, ConnectionParameters, PlainCredentials
 
@@ -15,6 +16,7 @@ class RabbitMQEnvConfig(metaclass=Singleton):
     port: str
     mode: str
     connections: Dict[str, BlockingConnection]
+
 
     def __init__(self):
         self.user = os.environ.get("RABBITMQ_USER", "guest")
@@ -40,3 +42,4 @@ class RabbitMQEnvConfig(metaclass=Singleton):
         rabbitmq_env_config = RabbitMQEnvConfig()
         rabbitmq_env_config.create_connection(key)
         return rabbitmq_env_config.connections.get(key)
+

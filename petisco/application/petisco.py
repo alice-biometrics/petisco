@@ -7,6 +7,7 @@ from dotmap import DotMap
 from petisco.cron.infrastructure.apscheduler_cron_executor import (
     APSchedulerCronExecutor,
 )
+
 from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.service_deployed import ServiceDeployed
 from petisco.events.subscriber.domain.interface_event_subscriber import IEventSubscriber

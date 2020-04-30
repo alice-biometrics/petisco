@@ -18,7 +18,6 @@ class ConfigPersistence:
     def from_dict(kdict):
         if not kdict or not isinstance(kdict, dict):
             return ConfigPersistence()
-
         config = (
             get_function_from_string(kdict.get("config"))
             .handle(

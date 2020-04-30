@@ -30,11 +30,29 @@ def test_should_create_a_rabbitmq_event_subscriber_and_then_unsubscribe_all():
             )
         },
     )
+    subscriber.subscribe_all()
 
     subscriber.unsubscribe_all()
 
-    subscriber.unsubscribe_all()
+    
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
+)
+def test_should_create_a_rabbitmq_event_subscriber_and_then_unsubscribe_all_when_not_subscribe_all_befor():
 
+    subscriber = RabbitMQEventSubscriber(
+        connection=BlockingConnection(ConnectionParameters(host="localhost")),
+        subscribers={
+            "auth": ConfigEventSubscriber(
+                organization="acme",
+                service="auth",
+                topic="auth-events",
+                handler=lambda ch, method, properties, body: None,
+            )
+        },
+    )
+    subscriber.unsubscribe_all()
 
 @pytest.mark.integration
 def test_should_fail_subscriber_when_connection_parameter_are_not_valid():
