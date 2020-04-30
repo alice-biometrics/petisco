@@ -66,7 +66,12 @@ class _SubscriberHandler:
             ):
                 return
 
-            event = Event.from_json(body)
+            try:
+                event = Event.from_json(body)
+            except TypeError:
+                event = Event.from_deprecated_json(body)
+            except:  # noqa E722
+                return ch.basic_reject(delivery_tag=method.delivery_tag, requeue=False)
 
             result = run_controller(event)
 
