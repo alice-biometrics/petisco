@@ -21,6 +21,7 @@ def test_should_check_info_id_to_dict_method(
         "client_id": given_any_client_id,
         "user_id": given_any_user_id,
         "correlation_id": given_any_correlation_id,
+        "ip": None,
     }
 
 
