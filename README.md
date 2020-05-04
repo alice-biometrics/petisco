@@ -55,6 +55,10 @@ app:
   name: taskmanager
   version:
     from_file: VERSION
+cron:
+  dead-letter:
+    seconds: 21600 # 6 hours
+    handler: taskmanager.src.modules.events.application.requeue.requeue_event.subscribe_to_dead_letter
 framework:
     selected_framework: flask
     config_file: swagger.yaml
@@ -63,21 +67,32 @@ framework:
 logger:
     selected_logger: logging
     name: petisco
-    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    config_func: taskmanager.src.config.logging_config_func.logging_config_func
+    format: "%(name)s - %(levelname)s - %(message)s"
+    config: taskmanager.src.config.logging.logging_config
 persistence:
-  config_func: taskmanager.src.config.config_persistence.config_persistence
+  config: taskmanager.src.config.persistence.config_persistence
   models:
     task: taskmanager.src.modules.tasks.infrastructure.persistence.models.task_model.TaskModel
-infrastructure:
-   services_provider_func: taskmanager.src.config.services_provider.services_provider
-   repositories_provider_func: taskmanager.src.config.repositories_provider.repositories_provider
-   event_manager_provider_func: taskmanager.src.config.event_manager_provider.event_manager_provider
-   publish_deploy_event_func: True
-   event_topic: taskmanager
+    event: taskmanager.src.modules.events.infrastructure.persistence.models.event_model.EventModel
+providers:
+   services_provider: taskmanager.src.config.services.services_provider
+   repositories_provider: taskmanager.src.config.repositories.repositories_provider
+events:
+  publish_deploy_event_func: True
+  publisher:
+    provider: taskmanager.src.config.events.publisher_provider
+  subscriber:
+    provider: taskmanager.src.config.events.subscriber_provider
+    subscribers:
+      store-event:
+        organization: acme
+        service: taskmanager
+        topic: taskmanager-events
+        dead_letter: True
+        handler: taskmanager.src.modules.events.application.store.event_store.event_store
 ```
 
-If your app don't need persistence and repositories, you can remove it from the `petisco.yml`:
+For instance, if your app don't need cron dispatchers, events persistence and repositories, you can remove it from the `petisco.yml`:
 
 ```yaml
 app:
@@ -92,13 +107,10 @@ framework:
 logger:
     selected_logger: logging
     name: petisco
-    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    config_func: taskmanager.src.config.logging_config_func.logging_config_func
-infrastructure:
-   services_provider_func: taskmanager.src.config.services_provider.services_provider
-   event_manager_provider_func: taskmanager.src.config.event_manager_provider.event_manager_provider
-   publish_deploy_event_func: True
-   event_topic: taskmanager
+    format: "%(name)s - %(levelname)s - %(message)s"
+    config: taskmanager.src.config.logging.logging_config
+providers:
+   services_provider: taskmanager.src.config.services.services_provider
 ```
 
 ### Handlers
