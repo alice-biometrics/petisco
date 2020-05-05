@@ -176,7 +176,7 @@ class Petisco(metaclass=Singleton):
         return self.config.get_application().get_app()
 
     @staticmethod
-    def services() -> Dict[str, IRepository]:
+    def services() -> Dict[str, IService]:
         return Petisco.get_instance().services_provider()
 
     @staticmethod
