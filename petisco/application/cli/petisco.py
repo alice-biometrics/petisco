@@ -11,7 +11,11 @@ def has_args(args):
     return is_active
 
 
-def rename_template(original_name, replacement: str):
+def rename_template(original_name: str, replacement: str):
+
+    for dname, _, _ in os.walk("."):
+        if original_name in dname:
+            os.rename(dname, dname.replace(original_name, replacement))
 
     blacklist = [".git/", ".idea"]
     for dname, dirs, files in os.walk("."):
