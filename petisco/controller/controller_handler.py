@@ -65,7 +65,7 @@ class _ControllerHandler:
         logging_types_blacklist
             Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
         petisco
-            Use Petisco to set params as: app_name, app_version, logger, or event_manager (EventConfig)
+            Use Petisco to set params as: app_name, app_version, logger
         """
         self.app_name = app_name
         self.app_version = app_version

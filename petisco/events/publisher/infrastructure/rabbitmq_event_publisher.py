@@ -73,7 +73,8 @@ class RabbitMQEventPublisher(IEventPublisher):
         }
 
     def close(self):
-        self.connection.close()
+        if self.connection.is_open:
+            self.connection.close()
 
     def publish(self, event: Event):
         if not event:
