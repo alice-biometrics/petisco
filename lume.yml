@@ -17,9 +17,10 @@ steps:
   test:
     run: pytest
   test-with-rabbitmq:
-    setup: docker run -d --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
-    run: pytest -k test_should_create_a_rabbitmq_event_publisher_and_publish_two_different_events
-    teardown: docker stop rabbitmq
+    setup: docker run -d --rm --name petisco-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+    wait_http_200: http://localhost:15672
+    run: pytest
+    teardown: docker stop petisco-rabbitmq
   test-command-line:
     run: petisco --version
 

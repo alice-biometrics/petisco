@@ -60,4 +60,4 @@ jobs:
         lume -lint
     - name: Test
       run: |
-        lume -build -test -test-command-line
+        lume -build -test-with-rabbitmq -test-command-line
