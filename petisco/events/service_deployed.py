@@ -1,6 +1,6 @@
 from petisco.events.event import Event
 
-EVENT_SERVICE_DEPLOYED_VERSION = "1.0.0"
+EVENT_SERVICE_DEPLOYED_VERSION = 2
 
 
 class ServiceDeployed(Event):
@@ -11,7 +11,7 @@ class ServiceDeployed(Event):
         self,
         app_name: str,
         app_version: str,
-        event_version: str = EVENT_SERVICE_DEPLOYED_VERSION,
+        event_version: int = EVENT_SERVICE_DEPLOYED_VERSION,
     ):
         self.app_name = app_name
         self.app_version = app_version

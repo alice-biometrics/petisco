@@ -16,7 +16,7 @@ def make_user_created_event(given_any_user_id):
 
         def __init__(self, user_id: UserId):
             self.user_id = user_id
-            self.event_version = "1"
+            self.event_version = 1
             super().__init__()
 
     def _make_any_user_created_event(user_id=given_any_user_id):
