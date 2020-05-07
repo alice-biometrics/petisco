@@ -13,12 +13,16 @@ class Event:
     event_id: EventId = None
     event_name: str = None
     event_occurred_on: str = None
-    event_version: str = None
+    event_version: int = None
     event_info_id: Dict = None
 
     def __init__(self, dictionary=None):
+
+        self.event_version = 1
+
         if dictionary:
             self.__dict__.update(dictionary)
+            self.event_version = dictionary.get("event_version", 1)
 
         self.event_id = (
             EventId.generate(str(dictionary)) if not self.event_id else self.event_id
@@ -53,12 +57,11 @@ class Event:
     def to_dict(self) -> Dict:
 
         raw_dict = self.__dict__.copy()
-
         data = {
             "data": {
                 "id": str(raw_dict.pop("event_id")),
                 "type": raw_dict.pop("event_name"),
-                "version": raw_dict.pop("event_version"),
+                "version": str(raw_dict.pop("event_version")),
                 "occurred_on": raw_dict.pop("event_occurred_on").strftime(
                     "%Y-%m-%d %H:%M:%S.%f"
                 ),
@@ -90,7 +93,7 @@ class Event:
             event_dictionary["event_name"] = EventId(data["type"])
 
         if "version" in data and isinstance(data["version"], str):
-            event_dictionary["event_version"] = data["version"]
+            event_dictionary["event_version"] = int(data["version"])
 
         if "occurred_on" in data and isinstance(data["occurred_on"], str):
             event_dictionary["event_occurred_on"] = datetime.strptime(
@@ -115,6 +118,14 @@ class Event:
             deprecated_dict["event_occurred_on"] = datetime.strptime(
                 deprecated_dict["event_occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
             )
+
+        if (
+            "event_version" in deprecated_dict
+            and isinstance(deprecated_dict["event_version"], str)
+            and len(deprecated_dict["event_version"]) > 1
+        ):
+            deprecated_dict["event_version"] = "0"
+
         return Event(deprecated_dict)
 
     def to_json(self):
