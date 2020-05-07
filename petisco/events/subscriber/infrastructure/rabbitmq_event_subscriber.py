@@ -24,6 +24,7 @@ class RabbitMQEventSubscriber(IEventSubscriber):
         if not connector:
             raise TypeError(f"RabbitMQEventSubscriber: Invalid Given RabbitMQConnector")
         self.connector = connector
+        self.connection = None
         self.connection_name = connection_name
         super().__init__(subscribers)
 
@@ -88,7 +89,11 @@ class RabbitMQEventSubscriber(IEventSubscriber):
             self._thread.join()
 
     def info(self) -> Dict:
+        is_open = False
+        if self.connection:
+            is_open = self.connection.is_open
         return {
             "name": self.__class__.__name__,
-            "connection.is_open": self.connection.is_open,
+            "connection.is_open": is_open,
+            "is_subscribed": self._is_subscribed,
         }
