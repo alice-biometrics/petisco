@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pika
 from meiga import isSuccess
 
 from petisco import (
@@ -7,38 +6,32 @@ from petisco import (
     RabbitMQEventSubscriber,
     ConfigEventSubscriber,
     Event,
+    RabbitMQConnector,
 )
 
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
-
-
 @subscriber_handler()
-def auth_handler(event: Event):
-    print(f" [x] auth_handler {event}")
+def a_handler(event: Event):
+    print(f" [x] a_handler {event}")
     return isSuccess
 
 
 @subscriber_handler(percentage_simulate_rejection=0.5)
-def dashboard_handler(event: Event):
-    print(f" [x] dashboard_handler {event}")
+def b_handler(event: Event):
+    print(f" [x] b_handler {event}")
     return isSuccess
 
 
 subscriber = RabbitMQEventSubscriber(
-    connection=connection,
+    connector=RabbitMQConnector(),
     subscribers={
-        "auth": ConfigEventSubscriber(
-            organization="acme",
-            service="auth",
-            topic="auth-events",
-            handler=auth_handler,
+        "a": ConfigEventSubscriber(
+            organization="acme", service="a", topic="a-events", handler=a_handler
         ),
-        "dashboard": ConfigEventSubscriber(
-            organization="acme",
-            service="dashboard",
-            topic="dashboard-events",
-            handler=dashboard_handler,
+        "b": ConfigEventSubscriber(
+            organization="acme", service="b", topic="b-events", handler=b_handler
         ),
     },
+    connection_name="petisco-subscribers",
 )
+subscriber.subscribe_all()

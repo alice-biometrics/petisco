@@ -245,59 +245,39 @@ This fixture will create and connect a database and after the test this will be 
 
 #### Extras
 
-###### RabbitMQ
+###### RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
 
 To test RabbitEventManager you need to run locally a RabbitMQ application, otherwise related test will be skipped.
 Please, check the official doc here: https://www.rabbitmq.com/download.html
 
-With docker
+Run RabbitMQ with docker
 
 ```console
 docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
-How to use the RabbitMQEventManager:
+Please, check examples in [examples/pubsub](examples/pubsub)
 
-```python
-from time import sleep
+Run a Subscriber
 
-from pika import ConnectionParameters
-from petisco import Event, RabbitMQEventManager, UserId
-
-
-class UserCreated(Event):
-    user_id: UserId
-
-    def __init__(self, user_id: UserId):
-        self.user_id = user_id
-        super().__init__()
-
-
-def callback(ch, method, properties, body):
-    event = Event.from_json(body)
-    print(f" [x] Received {event}")
-    # do your stuff here
-    ok = True
-    if ok:
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-    else:
-        ch.basic_nack(delivery_tag=method.delivery_tag)
-
-
-topic = "petisco"
-event_manager = RabbitMQEventManager(
-    connection_parameters=ConnectionParameters(host="localhost"),
-    subscribers={topic: callback},
-)
-
-event_manager.publish(
-    topic, UserCreated(user_id=UserId.generate())
-)
-
-sleep(0.5)  # wait for the callback
-
-event_manager.unsubscribe_all()
+```console
+python examples/pubsub/sub.py
 ```
+
+Run a Publisher:
+
+```console
+python examples/pubsub/pub.py
+```
+
+Run a Subscriber linked to a dead letter queues.
+
+```console
+python examples/pubsub/dl_sub.py
+```
+
+This can be used to requeue nack events.
+
 
 ## Development
 

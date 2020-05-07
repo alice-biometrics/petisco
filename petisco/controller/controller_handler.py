@@ -151,10 +151,9 @@ class _ControllerHandler:
                 http_response=http_response,
                 elapsed_time=elapsed_time,
                 additional_info=self.event_config.get_additional_info(kwargs),
-            )
-            self.event_config.publisher.publish(
-                event=request_responded.add_info_id(info_id)
-            )
+            ).add_info_id(info_id)
+
+            self.event_config.publisher.publish(request_responded)
 
             return http_response
 

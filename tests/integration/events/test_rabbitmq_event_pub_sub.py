@@ -2,7 +2,6 @@ from time import sleep
 
 import pytest
 from meiga import isSuccess, isFailure
-from pika import ConnectionParameters, BlockingConnection
 
 from petisco import (
     Event,
@@ -10,6 +9,7 @@ from petisco import (
     RabbitMQEventPublisher,
     RabbitMQEventSubscriber,
     ConfigEventSubscriber,
+    RabbitMQConnector,
 )
 
 from petisco.events.rabbitmq.rabbitmq_is_running_locally import (
@@ -41,10 +41,8 @@ def test_should_work_successfully_a_happy_path_pub_sub(make_user_created_event):
         else:
             return isFailure
 
-    connection = BlockingConnection(ConnectionParameters(host="localhost"))
-
     publisher = RabbitMQEventPublisher(
-        connection=connection,
+        connector=RabbitMQConnector(),
         organization="acme",
         service="pubsub",
         topic="pubsub-events",
@@ -53,7 +51,7 @@ def test_should_work_successfully_a_happy_path_pub_sub(make_user_created_event):
     publisher.publish_events([event, event])
 
     subscriber = RabbitMQEventSubscriber(
-        connection=connection,
+        connector=RabbitMQConnector(),
         subscribers={
             "auth": ConfigEventSubscriber(
                 organization="acme",
@@ -85,9 +83,8 @@ def test_should_publish_reject_and_requeue_from_dead_letter_exchange(
     global requeue_events
     requeue_events = []
 
-    connection = BlockingConnection(ConnectionParameters(host="localhost"))
     publisher = RabbitMQEventPublisher(
-        connection=connection,
+        connector=RabbitMQConnector(),
         organization="acme",
         service="pubsub",
         topic="pubsub-events",
@@ -109,7 +106,7 @@ def test_should_publish_reject_and_requeue_from_dead_letter_exchange(
     publisher.publish(event)
 
     subscriber = RabbitMQEventSubscriber(
-        connection=connection,
+        connector=RabbitMQConnector(),
         subscribers={
             "auth": ConfigEventSubscriber(
                 organization="acme",

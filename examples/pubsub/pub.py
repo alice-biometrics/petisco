@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 from time import sleep
 
-import pika
-
-from petisco import Event
+from petisco import Event, RabbitMQConnector
 from petisco.domain.value_objects.user_id import UserId
 from petisco.events.publisher.infrastructure.rabbitmq_event_publisher import (
     RabbitMQEventPublisher,
@@ -19,11 +17,10 @@ class UserCreated(Event):
         super().__init__()
 
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
 publishers = {}
-for service in ["auth", "dashboard"]:
+for service in ["a", "b"]:
     publisher = RabbitMQEventPublisher(
-        connection=connection,
+        connector=RabbitMQConnector(),
         organization="acme",
         service=service,
         topic=f"{service}-events",
@@ -33,6 +30,6 @@ for service in ["auth", "dashboard"]:
 for i in range(10):
     for name, publisher in publishers.items():
         event = UserCreated(UserId.generate())
-        print(f"Publishing: {name} -> {event}")
+        print(f"pub: \n* {name}: {event}")
         publisher.publish(event)
         sleep(1)

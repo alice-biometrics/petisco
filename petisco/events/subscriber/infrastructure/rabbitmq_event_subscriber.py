@@ -1,13 +1,12 @@
 import threading
 from typing import Dict
 
-from pika import BlockingConnection
-
 from petisco.events.rabbitmq.create_exchange_and_bind_queue import (
     create_exchange_and_bind_queue,
     create_dead_letter_exchange_and_bind_queue,
 )
 from petisco.events.rabbitmq.get_event_binding_key import get_event_binding_key
+from petisco.events.rabbitmq.rabbitmq_connector import RabbitMQConnector
 from petisco.events.subscriber.domain.config_event_subscriber import (
     ConfigEventSubscriber,
 )
@@ -17,18 +16,22 @@ from petisco.events.subscriber.domain.interface_event_subscriber import IEventSu
 class RabbitMQEventSubscriber(IEventSubscriber):
     def __init__(
         self,
-        connection: BlockingConnection,
+        connector: RabbitMQConnector,
         subscribers: Dict[str, ConfigEventSubscriber] = None,
+        connection_name: str = "subscriber",
     ):
-        if not connection:
-            raise TypeError(
-                f'RabbitMQEventSubscriber: Invalid Given Connection. Please, check with something similar to BlockingConnection(ConnectionParameters(host="localhost"))'
-            )
-        self.connection = connection
         self._is_subscribed = False
+        if not connector:
+            raise TypeError(f"RabbitMQEventSubscriber: Invalid Given RabbitMQConnector")
+        self.connector = connector
+        self.connection_name = connection_name
         super().__init__(subscribers)
 
+    def _connect(self):
+        self.connection = self.connector.get_connection(self.connection_name)
+
     def subscribe_all(self):
+        self._connect()
         if self.subscribers:
             # Run the worker into a thread
             self._thread = threading.Thread(target=self._subscribe)
