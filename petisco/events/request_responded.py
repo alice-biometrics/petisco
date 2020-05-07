@@ -41,7 +41,6 @@ class RequestResponded(Event):
     is_success: bool
     http_response: Dict
     elapsed_time: float
-    additional_info: Dict[str, str]
     event_version: str = None
 
     def __init__(
@@ -52,7 +51,6 @@ class RequestResponded(Event):
         is_success: bool,
         http_response: Tuple[Dict, int],
         elapsed_time: float,
-        additional_info: Dict[str, str],
         event_version: str = REQUEST_RESPONDED_VERSION,
     ):
         self.app_name = app_name
@@ -60,7 +58,6 @@ class RequestResponded(Event):
         self.controller = controller
         self.is_success = is_success
         self.elapsed_time = elapsed_time
-        self.additional_info = additional_info
         self.set_http_response(http_response)
         self.event_version = event_version
         super().__init__()

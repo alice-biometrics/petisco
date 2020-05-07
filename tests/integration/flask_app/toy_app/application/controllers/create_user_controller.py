@@ -31,7 +31,7 @@ def error_handler(result: Result):
     success_handler=success_handler,
     error_handler=error_handler,
     token_manager=TokenManager(token_type="ADMIN_TOKEN"),
-    petisco=Petisco.get_instance(),
+    send_request_responded_event=True,
 )
 def create_user(info_id: InfoId, body: dict):
     info_id.user_id = UserId.generate()

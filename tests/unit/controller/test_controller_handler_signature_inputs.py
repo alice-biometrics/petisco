@@ -90,22 +90,10 @@ def test_should_execute_a_controller_without_receive_any_param(
 
 
 @pytest.mark.unit
-def test_should_execute_a_controller_getting_the_petisco(given_any_petisco):
-    @controller_handler(petisco=given_any_petisco)
-    def my_controller(petisco):
-        assert isinstance(petisco, Petisco)
-        return Success("Hello Petisco")
-
-    http_response = my_controller()
-
-    assert http_response == ({"message": "OK"}, 200)
-
-
-@pytest.mark.unit
-def test_should_execute_a_controller_getting_none_petisco():
+def test_should_execute_a_controller_getting_the_petisco():
     @controller_handler()
     def my_controller(petisco):
-        assert petisco is None
+        assert isinstance(petisco, Petisco)
         return Success("Hello Petisco")
 
     http_response = my_controller()
