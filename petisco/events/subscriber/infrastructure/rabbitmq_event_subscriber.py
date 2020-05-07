@@ -39,12 +39,17 @@ class RabbitMQEventSubscriber(IEventSubscriber):
             self._is_subscribed = True
 
     def _subscribe(self):
-        self._channel = self.connection.channel()
-        # This uses the basic.qos protocol method to tell RabbitMQ not to give more than one message to a worker at a
-        # time. Or, in other words, don't dispatch a new message to a worker until it has processed and acknowledged
-        # the previous one. Instead, it will dispatch it to the next worker that is not still busy.
-        self._channel.basic_qos(prefetch_count=1)
+        self._channels = {}
 
+        # Create channels
+        for name in self.subscribers.keys():
+            self._channels[name] = self.connection.channel()
+            # This uses the basic.qos protocol method to tell RabbitMQ not to give more than one message to a worker at a
+            # time. Or, in other words, don't dispatch a new message to a worker until it has processed and acknowledged
+            # the previous one. Instead, it will dispatch it to the next worker that is not still busy.
+            self._channels[name].basic_qos(prefetch_count=1)
+
+        # Subscription
         for name, subscriber_config in self.subscribers.items():
             self._setup_exchanges_and_queues(subscriber_config)
             queue = (
@@ -52,11 +57,13 @@ class RabbitMQEventSubscriber(IEventSubscriber):
                 if not subscriber_config.dead_letter
                 else f"dl-{subscriber_config.topic}"
             )
-            self._channel.basic_consume(
+            self._channels[name].basic_consume(
                 queue=queue, on_message_callback=subscriber_config.get_handler()
             )
 
-        self._channel.start_consuming()
+        # Start consuming channels
+        for name in self.subscribers.keys():
+            self._channels[name].start_consuming()
 
     def _setup_exchanges_and_queues(self, subscriber_config: ConfigEventSubscriber):
         exchange = subscriber_config.service
