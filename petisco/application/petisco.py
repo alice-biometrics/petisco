@@ -233,3 +233,7 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def get_event_subscriber():
         return Petisco.get_instance().event_subscriber
+
+    @staticmethod
+    def get_logger():
+        return Petisco.get_instance().logger
