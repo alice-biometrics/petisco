@@ -22,7 +22,6 @@ from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.value_objects.value_object import ValueObject
-from petisco.events.event_config import EventConfig
 from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.publisher.infrastructure.not_implemented_event_publisher import (
     NotImplementedEventPublisher,
@@ -80,7 +79,6 @@ classes = [
     "ClientId",
     "UserId",
     "InfoId",
-    "EventConfig",
     "AggregateRoot",
     "Petisco",
     "IApplication",

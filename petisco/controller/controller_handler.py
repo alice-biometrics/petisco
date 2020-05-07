@@ -12,8 +12,8 @@ from petisco.controller.errors.known_result_failure_handler import (
 )
 
 from petisco.domain.aggregate_roots.info_id import InfoId
+from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.request_responded import RequestResponded
-from petisco.events.event_config import EventConfig
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO
 from petisco.controller.errors.http_error import HttpError
@@ -22,38 +22,39 @@ from petisco.security.token_manager.not_implemented_token_manager import (
 )
 from petisco.security.token_manager.token_manager import TokenManager
 from petisco.logger.log_message import LogMessage
-from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.tools.timer import timer
 
 DEFAULT_SUCCESS_MESSAGE = {"message": "OK"}, 200
 DEFAULT_ERROR_MESSAGE = HttpError().handle()
+DEFAULT_APP_NAME = "app-undefined"
+DEFAULT_APP_VERSION = "version-undefined"
+DEFAULT_LOGGER = None
+DEFAULT_PUBLISHER = None
 
 
 class _ControllerHandler:
     def __init__(
         self,
-        app_name: str = "app-undefined",
-        app_version: str = None,
-        logger=NotImplementedLogger(),
-        event_config: EventConfig = EventConfig(),
+        app_name: str = DEFAULT_ERROR_MESSAGE,
+        app_version: str = DEFAULT_APP_VERSION,
+        logger=DEFAULT_LOGGER,
         token_manager: TokenManager = NotImplementedTokenManager(),
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
         headers_provider: Callable = flask_headers_provider,
         logging_types_blacklist: List[Any] = [bytes],
-        petisco: Petisco = None,
+        publisher: IEventPublisher = DEFAULT_PUBLISHER,
+        send_request_responded_event: bool = False,
     ):
         """
         Parameters
         ----------
         app_name
-            Application Name
+            Application Name. If not specified it will get it from Petisco.get_app_version().
         app_version
-            Application Version
+            Application Version. If not specified it will get it from Petisco.get_app_version().
         logger
-            A ILogger implementation. Default NotImplementedLogger
-        event_config
-            EventConfig object. Here, you can define event management.
+            A ILogger implementation. If not specified it will get it from Petisco.get_logger(). You can also use NotImplementedLogger
         token_manager
             TokenManager object. Here, you can define how to deal with JWT Tokens
         success_handler
@@ -64,26 +65,44 @@ class _ControllerHandler:
             Injectable function to provide headers. By default is used headers_provider
         logging_types_blacklist
             Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
-        petisco
-            Use Petisco to set params as: app_name, app_version, logger
+        publisher
+            A IEventPublisher implementation. If not specified it will get it from Petisco.get_event_publisher().
+        send_request_responded_event
+            Boolean to select if RequestResponded event is send. It will use provided publisher
         """
         self.app_name = app_name
         self.app_version = app_version
         self.logger = logger
-        self.event_config = event_config
+        self.publisher = publisher
         self.token_manager = token_manager
         self.success_handler = success_handler
         self.error_handler = error_handler
         self.headers_provider = headers_provider
         self.logging_types_blacklist = logging_types_blacklist
-        self.petisco = petisco
-        self.set_petisco_dependencies()
+        self.send_request_responded_event = send_request_responded_event
 
-    def set_petisco_dependencies(self):
-        if self.petisco:
-            self.app_name = self.petisco.app_name
-            self.app_version = self.petisco.app_version
-            self.logger = self.petisco.logger
+    def _check_app_name(self):
+        if self.app_name == DEFAULT_ERROR_MESSAGE:
+            self.app_name = Petisco.get_app_name()
+
+    def _check_app_version(self):
+        if self.app_version == DEFAULT_APP_VERSION:
+            self.app_version = Petisco.get_app_version()
+
+    def _check_logger(self):
+        if self.logger == DEFAULT_LOGGER:
+            self.logger = Petisco.get_logger()
+
+    def _check_publisher(self):
+        if self.publisher == DEFAULT_PUBLISHER:
+            self.publisher = Petisco.get_event_publisher()
+
+    def _configure_petisco_dependencies(self):
+        self.petisco = Petisco.get_instance()
+        self._check_app_name()
+        self._check_app_version()
+        self._check_logger()
+        self._check_publisher()
 
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
@@ -94,6 +113,8 @@ class _ControllerHandler:
                 params = inspect.getfullargspec(func).args
                 kwargs = {k: v for k, v in kwargs.items() if k in params}
                 return func(*args, **kwargs)
+
+            self._configure_petisco_dependencies()
 
             info_id = None
             is_success = False
@@ -143,17 +164,18 @@ class _ControllerHandler:
                 self.logger.log(ERROR, log_message.to_json())
                 http_response = InternalHttpError().handle()
 
-            request_responded = RequestResponded(
-                app_name=self.app_name,
-                app_version=self.app_version,
-                controller=f"{func.__name__}",
-                is_success=is_success,
-                http_response=http_response,
-                elapsed_time=elapsed_time,
-                additional_info=self.event_config.get_additional_info(kwargs),
-            ).add_info_id(info_id)
+            if self.send_request_responded_event:
 
-            self.event_config.publisher.publish(request_responded)
+                request_responded = RequestResponded(
+                    app_name=self.app_name,
+                    app_version=self.app_version,
+                    controller=f"{func.__name__}",
+                    is_success=is_success,
+                    http_response=http_response,
+                    elapsed_time=elapsed_time,
+                ).add_info_id(info_id)
+
+                self.publisher.publish(request_responded)
 
             return http_response
 

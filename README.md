@@ -134,28 +134,27 @@ Add it to your entry point controller and manage the behaviour:
     Parameters
     ----------
     app_name
-        Application Name
+        Application Name. If not specified it will get it from Petisco.get_app_version().
     app_version
-        Application Version
+        Application Version. If not specified it will get it from Petisco.get_app_version().
     logger
-        A ILogger implementation. Default NotImplementedLogger
-    event_config
-        EventConfig object. Here, you can define event management.
+        A ILogger implementation. If not specified it will get it from Petisco.get_logger(). You can also use NotImplementedLogger
     token_manager
         TokenManager object. Here, you can define how to deal with JWT Tokens
     success_handler
         Handler to deal with Success Results
     error_handler
         Handler to deal with Failure Results
-    correlation_id_provider
-        Injectable function to provide correlation_id. By default is used flask_correlation_id_provider
     headers_provider
         Injectable function to provide headers. By default is used headers_provider
     logging_types_blacklist
         Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
-    petisco
-        Use Petisco to set params as: app_name, app_version, logger, or event_manager (EventConfig)
-
+    publisher
+        A IEventPublisher implementation. If not specified it will get it from Petisco.get_event_publisher().
+    send_request_responded_event
+        Boolean to select if RequestResponded event is send. It will use provided publisher
+    """
+    
 ### Model your Domain
 
 

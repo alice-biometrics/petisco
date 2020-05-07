@@ -31,7 +31,6 @@ def test_should_construct_request_responded_from_a_tuple_http_response(
         is_success=True,
         http_response=given_tuple_http_response,
         elapsed_time=1.0,
-        additional_info=None,
     ).add_info_id(given_any_info_id)
 
     assert request_responded.event_name == "request.responded"
@@ -51,7 +50,6 @@ def test_should_construct_request_responded_from_a_tuple_flask_http_response(
         is_success=True,
         http_response=given_tuple_flask_http_response,
         elapsed_time=1.0,
-        additional_info=None,
     ).add_info_id(given_any_info_id)
 
     assert request_responded.http_response["content"] == "flask response"
@@ -70,7 +68,6 @@ def test_should_construct_request_responded_from_flask_http_response(
         is_success=True,
         http_response=given_tuple_flask_response,
         elapsed_time=1.0,
-        additional_info=None,
     ).add_info_id(given_any_info_id)
 
     assert request_responded.http_response["content"] == "flask response"
