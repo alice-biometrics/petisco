@@ -78,7 +78,7 @@ providers:
    services_provider: taskmanager.src.config.services.services_provider
    repositories_provider: taskmanager.src.config.repositories.repositories_provider
 events:
-  publish_deploy_event_func: True
+  publish_deploy_event: True
   publisher:
     provider: taskmanager.src.config.events.publisher_provider
   subscriber:
