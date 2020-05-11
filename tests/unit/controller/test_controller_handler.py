@@ -55,7 +55,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
     assert request_responded.app_version == __version__
     assert request_responded.controller == "my_controller"
     assert request_responded.is_success is True
-    assert request_responded.http_response["content"] == '{"message": "OK"}'
+    assert request_responded.http_response["content"] == {"message": "OK"}
     assert request_responded.http_response["status_code"] == 200
 
 
