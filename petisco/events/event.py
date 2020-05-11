@@ -126,7 +126,18 @@ class Event:
         ):
             deprecated_dict["event_version"] = "0"
 
-        return Event(deprecated_dict)
+        info_id = None
+        if "info_id" in deprecated_dict and isinstance(
+            deprecated_dict["info_id"], dict
+        ):
+            from petisco.domain.aggregate_roots.info_id import InfoId
+
+            info_id = InfoId.from_dict(deprecated_dict.pop("info_id"))
+
+        event = Event(deprecated_dict)
+        event.add_info_id(info_id)
+
+        return event
 
     def to_json(self):
         return json.dumps(self.to_dict(), default=self._datetime_to_str)
