@@ -50,7 +50,6 @@ class Petisco(metaclass=Singleton):
 
         if self.options:
             self.logger.log(INFO, f"Options: {self.options}")
-        self.publish_deploy_event()
 
     @staticmethod
     def get_instance():
@@ -165,14 +164,17 @@ class Petisco(metaclass=Singleton):
                     f"Given event_subscriber ({type(self.event_subscriber)}) must implement info"
                 )
 
-    def start(self):
+    def _start(self):
         self.event_subscriber.subscribe_all()
         self.set_cron()
+        self.publish_deploy_event()
+
+    def start(self):
+        self._start()
         self.config.get_application().start()
 
     def get_app(self):
-        self.event_subscriber.subscribe_all()
-        self.set_cron()
+        self._start()
         return self.config.get_application().get_app()
 
     @staticmethod
