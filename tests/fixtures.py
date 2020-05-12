@@ -1,12 +1,70 @@
+import os
+import string
+import random
+
 import pytest
 
-from petisco import Event
+from petisco import Event, EventId
 from petisco.domain.value_objects.user_id import UserId
+
+
+class TrackedEventsSpy:
+    def __init__(self):
+        self.events = {}
+
+    def append(self, event: Event):
+        if str(event.event_id) not in self.events:
+            self.events[str(event.event_id)] = {"counter": 1}
+        else:
+            self.events[str(event.event_id)]["counter"] += 1
+
+    def assert_number_events(self, expected_number_events: int):
+        actual_number_events = len(self.events.keys())
+        assert (
+            actual_number_events == expected_number_events
+        ), f"Expected events is {expected_number_events}, actual {actual_number_events}"
+
+    def get_counter_by_event_id(self, event_id: EventId):
+        return self.events.get(str(event_id), {}).get("counter", 0)
 
 
 @pytest.fixture
 def given_any_topic():
     return "topic"
+
+
+@pytest.fixture
+def given_random_str() -> str:
+    letters = string.ascii_letters
+    return "".join(random.choice(letters) for i in range(5))
+
+
+@pytest.fixture
+def given_random_organization(given_random_str) -> str:
+    return f"acme-{given_random_str}"
+
+
+@pytest.fixture
+def given_random_service(given_random_str) -> str:
+    return f"service-{given_random_str}"
+
+
+@pytest.fixture
+def given_random_topic(given_random_str) -> str:
+    return f"topic-{given_random_str}"
+
+
+@pytest.fixture
+def given_a_short_message_ttl():
+
+    original_value = os.environ.get("PETISCO_BROKER_MESSAGE_TTL")
+
+    os.environ["PETISCO_BROKER_MESSAGE_TTL"] = "10"
+
+    yield
+
+    if original_value:
+        os.environ["PETISCO_BROKER_MESSAGE_TTL"] = original_value
 
 
 @pytest.fixture
@@ -16,7 +74,6 @@ def make_user_created_event(given_any_user_id):
 
         def __init__(self, user_id: UserId):
             self.user_id = user_id
-            self.event_version = 1
             super().__init__()
 
     def _make_any_user_created_event(user_id=given_any_user_id):
