@@ -1,3 +1,5 @@
+import os
+
 from pika import BlockingConnection
 
 
@@ -10,8 +12,9 @@ def create_exchange_and_bind_queue(
 ):
     queue_arguments = {}
     if dead_letter:
+        message_ttl = os.environ.get("PETISCO_BROKER_MESSAGE_TTL", 3000)  # 3 seconds
         queue_arguments = {
-            "x-message-ttl": 1000,
+            "x-message-ttl": message_ttl,
             "x-dead-letter-exchange": f"dlx-{exchange}",
         }
 
