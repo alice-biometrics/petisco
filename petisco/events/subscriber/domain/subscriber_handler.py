@@ -21,7 +21,7 @@ class _SubscriberHandler:
         message_broker: str = "rabbitmq",
         filter_routing_key: str = None,
         delay_after: float = 0,
-        percentage_simulate_rejection: float = None,
+        percentage_simulate_nack: float = None,
     ):
         """
         Parameters
@@ -34,8 +34,8 @@ class _SubscriberHandler:
             Only process, if received message is equal to given filter_routing_key
         delay_after:
             Delay ack or reject for a given number of seconds.
-        percentage_simulate_rejection:
-            Percentage of simulate rejection when the result is a success. [0.0 -> 1.0]. Where 1.0 rejects all the events.
+        percentage_simulate_nack:
+            Percentage of simulate nack when the result is a success. [0.0 -> 1.0]. Where 1.0 rejects all the events.
 
         """
         self.logger = logger
@@ -45,13 +45,30 @@ class _SubscriberHandler:
             )
         self.filter_routing_key = filter_routing_key
         self.delay_after = delay_after
-        self.percentage_simulate_rejection = percentage_simulate_rejection
+        self.percentage_simulate_nack = percentage_simulate_nack
 
     def _check_logger(self):
         if self.logger == DEFAULT_LOGGER:
             from petisco import Petisco
 
             self.logger = Petisco.get_logger()
+
+    def _nack_simulation(self):
+        return (
+            self.percentage_simulate_nack
+            and random.random() < self.percentage_simulate_nack
+        )
+
+    def _log_nack_simulation(self, log_message: LogMessage):
+        log_message.message = json.dumps(
+            {
+                "message": f"Message rejected (Simulation rejecting {self.percentage_simulate_nack * 100}% of the messages"
+            }
+        )
+        self.logger.log(INFO, log_message.to_json())
+
+    def _filter_by_routing_key(self, routing_key: str):
+        return self.filter_routing_key and self.filter_routing_key != routing_key
 
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
@@ -70,23 +87,12 @@ class _SubscriberHandler:
             )
             self.logger.log(INFO, log_message.to_json())
 
-            if (
-                self.percentage_simulate_rejection
-                and random.random() < self.percentage_simulate_rejection
-            ):
+            if self._nack_simulation():
                 ch.basic_nack(delivery_tag=method.delivery_tag)
-                log_message.message = json.dumps(
-                    {
-                        "message": f"Message rejected (Simulation rejecting {self.percentage_simulate_rejection*100}% of the messages"
-                    }
-                )
-                self.logger.log(INFO, log_message.to_json())
+                self._log_nack_simulation(log_message)
                 return
 
-            if (
-                self.filter_routing_key
-                and self.filter_routing_key != method.routing_key
-            ):
+            if self._filter_by_routing_key(method.routing_key):
                 return
 
             try:

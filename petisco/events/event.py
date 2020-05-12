@@ -8,6 +8,8 @@ import json
 
 from typing import List
 
+TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+
 
 class Event:
     event_id: EventId = None
@@ -62,9 +64,7 @@ class Event:
                 "id": str(raw_dict.pop("event_id")),
                 "type": raw_dict.pop("event_name"),
                 "version": str(raw_dict.pop("event_version")),
-                "occurred_on": raw_dict.pop("event_occurred_on").strftime(
-                    "%Y-%m-%d %H:%M:%S.%f"
-                ),
+                "occurred_on": raw_dict.pop("event_occurred_on").strftime(TIME_FORMAT),
                 "attributes": {},
                 "meta": {},
             }
@@ -97,7 +97,7 @@ class Event:
 
         if "occurred_on" in data and isinstance(data["occurred_on"], str):
             event_dictionary["event_occurred_on"] = datetime.strptime(
-                data["occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
+                data["occurred_on"], TIME_FORMAT
             )
 
         event_dictionary["event_info_id"] = data.get("meta", {}).get("info_id")
@@ -116,7 +116,7 @@ class Event:
             deprecated_dict["event_occurred_on"], str
         ):
             deprecated_dict["event_occurred_on"] = datetime.strptime(
-                deprecated_dict["event_occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
+                deprecated_dict["event_occurred_on"], TIME_FORMAT
             )
 
         if (
