@@ -89,7 +89,8 @@ class RabbitMQEventSubscriber(IEventSubscriber):
 
     def unsubscribe_all(self):
         def kill():
-            self._channel.stop_consuming()
+            for name in self.subscribers.keys():
+                self._channels[name].stop_consuming()
 
         if self._is_subscribed:
             self.connection.call_later(0, kill)
