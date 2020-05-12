@@ -9,13 +9,15 @@ from meiga import Result
 from meiga.decorators import meiga
 
 from petisco.logger.log_message import LogMessage
-from petisco.logger.not_implemented_logger import NotImplementedLogger
+
+
+DEFAULT_LOGGER = None
 
 
 class _SubscriberHandler:
     def __init__(
         self,
-        logger=NotImplementedLogger(),
+        logger=DEFAULT_LOGGER,
         message_broker: str = "rabbitmq",
         filter_routing_key: str = None,
         delay_after: float = 0,
@@ -27,7 +29,7 @@ class _SubscriberHandler:
         logger
             A ILogger implementation. Default NotImplementedLogger
         message_broker:
-            Select Message Brokent. For now, only available rabbitmq
+            Select Message Broker. For now, only available rabbitmq
         filter_routing_key:
             Only process, if received message is equal to given filter_routing_key
         delay_after:
@@ -45,12 +47,20 @@ class _SubscriberHandler:
         self.delay_after = delay_after
         self.percentage_simulate_rejection = percentage_simulate_rejection
 
+    def _check_logger(self):
+        if self.logger == DEFAULT_LOGGER:
+            from petisco import Petisco
+
+            self.logger = Petisco.get_logger()
+
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
         def wrapper(*args, **kwargs):
             @meiga
             def run_controller(*args, **kwargs) -> Result:
                 return func(*args, **kwargs)
+
+            self._check_logger()
 
             ch, method, properties, body = args
 
@@ -59,6 +69,19 @@ class _SubscriberHandler:
                 {"routing_key": method.routing_key, "body": json.loads(body)}
             )
             self.logger.log(INFO, log_message.to_json())
+
+            if (
+                self.percentage_simulate_rejection
+                and random.random() < self.percentage_simulate_rejection
+            ):
+                ch.basic_nack(delivery_tag=method.delivery_tag)
+                log_message.message = json.dumps(
+                    {
+                        "message": f"Message rejected (Simulation rejecting {self.percentage_simulate_rejection*100}% of the messages"
+                    }
+                )
+                self.logger.log(INFO, log_message.to_json())
+                return
 
             if (
                 self.filter_routing_key
@@ -71,26 +94,17 @@ class _SubscriberHandler:
             except TypeError:
                 event = Event.from_deprecated_json(body)
             except:  # noqa E722
-                return ch.basic_reject(delivery_tag=method.delivery_tag, requeue=False)
+                return ch.basic_nack(delivery_tag=method.delivery_tag)
 
             result = run_controller(event)
 
             if self.delay_after:
                 time.sleep(self.delay_after)
 
-            if result is None:
-                ch.basic_reject(delivery_tag=method.delivery_tag, requeue=False)
+            if result is None or result.is_failure:
+                ch.basic_nack(delivery_tag=method.delivery_tag)
             else:
-                if result.is_success:
-                    if (
-                        self.percentage_simulate_rejection
-                        and random.random() < self.percentage_simulate_rejection
-                    ):
-                        ch.basic_reject(delivery_tag=method.delivery_tag, requeue=False)
-                    else:
-                        ch.basic_ack(delivery_tag=method.delivery_tag)
-                else:
-                    ch.basic_reject(delivery_tag=method.delivery_tag, requeue=False)
+                ch.basic_ack(delivery_tag=method.delivery_tag)
 
         return wrapper
 
