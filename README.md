@@ -278,6 +278,10 @@ python examples/pubsub/dl_sub.py
 This can be used to requeue nack events.
 
 
+##### Configurations
+
+* `PETISCO_BROKER_MESSAGE_TTL`: (default 3000 ms)
+
 ## Development
 
 ### Using lume
