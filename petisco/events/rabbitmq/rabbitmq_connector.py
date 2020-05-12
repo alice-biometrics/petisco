@@ -8,6 +8,7 @@ from petisco.application.singleton import Singleton
 
 class RabbitMQConnector(metaclass=Singleton):
     def __init__(self):
+        self.heartbeat = os.environ.get("RABBITMQ_HEARTBEAT", 60)
         self.user = os.environ.get("RABBITMQ_USER", "guest")
         self.password = os.environ.get("RABBITMQ_PASSWORD", "guest")
         self.host = os.environ.get("RABBITMQ_HOST", "localhost")
@@ -49,6 +50,7 @@ class RabbitMQConnector(metaclass=Singleton):
         try:
             connection = BlockingConnection(
                 ConnectionParameters(
+                    heartbeat=self.heartbeat,
                     host=self.host,
                     port=int(self.port),
                     credentials=PlainCredentials(

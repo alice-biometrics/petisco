@@ -36,7 +36,7 @@ def given_any_topic():
 @pytest.fixture
 def given_random_str() -> str:
     letters = string.ascii_letters
-    return "".join(random.choice(letters) for i in range(5))
+    return "".join(random.choice(letters) for i in range(5)).lower()
 
 
 @pytest.fixture
@@ -57,14 +57,14 @@ def given_random_topic(given_random_str) -> str:
 @pytest.fixture
 def given_a_short_message_ttl():
 
-    original_value = os.environ.get("PETISCO_BROKER_MESSAGE_TTL")
+    original_value = os.environ.get("RABBITMQ_MESSAGE_TTL")
 
-    os.environ["PETISCO_BROKER_MESSAGE_TTL"] = "10"
+    os.environ["RABBITMQ_MESSAGE_TTL"] = "10"
 
     yield
 
     if original_value:
-        os.environ["PETISCO_BROKER_MESSAGE_TTL"] = original_value
+        os.environ["RABBITMQ_MESSAGE_TTL"] = original_value
 
 
 @pytest.fixture

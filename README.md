@@ -280,7 +280,15 @@ This can be used to requeue nack events.
 
 ##### Configurations
 
-* `PETISCO_BROKER_MESSAGE_TTL`: (default 3000 ms)
+* `RABBITMQ_HEARTBEAT`: (default: 60 s)
+* `RABBITMQ_USER`: (default: guest)
+* `RABBITMQ_PASSWORD`: (default: guest)
+* `RABBITMQ_HOST`: (default: localhost)
+* `RABBITMQ_HOST`: (default: 5672)
+* `RABBITMQ_CONNECTION_NUM_MAX_RETRIES`: (default: 15)
+* `RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY`: (default: 1)
+* `RABBITMQ_MESSAGE_TTL`: (default 3000 ms)
+
 
 ## Development
 
