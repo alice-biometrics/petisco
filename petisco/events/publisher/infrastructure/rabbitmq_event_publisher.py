@@ -1,5 +1,6 @@
 from typing import Dict
 
+from pika.exceptions import StreamLostError
 from pika import BasicProperties
 
 from petisco.events.event import Event
@@ -88,7 +89,11 @@ class RabbitMQEventPublisher(IEventPublisher):
         if not event:
             return
 
-        channel = self.connection.channel()
+        try:
+            channel = self.connection.channel()
+        except StreamLostError:
+            self._check_connection()
+            channel = self.connection.channel()
 
         routing_key = self._get_event_routing_key(event)
 
