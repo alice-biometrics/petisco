@@ -12,7 +12,8 @@ def create_exchange_and_bind_queue(
 ):
     queue_arguments = {}
     if dead_letter:
-        message_ttl = int(os.environ.get("RABBITMQ_MESSAGE_TTL", "3000"))  # 3 seconds
+        # Note: If queue is already created with another RABBITMQ_MESSAGE_TTL, it will fail.
+        message_ttl = int(os.environ.get("RABBITMQ_MESSAGE_TTL", "1000"))  # 1 second
         queue_arguments = {
             "x-message-ttl": message_ttl,
             "x-dead-letter-exchange": f"dlx-{exchange}",

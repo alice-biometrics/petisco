@@ -1,10 +1,9 @@
 from typing import List, Any
-import json
 
 from meiga import Result
 from meiga.decorators import meiga
 
-from petisco.logger.interface_logger import ERROR, INFO
+from petisco.logger.interface_logger import ERROR, INFO, DEBUG
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.use_case.use_case import UseCase
@@ -37,8 +36,7 @@ class _UseCaseHandler:
                     layer="use_case", operation=f"{cls.__name__}", info_id=info_id
                 )
 
-                log_message.message = f"Start"
-                self.logger.log(INFO, log_message.to_json())
+                self.logger.log(INFO, log_message.set_message(f"Running Use Case"))
 
                 if self.logging_parameters_whitelist:
                     loggable_kwargs = {}
@@ -51,8 +49,7 @@ class _UseCaseHandler:
                             loggable_kwargs[key] = value
 
                     if loggable_kwargs:
-                        log_message.message = json.dumps(loggable_kwargs)
-                        self.logger.log(INFO, log_message.to_json())
+                        self.logger.log(DEBUG, log_message.set_message(loggable_kwargs))
 
                 result = self._run_execute(*args, **kwargs)
 
@@ -66,16 +63,17 @@ class _UseCaseHandler:
                     detail = ""
 
                 if result.is_failure:
-                    log_message.message = f"{result} {detail}"
-                    self.logger.log(ERROR, log_message.to_json())
+                    self.logger.log(
+                        ERROR, log_message.set_message(f"{result} {detail}")
+                    )
                 else:
                     if not self._is_logging_type(result.value):
-                        log_message.message = (
+                        message = (
                             f"Success result of type: {type(result.value).__name__}"
                         )
                     else:
-                        log_message.message = f"{result.value}"
-                    self.logger.log(INFO, log_message.to_json())
+                        message = f"{result.value}"
+                    self.logger.log(DEBUG, log_message.set_message(message))
 
                 return result
 

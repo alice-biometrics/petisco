@@ -1,7 +1,7 @@
 import pytest
 from meiga import Success, isFailure
 
-from petisco import controller_handler, ERROR, INFO, __version__
+from petisco import controller_handler, ERROR, INFO, __version__, DEBUG
 from petisco.events.request_responded import RequestResponded
 from tests.unit.mocks.fake_event_publisher import FakeEventPublisher
 from tests.unit.mocks.fake_logger import FakeLogger
@@ -37,16 +37,18 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start", info_id=given_any_info_id
-        ).to_json(),
+            operation="my_controller",
+            message="Processing Request",
+            info_id=given_any_info_id,
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: success | value: Hello Petisco]",
             info_id=given_any_info_id,
-        ).to_json(),
+        ).to_dict(),
     )
 
     request_responded = publisher.get_sent_events()[0]
@@ -83,16 +85,18 @@ def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_o
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start", info_id=given_any_info_id
-        ).to_json(),
+            operation="my_controller",
+            message="Processing Request",
+            info_id=given_any_info_id,
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: success | value: Hello Petisco]",
             info_id=given_any_info_id,
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -123,8 +127,10 @@ def test_should_execute_with_a_failure_a_empty_controller_without_input_paramete
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start", info_id=given_any_info_id
-        ).to_json(),
+            operation="my_controller",
+            message="Processing Request",
+            info_id=given_any_info_id,
+        ).to_dict(),
     )
 
     assert second_logging_message == (
@@ -133,7 +139,7 @@ def test_should_execute_with_a_failure_a_empty_controller_without_input_paramete
             operation="my_controller",
             message="Result[status: failure | value: Error]",
             info_id=given_any_info_id,
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -164,8 +170,10 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start", info_id=given_any_info_id
-        ).to_json(),
+            operation="my_controller",
+            message="Processing Request",
+            info_id=given_any_info_id,
+        ).to_dict(),
     )
     assert second_logging_message == (
         ERROR,
@@ -173,7 +181,7 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
             operation="my_controller",
             message="Result[status: failure | value: Error]",
             info_id=given_any_info_id,
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -212,16 +220,18 @@ def test_should_execute_successfully_a_filtered_object_by_blacklist(
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start", info_id=given_any_info_id
-        ).to_json(),
+            operation="my_controller",
+            message="Processing Request",
+            info_id=given_any_info_id,
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Success result of type: bytes",
             info_id=given_any_info_id,
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -252,11 +262,13 @@ def test_should_log_an_exception_occurred_on_the_controller(
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start", info_id=given_any_info_id
-        ).to_json(),
+            operation="my_controller",
+            message="Processing Request",
+            info_id=given_any_info_id,
+        ).to_dict(),
     )
 
     assert second_logging_message[0] == ERROR
-    assert "line" in second_logging_message[1]
-    assert "RuntimeError" in second_logging_message[1]
-    assert "my_controller exception" in second_logging_message[1]
+    assert "line" in second_logging_message[1]["data"]["message"]
+    assert "RuntimeError" in second_logging_message[1]["data"]["message"]
+    assert "my_controller exception" in second_logging_message[1]["data"]["message"]

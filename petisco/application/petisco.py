@@ -12,9 +12,10 @@ from petisco.events.service_deployed import ServiceDeployed
 from petisco.events.subscriber.domain.interface_event_subscriber import IEventSubscriber
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import INFO, ILogger
+from petisco.logger.log_message import LogMessage
+from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
-from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.application.interface_repository import IRepository
 from petisco.application.interface_service import IService
 
@@ -46,10 +47,12 @@ class Petisco(metaclass=Singleton):
         self.set_events()
         self.options = config.options
         if self.info:
-            self.logger.log(INFO, f"Info: {self.info}")
+            self.logger.log(INFO, LogMessage(data={"message": {"info": self.info}}))
 
         if self.options:
-            self.logger.log(INFO, f"Options: {self.options}")
+            self.logger.log(
+                INFO, LogMessage(data={"message": {"options": self.options}})
+            )
 
     @staticmethod
     def get_instance():

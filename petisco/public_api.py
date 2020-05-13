@@ -10,7 +10,6 @@ from petisco.application.interface_repository import IRepository
 from petisco.application.interface_service import IService
 from petisco.application.petisco import Petisco
 from petisco.application.singleton import Singleton
-from petisco.commands.command_handler import command_handler
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.domain.errors.empty_value_object_error import EmptyValueObjectError
@@ -35,6 +34,7 @@ from petisco.events.subscriber.infrastructure.not_implemented_event_subscriber i
     NotImplementedEventSubscriber,
 )
 from petisco.frameworks.interface_application import IApplication
+from petisco.logger.log_message import LogMessage
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
@@ -59,7 +59,6 @@ classes = [
     "UseCase",
     "use_case_handler",
     "controller_handler",
-    "command_handler",
     "CorrelationId",
     "HttpError",
     "LoggingBasedLogger",
@@ -91,6 +90,7 @@ classes = [
     "IEventSubscriber",
     "NotImplementedEventPublisher",
     "NotImplementedEventSubscriber",
+    "LogMessage",
 ]
 
 # Controllers & Use Cases

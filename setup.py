@@ -40,7 +40,6 @@ setup(
         "petisco/application/config/events",
         "petisco/application/config/cron",
         "petisco/application/cli",
-        "petisco/commands",
         "petisco/controller",
         "petisco/controller/errors",
         "petisco/domain",

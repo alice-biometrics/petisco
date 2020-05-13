@@ -3,7 +3,7 @@ from typing import NamedTuple
 import pytest
 from meiga.assertions import assert_failure, assert_success
 
-from petisco import UseCase, use_case_handler, INFO, ERROR
+from petisco import UseCase, use_case_handler, INFO, ERROR, DEBUG
 from meiga import Success, Failure, isFailure, isSuccess, Error
 
 from tests.unit.mocks.fake_logger import FakeLogger
@@ -27,13 +27,15 @@ def test_should_log_successfully_a_non_error_use_case_without_input_parameters_a
 
     assert first_logging_message == (
         INFO,
-        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Hello Petisco"
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -54,13 +56,15 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters_but_
 
     assert first_logging_message == (
         INFO,
-        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Hello Petisco"
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -86,20 +90,22 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters():
 
     assert first_logging_message == (
         INFO,
-        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase",
-            message='{"client_id": "client_id", "user_id": "user_id"}',
-        ).to_json(),
+            message={"client_id": "client_id", "user_id": "user_id"},
+        ).to_dict(),
     )
     assert third_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Hello Petisco"
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -122,13 +128,15 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_python_type
 
     assert first_logging_message == (
         INFO,
-        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Success result of type: bytes"
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -156,13 +164,15 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_own_named_t
 
     assert first_logging_message == (
         INFO,
-        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Success result of type: BinaryInfo"
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -186,13 +196,15 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_a_tuple():
 
     assert first_logging_message == (
         INFO,
-        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Success result of type: tuple"
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -223,13 +235,15 @@ def test_should_log_successfully_a_large_type_with_its_repr():
 
     assert first_logging_message == (
         INFO,
-        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="<BinaryInfo my_data, len(data)=14>"
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -252,13 +266,15 @@ def test_should_log_successfully_an_error_returned_on_a_use_case():
 
     assert first_logging_message == (
         INFO,
-        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
     )
     assert second_logging_message == (
         ERROR,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Result[status: failure | value: Error] "
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -285,12 +301,14 @@ def test_should_log_successfully_an_error_raised_by_a_meiga_handler():
 
     assert first_logging_message == (
         INFO,
-        LogMessageMother.get_use_case(operation="MyUseCase", message="Start").to_json(),
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
     )
     assert second_logging_message == (
         ERROR,
         LogMessageMother.get_use_case(
             operation="MyUseCase",
             message="Result[status: failure | value: UserNotFoundError] ",
-        ).to_json(),
+        ).to_dict(),
     )
