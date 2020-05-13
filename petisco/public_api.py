@@ -35,6 +35,7 @@ from petisco.events.subscriber.infrastructure.not_implemented_event_subscriber i
     NotImplementedEventSubscriber,
 )
 from petisco.frameworks.interface_application import IApplication
+from petisco.logger.log_message import LogMessage
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
@@ -91,6 +92,7 @@ classes = [
     "IEventSubscriber",
     "NotImplementedEventPublisher",
     "NotImplementedEventSubscriber",
+    "LogMessage",
 ]
 
 # Controllers & Use Cases
