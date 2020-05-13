@@ -82,10 +82,13 @@ class _SubscriberHandler:
             ch, method, properties, body = args
 
             log_message = LogMessage(layer="subscriber", operation=f"{func.__name__}")
-            log_message.message = json.dumps(
-                {"routing_key": method.routing_key, "body": json.loads(body)}
+
+            self.logger.log(
+                INFO,
+                log_message.set_message(
+                    {"routing_key": method.routing_key, "body": json.loads(body)}
+                ),
             )
-            self.logger.log(INFO, log_message.to_json())
 
             if self._nack_simulation():
                 ch.basic_nack(delivery_tag=method.delivery_tag)

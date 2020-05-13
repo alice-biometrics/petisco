@@ -10,7 +10,10 @@ class LogMessageMother:
         operation: str = None, info_id: InfoId = None, message: str = None
     ) -> LogMessage:
         return LogMessage(
-            layer="controller", operation=operation, info_id=info_id, message=message
+            layer="controller",
+            operation=operation,
+            info_id=info_id,
+            data={"message": message},
         )
 
     @staticmethod
@@ -18,7 +21,10 @@ class LogMessageMother:
         operation: str = None, info_id: InfoId = None, message: Any = None
     ) -> LogMessage:
         return LogMessage(
-            layer="use_case", operation=operation, info_id=info_id, message=message
+            layer="use_case",
+            operation=operation,
+            info_id=info_id,
+            data={"message": message},
         )
 
     @staticmethod
@@ -26,5 +32,8 @@ class LogMessageMother:
         operation: str = None, info_id: InfoId = None, message: str = None
     ) -> LogMessage:
         return LogMessage(
-            layer="command", operation=operation, info_id=info_id, message=message
+            layer="command",
+            operation=operation,
+            info_id=info_id,
+            data={"message": message},
         )

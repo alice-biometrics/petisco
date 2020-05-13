@@ -287,7 +287,7 @@ This can be used to requeue nack events.
 * `RABBITMQ_HOST`: (default: 5672)
 * `RABBITMQ_CONNECTION_NUM_MAX_RETRIES`: (default: 15)
 * `RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY`: (default: 1)
-* `RABBITMQ_MESSAGE_TTL`: (default 3000 ms)
+* `RABBITMQ_MESSAGE_TTL`: (default 1000 ms) If a queue is already created it will generate a precodition failure.
 
 
 ## Development

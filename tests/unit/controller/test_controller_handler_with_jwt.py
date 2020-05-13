@@ -1,7 +1,7 @@
 import pytest
 from meiga import Success
 
-from petisco import controller_handler, INFO, ERROR, InfoId
+from petisco import controller_handler, INFO, ERROR, InfoId, DEBUG
 from petisco.security.token_manager.token_manager import TokenManager
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
@@ -41,16 +41,18 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start", info_id=expected_info_id
-        ).to_json(),
+            operation="my_controller",
+            message="Processing Request",
+            info_id=expected_info_id,
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: success | value: Hello Petisco]",
             info_id=expected_info_id,
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -102,16 +104,18 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     assert first_logging_message == (
         INFO,
         LogMessageMother.get_controller(
-            operation="my_controller", message="Start", info_id=expected_info_id
-        ).to_json(),
+            operation="my_controller",
+            message="Processing Request",
+            info_id=expected_info_id,
+        ).to_dict(),
     )
     assert second_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: success | value: Hello Petisco]",
             info_id=expected_info_id,
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -162,7 +166,7 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid REQUIRED_TOKEN Token]",
-        ).to_json(),
+        ).to_dict(),
     )
 
 
@@ -211,5 +215,5 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid TOKEN Token]",
-        ).to_json(),
+        ).to_dict(),
     )

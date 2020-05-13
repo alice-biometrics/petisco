@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
+from petisco.logger.log_message import LogMessage
+
 CRITICAL = 50
 FATAL = CRITICAL
 ERROR = 40
@@ -15,5 +17,5 @@ class ILogger:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def log(self, logging_level: int, message: str):
+    def log(self, logging_level: int, log_message: LogMessage):
         return NotImplementedError
