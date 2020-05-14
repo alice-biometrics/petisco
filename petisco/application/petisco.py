@@ -47,13 +47,6 @@ class Petisco(metaclass=Singleton):
         self._set_events()
         self.set_tasks()
         self.options = config.options
-        if self.info:
-            self.logger.log(INFO, LogMessage(data={"message": {"info": self.info}}))
-
-        if self.options:
-            self.logger.log(
-                INFO, LogMessage(data={"message": {"options": self.options}})
-            )
 
     @staticmethod
     def get_instance():
@@ -178,9 +171,19 @@ class Petisco(metaclass=Singleton):
                     f"Given event_subscriber ({type(self.event_subscriber)}) must implement info"
                 )
 
+    def _log_status(self):
+        if self.info:
+            self.logger.log(INFO, LogMessage(data={"message": {"info": self.info}}))
+
+        if self.options:
+            self.logger.log(
+                INFO, LogMessage(data={"message": {"options": self.options}})
+            )
+
     def _start(self):
         self.event_subscriber.subscribe_all()
         self._schedule_tasks()
+        self._log_status()
         self.publish_deploy_event()
 
     def start(self):
