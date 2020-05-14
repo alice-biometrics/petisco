@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 from typing import Dict
 
-from petisco.events.event_id import EventId
+from petisco.events.event_id import EventId, EVENT_ID_LENGTH
 
 import json
 
@@ -26,9 +26,16 @@ class Event:
             self.__dict__.update(dictionary)
             self.event_version = dictionary.get("event_version", 1)
 
+        self._set_id(dictionary)
+        self._set_name()
+        self._set_occurred_on()
+
+    def _set_id(self, dictionary: dict):
         self.event_id = (
             EventId.generate(str(dictionary)) if not self.event_id else self.event_id
         )
+
+    def _set_name(self):
         self.event_name = (
             self.__class__.__name__ if not self.event_name else self.event_name
         )
@@ -36,6 +43,7 @@ class Event:
             re.sub(r"(?<!^)(?=[A-Z])", "_", self.event_name).lower().replace("_", ".")
         )
 
+    def _set_occurred_on(self):
         self.event_occurred_on = (
             datetime.utcnow() if not self.event_occurred_on else self.event_occurred_on
         )
@@ -111,7 +119,8 @@ class Event:
         if "event_id" in deprecated_dict and isinstance(
             deprecated_dict["event_id"], str
         ):
-            deprecated_dict["event_id"] = EventId(deprecated_dict["event_id"])
+            new_event_id = deprecated_dict["event_id"].rjust(EVENT_ID_LENGTH, "0")
+            deprecated_dict["event_id"] = EventId(new_event_id)
         if "event_occurred_on" in deprecated_dict and isinstance(
             deprecated_dict["event_occurred_on"], str
         ):
