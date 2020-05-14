@@ -53,9 +53,9 @@ class RabbitMQEventPublisher(IEventPublisher):
     def _get_event_routing_key(self, event: Event):
         """
         acme.onboarding.1.event.user.created
-          |       |      |        |      |-> Action (past verb)
-          |       |      |        |-> domain entity
-          |       |      |-> version
+          |       |     |        |      |-> action (past verb)
+          |       |     |        |-> domain entity
+          |       |     |-> version
           |       |-> service
           |-> organization
         """
@@ -83,17 +83,21 @@ class RabbitMQEventPublisher(IEventPublisher):
             self._connect()
             print(self.connection)
 
-    def publish(self, event: Event):
+    def _get_channel(self):
         self._check_connection()
-
-        if not event:
-            return
-
         try:
             channel = self.connection.channel()
         except StreamLostError:
             self._check_connection()
             channel = self.connection.channel()
+        return channel
+
+    def publish(self, event: Event):
+
+        if not event:
+            return
+
+        channel = self._get_channel()
 
         routing_key = self._get_event_routing_key(event)
 
