@@ -42,9 +42,10 @@ class Petisco(metaclass=Singleton):
         self.app_version = config.app_version
         self.logger = config.get_logger()
         self.info = {"app_name": self.app_name, "app_version": self.app_version}
-        self.set_persistence()
-        self.set_providers()
-        self.set_events()
+        self._set_persistence()
+        self._set_providers()
+        self._set_events()
+        self.set_tasks()
         self.options = config.options
         if self.info:
             self.logger.log(INFO, LogMessage(data={"message": {"info": self.info}}))
@@ -94,10 +95,20 @@ class Petisco(metaclass=Singleton):
     def set_tasks(self):
         config_tasks = self.config.config_tasks
         if config_tasks.tasks:
-            cron_executor = APSchedulerTaskExecutor()
-            cron_executor.start(config_tasks)
+            self.info["tasks"] = {}
+            for task_name, config_task in config_tasks.tasks.items():
+                self.info["tasks"][task_name] = config_task.to_dict()
+            self.cron_executor = APSchedulerTaskExecutor()
 
-    def set_persistence(self):
+    def _schedule_tasks(self):
+        config_tasks = self.config.config_tasks
+        if config_tasks.tasks:
+            self.cron_executor.start(config_tasks)
+
+    def _unschedule_tasks(self):
+        self.cron_executor.stop()
+
+    def _set_persistence(self):
         self._persistence_models = {}
         config_persistence = self.config.config_persistence
         if config_persistence.config:
@@ -108,7 +119,7 @@ class Petisco(metaclass=Singleton):
             self.persistence_configured = True
             self._persistence_models = config_persistence.get_models()
 
-    def set_providers(self):
+    def _set_providers(self):
         config_providers = self.config.config_providers
         if not config_providers:
             return
@@ -141,7 +152,7 @@ class Petisco(metaclass=Singleton):
 
             self.info["repositories"] = info_repositories
 
-    def set_events(self):
+    def _set_events(self):
         config_events = self.config.config_events
         if not config_events:
             return
@@ -169,7 +180,7 @@ class Petisco(metaclass=Singleton):
 
     def _start(self):
         self.event_subscriber.subscribe_all()
-        self.set_tasks()
+        self._schedule_tasks()
         self.publish_deploy_event()
 
     def start(self):
@@ -179,6 +190,10 @@ class Petisco(metaclass=Singleton):
     def get_app(self):
         self._start()
         return self.config.get_application().get_app()
+
+    def stop(self):
+        self.event_subscriber.unsubscribe_all()
+        self._unschedule_tasks()
 
     @staticmethod
     def services() -> Dict[str, IService]:

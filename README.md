@@ -58,7 +58,7 @@ app:
 tasks:
   recurring-task:
     run_in: 5 # seconds
-    cron_interval: 10 # seconds
+    interval: 10 # seconds
     handler: taskmanager.tasks.recurring_task
   scheduled-task:
     run_in: 10 # seconds

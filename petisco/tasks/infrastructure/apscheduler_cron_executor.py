@@ -1,7 +1,10 @@
 import atexit
 from datetime import datetime, timedelta
 
-from apscheduler.schedulers import SchedulerAlreadyRunningError
+from apscheduler.schedulers import (
+    SchedulerAlreadyRunningError,
+    SchedulerNotRunningError,
+)
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -16,22 +19,24 @@ class APSchedulerTaskExecutor(TaskExecutor):
 
     def start(self, config_tasks: ConfigTasks):
         for task in config_tasks.tasks.values():
-            if task.cron_interval:
-                self._config_recurring_task(task)
-            else:
-                if task.run_in:
-                    self._config_scheduled_task(task)
-                else:
-                    self._config_instant_task(task)
+            self._config_task(task)
         try:
             self.scheduler.start()
-            atexit.register(lambda: self.scheduler.shutdown())
+            atexit.register(lambda: self.stop())
         except SchedulerAlreadyRunningError:
             pass
 
+    def _config_task(self, task):
+        if task.type == "recurring":
+            self._config_recurring_task(task)
+        elif task.type == "scheduled":
+            self._config_scheduled_task(task)
+        else:
+            self._config_instant_task(task)
+
     def _config_recurring_task(self, task):
         self.scheduler.add_job(
-            func=task.get_handler(), trigger="interval", seconds=task.cron_interval
+            func=task.get_handler(), trigger="interval", seconds=task.interval
         )
 
     def _config_scheduled_task(self, task):
@@ -45,4 +50,7 @@ class APSchedulerTaskExecutor(TaskExecutor):
         self.scheduler.add_job(func=task.get_handler())
 
     def stop(self):
-        self.scheduler.shutdown()
+        try:
+            self.scheduler.shutdown()
+        except SchedulerNotRunningError:
+            pass

@@ -4,7 +4,7 @@ app:
 tasks:
   date-time:
     run_in: 5 # seconds
-    cron_interval: 10
+    interval: 10
     handler: tests.integration.flask_app.toy_app.application.tasks.print_date_time.print_date_time
   background-loading:
     run_in: 5 # seconds
