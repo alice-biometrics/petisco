@@ -1,5 +1,6 @@
 import pytest
 
+from petisco.events.event_id import EVENT_ID_LENGTH
 from tests.unit.events.test_event import UserCreated
 
 
@@ -15,7 +16,7 @@ def test_should_create_an_event_from_deprecated_version():
     }
     expected_body = {
         "data": {
-            "id": "e4e1d",
+            "id": "e4e1d".rjust(EVENT_ID_LENGTH, "0"),  # Refilled with zeros
             "type": "user.created",
             "version": "0",  # old format event will be set to 0 version
             "occurred_on": "2020-04-30 09:05:58.965449",
@@ -86,7 +87,7 @@ def test_should_create_an_event_from_deprecated_version_with_info_id(
     }
     expected_body = {
         "data": {
-            "id": "57062",
+            "id": "57062".rjust(EVENT_ID_LENGTH, "0"),  # Refilled with zeros
             "type": "document.back.requested",
             "version": "0",
             "occurred_on": "2020-05-08 12:17:15.162161",
@@ -99,4 +100,5 @@ def test_should_create_an_event_from_deprecated_version_with_info_id(
     }
 
     retrieved_event = UserCreated.from_deprecated_dict(deprecated_body)
+
     assert retrieved_event.to_dict() == expected_body

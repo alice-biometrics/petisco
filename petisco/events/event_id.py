@@ -3,6 +3,8 @@ import random
 import string
 from datetime import datetime
 
+EVENT_ID_LENGTH = 16
+
 
 class EventId(str):
     def __init__(self, value):
@@ -26,7 +28,7 @@ class EventId(str):
         """
         Return a SHA-256 hash of the given string
         """
-        return hashlib.sha256(string.encode("utf-8")).hexdigest()[:5]
+        return hashlib.sha256(string.encode("utf-8")).hexdigest()[:EVENT_ID_LENGTH]
 
     @staticmethod
     def random_string(string_length: int):
