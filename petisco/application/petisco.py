@@ -3,9 +3,6 @@ from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
 
-from petisco.cron.infrastructure.apscheduler_cron_executor import (
-    APSchedulerCronExecutor,
-)
 
 from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.service_deployed import ServiceDeployed
@@ -18,6 +15,9 @@ from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.application.interface_repository import IRepository
 from petisco.application.interface_service import IService
+from petisco.tasks.infrastructure.apscheduler_cron_executor import (
+    APSchedulerTaskExecutor,
+)
 
 
 @dataclass
@@ -91,11 +91,11 @@ class Petisco(metaclass=Singleton):
             )
             self.event_publisher.publish(event)
 
-    def set_cron(self):
-        config_cron = self.config.config_cron
-        if config_cron.jobs:
-            cron_executor = APSchedulerCronExecutor()
-            cron_executor.start(config_cron)
+    def set_tasks(self):
+        config_tasks = self.config.config_tasks
+        if config_tasks.jobs:
+            cron_executor = APSchedulerTaskExecutor()
+            cron_executor.start(config_tasks)
 
     def set_persistence(self):
         self._persistence_models = {}
@@ -169,7 +169,7 @@ class Petisco(metaclass=Singleton):
 
     def _start(self):
         self.event_subscriber.subscribe_all()
-        self.set_cron()
+        self.set_tasks()
         self.publish_deploy_event()
 
     def start(self):

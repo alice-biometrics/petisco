@@ -9,7 +9,7 @@ from petisco.application.config.raise_petisco_config_error import (
 
 
 @dataclass
-class ConfigCronJob:
+class ConfigTasksJob:
     seconds: float
     handler_key: str
     kdict: Dict = None
@@ -21,7 +21,7 @@ class ConfigCronJob:
         if not handler_key:
             raise TypeError(f"ConfigEventsSubscriber: handler is a required parameter")
 
-        return ConfigCronJob(seconds, handler_key, kdict)
+        return ConfigTasksJob(seconds, handler_key, kdict)
 
     def get_handler(self) -> Callable:
         # Use this function to avoid circular dependency accessing Petisco objects before its configuration
@@ -29,7 +29,7 @@ class ConfigCronJob:
             get_function_from_string(self.handler_key)
             .handle(
                 on_failure=raise_petisco_config_exception,
-                failure_args=(self.kdict, "cron:*:handler"),
+                failure_args=(self.kdict, "tasks:*:handler"),
             )
             .unwrap()
         )
