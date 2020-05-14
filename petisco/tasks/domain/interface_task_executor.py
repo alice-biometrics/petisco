@@ -1,14 +1,14 @@
 from abc import ABCMeta, abstractmethod
 
-from petisco.application.config.cron.config_cron import ConfigCron
+from petisco.tasks.config.config_tasks import ConfigTasks
 
 
-class CronExecutor:
+class TaskExecutor:
 
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def start(self, config_cron: ConfigCron):
+    def start(self, config_tasks: ConfigTasks):
         raise NotImplementedError
 
     @abstractmethod

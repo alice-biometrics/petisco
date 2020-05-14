@@ -1,10 +1,14 @@
 app:
   name: toy-app
   version: 1.0.0
-cron:
-  date_time:
-    seconds: 10
-    handler: tests.integration.flask_app.toy_app.application.cron.print_date_time.print_date_time
+tasks:
+  date-time:
+    run_in: 5 # seconds
+    interval: 10
+    handler: tests.integration.flask_app.toy_app.application.tasks.print_date_time.print_date_time
+  background-loading:
+    run_in: 5 # seconds
+    handler: tests.integration.flask_app.toy_app.application.tasks.background_loading.background_loading
 framework:
   selected_framework: flask
   config_file: swagger.yaml
