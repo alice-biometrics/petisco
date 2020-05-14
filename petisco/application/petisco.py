@@ -93,7 +93,7 @@ class Petisco(metaclass=Singleton):
 
     def set_tasks(self):
         config_tasks = self.config.config_tasks
-        if config_tasks.jobs:
+        if config_tasks.tasks:
             cron_executor = APSchedulerTaskExecutor()
             cron_executor.start(config_tasks)
 
