@@ -1,8 +1,9 @@
 import json
 import time
 import random
+import traceback
 
-from petisco.logger.interface_logger import INFO
+from petisco.logger.interface_logger import INFO, ERROR
 from petisco.events.event import Event
 from functools import wraps
 from meiga import Result
@@ -20,7 +21,7 @@ class _SubscriberHandler:
         logger=DEFAULT_LOGGER,
         message_broker: str = "rabbitmq",
         filter_routing_key: str = None,
-        delay_after: float = 0,
+        delay_after: float = None,
         percentage_simulate_nack: float = None,
     ):
         """
@@ -54,21 +55,35 @@ class _SubscriberHandler:
             self.logger = Petisco.get_logger()
 
     def _nack_simulation(self):
-        return (
-            self.percentage_simulate_nack
-            and random.random() < self.percentage_simulate_nack
-        )
+        if self.percentage_simulate_nack is None:
+            return False
+        else:
+            return (
+                self.percentage_simulate_nack
+                and random.random() < self.percentage_simulate_nack
+            )
 
     def _log_nack_simulation(self, log_message: LogMessage):
-        log_message.message = json.dumps(
-            {
-                "message": f"Message rejected (Simulation rejecting {self.percentage_simulate_nack * 100}% of the messages"
-            }
+        self.logger.log(
+            INFO,
+            log_message.set_message(
+                f"Message rejected (Simulation rejecting {self.percentage_simulate_nack * 100}% of the messages)"
+            ),
         )
-        self.logger.log(INFO, log_message.to_json())
 
     def _filter_by_routing_key(self, routing_key: str):
-        return self.filter_routing_key and self.filter_routing_key != routing_key
+        if self.filter_routing_key is None:
+            return False
+        else:
+            return self.filter_routing_key != routing_key
+
+    def _log_filter_by_routing_key(self, log_message: LogMessage):
+        self.logger.log(
+            INFO,
+            log_message.set_message(
+                f"Message rejected (filtering by routing_key {self.filter_routing_key})"
+            ),
+        )
 
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
@@ -96,6 +111,8 @@ class _SubscriberHandler:
                 return
 
             if self._filter_by_routing_key(method.routing_key):
+                ch.basic_nack(delivery_tag=method.delivery_tag)
+                self._log_filter_by_routing_key(log_message)
                 return
 
             try:
@@ -111,6 +128,8 @@ class _SubscriberHandler:
                 time.sleep(self.delay_after)
 
             if result is None or result.is_failure:
+                message = f"{result}: {traceback.format_exc()}"
+                self.logger.log(ERROR, log_message.set_message(message))
                 ch.basic_nack(delivery_tag=method.delivery_tag)
             else:
                 ch.basic_ack(delivery_tag=method.delivery_tag)

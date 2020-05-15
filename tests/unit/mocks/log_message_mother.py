@@ -37,3 +37,9 @@ class LogMessageMother:
             info_id=info_id,
             data={"message": message},
         )
+
+    @staticmethod
+    def get_subscriber(operation: str = None, message: str = None) -> LogMessage:
+        return LogMessage(
+            layer="subscriber", operation=operation, data={"message": message}
+        )
