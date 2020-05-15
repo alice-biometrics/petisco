@@ -22,15 +22,42 @@ from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
 
 
+def await_for_subscriber():
+    sleep(2.0)
+
+
 def await_for_events():
     sleep(1.5)
 
 
 @pytest.fixture
-def given_any_publisher(
-    given_random_organization, given_random_service, given_random_topic
+def given_any_publisher_and_subscriber(
+    given_any_publisher,
+    given_any_subscriber,
+    given_random_organization,
+    given_random_service,
+    given_random_topic,
 ):
-    def _given_any_publisher():
+    def _given_any_publisher_and_subscriber(subscriber_handler: Callable):
+        publisher = given_any_publisher(
+            given_random_organization, given_random_service, given_random_topic
+        )
+        subscriber = given_any_subscriber(
+            given_random_organization,
+            given_random_service,
+            given_random_topic,
+            subscriber_handler,
+        )
+        return publisher, subscriber
+
+    return _given_any_publisher_and_subscriber
+
+
+@pytest.fixture
+def given_any_publisher():
+    def _given_any_publisher(
+        given_random_organization, given_random_service, given_random_topic
+    ):
         publisher = RabbitMQEventPublisher(
             connector=RabbitMQConnector(),
             organization=given_random_organization,
@@ -43,10 +70,13 @@ def given_any_publisher(
 
 
 @pytest.fixture
-def given_any_subscriber(
-    given_random_organization, given_random_service, given_random_topic
-):
-    def _given_any_subscriber(subscriber_handler: Callable):
+def given_any_subscriber():
+    def _given_any_subscriber(
+        given_random_organization,
+        given_random_service,
+        given_random_topic,
+        subscriber_handler: Callable,
+    ):
         subscriber = RabbitMQEventSubscriber(
             connector=RabbitMQConnector(),
             subscribers={
@@ -68,7 +98,7 @@ def given_any_subscriber(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_subscriber_handler_receive_one_event(
-    make_user_created_event, given_any_publisher, given_any_subscriber
+    make_user_created_event, given_any_publisher_and_subscriber
 ):
     event = make_user_created_event()
     tracked_events_spy = TrackedEventsSpy()
@@ -78,9 +108,11 @@ def test_should_subscriber_handler_receive_one_event(
         tracked_events_spy.append(event)
         return isSuccess
 
-    publisher = given_any_publisher()
-    subscriber = given_any_subscriber(main_handler)
+    publisher, subscriber = given_any_publisher_and_subscriber(main_handler)
+
     subscriber.subscribe_all()
+
+    await_for_subscriber()
 
     publisher.publish(event)
 
@@ -96,7 +128,7 @@ def test_should_subscriber_handler_receive_one_event(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_subscriber_handler_always_simulate_a_nack(
-    make_user_created_event, given_any_publisher, given_any_subscriber
+    make_user_created_event, given_any_publisher_and_subscriber
 ):
     logger = FakeLogger()
     event = make_user_created_event()
@@ -107,9 +139,11 @@ def test_should_subscriber_handler_always_simulate_a_nack(
         tracked_events_spy.append(event)
         return isSuccess
 
-    publisher = given_any_publisher()
-    subscriber = given_any_subscriber(main_handler)
+    publisher, subscriber = given_any_publisher_and_subscriber(main_handler)
+
     subscriber.subscribe_all()
+
+    await_for_subscriber()
 
     publisher.publish(event)
 
@@ -135,7 +169,7 @@ def test_should_subscriber_handler_always_simulate_a_nack(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_subscriber_handler_always_returns_nack_filtering_by_invalid_routing_key(
-    make_user_created_event, given_any_publisher, given_any_subscriber
+    make_user_created_event, given_any_publisher_and_subscriber
 ):
     logger = FakeLogger()
     event = make_user_created_event()
@@ -147,9 +181,11 @@ def test_should_subscriber_handler_always_returns_nack_filtering_by_invalid_rout
         tracked_events_spy.append(event)
         return isSuccess
 
-    publisher = given_any_publisher()
-    subscriber = given_any_subscriber(main_handler)
+    publisher, subscriber = given_any_publisher_and_subscriber(main_handler)
+
     subscriber.subscribe_all()
+
+    await_for_subscriber()
 
     publisher.publish(event)
 

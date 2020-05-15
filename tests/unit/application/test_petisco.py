@@ -10,12 +10,13 @@ def petisco_yml_path():
 
 
 @pytest.mark.unit
-def test_should_load_petisco_from_yml(petisco_yml_path):
+def test_should_load_petisco_from_yml(petisco_yml_path, given_petisco_version):
 
     filename = f"{petisco_yml_path}/ymls/petisco.all.yml"
     expected_petisco_info = {
         "app_name": "toy-app",
         "app_version": "1.0.0",
+        "petisco_version": given_petisco_version,
         "services": {"sum": {"name": "SumService"}},
         "repositories": {"user": {"name": "SqlUserRepository"}},
         "event_publisher": {"name": "NotImplementedEventPublisher"},

@@ -18,6 +18,7 @@ from petisco.application.interface_service import IService
 from petisco.tasks.infrastructure.apscheduler_cron_executor import (
     APSchedulerTaskExecutor,
 )
+from petisco import __version__
 
 
 @dataclass
@@ -41,7 +42,11 @@ class Petisco(metaclass=Singleton):
         self.app_name = config.app_name
         self.app_version = config.app_version
         self.logger = config.get_logger()
-        self.info = {"app_name": self.app_name, "app_version": self.app_version}
+        self.info = {
+            "app_name": self.app_name,
+            "app_version": self.app_version,
+            "petisco_version": __version__,
+        }
         self._set_persistence()
         self._set_providers()
         self._set_events()

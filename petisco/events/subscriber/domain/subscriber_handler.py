@@ -1,3 +1,5 @@
+from typing import Dict
+
 import json
 import time
 import random
@@ -85,6 +87,9 @@ class _SubscriberHandler:
             ),
         )
 
+    def _log_invalid_event_format(self, log_message: LogMessage, body: Dict):
+        self.logger.log(INFO, log_message.set_message(f"Invalid event format: {body})"))
+
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -120,6 +125,7 @@ class _SubscriberHandler:
             except TypeError:
                 event = Event.from_deprecated_json(body)
             except:  # noqa E722
+                self._log_invalid_event_format(log_message, body)
                 return ch.basic_nack(delivery_tag=method.delivery_tag)
 
             result = run_controller(event)
