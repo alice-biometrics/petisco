@@ -43,7 +43,7 @@ class APSchedulerTaskExecutor(TaskExecutor):
         now = datetime.utcnow()
         start_date = now + timedelta(0, task.run_in)
         self.scheduler.add_job(
-            func=task.get_handler(), trigger="date", run_date=start_date.date()
+            func=task.get_handler(), trigger="date", run_date=start_date
         )
 
     def _config_instant_task(self, task):
