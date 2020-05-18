@@ -62,13 +62,13 @@ def test_should_work_successfully_a_happy_path_pub_sub(
             )
         },
     )
-    subscriber.subscribe_all()
+    subscriber.start()
 
     await_for_events()
 
-    subscriber.unsubscribe_all()
-
     tracked_events_spy.assert_number_events(2)
+
+    subscriber.stop()
 
 
 @pytest.mark.integration
@@ -124,14 +124,14 @@ def test_should_publish_reject_and_requeue_from_dead_letter_exchange(
             ),
         },
     )
-    subscriber.subscribe_all()
+    subscriber.start()
 
     await_for_events()
 
-    subscriber.unsubscribe_all()
-
     tracked_events_spy.assert_number_events(1)
     tracked_requeue_events_dead_letter_spy.assert_number_events(1)
+
+    subscriber.stop()
 
 
 @pytest.mark.integration
@@ -172,10 +172,10 @@ def test_should_work_successfully_a_happy_path_pub_sub_with_subscribers_simulati
             )
         },
     )
-    subscriber.subscribe_all()
+    subscriber.start()
 
     await_for_events()
 
-    subscriber.unsubscribe_all()
-
     tracked_events_spy.assert_number_events(0)
+
+    subscriber.stop()

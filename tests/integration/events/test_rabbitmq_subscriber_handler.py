@@ -110,7 +110,7 @@ def test_should_subscriber_handler_receive_one_event(
 
     publisher, subscriber = given_any_publisher_and_subscriber(main_handler)
 
-    subscriber.subscribe_all()
+    subscriber.start()
 
     await_for_subscriber()
 
@@ -118,9 +118,9 @@ def test_should_subscriber_handler_receive_one_event(
 
     await_for_events()
 
-    subscriber.unsubscribe_all()
-
     tracked_events_spy.assert_number_events(1)
+
+    subscriber.stop()
 
 
 @pytest.mark.integration
@@ -141,15 +141,13 @@ def test_should_subscriber_handler_always_simulate_a_nack(
 
     publisher, subscriber = given_any_publisher_and_subscriber(main_handler)
 
-    subscriber.subscribe_all()
+    subscriber.start()
 
     await_for_subscriber()
 
     publisher.publish(event)
 
     await_for_events()
-
-    subscriber.unsubscribe_all()
 
     tracked_events_spy.assert_number_events(0)
 
@@ -162,6 +160,8 @@ def test_should_subscriber_handler_always_simulate_a_nack(
             message="Message rejected (Simulation rejecting 100.0% of the messages)",
         ).to_dict(),
     )
+
+    subscriber.stop()
 
 
 @pytest.mark.integration
@@ -183,15 +183,13 @@ def test_should_subscriber_handler_always_returns_nack_filtering_by_invalid_rout
 
     publisher, subscriber = given_any_publisher_and_subscriber(main_handler)
 
-    subscriber.subscribe_all()
+    subscriber.start()
 
     await_for_subscriber()
 
     publisher.publish(event)
 
     await_for_events()
-
-    subscriber.unsubscribe_all()
 
     tracked_events_spy.assert_number_events(0)
 
@@ -204,3 +202,4 @@ def test_should_subscriber_handler_always_returns_nack_filtering_by_invalid_rout
             message=f"Message rejected (filtering by routing_key {invalid_routing_key})",
         ).to_dict(),
     )
+    subscriber.stop()

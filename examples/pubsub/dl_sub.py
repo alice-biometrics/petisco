@@ -53,4 +53,4 @@ subscriber = RabbitMQEventSubscriber(
     },
     connection_name="petisco-subscribers",
 )
-subscriber.subscribe_all()
+subscriber.start()

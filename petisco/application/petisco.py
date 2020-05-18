@@ -104,7 +104,7 @@ class Petisco(metaclass=Singleton):
             self.cron_executor.start(config_tasks)
 
     def _unschedule_tasks(self):
-        self.cron_executor.stop()
+        self.cron_executor.close()
 
     def _set_persistence(self):
         self._persistence_models = {}
@@ -186,7 +186,7 @@ class Petisco(metaclass=Singleton):
             )
 
     def _start(self):
-        self.event_subscriber.subscribe_all()
+        self.event_subscriber.start()
         self._schedule_tasks()
         self._log_status()
         self.publish_deploy_event()
@@ -200,7 +200,7 @@ class Petisco(metaclass=Singleton):
         return self.config.get_application().get_app()
 
     def stop(self):
-        self.event_subscriber.unsubscribe_all()
+        self.event_subscriber.stop()
         self._unschedule_tasks()
 
     @staticmethod

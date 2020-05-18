@@ -13,7 +13,6 @@ class UserCreated(Event):
 
     def __init__(self, user_id: UserId):
         self.user_id = user_id
-        self.event_version = "1"
         super().__init__()
 
 
