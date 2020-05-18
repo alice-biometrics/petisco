@@ -20,37 +20,42 @@ class RabbitMQEventSubscriber(IEventSubscriber):
         subscribers: Dict[str, ConfigEventSubscriber] = None,
         connection_name: str = "subscriber",
     ):
-        self._is_subscribed = False
         if not connector:
-            raise TypeError(f"RabbitMQEventSubscriber: Invalid Given RabbitMQConnector")
-        self.connector = connector
-        self.connection = None
-        self.connection_name = connection_name
+            raise TypeError("RabbitMQEventSubscriber: Invalid Given RabbitMQConnector")
+
+        self._connector = connector
+        self._connection = None
+        self._connection_name = connection_name
+        self._channels = {}
+        self._thread = None
         super().__init__(subscribers)
 
-    def _connect(self):
-        self.connection = self.connector.get_connection(self.connection_name)
+    def start(self):
+        if not self.subscribers:
+            raise RuntimeError(
+                "RabbitMQEventSubscriber: cannot start consuming events without any subscriber defined"
+            )
+        self._thread = threading.Thread(target=self._start)
+        self._thread.start()
 
-    def subscribe_all(self):
+    def _start(self):
         self._connect()
-        if self.subscribers:
-            # Run the worker into a thread
-            self._thread = threading.Thread(target=self._subscribe)
-            self._thread.start()
-            self._is_subscribed = True
+        self._create_channels()
+        self._bind_queue_and_subscribers()
+        self._start_consuming()
 
-    def _subscribe(self):
-        self._channels = {}
+    def _connect(self):
+        self._connection = self._connector.get_connection(self._connection_name)
 
-        # Create channels
+    def _create_channels(self):
+        # This uses the basic.qos protocol method to tell RabbitMQ not to give more than one message to a worker at a
+        # time. Or, in other words, don't dispatch a new message to a worker until it has processed and acknowledged
+        # the previous one. Instead, it will dispatch it to the next worker that is not still busy.
         for name in self.subscribers.keys():
-            self._channels[name] = self.connection.channel()
-            # This uses the basic.qos protocol method to tell RabbitMQ not to give more than one message to a worker at a
-            # time. Or, in other words, don't dispatch a new message to a worker until it has processed and acknowledged
-            # the previous one. Instead, it will dispatch it to the next worker that is not still busy.
+            self._channels[name] = self._connection.channel()
             self._channels[name].basic_qos(prefetch_count=1)
 
-        # Subscription
+    def _bind_queue_and_subscribers(self):
         for name, subscriber_config in self.subscribers.items():
             self._setup_exchanges_and_queues(subscriber_config)
             queue = (
@@ -62,10 +67,6 @@ class RabbitMQEventSubscriber(IEventSubscriber):
                 queue=queue, on_message_callback=subscriber_config.get_handler()
             )
 
-        # Start consuming channels
-        for name in self.subscribers.keys():
-            self._channels[name].start_consuming()
-
     def _setup_exchanges_and_queues(self, subscriber_config: ConfigEventSubscriber):
         exchange = subscriber_config.service
         queue = subscriber_config.topic
@@ -74,34 +75,50 @@ class RabbitMQEventSubscriber(IEventSubscriber):
         )
 
         create_dead_letter_exchange_and_bind_queue(
-            connection=self.connection,
+            connection=self._connection,
             exchange=exchange,
             queue=queue,
             binding_key=binding_key,
         )
         create_exchange_and_bind_queue(
-            connection=self.connection,
+            connection=self._connection,
             exchange=exchange,
             queue=queue,
             binding_key=binding_key,
             dead_letter=True,
         )
 
-    def unsubscribe_all(self):
+    def _start_consuming(self):
+        for name in self.subscribers.keys():
+            self._channels[name].start_consuming()
+
+    def get_subscribers_status(self) -> Dict[str, str]:
+        subscribers_status = {}
+        for name, channel in self._channels.items():
+            subscribers_status[name] = (
+                "subscribed" if len(channel.consumer_tags) > 0 else "unsubscribed"
+            )
+        return subscribers_status
+
+    def _unsubscribe_all(self):
         def kill():
             for name in self.subscribers.keys():
-                self._channels[name].stop_consuming()
+                if name in self._channels:
+                    self._channels[name].stop_consuming()
 
-        if self._is_subscribed:
-            self.connection.call_later(0, kill)
+        self._connection.call_later(0, kill)
+
+    def stop(self):
+        if self._thread and self._thread.is_alive():
+            self._unsubscribe_all()
             self._thread.join()
 
     def info(self) -> Dict:
         is_open = False
-        if self.connection:
-            is_open = self.connection.is_open
+        if self._connection:
+            is_open = self._connection.is_open
         return {
             "name": self.__class__.__name__,
             "connection.is_open": is_open,
-            "is_subscribed": self._is_subscribed,
+            "subscribers_status": self.get_subscribers_status(),
         }

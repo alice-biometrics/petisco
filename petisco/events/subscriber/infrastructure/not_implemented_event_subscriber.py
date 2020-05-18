@@ -7,8 +7,8 @@ class NotImplementedEventSubscriber(IEventSubscriber):
     def info(self) -> Dict:
         return {"name": self.__class__.__name__}
 
-    def subscribe_all(self):
+    def start(self):
         pass
 
-    def unsubscribe_all(self):
+    def stop(self):
         pass
