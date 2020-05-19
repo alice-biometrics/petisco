@@ -29,7 +29,7 @@ def get_content(response, status_code):
     if is_flask_response(response):
         return {"message": "flask response"}
     else:
-        return {"message": "Response OK"} if status_code == 200 else response
+        return {"message": "Response OK"} if 200 >= status_code <= 299 else response
 
 
 class RequestResponded(Event):
