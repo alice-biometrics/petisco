@@ -17,7 +17,7 @@ def get_float_if_exist(kdict: Dict, value: str) -> float:
 
 def get_type(run_in, interval) -> str:
     if interval:
-        type_task = "interval"
+        type_task = "recurring"
     else:
         if run_in:
             type_task = "scheduled"
