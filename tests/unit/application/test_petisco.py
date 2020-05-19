@@ -22,9 +22,9 @@ def test_should_load_petisco_from_yml(petisco_yml_path, given_petisco_version):
         "event_publisher": {"name": "NotImplementedEventPublisher"},
         "event_subscriber": {"name": "NotImplementedEventSubscriber"},
         "tasks": {
-            "recurring-task": {"type": "recurring", "run_in": 5.0, "interval": 10.0},
+            "recurring-task": {"type": "recurring", "run_in": 0.0, "interval": 10.0},
             "scheduled-task": {"type": "scheduled", "run_in": 10.0},
-            "instant-task": {"type": "instant"},
+            "instant-task": {"type": "instant", "run_in": 0.0},
         },
     }
 

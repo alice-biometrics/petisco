@@ -15,7 +15,7 @@ from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.application.interface_repository import IRepository
 from petisco.application.interface_service import IService
-from petisco.tasks.infrastructure.apscheduler_cron_executor import (
+from petisco.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )
 from petisco import __version__
@@ -96,15 +96,15 @@ class Petisco(metaclass=Singleton):
             self.info["tasks"] = {}
             for task_name, config_task in config_tasks.tasks.items():
                 self.info["tasks"][task_name] = config_task.to_dict()
-            self.cron_executor = APSchedulerTaskExecutor()
+            self.task_executor = APSchedulerTaskExecutor()
 
     def _schedule_tasks(self):
         config_tasks = self.config.config_tasks
         if config_tasks.tasks:
-            self.cron_executor.start(config_tasks)
+            self.task_executor.start(config_tasks)
 
     def _unschedule_tasks(self):
-        self.cron_executor.close()
+        self.task_executor.stop()
 
     def _set_persistence(self):
         self._persistence_models = {}

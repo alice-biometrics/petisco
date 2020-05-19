@@ -35,8 +35,13 @@ class APSchedulerTaskExecutor(TaskExecutor):
             self._config_instant_task(task)
 
     def _config_recurring_task(self, task):
+        now = datetime.utcnow()
+        start_date = now + timedelta(0, task.run_in)
         self.scheduler.add_job(
-            func=task.get_handler(), trigger="interval", seconds=task.interval
+            func=task.get_handler(),
+            start_date=start_date,
+            trigger="interval",
+            seconds=task.interval,
         )
 
     def _config_scheduled_task(self, task):
