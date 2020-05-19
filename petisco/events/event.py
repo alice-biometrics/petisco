@@ -26,14 +26,12 @@ class Event:
             self.__dict__.update(dictionary)
             self.event_version = dictionary.get("event_version", 1)
 
-        self._set_id(dictionary)
+        self._set_id()
         self._set_name()
         self._set_occurred_on()
 
-    def _set_id(self, dictionary: dict):
-        self.event_id = (
-            EventId.generate(str(dictionary)) if not self.event_id else self.event_id
-        )
+    def _set_id(self):
+        self.event_id = EventId.generate() if not self.event_id else self.event_id
 
     def _set_name(self):
         self.event_name = (
