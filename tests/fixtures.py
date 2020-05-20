@@ -22,7 +22,7 @@ class TrackedEventsSpy:
         actual_number_events = len(self.events.keys())
         assert (
             actual_number_events == expected_number_events
-        ), f"Expected events is {expected_number_events}, actual {actual_number_events}"
+        ), f"Expected events is {expected_number_events}, actual {actual_number_events}. [{self.events}]"
 
     def get_counter_by_event_id(self, event_id: EventId):
         return self.events.get(str(event_id), {}).get("counter", 0)

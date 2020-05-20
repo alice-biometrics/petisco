@@ -3,6 +3,7 @@ from typing import Callable
 from time import sleep
 
 import pytest
+import os
 
 from petisco.events.publisher.infrastructure.rabbitmq_event_publisher import (
     RabbitMQEventPublisher,
@@ -22,8 +23,6 @@ from petisco.events.subscriber.infrastructure.rabbitmq_event_subscriber import (
 
 from petisco.events.event import Event
 from meiga import isSuccess
-
-from tests.fixtures import TrackedEventsSpy
 
 
 def await_for_it(seconds: float = 1.5):
@@ -70,6 +69,23 @@ def test_should_create_a_rabbitmq_event_subscriber_and_then_close_it(
         "subscribers_status": {"auth": "subscribed"},
     }
 
+    subscriber.stop()
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
+)
+def test_should_create_a_rabbitmq_event_subscriber_and_try_to_delete_twice(
+    given_any_config_event_subscriber
+):
+    subscriber = RabbitMQEventSubscriber(
+        connector=RabbitMQConnector(),
+        subscribers={"auth": given_any_config_event_subscriber()},
+    )
+    subscriber.start()
+    await_for_it()
+    subscriber.stop()
     subscriber.stop()
 
 
@@ -194,25 +210,32 @@ def test_should_work_successfully_a_happy_path_pub_sub_with_two_subscribers_and_
     given_random_service,
     given_random_topic,
 ):
-    event_1 = make_user_created_event()
-    event_2 = make_user_created_event()
+    event_before_delete_letter_stop = make_user_created_event("user_id_1")
+    event_after_delete_letter_stop_1 = make_user_created_event(
+        "user_id_after_delete_letter_stop_1"
+    )
+    event_after_delete_letter_stop_2 = make_user_created_event(
+        "user_id_after_delete_letter_stop_2"
+    )
+    event_after_delete_letter_stop_3 = make_user_created_event(
+        "user_id_after_delete_letter_stop_3"
+    )
 
-    global tracked_events_spy
-    tracked_events_spy = TrackedEventsSpy()
-
-    global tracked_requeue_events_dead_letter_spy
-    tracked_requeue_events_dead_letter_spy = TrackedEventsSpy()
+    filename_main_handler = "filename_main_handler.txt"
+    filename_main_handler_requeue = "filename_main_handler_requeue.txt"
 
     @subscriber_handler()
     def main_handler(event: Event):
-        global tracked_events_spy
-        tracked_events_spy.append(event)
+        print(f"main_handler: {event.to_json()}")
+        with open(filename_main_handler, "a+") as fm:
+            fm.write(event.to_json() + "\n")
         return isSuccess
 
     @subscriber_handler()
     def main_handler_requeue(event: Event):
-        global tracked_requeue_events_dead_letter_spy
-        tracked_requeue_events_dead_letter_spy.append(event)
+        print(f"main_handler_requeue: {event.to_json()}")
+        with open(filename_main_handler_requeue, "a+") as fp:
+            fp.write(event.to_json() + "\n")
         return isSuccess
 
     subscriber = RabbitMQEventSubscriber(
@@ -235,6 +258,7 @@ def test_should_work_successfully_a_happy_path_pub_sub_with_two_subscribers_and_
                 service=given_random_service,
                 topic=given_random_topic,
                 handler=main_handler_requeue,
+                dead_letter=True,
             )
         },
         connection_name="dl-subscriber",
@@ -250,25 +274,38 @@ def test_should_work_successfully_a_happy_path_pub_sub_with_two_subscribers_and_
     subscriber.start()
     dl_subscriber.start()
 
-    await_for_it(4.5)
+    await_for_it(1.5)
 
-    publisher.publish(event_1)
+    publisher.publish(event_before_delete_letter_stop)
 
-    await_for_it(3.0)
-
-    print(tracked_events_spy.events)
-    tracked_events_spy.assert_number_events(1)
-    tracked_requeue_events_dead_letter_spy.assert_number_events(0)
+    await_for_it(1.5)
 
     dl_subscriber.stop()
 
-    publisher.publish(event_2)
+    await_for_it(5.5)
 
-    await_for_it(3.5)
+    publisher.publish_events(
+        [
+            event_after_delete_letter_stop_1,
+            event_after_delete_letter_stop_2,
+            event_after_delete_letter_stop_3,
+        ]
+    )
 
-    tracked_events_spy.assert_number_events(2)
-    tracked_requeue_events_dead_letter_spy.assert_number_events(0)
+    await_for_it(1.5)
 
-    print(tracked_events_spy.events)
+    with open(filename_main_handler, "r") as fmm:
+        lines = fmm.readlines()
+        events = []
+        for line in lines:
+            events.append(Event.from_json(line))
+
+        assert event_before_delete_letter_stop == events[0]
+        assert event_after_delete_letter_stop_1 == events[1]
+        assert event_after_delete_letter_stop_2 == events[2]
+        assert event_after_delete_letter_stop_3 == events[3]
+
+    assert not os.path.exists(filename_main_handler_requeue)
+    os.remove(filename_main_handler)
 
     subscriber.stop()

@@ -1,4 +1,6 @@
 import threading
+import traceback
+from time import sleep
 from typing import Dict
 
 from petisco.events.rabbitmq.create_exchange_and_bind_queue import (
@@ -101,17 +103,36 @@ class RabbitMQEventSubscriber(IEventSubscriber):
         return subscribers_status
 
     def _unsubscribe_all(self):
-        def kill():
+        def _stop_consuming_channels():
             for name in self.subscribers.keys():
                 if name in self._channels:
                     self._channels[name].stop_consuming()
+                    self._channels[name].cancel()
 
-        self._connection.call_later(0, kill)
+        def _await_for_stop_consuming_channels():
+            sleep(2.0)
+
+        self._connection.call_later(0, _stop_consuming_channels)
+        _await_for_stop_consuming_channels()
 
     def stop(self):
+        def _log_stop_exception(e: Exception):
+            from petisco import LogMessage, ERROR, Petisco
+
+            logger = Petisco.get_logger()
+            log_message = LogMessage(
+                layer="petisco", operation=f"RabbitMQEventSubscriber"
+            )
+            message = f"Error stopping RabbitMQEventSubscriber: {repr(e.__class__)} {e} | {traceback.format_exc()}"
+            logger.log(ERROR, log_message.set_message(message))
+
         if self._thread and self._thread.is_alive():
             self._unsubscribe_all()
-            self._thread.join()
+            try:
+                self._thread.join()
+                self._thread = None
+            except Exception as e:
+                _log_stop_exception(e)
 
     def info(self) -> Dict:
         is_open = False
