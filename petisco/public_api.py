@@ -25,6 +25,7 @@ from petisco.events.publisher.domain.interface_event_publisher import IEventPubl
 from petisco.events.publisher.infrastructure.not_implemented_event_publisher import (
     NotImplementedEventPublisher,
 )
+from petisco.events.routing_key import RoutingKey
 from petisco.events.subscriber.domain.config_event_subscriber import (
     ConfigEventSubscriber,
 )
@@ -52,7 +53,6 @@ from petisco.controller.errors.http_error import HttpError
 from petisco.events.event import Event, Events
 from petisco.events.event_id import EventId
 
-
 classes = [
     "IService",
     "IRepository",
@@ -64,6 +64,7 @@ classes = [
     "LoggingBasedLogger",
     "ILogger",
     "Event",
+    "RoutingKey",
     "Events",
     "EventId",
     "Singleton",

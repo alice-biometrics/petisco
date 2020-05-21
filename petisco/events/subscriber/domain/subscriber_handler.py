@@ -1,3 +1,4 @@
+import inspect
 from typing import Dict
 
 import json
@@ -5,6 +6,7 @@ import time
 import random
 import traceback
 
+from petisco.events.routing_key import RoutingKey
 from petisco.logger.interface_logger import INFO, ERROR
 from petisco.events.event import Event
 from functools import wraps
@@ -94,8 +96,10 @@ class _SubscriberHandler:
         @wraps(func)
         def wrapper(*args, **kwargs):
             @meiga
-            def run_controller(*args, **kwargs) -> Result:
-                return func(*args, **kwargs)
+            def run_controller(**kwargs) -> Result:
+                params = inspect.getfullargspec(func).args
+                kwargs = {k: v for k, v in kwargs.items() if k in params}
+                return func(**kwargs)
 
             self._check_logger()
 
@@ -128,7 +132,8 @@ class _SubscriberHandler:
                 self._log_invalid_event_format(log_message, body)
                 return ch.basic_nack(delivery_tag=method.delivery_tag)
 
-            result = run_controller(event)
+            kwargs = dict(event=event, routing_key=RoutingKey(method.routing_key))
+            result = run_controller(**kwargs)
 
             if self.delay_after:
                 time.sleep(self.delay_after)

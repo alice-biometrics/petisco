@@ -16,7 +16,7 @@ def a_handler(event: Event):
     return isSuccess
 
 
-@subscriber_handler(percentage_simulate_rejection=0.5)
+@subscriber_handler(percentage_simulate_nack=0.5)
 def b_handler(event: Event):
     print(f" [x] b_handler {event}")
     return isSuccess
