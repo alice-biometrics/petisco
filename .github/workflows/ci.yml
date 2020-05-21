@@ -15,7 +15,7 @@ on:
       - master
 
 jobs:
-  build:
+  ci:
 
     strategy:
       max-parallel: 4
@@ -47,3 +47,9 @@ jobs:
     - name: Test
       run: |
         lume -build -test-with-rabbitmq -test-command-line
+
+    - name: Check Installation (--no-binary)
+      run: |
+        pip install wheel
+        python setup.py sdist
+        pip wheel --no-binary lume -w /tmp/ext dist/petisco-*.tar.gz
