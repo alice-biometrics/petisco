@@ -9,7 +9,7 @@ from yaml.parser import ParserError, ScannerError
 
 from petisco.application.config.config_persistence import ConfigPersistence
 from petisco.application.config.config_providers import ConfigProviders
-from petisco.application.config.cron.config_cron import ConfigCron
+from petisco.tasks.config.config_tasks import ConfigTasks
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import ILogger
 from petisco.logger.logging_based_logger import LoggingBasedLogger
@@ -31,7 +31,7 @@ class Config:
         app_name: str,
         app_version: str,
         petisco_yml_folder: str = None,
-        config_cron: ConfigCron = None,
+        config_tasks: ConfigTasks = None,
         config_framework: ConfigFramework = None,
         config_logger: ConfigLogger = None,
         config_persistence: ConfigPersistence = None,
@@ -42,7 +42,7 @@ class Config:
         self.app_name = app_name
         self.app_version = app_version
         self.petisco_yml_folder = petisco_yml_folder
-        self.config_cron = config_cron
+        self.config_tasks = config_tasks
         self.config_framework = config_framework
         self.config_logger = config_logger
         self.config_persistence = config_persistence
@@ -76,7 +76,7 @@ class Config:
             petisco_yml_folder, app_config.get("version")
         ).unwrap_or_return()
 
-        config_cron = ConfigCron.from_dict(yaml_dict.get("cron"))
+        config_tasks = ConfigTasks.from_dict(yaml_dict.get("tasks"))
 
         config_framework = ConfigFramework.from_dict(yaml_dict.get("framework"))
 
@@ -97,7 +97,7 @@ class Config:
                 petisco_yml_folder=petisco_yml_folder,
                 app_name=app_name,
                 app_version=app_version,
-                config_cron=config_cron,
+                config_tasks=config_tasks,
                 config_framework=config_framework,
                 config_logger=config_logger,
                 config_providers=config_providers,

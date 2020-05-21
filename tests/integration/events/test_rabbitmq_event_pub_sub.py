@@ -15,6 +15,7 @@ from petisco import (
 from petisco.events.rabbitmq.rabbitmq_is_running_locally import (
     rabbitmq_is_running_locally,
 )
+from tests.fixtures import TrackedEventsSpy
 
 
 def await_for_events():
@@ -25,27 +26,137 @@ def await_for_events():
 @pytest.mark.skipif(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
-def test_should_work_successfully_a_happy_path_pub_sub(make_user_created_event):
-    event = make_user_created_event()
-    global received_events
-    received_events = []
+def test_should_work_successfully_a_happy_path_pub_sub(
+    make_user_created_event,
+    given_random_organization,
+    given_random_service,
+    given_random_topic,
+):
+    event_1 = make_user_created_event()
+    event_2 = make_user_created_event()
+
+    tracked_events_spy = TrackedEventsSpy()
 
     @subscriber_handler()
     def main_handler(event: Event):
-        global received_events
-        received_events.append(event)
-
-        if isinstance(event, make_user_created_event().__class__):
-            assert event.user_id == "user_id_1"
-            return isSuccess
-        else:
-            return isFailure
+        tracked_events_spy.append(event)
+        return isSuccess
 
     publisher = RabbitMQEventPublisher(
         connector=RabbitMQConnector(),
-        organization="acme",
-        service="pubsub",
-        topic="pubsub-events",
+        organization=given_random_organization,
+        service=given_random_service,
+        topic=given_random_topic,
+    )
+
+    publisher.publish_events([event_1, event_2])
+
+    subscriber = RabbitMQEventSubscriber(
+        connector=RabbitMQConnector(),
+        subscribers={
+            "auth": ConfigEventSubscriber(
+                organization=given_random_organization,
+                service=given_random_service,
+                topic=given_random_topic,
+                handler=main_handler,
+            )
+        },
+    )
+    subscriber.start()
+
+    await_for_events()
+
+    tracked_events_spy.assert_number_events(2)
+
+    subscriber.stop()
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
+)
+def test_should_publish_reject_and_requeue_from_dead_letter_exchange(
+    make_user_created_event,
+    given_random_organization,
+    given_random_service,
+    given_random_topic,
+    given_a_short_message_ttl,
+):
+    event = make_user_created_event()
+    tracked_events_spy = TrackedEventsSpy()
+    tracked_requeue_events_dead_letter_spy = TrackedEventsSpy()
+
+    publisher = RabbitMQEventPublisher(
+        connector=RabbitMQConnector(),
+        organization=given_random_organization,
+        service=given_random_service,
+        topic=given_random_topic,
+    )
+
+    @subscriber_handler()
+    def main_handler(event: Event):
+        tracked_events_spy.append(event)
+        return isFailure
+
+    @subscriber_handler()
+    def requeue_from_dead_letter(event: Event):
+        tracked_requeue_events_dead_letter_spy.append(event)
+        publisher.publish(event)
+        return isSuccess
+
+    publisher.publish(event)
+
+    subscriber = RabbitMQEventSubscriber(
+        connector=RabbitMQConnector(),
+        subscribers={
+            "auth": ConfigEventSubscriber(
+                organization=given_random_organization,
+                service=given_random_service,
+                topic=given_random_topic,
+                handler=main_handler,
+            ),
+            "dead-letter": ConfigEventSubscriber(
+                organization=given_random_organization,
+                service=given_random_service,
+                topic=given_random_topic,
+                handler=requeue_from_dead_letter,
+                dead_letter=True,
+            ),
+        },
+    )
+    subscriber.start()
+
+    await_for_events()
+
+    tracked_events_spy.assert_number_events(1)
+    tracked_requeue_events_dead_letter_spy.assert_number_events(1)
+
+    subscriber.stop()
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
+)
+def test_should_work_successfully_a_happy_path_pub_sub_with_subscribers_simulations_nack_everything(
+    make_user_created_event,
+    given_random_organization,
+    given_random_service,
+    given_random_topic,
+):
+    event = make_user_created_event()
+    tracked_events_spy = TrackedEventsSpy()
+
+    @subscriber_handler(percentage_simulate_nack=1.0)
+    def main_handler_everything_nack(event: Event):
+        tracked_events_spy.append(event)
+        return isSuccess
+
+    publisher = RabbitMQEventPublisher(
+        connector=RabbitMQConnector(),
+        organization=given_random_organization,
+        service=given_random_service,
+        topic=given_random_topic,
     )
 
     publisher.publish_events([event, event])
@@ -54,80 +165,17 @@ def test_should_work_successfully_a_happy_path_pub_sub(make_user_created_event):
         connector=RabbitMQConnector(),
         subscribers={
             "auth": ConfigEventSubscriber(
-                organization="acme",
-                service="pubsub",
-                topic="pubsub-events",
-                handler=main_handler,
+                organization=given_random_organization,
+                service=given_random_service,
+                topic=given_random_topic,
+                handler=main_handler_everything_nack,
             )
         },
     )
-    subscriber.subscribe_all()
+    subscriber.start()
 
     await_for_events()
 
-    subscriber.unsubscribe_all()
+    tracked_events_spy.assert_number_events(0)
 
-    assert len(received_events) >= 2
-
-
-@pytest.mark.integration
-@pytest.mark.skipif(
-    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
-)
-def test_should_publish_reject_and_requeue_from_dead_letter_exchange(
-    make_user_created_event
-):
-    event = make_user_created_event()
-    global received_events
-    received_events = []
-    global requeue_events
-    requeue_events = []
-
-    publisher = RabbitMQEventPublisher(
-        connector=RabbitMQConnector(),
-        organization="acme",
-        service="pubsub",
-        topic="pubsub-events",
-    )
-
-    @subscriber_handler()
-    def main_handler(event: Event):
-        global received_events
-        received_events.append(event)
-        return isFailure
-
-    @subscriber_handler()
-    def requeue_from_dead_letter(event: Event):
-        global requeue_events
-        requeue_events.append(event)
-        publisher.publish(event)
-        return isFailure
-
-    publisher.publish(event)
-
-    subscriber = RabbitMQEventSubscriber(
-        connector=RabbitMQConnector(),
-        subscribers={
-            "auth": ConfigEventSubscriber(
-                organization="acme",
-                service="pubsub",
-                topic="pubsub-events",
-                handler=main_handler,
-            ),
-            "dead-letter": ConfigEventSubscriber(
-                organization="acme",
-                service="pubsub",
-                topic="pubsub-events",
-                handler=requeue_from_dead_letter,
-                dead_letter=True,
-            ),
-        },
-    )
-    subscriber.subscribe_all()
-
-    await_for_events()
-
-    subscriber.unsubscribe_all()
-
-    assert len(received_events) >= 2
-    assert len(requeue_events) >= 1
+    subscriber.stop()

@@ -2,11 +2,13 @@ import re
 from datetime import datetime
 from typing import Dict
 
-from petisco.events.event_id import EventId
+from petisco.events.event_id import EventId, EVENT_ID_LENGTH
 
 import json
 
 from typing import List
+
+TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 
 class Event:
@@ -24,9 +26,14 @@ class Event:
             self.__dict__.update(dictionary)
             self.event_version = dictionary.get("event_version", 1)
 
-        self.event_id = (
-            EventId.generate(str(dictionary)) if not self.event_id else self.event_id
-        )
+        self._set_id()
+        self._set_name()
+        self._set_occurred_on()
+
+    def _set_id(self):
+        self.event_id = EventId.generate() if not self.event_id else self.event_id
+
+    def _set_name(self):
         self.event_name = (
             self.__class__.__name__ if not self.event_name else self.event_name
         )
@@ -34,6 +41,7 @@ class Event:
             re.sub(r"(?<!^)(?=[A-Z])", "_", self.event_name).lower().replace("_", ".")
         )
 
+    def _set_occurred_on(self):
         self.event_occurred_on = (
             datetime.utcnow() if not self.event_occurred_on else self.event_occurred_on
         )
@@ -62,9 +70,7 @@ class Event:
                 "id": str(raw_dict.pop("event_id")),
                 "type": raw_dict.pop("event_name"),
                 "version": str(raw_dict.pop("event_version")),
-                "occurred_on": raw_dict.pop("event_occurred_on").strftime(
-                    "%Y-%m-%d %H:%M:%S.%f"
-                ),
+                "occurred_on": raw_dict.pop("event_occurred_on").strftime(TIME_FORMAT),
                 "attributes": {},
                 "meta": {},
             }
@@ -97,7 +103,7 @@ class Event:
 
         if "occurred_on" in data and isinstance(data["occurred_on"], str):
             event_dictionary["event_occurred_on"] = datetime.strptime(
-                data["occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
+                data["occurred_on"], TIME_FORMAT
             )
 
         event_dictionary["event_info_id"] = data.get("meta", {}).get("info_id")
@@ -111,12 +117,13 @@ class Event:
         if "event_id" in deprecated_dict and isinstance(
             deprecated_dict["event_id"], str
         ):
-            deprecated_dict["event_id"] = EventId(deprecated_dict["event_id"])
+            new_event_id = deprecated_dict["event_id"].rjust(EVENT_ID_LENGTH, "0")
+            deprecated_dict["event_id"] = EventId(new_event_id)
         if "event_occurred_on" in deprecated_dict and isinstance(
             deprecated_dict["event_occurred_on"], str
         ):
             deprecated_dict["event_occurred_on"] = datetime.strptime(
-                deprecated_dict["event_occurred_on"], "%Y-%m-%d %H:%M:%S.%f"
+                deprecated_dict["event_occurred_on"], TIME_FORMAT
             )
 
         if (
@@ -126,7 +133,18 @@ class Event:
         ):
             deprecated_dict["event_version"] = "0"
 
-        return Event(deprecated_dict)
+        info_id = None
+        if "info_id" in deprecated_dict and isinstance(
+            deprecated_dict["info_id"], dict
+        ):
+            from petisco.domain.aggregate_roots.info_id import InfoId
+
+            info_id = InfoId.from_dict(deprecated_dict.pop("info_id"))
+
+        event = Event(deprecated_dict)
+        event.add_info_id(info_id)
+
+        return event
 
     def to_json(self):
         return json.dumps(self.to_dict(), default=self._datetime_to_str)

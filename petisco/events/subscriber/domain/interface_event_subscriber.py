@@ -21,9 +21,9 @@ class IEventSubscriber:
         raise NotImplementedError
 
     @abstractmethod
-    def subscribe_all(self):
+    def start(self):
         raise NotImplementedError
 
     @abstractmethod
-    def unsubscribe_all(self):
+    def stop(self):
         raise NotImplementedError

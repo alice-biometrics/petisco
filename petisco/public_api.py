@@ -10,7 +10,6 @@ from petisco.application.interface_repository import IRepository
 from petisco.application.interface_service import IService
 from petisco.application.petisco import Petisco
 from petisco.application.singleton import Singleton
-from petisco.commands.command_handler import command_handler
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.domain.errors.empty_value_object_error import EmptyValueObjectError
@@ -26,6 +25,7 @@ from petisco.events.publisher.domain.interface_event_publisher import IEventPubl
 from petisco.events.publisher.infrastructure.not_implemented_event_publisher import (
     NotImplementedEventPublisher,
 )
+from petisco.events.routing_key import RoutingKey
 from petisco.events.subscriber.domain.config_event_subscriber import (
     ConfigEventSubscriber,
 )
@@ -35,6 +35,7 @@ from petisco.events.subscriber.infrastructure.not_implemented_event_subscriber i
     NotImplementedEventSubscriber,
 )
 from petisco.frameworks.interface_application import IApplication
+from petisco.logger.log_message import LogMessage
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.notifier.domain.interface_notifier import INotifier
@@ -53,19 +54,18 @@ from petisco.controller.errors.http_error import HttpError
 from petisco.events.event import Event, Events
 from petisco.events.event_id import EventId
 
-
 classes = [
     "IService",
     "IRepository",
     "UseCase",
     "use_case_handler",
     "controller_handler",
-    "command_handler",
     "CorrelationId",
     "HttpError",
     "LoggingBasedLogger",
     "ILogger",
     "Event",
+    "RoutingKey",
     "Events",
     "EventId",
     "Singleton",
@@ -93,6 +93,7 @@ classes = [
     "NotImplementedEventPublisher",
     "NotImplementedEventSubscriber",
     "INotifier",
+    "LogMessage",
 ]
 
 # Controllers & Use Cases
@@ -169,13 +170,14 @@ except (RuntimeError, ImportError):
 
 # RabbitMQ
 try:
+    from petisco.events.rabbitmq.rabbitmq_connector import RabbitMQConnector
+
     from petisco.events.publisher.infrastructure.rabbitmq_event_publisher import (
         RabbitMQEventPublisher,
     )
     from petisco.events.subscriber.infrastructure.rabbitmq_event_subscriber import (
         RabbitMQEventSubscriber,
     )
-    from petisco.events.rabbitmq.rabbitmq_connector import RabbitMQConnector
 
     rabbitmq = [
         "RabbitMQEventPublisher",

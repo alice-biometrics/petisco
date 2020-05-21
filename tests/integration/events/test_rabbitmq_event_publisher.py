@@ -1,3 +1,5 @@
+from time import sleep
+
 import pytest
 
 from petisco.events.publisher.infrastructure.rabbitmq_event_publisher import (
@@ -16,10 +18,11 @@ from petisco.events.rabbitmq.rabbitmq_is_running_locally import (
 def test_should_create_a_rabbitmq_event_publisher_and_publish_a_event(
     make_user_created_event
 ):
+    rabbitmq_connector = RabbitMQConnector()
     event = make_user_created_event()
 
     publisher = RabbitMQEventPublisher(
-        connector=RabbitMQConnector(),
+        connector=rabbitmq_connector,
         organization="acme",
         service="service",
         topic="service-events",
@@ -37,3 +40,26 @@ def test_should_fail_publisher_when_connection_parameter_are_not_valid():
             service="service",
             topic="service-events",
         )
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
+)
+def test_should_create_a_rabbitmq_event_publisher_and_publish_a_event_after_heartbeat(
+    make_user_created_event
+):
+    event = make_user_created_event()
+    rabbitmq_connector = RabbitMQConnector()
+    rabbitmq_connector.heartbeat = 2
+
+    publisher = RabbitMQEventPublisher(
+        connector=rabbitmq_connector,
+        organization="acme",
+        service="service",
+        topic="service-events",
+    )
+
+    sleep(10)  # wait more than the heartbeat
+
+    publisher.publish(event)

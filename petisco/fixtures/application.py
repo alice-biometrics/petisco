@@ -2,9 +2,15 @@ import pytest
 
 from typing import Dict
 
+from petisco import ROOT_PATH
 from petisco.application.config.config import Config
 from petisco.application.petisco import Petisco
 from petisco.security.token_manager.jwt_token_builder import JwtTokenBuilder
+
+
+@pytest.fixture
+def given_petisco_version():
+    return open(f"{ROOT_PATH}/VERSION", "r").read()[:-1]
 
 
 @pytest.fixture

@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
@@ -14,10 +14,10 @@ from petisco.security.token_decoder.token import Token
 @dataclass_json
 @dataclass
 class InfoId(AggregateRoot):
-    client_id: ClientId = None
-    user_id: UserId = None
-    correlation_id: CorrelationId = None
-    ip: str = None
+    client_id: Optional[ClientId] = None
+    user_id: Optional[UserId] = None
+    correlation_id: Optional[CorrelationId] = None
+    ip: Optional[str] = None
 
     def __init__(
         self,

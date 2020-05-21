@@ -18,6 +18,8 @@ def test_should_load_complete_petisco_yml(petisco_yml_path):
 
     config = Config.from_filename(filename).unwrap()
 
+    assert len(config.config_tasks.tasks.keys()) == 3
+
     assert isinstance(config.config_persistence.config, Callable)
     assert config.config_persistence.models is not None
 

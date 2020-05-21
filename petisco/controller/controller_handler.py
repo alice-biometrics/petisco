@@ -15,7 +15,7 @@ from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.request_responded import RequestResponded
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
-from petisco.logger.interface_logger import ERROR, INFO
+from petisco.logger.interface_logger import ERROR, INFO, DEBUG
 from petisco.controller.errors.http_error import HttpError
 from petisco.security.token_manager.not_implemented_token_manager import (
     NotImplementedTokenManager,
@@ -104,12 +104,20 @@ class _ControllerHandler:
         self._check_logger()
         self._check_publisher()
 
+    def _get_success_message(self, result: Result):
+        message = ""
+        if isinstance(result.value, tuple(self.logging_types_blacklist)):
+            message = f"Success result of type: {type(result.value).__name__}"
+        else:
+            message = f"{result}"
+        return message
+
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
         def wrapper(*args, **kwargs):
             @timer
             @meiga
-            def run_controller(*args, **kwargs) -> Result:
+            def run_controller(*args, **kwargs) -> Tuple[Result, float]:
                 params = inspect.getfullargspec(func).args
                 kwargs = {k: v for k, v in kwargs.items() if k in params}
                 return func(*args, **kwargs)
@@ -132,8 +140,7 @@ class _ControllerHandler:
                 else:
                     kwargs, info_id = result_kwargs.value
                     log_message.info_id = info_id
-                    log_message.message = "Start"
-                    self.logger.log(INFO, log_message.to_json())
+                    self.logger.log(INFO, log_message.set_message("Processing Request"))
 
                     result_controller, elapsed_time = run_controller(*args, **kwargs)
 
@@ -142,13 +149,8 @@ class _ControllerHandler:
                             log_message, result_controller
                         )
                     else:
-                        if isinstance(
-                            result_controller.value, tuple(self.logging_types_blacklist)
-                        ):
-                            log_message.message = f"Success result of type: {type(result_controller.value).__name__}"
-                        else:
-                            log_message.message = f"{result_controller}"
-                        self.logger.log(INFO, log_message.to_json())
+                        message = self._get_success_message(result_controller)
+                        self.logger.log(DEBUG, log_message.set_message(message))
                         http_response = (
                             self.success_handler(result_controller)
                             if self.success_handler
@@ -157,11 +159,11 @@ class _ControllerHandler:
                         is_success = True
             except Exception as e:
                 log_message = LogMessage(
-                    layer="controller",
-                    operation=f"{func.__name__}",
-                    message=f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}",
+                    layer="controller", operation=f"{func.__name__}"
                 )
-                self.logger.log(ERROR, log_message.to_json())
+                log_message.info_id = info_id if info_id else None
+                message = f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}"
+                self.logger.log(ERROR, log_message.set_message(message))
                 http_response = InternalHttpError().handle()
 
             if self.send_request_responded_event:
@@ -202,8 +204,7 @@ class _ControllerHandler:
     def handle_failure(
         self, log_message: LogMessage, result: Result
     ) -> Tuple[dict, int]:
-        log_message.message = f"{result}"
-        self.logger.log(ERROR, log_message.to_json())
+        self.logger.log(ERROR, log_message.set_message(f"{result}"))
         known_result_failure_handler = KnownResultFailureHandler(result)
         http_response = DEFAULT_ERROR_MESSAGE
         if not known_result_failure_handler.is_a_result_known_error:

@@ -55,10 +55,16 @@ app:
   name: taskmanager
   version:
     from_file: VERSION
-cron:
-  dead-letter:
-    seconds: 21600 # 6 hours
-    handler: taskmanager.src.modules.events.application.requeue.requeue_event.subscribe_to_dead_letter
+tasks:
+  recurring-task:
+    run_in: 5 # seconds
+    interval: 10 # seconds
+    handler: taskmanager.tasks.recurring_task
+  scheduled-task:
+    run_in: 10 # seconds
+    handler: taskmanager.tasks.scheduled_task
+  instant-task:
+    handler: taskmanager.tasks.instant_task
 framework:
     selected_framework: flask
     config_file: swagger.yaml
@@ -276,6 +282,18 @@ python examples/pubsub/dl_sub.py
 ```
 
 This can be used to requeue nack events.
+
+
+##### Configurations
+
+* `RABBITMQ_HEARTBEAT`: (default: 60 s)
+* `RABBITMQ_USER`: (default: guest)
+* `RABBITMQ_PASSWORD`: (default: guest)
+* `RABBITMQ_HOST`: (default: localhost)
+* `RABBITMQ_HOST`: (default: 5672)
+* `RABBITMQ_CONNECTION_NUM_MAX_RETRIES`: (default: 15)
+* `RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY`: (default: 1)
+* `RABBITMQ_MESSAGE_TTL`: (default 1000 ms) If a queue is already created it will generate a precodition failure.
 
 
 ## Development

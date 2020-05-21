@@ -1,5 +1,6 @@
 from typing import Dict
 
+from pika.exceptions import StreamLostError
 from pika import BasicProperties
 
 from petisco.events.event import Event
@@ -52,9 +53,9 @@ class RabbitMQEventPublisher(IEventPublisher):
     def _get_event_routing_key(self, event: Event):
         """
         acme.onboarding.1.event.user.created
-          |       |      |        |      |-> Action (past verb)
-          |       |      |        |-> domain entity
-          |       |      |-> version
+          |       |     |        |      |-> action (past verb)
+          |       |     |        |-> domain entity
+          |       |     |-> version
           |       |-> service
           |-> organization
         """
@@ -77,16 +78,26 @@ class RabbitMQEventPublisher(IEventPublisher):
             self.connection.close()
 
     def _check_connection(self):
+        print(self.connection)
         if not self.connection.is_open:
             self._connect()
+            print(self.connection)
+
+    def _get_channel(self):
+        self._check_connection()
+        try:
+            channel = self.connection.channel()
+        except StreamLostError:
+            self._check_connection()
+            channel = self.connection.channel()
+        return channel
 
     def publish(self, event: Event):
-        self._check_connection()
 
         if not event:
             return
 
-        channel = self.connection.channel()
+        channel = self._get_channel()
 
         routing_key = self._get_event_routing_key(event)
 
