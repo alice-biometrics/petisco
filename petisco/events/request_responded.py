@@ -65,10 +65,14 @@ class RequestResponded(Event):
                 "status_code": 500,
             }
             if isinstance(http_response, Tuple):
-                _http_response["content"] = get_content(http_response[0], http_response[1])
+                _http_response["content"] = get_content(
+                    http_response[0], http_response[1]
+                )
                 _http_response["status_code"] = http_response[1]
             else:
-                _http_response["content"] = get_content(http_response, http_response.status_code)
+                _http_response["content"] = get_content(
+                    http_response, http_response.status_code
+                )
                 _http_response["status_code"] = http_response.status_code
         except Exception as e:  # noqa E722
             traceback.print_exc()
