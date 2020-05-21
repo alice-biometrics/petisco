@@ -12,6 +12,7 @@ from petisco import (
     ConfigEventSubscriber,
     RabbitMQConnector,
     INFO,
+    RoutingKey,
 )
 
 from petisco.events.rabbitmq.rabbitmq_is_running_locally import (
@@ -38,15 +39,20 @@ def given_any_publisher_and_subscriber(
     given_random_service,
     given_random_topic,
 ):
-    def _given_any_publisher_and_subscriber(subscriber_handler: Callable):
-        publisher = given_any_publisher(
-            given_random_organization, given_random_service, given_random_topic
-        )
+    def _given_any_publisher_and_subscriber(
+        subscriber_handler: Callable,
+        organization: str = None,
+        service: str = None,
+        topic: str = None,
+    ):
+
+        organization = organization if organization else given_random_organization
+        service = service if service else given_random_service
+        topic = topic if topic else given_random_topic
+
+        publisher = given_any_publisher(organization, service, topic)
         subscriber = given_any_subscriber(
-            given_random_organization,
-            given_random_service,
-            given_random_topic,
-            subscriber_handler,
+            organization, service, topic, subscriber_handler
         )
         return publisher, subscriber
 
@@ -202,4 +208,38 @@ def test_should_subscriber_handler_always_returns_nack_filtering_by_invalid_rout
             message=f"Message rejected (filtering by routing_key {invalid_routing_key})",
         ).to_dict(),
     )
+    subscriber.stop()
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
+)
+def test_should_subscriber_handler_receive_one_event_and_obtain_the_routing_key(
+    make_user_created_event, given_any_publisher_and_subscriber
+):
+    event = make_user_created_event()
+    tracked_events_spy = TrackedEventsSpy()
+    expected_organization = "acmeorganization"
+
+    @subscriber_handler()
+    def main_handler(event: Event, routing_key: RoutingKey):
+        assert routing_key.match(organization=expected_organization)
+        tracked_events_spy.append(event)
+        return isSuccess
+
+    publisher, subscriber = given_any_publisher_and_subscriber(
+        main_handler, organization=expected_organization
+    )
+
+    subscriber.start()
+
+    await_for_subscriber()
+
+    publisher.publish(event)
+
+    await_for_events()
+
+    tracked_events_spy.assert_number_events(1)
+
     subscriber.stop()
