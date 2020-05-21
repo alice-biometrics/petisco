@@ -9,6 +9,8 @@ from yaml.parser import ParserError, ScannerError
 
 from petisco.application.config.config_persistence import ConfigPersistence
 from petisco.application.config.config_providers import ConfigProviders
+from petisco.notifier.config.config_notifier import ConfigNotifier
+from petisco.notifier.domain.interface_notifier import INotifier
 from petisco.tasks.config.config_tasks import ConfigTasks
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import ILogger
@@ -34,6 +36,7 @@ class Config:
         config_tasks: ConfigTasks = None,
         config_framework: ConfigFramework = None,
         config_logger: ConfigLogger = None,
+        config_notifier: ConfigNotifier = None,
         config_persistence: ConfigPersistence = None,
         config_providers: ConfigProviders = None,
         config_events: ConfigEvents = None,
@@ -45,6 +48,7 @@ class Config:
         self.config_tasks = config_tasks
         self.config_framework = config_framework
         self.config_logger = config_logger
+        self.config_notifier = config_notifier
         self.config_persistence = config_persistence
         self.config_providers = config_providers
         self.config_events = config_events
@@ -84,6 +88,8 @@ class Config:
             yaml_dict.get("logger")
         ).unwrap_or_return()
 
+        config_notifier = ConfigNotifier.from_dict(yaml_dict.get("notifier"))
+
         config_persistence = ConfigPersistence.from_dict(yaml_dict.get("persistence"))
 
         config_providers = ConfigProviders.from_dict(yaml_dict.get("providers"))
@@ -100,6 +106,7 @@ class Config:
                 config_tasks=config_tasks,
                 config_framework=config_framework,
                 config_logger=config_logger,
+                config_notifier=config_notifier,
                 config_providers=config_providers,
                 config_events=config_events,
                 config_persistence=config_persistence,
@@ -147,6 +154,9 @@ class Config:
                 format=self.config_logger.format,
                 config=self.config_logger.config,
             )
+
+    def get_notifier(self) -> INotifier:
+        return self.config_notifier.provider()
 
     def get_application(self) -> IApplication:
         if not self.config_framework:

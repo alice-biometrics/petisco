@@ -39,6 +39,10 @@ from petisco.logger.log_message import LogMessage
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
 from petisco.notifier.domain.interface_notifier import INotifier
+from petisco.notifier.domain.notifier_message import NotifierMessage
+from petisco.notifier.infrastructure.not_implemented_notifier import (
+    NotImplementedNotifier,
+)
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
 from petisco.security.token_decoder.interface_token_decoder import ITokenDecoder
 from petisco.security.token_decoder.token_decoder import TokenDecoder
@@ -93,6 +97,8 @@ classes = [
     "NotImplementedEventPublisher",
     "NotImplementedEventSubscriber",
     "INotifier",
+    "NotImplementedNotifier",
+    "NotifierMessage",
     "LogMessage",
 ]
 

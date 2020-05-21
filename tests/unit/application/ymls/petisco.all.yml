@@ -35,3 +35,5 @@ events:
         topic: "toy-app-events"
         dead_letter: True
         handler: tests.integration.flask_app.toy_app.application.handlers.store_event.store_event
+notifier:
+  provider: tests.integration.flask_app.toy_app.config.notifier.notifier_provider

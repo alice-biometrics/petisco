@@ -1,6 +1,8 @@
 from typing import Dict
 from abc import ABCMeta, abstractmethod
 
+from petisco.notifier.domain.notifier_message import NotifierMessage
+
 
 class INotifier:
 
@@ -14,5 +16,5 @@ class INotifier:
         raise NotImplementedError
 
     @abstractmethod
-    def publish(self, message: str):
+    def publish(self, notifier_message: NotifierMessage):
         raise NotImplementedError

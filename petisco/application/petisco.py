@@ -42,6 +42,7 @@ class Petisco(metaclass=Singleton):
         self.app_name = config.app_name
         self.app_version = config.app_version
         self.logger = config.get_logger()
+        self.notifier = config.get_notifier()
         self.info = {
             "app_name": self.app_name,
             "app_version": self.app_version,
@@ -265,6 +266,10 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def get_logger():
         return Petisco.get_instance().logger
+
+    @staticmethod
+    def get_notifier():
+        return Petisco.get_instance().notifier
 
     @staticmethod
     def get_app_name():
