@@ -42,12 +42,12 @@ class Petisco(metaclass=Singleton):
         self.app_name = config.app_name
         self.app_version = config.app_version
         self.logger = config.get_logger()
-        self.notifier = config.get_notifier()
         self.info = {
             "app_name": self.app_name,
             "app_version": self.app_version,
             "petisco_version": __version__,
         }
+        self.notifier = config.get_notifier(self.info)
         self._set_persistence()
         self._set_providers()
         self._set_events()
