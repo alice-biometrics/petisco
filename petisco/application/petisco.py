@@ -11,6 +11,10 @@ from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import INFO, ILogger
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
+from petisco.notifier.infrastructure.not_implemented_notifier import (
+    NotImplementedNotifier,
+)
+from petisco.notifier.domain.interface_notifier import INotifier
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.application.interface_repository import IRepository
@@ -26,6 +30,7 @@ class Petisco(metaclass=Singleton):
     app_name: str
     app_version: str
     logger: ILogger = NotImplementedLogger()
+    notifier: INotifier = NotImplementedNotifier()
     application: IApplication = None
     services_provider: Callable = None
     repositories_provider: Callable = None

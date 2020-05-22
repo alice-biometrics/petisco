@@ -17,6 +17,8 @@ from petisco.events.request_responded import RequestResponded
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO, DEBUG
 from petisco.controller.errors.http_error import HttpError
+from petisco.notifier.domain.interface_notifier import INotifier
+from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 from petisco.security.token_manager.not_implemented_token_manager import (
     NotImplementedTokenManager,
 )
@@ -39,7 +41,7 @@ class _ControllerHandler:
         app_name: str = DEFAULT_ERROR_MESSAGE,
         app_version: str = DEFAULT_APP_VERSION,
         logger=DEFAULT_LOGGER,
-        notifier=DEFAULT_NOTIFIER,
+        notifier: INotifier = DEFAULT_NOTIFIER,
         token_manager: TokenManager = NotImplementedTokenManager(),
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
@@ -175,6 +177,14 @@ class _ControllerHandler:
                 message = f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}"
                 self.logger.log(ERROR, log_message.set_message(message))
                 http_response = InternalHttpError().handle()
+                if self.notifier:
+                    self.notifier.publish(
+                        NotifierExceptionMessage(
+                            exception=e,
+                            function=func.__name__,
+                            traceback=traceback.format_exc(),
+                        )
+                    )
 
             if self.send_request_responded_event:
 

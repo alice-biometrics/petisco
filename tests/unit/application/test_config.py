@@ -25,6 +25,7 @@ def test_should_load_complete_petisco_yml(petisco_yml_path):
 
     assert isinstance(config.config_providers.services_provider, Callable)
     assert isinstance(config.config_providers.repositories_provider, Callable)
+    assert isinstance(config.config_notifier.provider, Callable)
 
 
 @pytest.mark.unit
