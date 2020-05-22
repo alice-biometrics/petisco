@@ -8,3 +8,4 @@ py-healthcheck==1.7.2
 APScheduler==3.6.3
 pyyaml
 deprecation
+slackclient==2.5.0
