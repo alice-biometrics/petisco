@@ -183,6 +183,7 @@ class _ControllerHandler:
                             exception=e,
                             function=func.__name__,
                             traceback=traceback.format_exc(),
+                            info_id=info_id,
                         )
                     )
 

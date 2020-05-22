@@ -1,5 +1,6 @@
 from typing import Dict
 
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.notifier.domain.interface_notifier import INotifier
 from slack import WebClient
 from slack.errors import SlackApiError
@@ -26,6 +27,30 @@ class SlackNotifier(INotifier):
             },
         }
 
+    def __info_block(self, info_id: InfoId):
+        if not info_id:
+            return None
+        info_id_text = f":information_source: *Info*\n"
+        info_id_available = False
+        if info_id.client_id:
+            info_id_text += f"*Client:* {info_id.client_id}\n"
+            info_id_available = True
+        if info_id.user_id:
+            info_id_text += f"*UserID:* {info_id.user_id}\n"
+            info_id_available = True
+        if info_id.correlation_id:
+            info_id_text += f"*CorrelationID:* {info_id.correlation_id}\n"
+            info_id_available = True
+        if info_id.correlation_id:
+            info_id_text += f"*IP:* {info_id.ip}"
+            info_id_available = True
+        if not info_id_available:
+            return None
+        return {
+            "type": "section",
+            "text": {"type": "mrkdwn", "text": info_id_text},
+        }
+
     def __get_blocks_exception_message(
         self, notifier_message: NotifierExceptionMessage
     ):
@@ -39,6 +64,8 @@ class SlackNotifier(INotifier):
                 "text": f":fire: *Exception* \n*Class*: {notifier_message.exception.__class__} *Description:* {notifier_message.exception}",
             },
         }
+        info_id_block = self.__info_block(notifier_message.info_id)
+
         function_block = {
             "type": "section",
             "text": {
@@ -54,6 +81,8 @@ class SlackNotifier(INotifier):
             },
         }
         blocks.append(header_block)
+        if info_id_block:
+            blocks.append(info_id_block)
         blocks.append(divider_block)
         blocks.append(exception_block)
         blocks.append(function_block)
@@ -88,7 +117,4 @@ class SlackNotifier(INotifier):
                 channel=self.channel, blocks=self.__get_blocks(notifier_message)
             )
         except SlackApiError as e:
-            # You will get a SlackApiError if "ok" is False
-            assert e.response["ok"] is False
-            assert e.response["error"]  # str like 'invalid_auth', 'channel_not_found'
-            print(f"Got an error: {e.response['error']}")
+            raise ConnectionError(f"SlackApiError: {e.response['error']}")
