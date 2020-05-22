@@ -17,7 +17,7 @@ class SlackNotifier(INotifier):
     def info(self) -> Dict:
         return {"name": self.__class__.__name__}
 
-    def __get_blocks(self, notifier_message):
+    def __get_blocks(self, notifier_message: NotifierMessage):
         blocks = []
         header_block = {
             "type": "section",
