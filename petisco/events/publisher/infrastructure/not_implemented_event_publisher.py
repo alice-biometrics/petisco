@@ -10,3 +10,6 @@ class NotImplementedEventPublisher(IEventPublisher):
 
     def publish(self, event: Event):
         pass
+
+    def stop(self):
+        pass

@@ -23,3 +23,7 @@ class IEventPublisher:
     def publish_events(self, events: Events):
         for event in events:
             self.publish(event)
+
+    @abstractmethod
+    def stop(self):
+        raise NotImplementedError
