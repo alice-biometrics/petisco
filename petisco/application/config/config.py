@@ -155,8 +155,8 @@ class Config:
                 config=self.config_logger.config,
             )
 
-    def get_notifier(self, petisco_info: Dict) -> INotifier:
-        return self.config_notifier.provider(petisco_info)
+    def get_notifier(self) -> INotifier:
+        return self.config_notifier.provider()
 
     def get_application(self) -> IApplication:
         if not self.config_framework:

@@ -178,14 +178,13 @@ class _ControllerHandler:
                 self.logger.log(ERROR, log_message.set_message(message))
                 http_response = InternalHttpError().handle()
                 if self.notifier:
-                    self.notifier.publish(
-                        NotifierExceptionMessage(
-                            exception=e,
-                            function=func.__name__,
-                            traceback=traceback.format_exc(),
-                            info_id=info_id,
-                        )
+                    message = NotifierExceptionMessage(
+                        exception=e,
+                        function=func.__name__,
+                        traceback=traceback.format_exc(),
                     )
+                    message.info_id = info_id
+                    self.notifier.publish(message)
 
             if self.send_request_responded_event:
 

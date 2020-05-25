@@ -4,8 +4,9 @@ import random
 
 import pytest
 
-from petisco import Event, EventId
+from petisco import Event, EventId, NotifierMessage, InfoId
 from petisco.domain.value_objects.user_id import UserId
+from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 
 
 class TrackedEventsSpy:
@@ -99,3 +100,71 @@ def make_first_name_added_event(given_any_user_id, given_any_name):
         return FirstNameAdded(user_id=user_id, first_name=first_name)
 
     return _make_any_first_name_added_event
+
+
+@pytest.fixture
+def given_any_message():
+    return "Hello world"
+
+
+@pytest.fixture
+def given_any_info_petisco():
+    return {"app_name": "test", "app_version": "0.0.1", "petisco_version": "0.0.1"}
+
+
+@pytest.fixture
+def given_any_basic_notifier_message(given_any_message):
+    return NotifierMessage(message=given_any_message)
+
+
+@pytest.fixture
+def given_any_notifier_message_with_info_id(
+    given_any_client_id, given_any_user_id, given_any_message
+):
+    return NotifierMessage(
+        message=given_any_message,
+        info_id=InfoId(client_id=given_any_client_id, user_id=given_any_user_id),
+    )
+
+
+@pytest.fixture
+def given_any_complete_notifier_message(
+    given_any_client_id, given_any_user_id, given_any_message, given_any_info_petisco
+):
+    return NotifierMessage(
+        message=given_any_message,
+        info_id=InfoId(client_id=given_any_client_id, user_id=given_any_user_id),
+        info_petisco=given_any_info_petisco,
+    )
+
+
+@pytest.fixture
+def given_any_exception():
+    return ValueError("Oops, something went wrong")
+
+
+@pytest.fixture
+def given_any_traceback():
+    return """Traceback (most recent call last):
+  File "e.py", line 7, in <module>
+    raise TypeError("Again !?!")
+TypeError: Again !?!
+"""
+
+
+@pytest.fixture
+def given_any_complete_notifier_exception_message(
+    given_any_client_id,
+    given_any_user_id,
+    given_any_message,
+    given_any_info_petisco,
+    given_any_exception,
+    given_any_traceback,
+):
+    return NotifierExceptionMessage(
+        function="test_function",
+        exception=given_any_exception,
+        traceback=given_any_traceback,
+        info_id=InfoId(client_id=given_any_client_id, user_id=given_any_user_id),
+        info_petisco=given_any_info_petisco,
+    )

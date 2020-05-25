@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Callable, Dict
+from typing import Optional, Callable
 
 from dataclasses import dataclass
 
@@ -10,10 +10,13 @@ from petisco.application.config.raise_petisco_config_error import (
 from petisco.notifier.infrastructure.not_implemented_notifier import (
     NotImplementedNotifier,
 )
+from petisco.notifier.infrastructure.slack.slack_notifier_message_converter import (
+    SlackNotifierMessageConverter,
+)
 from petisco.notifier.infrastructure.slack.slack_notifier import SlackNotifier
 
 
-def get_slack_notifier(petisco_info: Dict):
+def get_slack_notifier():
     slack_token = os.environ.get("SLACK_API_TOKEN", None)
     slack_channel = os.environ.get("SLACK_CHANNEL", "#feed")
     if not slack_token:
@@ -22,11 +25,13 @@ def get_slack_notifier(petisco_info: Dict):
             "Please check Slack Notifier configuration and add required values"
         )
     return SlackNotifier(
-        token=slack_token, channel=slack_channel, petisco_info=petisco_info
+        token=slack_token,
+        channel=slack_channel,
+        converter=SlackNotifierMessageConverter,
     )
 
 
-def get_default_notifier(petisco_info: Dict):
+def get_default_notifier():
     return NotImplementedNotifier()
 
 
