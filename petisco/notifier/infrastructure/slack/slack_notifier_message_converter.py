@@ -17,7 +17,7 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f":cookie: *Message from Petisco*\n*Application:* {info_petisco['app_name']} ({info_petisco['app_version']})\n*Petisco:* {info_petisco['petisco_version']}",
+                "text": f":cookie: *Message from Petisco*\n*Application:* {info_petisco['app_name']} ({info_petisco['app_version']})\n*Petisco:* {info_petisco['petisco_version']}\n*Environment:* {info_petisco['environment']}",
             },
         }
 

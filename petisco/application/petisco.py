@@ -1,4 +1,5 @@
 import inspect
+from os import environ
 from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
@@ -41,16 +42,19 @@ class Petisco(metaclass=Singleton):
     config: Config = None
     event_publisher: IEventPublisher = None
     event_subscriber: IEventSubscriber = None
+    environment: str = None
 
     def __init__(self, config: Config):
         self.config = config
         self.app_name = config.app_name
         self.app_version = config.app_version
         self.logger = config.get_logger()
+        self.environment = environ.get("ENVIRONMENT", None)
         self.info = {
             "app_name": self.app_name,
             "app_version": self.app_version,
             "petisco_version": __version__,
+            "environment": self.environment,
         }
         self.notifier = config.get_notifier()
         self._set_persistence()
@@ -283,6 +287,10 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def get_app_version():
         return Petisco.get_instance().app_version
+
+    @staticmethod
+    def get_environment():
+        return Petisco.get_instance().environment
 
     @staticmethod
     def get_info():
