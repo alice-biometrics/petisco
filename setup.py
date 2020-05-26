@@ -54,6 +54,7 @@ setup(
         "petisco/events/subscriber/domain",
         "petisco/events/subscriber/infrastructure",
         "petisco/notifier",
+        "petisco/notifier/config",
         "petisco/notifier/infrastructure",
         "petisco/notifier/infrastructure/slack",
         "petisco/notifier/domain",
