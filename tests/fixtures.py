@@ -114,7 +114,12 @@ def given_any_title():
 
 @pytest.fixture
 def given_any_info_petisco():
-    return {"app_name": "test", "app_version": "0.0.1", "petisco_version": "0.0.1"}
+    return {
+        "app_name": "test",
+        "app_version": "0.0.1",
+        "petisco_version": "0.0.1",
+        "environment": "Production",
+    }
 
 
 @pytest.fixture
