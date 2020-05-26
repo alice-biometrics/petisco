@@ -182,8 +182,9 @@ class _ControllerHandler:
                         exception=e,
                         function=func.__name__,
                         traceback=traceback.format_exc(),
+                        info_id=info_id,
+                        info_petisco=Petisco.get_info(),
                     )
-                    message.info_id = info_id
                     self.notifier.publish(message)
 
             if self.send_request_responded_event:

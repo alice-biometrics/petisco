@@ -108,6 +108,11 @@ def given_any_message():
 
 
 @pytest.fixture
+def given_any_title():
+    return "This is a title"
+
+
+@pytest.fixture
 def given_any_info_petisco():
     return {"app_name": "test", "app_version": "0.0.1", "petisco_version": "0.0.1"}
 
@@ -129,9 +134,14 @@ def given_any_notifier_message_with_info_id(
 
 @pytest.fixture
 def given_any_complete_notifier_message(
-    given_any_client_id, given_any_user_id, given_any_message, given_any_info_petisco
+    given_any_client_id,
+    given_any_user_id,
+    given_any_message,
+    given_any_info_petisco,
+    given_any_title,
 ):
     return NotifierMessage(
+        title=given_any_title,
         message=given_any_message,
         info_id=InfoId(client_id=given_any_client_id, user_id=given_any_user_id),
         info_petisco=given_any_info_petisco,

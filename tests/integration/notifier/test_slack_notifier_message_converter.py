@@ -33,11 +33,11 @@ def test_should_convert_a_notifier_message_with_info_id(
 
 @pytest.mark.integration
 def test_should_convert_a_complete_notifier_message(
-    given_any_complete_notifier_message, given_any_message
+    given_any_complete_notifier_message, given_any_message, given_any_title
 ):
     converter = SlackNotifierMessageConverter()
     blocks = converter.convert(given_any_complete_notifier_message)
-    assert len(blocks) == 4
+    assert len(blocks) == 5
     assert "Petisco" in blocks[0]["text"]["text"]
     assert "Application" in blocks[0]["text"]["text"]
     assert "information" in blocks[1]["text"]["text"]
@@ -45,7 +45,9 @@ def test_should_convert_a_complete_notifier_message(
     assert "User" in blocks[1]["text"]["text"]
     assert "divider" in blocks[2].values()
     assert "text" in blocks[3].keys()
-    assert given_any_message in blocks[3]["text"]["text"]
+    assert given_any_title in blocks[3]["text"]["text"]
+    assert "text" in blocks[4].keys()
+    assert given_any_message in blocks[4]["text"]["text"]
 
 
 @pytest.mark.integration

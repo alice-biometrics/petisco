@@ -40,10 +40,7 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
             info_id_available = True
         if not info_id_available:
             return None
-        return {
-            "type": "section",
-            "text": {"type": "mrkdwn", "text": info_id_text},
-        }
+        return {"type": "section", "text": {"type": "mrkdwn", "text": info_id_text}}
 
     def __get_common_blocks(self, notifier_message: NotifierMessage) -> List[Dict]:
         blocks = []
@@ -101,5 +98,14 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
                 },
             }
             blocks += self.__get_common_blocks(message)
+            if message.title:
+                title_block = {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f":label: *Title*\n{message.title}",
+                    },
+                }
+                blocks.append(title_block)
             blocks.append(message_block)
         return blocks

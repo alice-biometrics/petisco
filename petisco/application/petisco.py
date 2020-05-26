@@ -283,3 +283,7 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def get_app_version():
         return Petisco.get_instance().app_version
+
+    @staticmethod
+    def get_info():
+        return Petisco.get_instance().info
