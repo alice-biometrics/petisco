@@ -38,6 +38,11 @@ from petisco.frameworks.interface_application import IApplication
 from petisco.logger.log_message import LogMessage
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
+from petisco.notifier.domain.interface_notifier import INotifier
+from petisco.notifier.domain.notifier_message import NotifierMessage
+from petisco.notifier.infrastructure.not_implemented_notifier import (
+    NotImplementedNotifier,
+)
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
 from petisco.security.token_decoder.interface_token_decoder import ITokenDecoder
 from petisco.security.token_decoder.token_decoder import TokenDecoder
@@ -91,6 +96,9 @@ classes = [
     "IEventSubscriber",
     "NotImplementedEventPublisher",
     "NotImplementedEventSubscriber",
+    "INotifier",
+    "NotImplementedNotifier",
+    "NotifierMessage",
     "LogMessage",
 ]
 
@@ -185,6 +193,21 @@ try:
 except (RuntimeError, ImportError):
     rabbitmq = []
 
+
+# Slack
+try:
+    from petisco.notifier.infrastructure.slack.slack_notifier import SlackNotifier
+
+    slack = ["SlackNotifier"]
+except (RuntimeError, ImportError):
+    slack = []
+
 __all__ = (
-    classes + controllers_and_use_cases + constants + flask + sqlalchemy + rabbitmq
+    classes
+    + controllers_and_use_cases
+    + constants
+    + flask
+    + sqlalchemy
+    + rabbitmq
+    + slack
 )

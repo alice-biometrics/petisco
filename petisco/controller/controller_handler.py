@@ -17,6 +17,8 @@ from petisco.events.request_responded import RequestResponded
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, INFO, DEBUG
 from petisco.controller.errors.http_error import HttpError
+from petisco.notifier.domain.interface_notifier import INotifier
+from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 from petisco.security.token_manager.not_implemented_token_manager import (
     NotImplementedTokenManager,
 )
@@ -30,6 +32,7 @@ DEFAULT_APP_NAME = "app-undefined"
 DEFAULT_APP_VERSION = "version-undefined"
 DEFAULT_LOGGER = None
 DEFAULT_PUBLISHER = None
+DEFAULT_NOTIFIER = None
 
 
 class _ControllerHandler:
@@ -38,6 +41,7 @@ class _ControllerHandler:
         app_name: str = DEFAULT_ERROR_MESSAGE,
         app_version: str = DEFAULT_APP_VERSION,
         logger=DEFAULT_LOGGER,
+        notifier: INotifier = DEFAULT_NOTIFIER,
         token_manager: TokenManager = NotImplementedTokenManager(),
         success_handler: Callable[[Result], Tuple[Dict, int]] = None,
         error_handler: Callable[[Result], HttpError] = None,
@@ -55,6 +59,8 @@ class _ControllerHandler:
             Application Version. If not specified it will get it from Petisco.get_app_version().
         logger
             A ILogger implementation. If not specified it will get it from Petisco.get_logger(). You can also use NotImplementedLogger
+        notifier
+            A INotifier implementation. If not specified it will get it from Petisco.get_notifier(). You can also use NotImplementedNotifier
         token_manager
             TokenManager object. Here, you can define how to deal with JWT Tokens
         success_handler
@@ -73,6 +79,7 @@ class _ControllerHandler:
         self.app_name = app_name
         self.app_version = app_version
         self.logger = logger
+        self.notifier = notifier
         self.publisher = publisher
         self.token_manager = token_manager
         self.success_handler = success_handler
@@ -93,6 +100,10 @@ class _ControllerHandler:
         if self.logger == DEFAULT_LOGGER:
             self.logger = Petisco.get_logger()
 
+    def _check_notifier(self):
+        if self.notifier == DEFAULT_NOTIFIER:
+            self.notifier = Petisco.get_notifier()
+
     def _check_publisher(self):
         if self.publisher == DEFAULT_PUBLISHER:
             self.publisher = Petisco.get_event_publisher()
@@ -102,6 +113,7 @@ class _ControllerHandler:
         self._check_app_name()
         self._check_app_version()
         self._check_logger()
+        self._check_notifier()
         self._check_publisher()
 
     def _get_success_message(self, result: Result):
@@ -165,6 +177,15 @@ class _ControllerHandler:
                 message = f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}"
                 self.logger.log(ERROR, log_message.set_message(message))
                 http_response = InternalHttpError().handle()
+                if self.notifier:
+                    message = NotifierExceptionMessage(
+                        exception=e,
+                        function=func.__name__,
+                        traceback=traceback.format_exc(),
+                        info_id=info_id,
+                        info_petisco=Petisco.get_info(),
+                    )
+                    self.notifier.publish(message)
 
             if self.send_request_responded_event:
 

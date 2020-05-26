@@ -1,4 +1,5 @@
 import inspect
+from os import environ
 from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
@@ -11,6 +12,10 @@ from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import INFO, ILogger
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
+from petisco.notifier.infrastructure.not_implemented_notifier import (
+    NotImplementedNotifier,
+)
+from petisco.notifier.domain.interface_notifier import INotifier
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.application.interface_repository import IRepository
@@ -26,6 +31,7 @@ class Petisco(metaclass=Singleton):
     app_name: str
     app_version: str
     logger: ILogger = NotImplementedLogger()
+    notifier: INotifier = NotImplementedNotifier()
     application: IApplication = None
     services_provider: Callable = None
     repositories_provider: Callable = None
@@ -36,17 +42,21 @@ class Petisco(metaclass=Singleton):
     config: Config = None
     event_publisher: IEventPublisher = None
     event_subscriber: IEventSubscriber = None
+    environment: str = None
 
     def __init__(self, config: Config):
         self.config = config
         self.app_name = config.app_name
         self.app_version = config.app_version
         self.logger = config.get_logger()
+        self.environment = environ.get("ENVIRONMENT", None)
         self.info = {
             "app_name": self.app_name,
             "app_version": self.app_version,
             "petisco_version": __version__,
+            "environment": self.environment,
         }
+        self.notifier = config.get_notifier()
         self._set_persistence()
         self._set_providers()
         self._set_events()
@@ -267,9 +277,21 @@ class Petisco(metaclass=Singleton):
         return Petisco.get_instance().logger
 
     @staticmethod
+    def get_notifier():
+        return Petisco.get_instance().notifier
+
+    @staticmethod
     def get_app_name():
         return Petisco.get_instance().app_name
 
     @staticmethod
     def get_app_version():
         return Petisco.get_instance().app_version
+
+    @staticmethod
+    def get_environment():
+        return Petisco.get_instance().environment
+
+    @staticmethod
+    def get_info():
+        return Petisco.get_instance().info

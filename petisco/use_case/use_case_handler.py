@@ -6,7 +6,12 @@ from meiga.decorators import meiga
 from petisco.logger.interface_logger import ERROR, INFO, DEBUG
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
+from petisco.notifier.domain.notifier_message import NotifierMessage
+from petisco.notifier.infrastructure.not_implemented_notifier import (
+    NotImplementedNotifier,
+)
 from petisco.use_case.use_case import UseCase
+from petisco.application.petisco import Petisco
 
 
 class _UseCaseHandler:
@@ -15,10 +20,12 @@ class _UseCaseHandler:
         logger=NotImplementedLogger(),
         logging_parameters_whitelist: List[str] = None,
         logging_types_blacklist: List[Any] = None,
+        notifier=NotImplementedNotifier(),
     ):
         self.logger = logger
         self.logging_parameters_whitelist = logging_parameters_whitelist
         self.logging_types_blacklist = logging_types_blacklist
+        self.notifier = notifier
 
     def __call__(self, cls):
         if not issubclass(cls, UseCase):
@@ -28,6 +35,7 @@ class _UseCaseHandler:
             logger = self.logger
             logging_parameters_whitelist = self.logging_parameters_whitelist
             logging_types_blacklist = self.logging_types_blacklist
+            notifier = self.notifier
 
             def execute(self, *args, **kwargs):
                 info_id = kwargs.get("info_id")
@@ -65,6 +73,14 @@ class _UseCaseHandler:
                 if result.is_failure:
                     self.logger.log(
                         ERROR, log_message.set_message(f"{result} {detail}")
+                    )
+                    self.notifier.publish(
+                        NotifierMessage(
+                            title=f"Use case: {cls.__name__}",
+                            message=f"{result} {detail}",
+                            info_petisco=Petisco.get_info(),
+                            info_id=info_id,
+                        )
                     )
                 else:
                     if not self._is_logging_type(result.value):

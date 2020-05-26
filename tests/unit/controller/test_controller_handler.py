@@ -5,6 +5,7 @@ from petisco import controller_handler, ERROR, INFO, __version__, DEBUG
 from petisco.events.request_responded import RequestResponded
 from tests.unit.mocks.fake_event_publisher import FakeEventPublisher
 from tests.unit.mocks.fake_logger import FakeLogger
+from tests.unit.mocks.fake_notifier import FakeNotifier
 from tests.unit.mocks.log_message_mother import LogMessageMother
 
 
@@ -272,3 +273,28 @@ def test_should_log_an_exception_occurred_on_the_controller(
     assert "line" in second_logging_message[1]["data"]["message"]
     assert "RuntimeError" in second_logging_message[1]["data"]["message"]
     assert "my_controller exception" in second_logging_message[1]["data"]["message"]
+
+
+@pytest.mark.unit
+def test_should_notify_an_exception_occurred_on_the_controller(
+    given_any_info_id, given_headers_provider
+):
+
+    notifier = FakeNotifier()
+
+    @controller_handler(
+        notifier=notifier,
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
+    def my_controller(headers=None):
+        raise RuntimeError("my_controller exception")
+
+    http_response = my_controller()
+
+    assert http_response == (
+        {"error": {"message": "Internal Error.", "type": "InternalHttpError"}},
+        500,
+    )
+
+    assert notifier.publish_called
+    assert notifier.publish_times_called == 1

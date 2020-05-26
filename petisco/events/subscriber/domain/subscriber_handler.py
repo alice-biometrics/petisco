@@ -6,6 +6,7 @@ import time
 import random
 import traceback
 
+from petisco.application.petisco import Petisco
 from petisco.events.routing_key import RoutingKey
 from petisco.logger.interface_logger import INFO, ERROR
 from petisco.events.event import Event
@@ -14,9 +15,10 @@ from meiga import Result
 from meiga.decorators import meiga
 
 from petisco.logger.log_message import LogMessage
-
+from petisco.notifier.domain.notifier_message import NotifierMessage
 
 DEFAULT_LOGGER = None
+DEFAULT_NOTIFIER = None
 
 
 class _SubscriberHandler:
@@ -27,6 +29,7 @@ class _SubscriberHandler:
         filter_routing_key: str = None,
         delay_after: float = None,
         percentage_simulate_nack: float = None,
+        notifier=DEFAULT_NOTIFIER,
     ):
         """
         Parameters
@@ -41,7 +44,8 @@ class _SubscriberHandler:
             Delay ack or reject for a given number of seconds.
         percentage_simulate_nack:
             Percentage of simulate nack when the result is a success. [0.0 -> 1.0]. Where 1.0 rejects all the events.
-
+        notifier
+            A INotifier implementation. If not specified it will get it from Petisco.get_notifier(). You can also use NotImplementedNotifier
         """
         self.logger = logger
         if message_broker != "rabbitmq":
@@ -51,12 +55,19 @@ class _SubscriberHandler:
         self.filter_routing_key = filter_routing_key
         self.delay_after = delay_after
         self.percentage_simulate_nack = percentage_simulate_nack
+        self.notifier = notifier
 
     def _check_logger(self):
         if self.logger == DEFAULT_LOGGER:
             from petisco import Petisco
 
             self.logger = Petisco.get_logger()
+
+    def _check_notifier(self):
+        if self.notifier == DEFAULT_NOTIFIER:
+            from petisco import Petisco
+
+            self.notifier = Petisco.get_notifier()
 
     def _nack_simulation(self):
         if self.percentage_simulate_nack is None:
@@ -103,6 +114,8 @@ class _SubscriberHandler:
 
             self._check_logger()
 
+            self._check_notifier()
+
             ch, method, properties, body = args
 
             log_message = LogMessage(layer="subscriber", operation=f"{func.__name__}")
@@ -141,6 +154,13 @@ class _SubscriberHandler:
             if result is None or result.is_failure:
                 message = f"{result}: {traceback.format_exc()}"
                 self.logger.log(ERROR, log_message.set_message(message))
+                self.notifier.publish(
+                    NotifierMessage(
+                        title=f"Subscriber: {func.__name__}",
+                        message=f"{result}: {traceback.format_exc()}",
+                        info_petisco=Petisco.get_info(),
+                    )
+                )
                 ch.basic_nack(delivery_tag=method.delivery_tag)
             else:
                 ch.basic_ack(delivery_tag=method.delivery_tag)

@@ -53,6 +53,10 @@ setup(
         "petisco/events/subscriber",
         "petisco/events/subscriber/domain",
         "petisco/events/subscriber/infrastructure",
+        "petisco/notifier",
+        "petisco/notifier/infrastructure",
+        "petisco/notifier/infrastructure/slack",
+        "petisco/notifier/domain",
         "petisco/tasks",
         "petisco/tasks/config",
         "petisco/tasks/domain",
@@ -85,5 +89,6 @@ setup(
         "rabbitmq": ["pika==1.1.0"],
         "gunicorn": ["gunicorn", "json-logging-py==0.2"],
         "fixtures": ["pytest"],
+        "slack": ["slackclient"],
     },
 )
