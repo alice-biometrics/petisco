@@ -16,6 +16,9 @@ from meiga.decorators import meiga
 
 from petisco.logger.log_message import LogMessage
 from petisco.notifier.domain.notifier_message import NotifierMessage
+from petisco.notifier.infrastructure.not_implemented_notifier import (
+    NotImplementedNotifier,
+)
 
 DEFAULT_LOGGER = None
 DEFAULT_NOTIFIER = None
@@ -65,9 +68,7 @@ class _SubscriberHandler:
 
     def _check_notifier(self):
         if self.notifier == DEFAULT_NOTIFIER:
-            from petisco import Petisco
-
-            self.notifier = Petisco.get_notifier()
+            self.notifier = NotImplementedNotifier()
 
     def _nack_simulation(self):
         if self.percentage_simulate_nack is None:
