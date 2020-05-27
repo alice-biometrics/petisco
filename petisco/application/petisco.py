@@ -16,6 +16,7 @@ from petisco.notifier.infrastructure.not_implemented_notifier import (
     NotImplementedNotifier,
 )
 from petisco.notifier.domain.interface_notifier import INotifier
+from petisco.notifier.domain.notifier_message import NotifierMessage
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.application.interface_repository import IRepository
@@ -23,7 +24,7 @@ from petisco.application.interface_service import IService
 from petisco.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )
-from petisco import __version__, NotifierMessage
+from petisco import __version__
 
 
 @dataclass
@@ -209,7 +210,7 @@ class Petisco(metaclass=Singleton):
         self._schedule_tasks()
         self._log_status()
         self.publish_deploy_event()
-        self.notifiy_deploy()
+        self.notify_deploy()
 
     def start(self):
         self._start()
