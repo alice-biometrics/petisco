@@ -27,7 +27,7 @@ def get_slack_notifier():
     return SlackNotifier(
         token=slack_token,
         channel=slack_channel,
-        converter=SlackNotifierMessageConverter,
+        converter=SlackNotifierMessageConverter(),
     )
 
 
