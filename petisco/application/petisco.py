@@ -23,7 +23,7 @@ from petisco.application.interface_service import IService
 from petisco.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )
-from petisco import __version__
+from petisco import __version__, NotifierMessage
 
 
 @dataclass
@@ -99,6 +99,15 @@ class Petisco(metaclass=Singleton):
                 app_name=self.app_name, app_version=self.app_version
             )
             self.event_publisher.publish(event)
+
+    def notify_deploy(self):
+        self.notifier.publish(
+            NotifierMessage(
+                title="Service deployed",
+                message=f"{self.app_name} has been deployed",
+                info_petisco=self.get_info(),
+            ),
+        )
 
     def set_tasks(self):
         config_tasks = self.config.config_tasks
@@ -200,6 +209,7 @@ class Petisco(metaclass=Singleton):
         self._schedule_tasks()
         self._log_status()
         self.publish_deploy_event()
+        self.notifiy_deploy()
 
     def start(self):
         self._start()
