@@ -85,25 +85,25 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
         blocks.append(traceback_block)
         return blocks
 
-    def convert(self, message: NotifierMessage):
-        if isinstance(message, NotifierExceptionMessage):
-            blocks = self.__get_blocks_exception_message(message)
+    def convert(self, notifier_message: NotifierMessage):
+        if isinstance(notifier_message, NotifierExceptionMessage):
+            blocks = self.__get_blocks_exception_message(notifier_message)
         else:
             blocks = []
             message_block = {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f":envelope: *Message*\n{message.message}",
+                    "text": f":envelope: *Message*\n{notifier_message.message}",
                 },
             }
-            blocks += self.__get_common_blocks(message)
-            if message.title:
+            blocks += self.__get_common_blocks(notifier_message)
+            if notifier_message.title:
                 title_block = {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f":label: *Title*\n{message.title}",
+                        "text": f":label: *Title*\n{notifier_message.title}",
                     },
                 }
                 blocks.append(title_block)
