@@ -16,6 +16,7 @@ from petisco.notifier.infrastructure.not_implemented_notifier import (
     NotImplementedNotifier,
 )
 from petisco.notifier.domain.interface_notifier import INotifier
+from petisco.notifier.domain.notifier_message import NotifierMessage
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.application.interface_repository import IRepository
@@ -99,6 +100,15 @@ class Petisco(metaclass=Singleton):
                 app_name=self.app_name, app_version=self.app_version
             )
             self.event_publisher.publish(event)
+
+    def notify_deploy(self):
+        self.notifier.publish(
+            NotifierMessage(
+                title="Service deployed",
+                message=f"{self.app_name} has been deployed",
+                info_petisco=self.get_info(),
+            ),
+        )
 
     def set_tasks(self):
         config_tasks = self.config.config_tasks
@@ -200,6 +210,7 @@ class Petisco(metaclass=Singleton):
         self._schedule_tasks()
         self._log_status()
         self.publish_deploy_event()
+        self.notify_deploy()
 
     def start(self):
         self._start()
