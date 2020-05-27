@@ -33,7 +33,8 @@ class SlackNotifier(INotifier):
 
         try:
             client.chat_postMessage(
-                channel=self.channel, blocks=self.converter.convert(notifier_message)
+                channel=self.channel,
+                blocks=self.converter.convert(notifier_message=notifier_message),
             )
         except SlackApiError as e:
             raise ConnectionError(f"SlackApiError: {e.response['error']}")
