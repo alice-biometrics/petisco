@@ -1,10 +1,10 @@
 import os
 
-from pika import BlockingConnection
+from pika.adapters.blocking_connection import BlockingChannel
 
 
 def create_exchange_and_bind_queue(
-    connection: BlockingConnection,
+    channel: BlockingChannel,
     exchange: str,
     queue: str,
     binding_key: str,
@@ -20,7 +20,6 @@ def create_exchange_and_bind_queue(
         }
 
     try:
-        channel = connection.channel()
         channel.exchange_declare(exchange=exchange, exchange_type="topic", durable=True)
         result = channel.queue_declare(
             queue=queue, arguments=queue_arguments, durable=True
@@ -28,7 +27,6 @@ def create_exchange_and_bind_queue(
         channel.queue_bind(
             exchange=exchange, queue=result.method.queue, routing_key=binding_key
         )
-        channel.close()
     except Exception as error:
         raise TypeError(
             f"RabbitMQEventPublisher: Cannot create the exchange ({exchange}) and bind to queue ({queue}) using given routing_key ({binding_key}) \n{error}"
@@ -36,10 +34,8 @@ def create_exchange_and_bind_queue(
 
 
 def create_dead_letter_exchange_and_bind_queue(
-    connection: BlockingConnection, exchange: str, queue: str, binding_key: str
+    channel: BlockingChannel, exchange: str, queue: str, binding_key: str
 ):
-    channel = connection.channel()
-
     exchange = f"dlx-{exchange}"
     queue = f"dl-{queue}"
 
@@ -48,4 +44,3 @@ def create_dead_letter_exchange_and_bind_queue(
     result = channel.queue_declare(queue=queue, durable=True)
     queue_name = result.method.queue
     channel.queue_bind(exchange=exchange, routing_key=binding_key, queue=queue_name)
-    channel.close()
