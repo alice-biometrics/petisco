@@ -3,6 +3,9 @@ import traceback
 from time import sleep
 from typing import Dict
 
+from pika.adapters.blocking_connection import BlockingChannel
+from pika.exceptions import StreamLostError
+
 from petisco.events.rabbitmq.create_exchange_and_bind_queue import (
     create_exchange_and_bind_queue,
     create_dead_letter_exchange_and_bind_queue,
@@ -49,17 +52,30 @@ class RabbitMQEventSubscriber(IEventSubscriber):
     def _connect(self):
         self._connection = self._connector.get_connection(self._connection_name)
 
+    def _check_connection(self):
+        if not self._connection.is_open:
+            self._connect()
+
+    def _get_channel(self) -> BlockingChannel:
+        self._check_connection()
+        try:
+            channel = self._connection.channel()
+        except StreamLostError:
+            self._check_connection()
+            channel = self._connection.channel()
+        return channel
+
     def _create_channels(self):
         # This uses the basic.qos protocol method to tell RabbitMQ not to give more than one message to a worker at a
         # time. Or, in other words, don't dispatch a new message to a worker until it has processed and acknowledged
         # the previous one. Instead, it will dispatch it to the next worker that is not still busy.
         for name in self.subscribers.keys():
-            self._channels[name] = self._connection.channel()
+            self._channels[name] = self._get_channel()
             self._channels[name].basic_qos(prefetch_count=1)
 
     def _bind_queue_and_subscribers(self):
         for name, subscriber_config in self.subscribers.items():
-            self._setup_exchanges_and_queues(subscriber_config)
+            self._setup_exchanges_and_queues(subscriber_config, self._channels[name])
             queue = (
                 subscriber_config.topic
                 if not subscriber_config.dead_letter
@@ -69,7 +85,9 @@ class RabbitMQEventSubscriber(IEventSubscriber):
                 queue=queue, on_message_callback=subscriber_config.get_handler()
             )
 
-    def _setup_exchanges_and_queues(self, subscriber_config: ConfigEventSubscriber):
+    def _setup_exchanges_and_queues(
+        self, subscriber_config: ConfigEventSubscriber, channel: BlockingChannel
+    ):
         exchange = subscriber_config.service
         queue = subscriber_config.topic
         binding_key = get_event_binding_key(
@@ -77,13 +95,10 @@ class RabbitMQEventSubscriber(IEventSubscriber):
         )
 
         create_dead_letter_exchange_and_bind_queue(
-            connection=self._connection,
-            exchange=exchange,
-            queue=queue,
-            binding_key=binding_key,
+            channel=channel, exchange=exchange, queue=queue, binding_key=binding_key
         )
         create_exchange_and_bind_queue(
-            connection=self._connection,
+            channel=channel,
             exchange=exchange,
             queue=queue,
             binding_key=binding_key,

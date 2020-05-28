@@ -1,5 +1,6 @@
 from typing import Dict
 
+from pika.adapters.blocking_connection import BlockingChannel
 from pika.exceptions import StreamLostError
 from pika import BasicProperties
 
@@ -25,7 +26,8 @@ class RabbitMQEventPublisher(IEventPublisher):
         self.binding_key = get_event_binding_key(organization, service)
         self.properties = self._get_message_persistent_properties()
         self._connect()
-        self._setup_exchanges_and_queues()
+        channel = self._get_channel()
+        self._setup_exchanges_and_queues(channel)
         super().__init__()
 
     def _connect(self):
@@ -35,15 +37,15 @@ class RabbitMQEventPublisher(IEventPublisher):
             f"{self.organization}.{self.exchange}"
         )
 
-    def _setup_exchanges_and_queues(self):
+    def _setup_exchanges_and_queues(self, channel: BlockingChannel):
         create_dead_letter_exchange_and_bind_queue(
-            connection=self.connection,
+            channel=channel,
             exchange=self.exchange,
             queue=self.queue,
             binding_key=self.binding_key,
         )
         create_exchange_and_bind_queue(
-            connection=self.connection,
+            channel=channel,
             exchange=self.exchange,
             queue=self.queue,
             binding_key=self.binding_key,
@@ -78,12 +80,10 @@ class RabbitMQEventPublisher(IEventPublisher):
             self.connection.close()
 
     def _check_connection(self):
-        print(self.connection)
         if not self.connection.is_open:
             self._connect()
-            print(self.connection)
 
-    def _get_channel(self):
+    def _get_channel(self) -> BlockingChannel:
         self._check_connection()
         try:
             channel = self.connection.channel()
