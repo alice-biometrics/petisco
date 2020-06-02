@@ -1,4 +1,5 @@
 import inspect
+import json
 import traceback
 from typing import Tuple, Dict
 
@@ -25,11 +26,37 @@ def is_flask_response(value):
     return False
 
 
+def is_success(status_code: int):
+    return 200 >= status_code <= 299
+
+
 def get_content(response, status_code):
     if is_flask_response(response):
         return {"message": "flask response"}
     else:
-        return {"message": "Response OK"} if 200 >= status_code <= 299 else response
+        content = response
+        if isinstance(content, str):
+            content = json.loads(content)
+        content_size = len(str(content))
+
+        if content_size > 300:
+            if is_success(status_code):
+                content = {
+                    "message": "Response OK (Trimmed message: message too long)",
+                    "message_size": content_size,
+                }
+            else:
+                error_type = content.get("error", {}).get("type", "Error")
+
+                content = {
+                    "error": {
+                        "type": error_type,
+                        "message": "Response Error (Trimmed message: message too long)",
+                        "message_size": content_size,
+                    }
+                }
+
+        return content
 
 
 class RequestResponded(Event):
