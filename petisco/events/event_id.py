@@ -8,6 +8,9 @@ class EventId(str):
         super(EventId, self).__init__()
         self.value = value
 
+    def __hash__(self):
+        return hash(str(self))
+
     def __eq__(self, other):
         return self.value == other.value
 

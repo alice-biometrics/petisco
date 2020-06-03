@@ -46,6 +46,9 @@ class Event:
             datetime.utcnow() if not self.event_occurred_on else self.event_occurred_on
         )
 
+    def __hash__(self):
+        return hash(str(self))
+
     def __repr__(self):
         return f"{json.loads(self.to_json())}"
 

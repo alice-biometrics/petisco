@@ -53,6 +53,20 @@ def test_should_create_an_event_and_check_to_dict_from_dict_with_non_default_ver
 
 
 @pytest.mark.unit
+def test_should_create_an_event_and_check_its_hash(given_any_info_id, given_any_name):
+
+    event = UserCreated(name=given_any_name)
+
+    hash_before_add_info_id = hash(event)
+
+    event.add_info_id(given_any_info_id)
+
+    hash_after_add_info_id = hash(event)
+
+    assert hash_before_add_info_id != hash_after_add_info_id
+
+
+@pytest.mark.unit
 def test_should_create_an_event_and_check_to_json_from_json(
     given_any_info_id, given_any_name
 ):
