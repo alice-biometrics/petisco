@@ -55,7 +55,7 @@ from petisco.use_case import UseCase
 from petisco.use_case import use_case_handler
 from petisco.controller.controller_handler import controller_handler
 from petisco.controller.errors.http_error import HttpError
-from petisco.events.event import Event, Events
+from petisco.events.event import Event, Events, unique_events
 from petisco.events.event_id import EventId
 
 classes = [
@@ -72,6 +72,7 @@ classes = [
     "RoutingKey",
     "Events",
     "EventId",
+    "unique_events",
     "Singleton",
     "TokenManager",
     "NotImplementedTokenManager",

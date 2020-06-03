@@ -181,3 +181,7 @@ class Event:
 
 
 Events = List[Event]
+
+
+def unique_events(events: Events):
+    return list({event.event_id: event for event in events}.values())

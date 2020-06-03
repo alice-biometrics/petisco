@@ -1,7 +1,6 @@
 import pytest
 
-from petisco import Name
-from petisco.events.event import Event
+from petisco import Event, Name, unique_events
 
 
 class UserCreated(Event):
@@ -118,3 +117,16 @@ def test_should_load_an_event_agnostically_with_non_default_version_event(
     agnostic_event = Event.from_json(event_json)
 
     assert event == agnostic_event
+
+
+@pytest.mark.unit
+def test_should_check_unique_events():
+
+    user_one = UserCreated(name=Name("one"))
+    user_two = UserCreated(name=Name("two"))
+
+    events = unique_events([user_one, user_one, user_one])
+    assert len(events) == 1
+
+    events = unique_events([user_one, user_one, user_two, user_two])
+    assert len(events) == 2
