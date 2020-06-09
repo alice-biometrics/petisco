@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Dict
 
 from petisco.domain.value_objects.value_object import ValueObject
-from petisco.events.event_id import EventId, EVENT_ID_LENGTH
+from petisco.events.event_id import EventId
 
 import json
 
@@ -71,7 +71,7 @@ class Event:
         raw_dict = self.__dict__.copy()
         data = {
             "data": {
-                "id": str(raw_dict.pop("event_id")),
+                "id": raw_dict.pop("event_id").value,
                 "type": raw_dict.pop("event_name"),
                 "version": str(raw_dict.pop("event_version")),
                 "occurred_on": raw_dict.pop("event_occurred_on").strftime(TIME_FORMAT),
@@ -99,12 +99,11 @@ class Event:
         data = jsonapi.get("data")
 
         event_dictionary = {}
-
         if "id" in data and isinstance(data["id"], str):
             event_dictionary["event_id"] = EventId(data["id"])
 
         if "type" in data and isinstance(data["type"], str):
-            event_dictionary["event_name"] = EventId(data["type"])
+            event_dictionary["event_name"] = data["type"]
 
         if "version" in data and isinstance(data["version"], str):
             event_dictionary["event_version"] = int(data["version"])
@@ -125,7 +124,7 @@ class Event:
         if "event_id" in deprecated_dict and isinstance(
             deprecated_dict["event_id"], str
         ):
-            new_event_id = deprecated_dict["event_id"].rjust(EVENT_ID_LENGTH, "0")
+            new_event_id = deprecated_dict["event_id"].rjust(EventId.length(), "0")
             deprecated_dict["event_id"] = EventId(new_event_id)
         if "event_occurred_on" in deprecated_dict and isinstance(
             deprecated_dict["event_occurred_on"], str

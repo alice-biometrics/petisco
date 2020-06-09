@@ -10,6 +10,10 @@ class InvalidUuidError(ValueObjectError):
 
 
 class Uuid(ValueObject):
+    @staticmethod
+    def length():
+        return 36
+
     def __init__(self, value: str):
         self.value = value
         super(Uuid, self).__init__()
