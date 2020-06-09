@@ -3,6 +3,7 @@ from typing import Dict, Any, Callable
 from meiga import Result, Error, isSuccess, Success, Failure
 
 from petisco.domain.value_objects.client_id import ClientId
+from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.user_id import UserId
 from tests.integration.flask_app.toy_app.domain.aggregate_roots.user import User
 from tests.integration.flask_app.toy_app.domain.repositories.interface_user_repository import (
@@ -32,7 +33,9 @@ class SqlUserRepository(IUserRepository):
 
         with self.session_scope() as session:
             user = self.UserModel(
-                client_id=user.client_id, user_id=user.user_id, name=user.name
+                client_id=user.client_id.value,
+                user_id=user.user_id.value,
+                name=user.name.value,
             )
             session.add(user)
         return isSuccess
@@ -42,22 +45,26 @@ class SqlUserRepository(IUserRepository):
         with self.session_scope() as session:
             user_model = (
                 session.query(self.UserModel)
-                .filter(self.UserModel.client_id == client_id)
-                .filter(self.UserModel.user_id == user_id)
+                .filter(self.UserModel.client_id == client_id.value)
+                .filter(self.UserModel.user_id == user_id.value)
                 .first()
             )
             if not user_model:
                 return Failure(UserNotFoundError(user_id))
 
             return Success(
-                User(user_model.name, user_model.client_id, user_model.user_id)
+                User(
+                    name=Name(user_model.name),
+                    client_id=ClientId(user_model.client_id),
+                    user_id=UserId(user_model.user_id),
+                )
             )
 
     def exists(self, user_id: UserId) -> Result[bool, Error]:
         with self.session_scope() as session:
             user = (
                 session.query(self.UserModel)
-                .filter(self.UserModel.user_id == user_id)
+                .filter(self.UserModel.user_id == user_id.value)
                 .first()
             )
             if user:

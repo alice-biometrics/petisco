@@ -79,9 +79,9 @@ def test_should_return_200_when_call_sum_with_valid_values_with_external_headers
     headers = {
         "Content-Type": "multipart/form-data",
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
-        "X-Correlation-Id": CorrelationId.generate(),
+        "X-Correlation-Id": CorrelationId.generate().value,
         "X-Onboarding-Clientid": "petisco",
-        "X-Onboarding-Userid": UserId.generate(),
+        "X-Onboarding-Userid": UserId.generate().value,
     }
 
     multipart_data = dict(value_1=2, value_2=3)

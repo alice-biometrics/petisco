@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from typing import Dict
 
+from petisco.domain.value_objects.value_object import ValueObject
 from petisco.events.event_id import EventId, EVENT_ID_LENGTH
 
 import json
@@ -84,7 +85,11 @@ class Event:
                 data["data"]["meta"]["info_id"] = raw_dict.get("event_info_id")
             raw_dict.pop("event_info_id")
 
-        data["data"]["attributes"] = raw_dict
+        data["data"]["attributes"] = {}
+        for key, value in raw_dict.items():
+            data["data"]["attributes"][key] = (
+                value.value if issubclass(value.__class__, ValueObject) else value
+            )
 
         return data
 

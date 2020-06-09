@@ -19,7 +19,7 @@ def given_any_user_id() -> UserId:
 
 @pytest.fixture
 def given_any_correlation_id() -> CorrelationId:
-    return CorrelationId("crr1d")
+    return CorrelationId("fde825e8-8ac2-4ca1-950a-5c74c8f6b66d")
 
 
 @pytest.fixture

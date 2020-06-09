@@ -1,5 +1,6 @@
 import pytest
 
+from petisco.domain.value_objects.user_id import UserId
 from petisco.frameworks.flask.flask_extension_is_installed import (
     flask_extension_is_installed,
 )
@@ -23,7 +24,7 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token(
     headers = given_auth_token_headers_creator(type_token="ADMIN_TOKEN")
 
     response = petisco_client.post(
-        "/petisco/user", headers=headers, data=dict(name=given_any_name)
+        "/petisco/user", headers=headers, data=dict(name=given_any_name.value)
     )
     assert response.status_code == 200
 
@@ -62,15 +63,17 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token_
 ):
     headers = given_auth_token_headers_creator(type_token="ADMIN_TOKEN")
     response = petisco_client.post(
-        "/petisco/user", headers=headers, data=dict(name=given_any_name)
+        "/petisco/user", headers=headers, data=dict(name=given_any_name.value)
     )
     assert response.status_code == 200
     user_id = response.json["user_id"]
 
-    headers = given_auth_token_headers_creator(type_token="USER_TOKEN", user_id=user_id)
+    headers = given_auth_token_headers_creator(
+        type_token="USER_TOKEN", user_id=UserId(user_id)
+    )
 
     response = petisco_client.get("/petisco/user/name", headers=headers)
-    assert response.json["name"] == given_any_name
+    assert response.json["name"] == given_any_name.value
 
 
 @pytest.mark.integration

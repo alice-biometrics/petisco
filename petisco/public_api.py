@@ -16,10 +16,17 @@ from petisco.domain.errors.empty_value_object_error import EmptyValueObjectError
 from petisco.domain.errors.exceed_length_limit_value_error_error import (
     ExceedLengthLimitValueObjectError,
 )
+from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
+from petisco.domain.value_objects.integer_value_object import IntegerValueObject
 from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.client_id import ClientId
+from petisco.domain.value_objects.string_value_object import (
+    StringValueObject,
+    InvalidStringValueObjectError,
+)
 from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
+from petisco.domain.value_objects.uuid import Uuid, InvalidUuidError
 from petisco.domain.value_objects.value_object import ValueObject
 from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.publisher.infrastructure.not_implemented_event_publisher import (
@@ -84,6 +91,12 @@ classes = [
     "Name",
     "ClientId",
     "UserId",
+    "Uuid",
+    "StringValueObject",
+    "IntegerValueObject",
+    "InvalidUuidError",
+    "InvalidStringValueObjectError",
+    "GivenNameIsNotValidError",
     "InfoId",
     "AggregateRoot",
     "Petisco",

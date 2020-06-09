@@ -1,6 +1,6 @@
 from meiga import Result, Success, Error
 
-from petisco import UseCase, use_case_handler, InfoId
+from petisco import UseCase, use_case_handler, InfoId, Petisco
 from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.user_id import UserId
 from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
@@ -12,6 +12,13 @@ from tests.integration.flask_app.toy_app.domain.repositories.interface_user_repo
 
 @use_case_handler()
 class CreateUser(UseCase):
+    @staticmethod
+    def build():
+        return CreateUser(
+            repository=Petisco.get_repository("user"),
+            publisher=Petisco.get_event_publisher(),
+        )
+
     def __init__(self, repository: IUserRepository, publisher: IEventPublisher):
         self.repository = repository
         self.publisher = publisher

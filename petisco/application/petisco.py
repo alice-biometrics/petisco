@@ -107,7 +107,7 @@ class Petisco(metaclass=Singleton):
                 title="Service deployed",
                 message=f"{self.app_name} has been deployed",
                 info_petisco=self.get_info(),
-            ),
+            )
         )
 
     def set_tasks(self):
