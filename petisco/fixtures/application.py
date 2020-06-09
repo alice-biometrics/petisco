@@ -2,7 +2,7 @@ import pytest
 
 from typing import Dict
 
-from petisco import ROOT_PATH
+from petisco import ROOT_PATH, ClientId, UserId
 from petisco.application.config.config import Config
 from petisco.application.petisco import Petisco
 from petisco.security.token_manager.jwt_token_builder import JwtTokenBuilder
@@ -85,7 +85,9 @@ def given_dummy_key():
 @pytest.fixture
 def given_auth_token_headers_creator(given_dummy_key):
     def _given_auth_token_headers_creator(
-        type_token=str, client_id="client-id", user_id=None
+        type_token=str,
+        client_id: ClientId = ClientId("client-id"),
+        user_id: UserId = None,
     ):
         headers = {
             "Authorization": f"Bearer {JwtTokenBuilder.build(given_dummy_key, type_token, client_id, user_id=user_id)}"

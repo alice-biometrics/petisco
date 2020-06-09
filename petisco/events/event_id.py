@@ -1,22 +1,18 @@
-import uuid
+from petisco.domain.value_objects.uuid import Uuid
+from petisco.domain.value_objects.value_object import ValueObjectError
 
-EVENT_ID_LENGTH = 36
+
+class InvalidEventIdError(ValueObjectError):
+    def __init__(self, uuid_value: str):
+        self.message = f"{self.__class__.__name__}: [uuid: {uuid_value}]"
 
 
-class EventId(str):
-    def __init__(self, value):
-        super(EventId, self).__init__()
-        self.value = value
+class EventId(Uuid):
 
-    def __hash__(self):
-        return hash(str(self))
+    # overwritten to maintain compatibility with legacy events
+    def guard(self):
+        self._ensure_is_36_char_uuid()
 
-    def __eq__(self, other):
-        return self.value == other.value
-
-    def __repr__(self):
-        return f"{self.value}"
-
-    @staticmethod
-    def generate():
-        return EventId(str(uuid.uuid4()))
+    def _ensure_is_36_char_uuid(self):
+        if len(self.value) != 36:
+            raise InvalidEventIdError(self.value)

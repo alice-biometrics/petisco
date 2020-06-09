@@ -1,6 +1,6 @@
 from meiga import Result
 
-from petisco import controller_handler, TokenManager, HttpError, InfoId, UserId, Petisco
+from petisco import controller_handler, TokenManager, HttpError, InfoId, UserId
 from petisco.domain.value_objects.name import Name
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
@@ -13,7 +13,7 @@ from tests.integration.flask_app.toy_app.application.use_cases.create_user impor
 
 
 def success_handler(result: Result):
-    return {"user_id": result.value}, 200
+    return {"user_id": result.value.value}, 200
 
 
 class GivenInputIsNotValidHttpError(HttpError):
@@ -36,10 +36,5 @@ def error_handler(result: Result):
 def create_user(info_id: InfoId, body: dict):
     info_id.user_id = UserId.generate()
 
-    name = Name(body.get("name")).guard()
-
-    use_case = CreateUser(
-        repository=Petisco.get_repository("user"),
-        publisher=Petisco.get_event_publisher(),
-    )
-    return use_case.execute(info_id=info_id, name=name)
+    name = Name(body.get("name"))
+    return CreateUser.build().execute(info_id=info_id, name=name)

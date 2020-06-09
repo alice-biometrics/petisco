@@ -11,79 +11,51 @@ from petisco.domain.errors.exceed_length_limit_value_error_error import (
 
 @pytest.mark.unit
 def test_should_declare_a_user_id_manually():
-    user_id = UserId("my_user_id")
 
-    assert_success(
-        user_id.to_result(), value_is_instance_of=str, value_is_equal_to="my_user_id"
-    )
+    value = "my_user_id"
+    user_id = UserId(value)
+
+    assert isinstance(user_id, UserId)
+    assert user_id.value == value
 
 
 @pytest.mark.unit
 def test_should_declare_a_user_id_with_empty_string():
-    user_id = UserId("")
-
-    assert_success(user_id.to_result(), value_is_instance_of=str, value_is_equal_to="")
+    value = ""
+    user_id = UserId(value)
+    assert isinstance(user_id, UserId)
+    assert user_id.value == value
 
 
 @pytest.mark.unit
 def test_should_declare_a_user_id_generated_automatically():
     user_id = UserId.generate()
 
-    assert_success(user_id.to_result(), value_is_instance_of=str)
-    assert len(user_id.to_result().value) == 16
+    assert isinstance(user_id, UserId)
+    assert len(user_id.value) == 16
 
 
 @pytest.mark.unit
-def test_should_faile_when_declare_a_user_id_that_exceeds_default_length_limits():
-    user_id = UserId("my_user_id_is_too_long_for_default_limit_length")
-
-    assert_failure(
-        user_id.to_result(), value_is_instance_of=ExceedLengthLimitValueObjectError
-    )
+def test_should_fail_when_declare_a_user_id_that_exceeds_default_length_limits():
+    with pytest.raises(ExceedLengthLimitValueObjectError):
+        UserId("my_user_id_is_too_long_for_default_limit_length")
 
 
 @pytest.mark.unit
-def test_should_declare_a_user_id_call_to_result_and_try_to_unwrap_or_return():
+def test_should_return_success_user_id_if_generate_user_id_on_meiga_decorated_method():
     @meiga
     def controller():
-        user_id = UserId.generate().to_result().unwrap_or_return()
-        return Success(user_id)
+        return Success(UserId.generate())
 
     result = controller()
     assert_success(result, value_is_instance_of=UserId)
 
 
 @pytest.mark.unit
-def test_should_fail_when_declare_a_non_valid_user_id_and_call_to_result_and_try_to_unwrap_or_return():
+def test_should_fail_when_declare_a_non_valid_user_id():
     @meiga
     def controller():
-        user_id = (
-            UserId("my_user_id_is_too_long_for_default_limit_length")
-            .to_result()
-            .unwrap_or_return()
-        )
-        return Success(user_id)
-
-    result = controller()
-    assert_failure(result, value_is_instance_of=ExceedLengthLimitValueObjectError)
-
-
-@pytest.mark.unit
-def test_should_declare_a_user_id_call_guard():
-    @meiga
-    def controller():
-        user_id = UserId.generate().guard()
-        return Success(user_id)
-
-    result = controller()
-    assert_success(result, value_is_instance_of=UserId)
-
-
-@pytest.mark.unit
-def test_should_fail_when_declare_a_non_valid_user_id_call_guard():
-    @meiga
-    def controller():
-        user_id = UserId("my_user_id_is_too_long_for_default_limit_length").guard()
+        user_id = UserId("my_user_id_is_too_long_for_default_limit_length")
         return Success(user_id)
 
     result = controller()

@@ -1,4 +1,4 @@
-meiga>=1.2.8
+meiga>=1.2.9
 dataclasses==0.7;python_version<"3.7"
 dataclasses-json==0.3.8
 backports-datetime-fromisoformat>=1.0.0;python_version<"3.7"
@@ -9,3 +9,4 @@ APScheduler==3.6.3
 pyyaml
 deprecation
 slackclient==2.5.0
+validators==0.15.0

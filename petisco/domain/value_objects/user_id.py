@@ -1,10 +1,7 @@
 import base64
 import os
-from typing import Any
 
-from meiga import Result, Failure, Error, Success
-
-from petisco.domain.value_objects.value_object import ValueObject
+from petisco.domain.value_objects.uuid import Uuid
 from petisco.domain.errors.exceed_length_limit_value_error_error import (
     ExceedLengthLimitValueObjectError,
 )
@@ -12,21 +9,16 @@ from petisco.domain.errors.exceed_length_limit_value_error_error import (
 LENGTH = 16
 
 
-class UserId(str, ValueObject):
-    def __new__(cls, user_id, length=LENGTH):
-        user_id = None if user_id == "None" else user_id
-        cls.length = length
-        return str.__new__(cls, user_id)
+class UserId(Uuid):
+    def guard(self):
+        self._ensure_is_16_char_uuid()
 
-    def to_result(self) -> Result[Any, Error]:
-        user_id = None if self == "None" else self
+    def _ensure_is_16_char_uuid(self):
+        if len(self.value) > LENGTH:
+            raise ExceedLengthLimitValueObjectError(message=self.value)
 
-        if user_id is not None and len(user_id) > self.length:
-            return Failure(ExceedLengthLimitValueObjectError(message=user_id))
-        else:
-            return Success(user_id)
-
-    @staticmethod
-    def generate():
+    @classmethod
+    def generate(cls):
+        # TODO: refactor to cls(str(uuid.uuid4()))
         r = os.urandom(LENGTH)
-        return UserId(base64.b64encode(r, altchars=b"-_").decode("utf-8")[:LENGTH])
+        return cls(base64.b64encode(r, altchars=b"-_").decode("utf-8")[:LENGTH])

@@ -1,6 +1,6 @@
 from meiga import Result, Error, Success
 
-from petisco import UseCase, use_case_handler, InfoId
+from petisco import UseCase, use_case_handler, InfoId, Petisco
 from petisco.domain.value_objects.name import Name
 from tests.integration.flask_app.toy_app.domain.repositories.interface_user_repository import (
     IUserRepository,
@@ -9,6 +9,10 @@ from tests.integration.flask_app.toy_app.domain.repositories.interface_user_repo
 
 @use_case_handler()
 class GetUserName(UseCase):
+    @staticmethod
+    def build():
+        return GetUserName(repository=Petisco.get_repository("user"))
+
     def __init__(self, repository: IUserRepository):
         self.repository = repository
 

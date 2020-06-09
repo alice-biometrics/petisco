@@ -1,6 +1,6 @@
 import pytest
 from meiga import Success
-from meiga.assertions import assert_failure, assert_success
+from meiga.assertions import assert_failure
 from meiga.decorators import meiga
 
 from petisco.domain.value_objects.name import Name
@@ -13,48 +13,36 @@ from petisco.domain.errors.exceed_length_limit_value_error_error import (
 @pytest.mark.unit
 def test_should_declare_a_valid_name():
 
-    name = Name("Rosalia")
+    value = "Rosalia"
+    name = Name(value)
 
-    assert_success(
-        name.to_result(), value_is_instance_of=str, value_is_equal_to="Rosalia"
-    )
+    assert isinstance(name, Name)
+    assert name.value == value
 
 
 @pytest.mark.unit
 def test_should_declare_a_name_that_exceeds_default_length_limits():
 
-    name = Name(
-        'Rosalia de Castro: "Adios rios adios fontes; adios, regatos pequenos; adios, vista dos meus ollos: non sei cando nos veremos."'
-    )
-
-    assert_failure(
-        name.to_result(), value_is_instance_of=ExceedLengthLimitValueObjectError
-    )
+    with pytest.raises(ExceedLengthLimitValueObjectError):
+        Name(
+            'Rosalia de Castro: "Adios rios adios fontes; adios, regatos pequenos; adios, vista dos meus ollos: non sei cando nos veremos."'
+        )
 
 
 @pytest.mark.unit
 def test_should_declare_a_name_with_js_injection():
 
-    name = Name("<script>evil()</script>")
-
-    assert_failure(name.to_result(), value_is_instance_of=GivenNameIsNotValidError)
-
-
-@pytest.mark.unit
-def test_should_declare_a_name_with_none_string():
-    # This is quite typical using frameworks as connexion
-
-    name = Name("None")
-
-    assert_success(name.to_result(), value_is_equal_to=None)
+    with pytest.raises(GivenNameIsNotValidError):
+        Name("<script>evil()</script>")
 
 
 @pytest.mark.unit
 def test_should_declare_a_name_with_empty_string():
+    value = ""
+    name = Name(value)
 
-    name = Name("")
-
-    assert_success(name.to_result(), value_is_instance_of=str, value_is_equal_to="")
+    assert isinstance(name, Name)
+    assert name.value == value
 
 
 @pytest.mark.unit
@@ -80,19 +68,29 @@ def test_should_declare_a_name_with_empty_string():
 def test_should_declare_a_valid_name_parametrizable(input_name):
     name = Name(input_name)
 
-    assert_success(
-        name.to_result(), value_is_instance_of=str, value_is_equal_to=input_name
-    )
+    assert isinstance(name.value, str)
+    assert name.value == input_name
 
 
 @pytest.mark.unit
-def test_should_fail_when_declare_an_empty_name_and_call_guard():
+def test_should_fail_when_declare_a_large_name_on_a_meiga_decorated_method():
     @meiga
     def controller():
-        user_id = Name(
+        name = Name(
             'Rosalia de Castro: "Adios rios adios fontes; adios, regatos pequenos; adios, vista dos meus ollos: non sei cando nos veremos."'
-        ).guard()
-        return Success(user_id)
+        )
+        return Success(name)
 
     result = controller()
     assert_failure(result, value_is_instance_of=ExceedLengthLimitValueObjectError)
+
+
+@pytest.mark.unit
+def test_should_fail_when_declare_a_no_valid_name_on_a_meiga_decorated_method():
+    @meiga
+    def controller():
+        name = Name("<script>evil()</script>")
+        return Success(name)
+
+    result = controller()
+    assert_failure(result, value_is_instance_of=GivenNameIsNotValidError)

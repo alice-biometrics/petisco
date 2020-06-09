@@ -1,9 +1,6 @@
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
-from meiga import Result, Error, Success
-from meiga.decorators import meiga
 from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
@@ -11,7 +8,6 @@ from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.security.token_decoder.token import Token
 
 
-@dataclass_json
 @dataclass
 class InfoId(AggregateRoot):
     client_id: Optional[ClientId] = None
@@ -46,6 +42,31 @@ class InfoId(AggregateRoot):
             and self.ip == other.ip
         )
 
+    @staticmethod
+    def from_dict(kdict: dict):
+        client_id = ClientId(kdict.get("client_id")) if kdict.get("client_id") else None
+        user_id = ClientId(kdict.get("user_id")) if kdict.get("user_id") else None
+        correlation_id = (
+            ClientId(kdict.get("correlation_id"))
+            if kdict.get("correlation_id")
+            else None
+        )
+        ip = kdict.get("ip")
+
+        return InfoId(
+            client_id=client_id, user_id=user_id, correlation_id=correlation_id, ip=ip
+        )
+
+    def to_dict(self):
+        return {
+            "client_id": self.client_id.value if self.client_id else None,
+            "user_id": self.user_id.value if self.user_id else None,
+            "correlation_id": self.correlation_id.value
+            if self.correlation_id
+            else None,
+            "ip": self.ip,
+        }
+
     def update_from_headers(self, headers: Dict[str, str]):
         if headers:
             client_id = headers.get("X-Onboarding-Clientid")
@@ -53,10 +74,10 @@ class InfoId(AggregateRoot):
             correlation_id = headers.get("X-Correlation-Id")
             ip = headers.get("X-Forwarded-For")
 
-            self.client_id = client_id if client_id else self.client_id
-            self.user_id = user_id if user_id else self.user_id
+            self.client_id = ClientId(client_id) if client_id else self.client_id
+            self.user_id = UserId(user_id) if user_id else self.user_id
             self.correlation_id = (
-                correlation_id if correlation_id else self.correlation_id
+                CorrelationId(correlation_id) if correlation_id else self.correlation_id
             )
             self.ip = ip if ip else self.ip
         return self
@@ -77,7 +98,9 @@ class InfoId(AggregateRoot):
     @staticmethod
     def from_token(token: Token):
         if token:
-            info_id = InfoId.from_strings(token.client_id, token.user_id)
+            info_id = InfoId.from_strings(
+                token.client_id.value, token.user_id.value if token.user_id else None
+            )
         else:
             info_id = InfoId()
         return info_id
@@ -96,24 +119,14 @@ class InfoId(AggregateRoot):
             ip,
         )
 
-    @meiga
-    def to_result(self) -> Result[Any, Error]:
-        if self.client_id:
-            self.client_id.guard()
-
-        if self.user_id:
-            self.user_id.guard()
-
-        return Success(self)
-
     def get_http_headers(self):
         headers = {}
 
         if self.client_id:
-            headers["X-Onboarding-Clientid"] = self.client_id
+            headers["X-Onboarding-Clientid"] = self.client_id.value
         if self.user_id:
-            headers["X-Onboarding-Userid"] = self.user_id
+            headers["X-Onboarding-Userid"] = self.user_id.value
         if self.correlation_id:
-            headers["X-Correlation-Id"] = self.correlation_id
+            headers["X-Correlation-Id"] = self.correlation_id.value
 
         return headers if len(headers) > 0 else None
