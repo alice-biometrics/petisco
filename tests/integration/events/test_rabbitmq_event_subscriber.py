@@ -224,6 +224,12 @@ def test_should_work_successfully_a_happy_path_pub_sub_with_two_subscribers_and_
     filename_main_handler = "filename_main_handler.txt"
     filename_main_handler_requeue = "filename_main_handler_requeue.txt"
 
+    if os.path.exists(filename_main_handler):
+        os.remove(filename_main_handler)
+
+    if os.path.exists(filename_main_handler_requeue):
+        os.remove(filename_main_handler_requeue)
+
     @subscriber_handler()
     def main_handler(event: Event):
         print(f"main_handler: {event.to_json()}")

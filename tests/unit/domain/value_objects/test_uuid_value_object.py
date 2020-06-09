@@ -10,24 +10,11 @@ def test_should_construct_generate():
 
 
 @pytest.mark.unit
-def test_should_inherit_from_uuid_and_construct():
-    class MyId(Uuid):
-        pass
-
-    uuid_value = "acme"
-
-    my_id = MyId(uuid_value)
-
-    assert isinstance(my_id, MyId)
-    assert my_id.value == uuid_value
-
-
-@pytest.mark.unit
 def test_should_inherit_from_uuid_and_construct_from_generated_value():
     class MyId(Uuid):
         pass
 
-    uuid_value = Uuid.generate()
+    uuid_value = Uuid.generate().value
 
     my_id = MyId(uuid_value)
 

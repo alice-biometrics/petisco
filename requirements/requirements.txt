@@ -9,4 +9,4 @@ APScheduler==3.6.3
 pyyaml
 deprecation
 slackclient==2.5.0
-validators=0.15.0
+validators==0.15.0
