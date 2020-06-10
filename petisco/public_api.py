@@ -17,6 +17,7 @@ from petisco.domain.errors.exceed_length_limit_value_error_error import (
     ExceedLengthLimitValueObjectError,
 )
 from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
+from petisco.domain.errors.unknown_error import UnknownError
 from petisco.domain.value_objects.integer_value_object import IntegerValueObject
 from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.client_id import ClientId
@@ -98,6 +99,7 @@ classes = [
     "InvalidUuidError",
     "InvalidStringValueObjectError",
     "GivenNameIsNotValidError",
+    "UnknownError",
     "InfoId",
     "AggregateRoot",
     "Petisco",
