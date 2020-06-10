@@ -315,7 +315,7 @@ def test_should_log_successfully_an_error_raised_by_a_meiga_handler():
 
 
 @pytest.mark.unit
-def test_should_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception():
+def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception():
 
     logger = FakeLogger()
 
