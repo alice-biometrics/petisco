@@ -312,3 +312,33 @@ def test_should_log_successfully_an_error_raised_by_a_meiga_handler():
             message="Result[status: failure | value: UserNotFoundError] ",
         ).to_dict(),
     )
+
+
+@pytest.mark.unit
+def test_should_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception():
+
+    logger = FakeLogger()
+
+    @use_case_handler(logger=logger)
+    class MyUseCase(UseCase):
+        def execute(self):
+            raise RuntimeError("uncontrolled exception")
+
+    MyUseCase().execute()
+
+    first_logging_message = logger.get_logging_messages()[0]
+    second_logging_message = logger.get_logging_messages()[1]
+
+    assert first_logging_message == (
+        INFO,
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
+    )
+    assert second_logging_message == (
+        ERROR,
+        LogMessageMother.get_use_case(
+            operation="MyUseCase",
+            message="Result[status: failure | value: UnknownError: RuntimeError: uncontrolled exception] -> RuntimeError: uncontrolled exception",
+        ).to_dict(),
+    )
