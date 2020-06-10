@@ -13,6 +13,7 @@ from petisco import (
     RabbitMQConnector,
     INFO,
     RoutingKey,
+    ERROR,
 )
 
 from petisco.events.rabbitmq.rabbitmq_is_running_locally import (
@@ -243,3 +244,44 @@ def test_should_subscriber_handler_receive_one_event_and_obtain_the_routing_key(
     tracked_events_spy.assert_number_events(1)
 
     subscriber.stop()
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
+)
+def test_should_subscriber_handler_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception(
+    make_user_created_event, given_any_publisher_and_subscriber
+):
+    event = make_user_created_event()
+    expected_organization = "acmeorganization"
+
+    logger = FakeLogger()
+
+    @subscriber_handler(logger=logger)
+    def main_handler(event: Event, routing_key: RoutingKey):
+        raise RuntimeError("uncontrolled exception")
+
+    publisher, subscriber = given_any_publisher_and_subscriber(
+        main_handler, organization=expected_organization
+    )
+
+    subscriber.start()
+
+    await_for_subscriber()
+
+    publisher.publish(event)
+
+    await_for_events()
+
+    subscriber.stop()
+
+    second_logging_message = logger.get_logging_messages()[1]
+
+    assert second_logging_message == (
+        ERROR,
+        LogMessageMother.get_subscriber(
+            operation="main_handler",
+            message="Result[status: failure | value: UnknownError: RuntimeError: uncontrolled exception]: NoneType: None\n",
+        ).to_dict(),
+    )

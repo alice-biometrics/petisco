@@ -1,8 +1,9 @@
 from typing import List, Any
 
-from meiga import Result
+from meiga import Result, Failure
 from meiga.decorators import meiga
 
+from petisco.domain.errors.unknown_error import UnknownError
 from petisco.logger.interface_logger import ERROR, INFO, DEBUG
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
@@ -59,7 +60,10 @@ class _UseCaseHandler:
                     if loggable_kwargs:
                         self.logger.log(DEBUG, log_message.set_message(loggable_kwargs))
 
-                result = self._run_execute(*args, **kwargs)
+                try:
+                    result = self._run_execute(*args, **kwargs)
+                except Exception as exception:
+                    result = Failure(UnknownError(exception))
 
                 if not isinstance(result, Result):
                     return result

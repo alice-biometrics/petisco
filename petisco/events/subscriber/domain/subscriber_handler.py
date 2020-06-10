@@ -7,11 +7,12 @@ import random
 import traceback
 
 from petisco.application.petisco import Petisco
+from petisco.domain.errors.unknown_error import UnknownError
 from petisco.events.routing_key import RoutingKey
 from petisco.logger.interface_logger import INFO, ERROR
 from petisco.events.event import Event
 from functools import wraps
-from meiga import Result
+from meiga import Result, Failure
 from meiga.decorators import meiga
 
 from petisco.logger.log_message import LogMessage
@@ -108,7 +109,7 @@ class _SubscriberHandler:
         @wraps(func)
         def wrapper(*args, **kwargs):
             @meiga
-            def run_controller(**kwargs) -> Result:
+            def run_subscriber(**kwargs) -> Result:
                 params = inspect.getfullargspec(func).args
                 kwargs = {k: v for k, v in kwargs.items() if k in params}
                 return func(**kwargs)
@@ -147,7 +148,11 @@ class _SubscriberHandler:
                 return ch.basic_nack(delivery_tag=method.delivery_tag)
 
             kwargs = dict(event=event, routing_key=RoutingKey(method.routing_key))
-            result = run_controller(**kwargs)
+
+            try:
+                result = run_subscriber(**kwargs)
+            except Exception as exception:
+                result = Failure(UnknownError(exception))
 
             if self.delay_after:
                 time.sleep(self.delay_after)
