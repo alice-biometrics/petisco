@@ -6,6 +6,7 @@ pytest-mock == 1.7.1
 pytest-env == 0.6.2
 pytest-variables[yaml]
 pytest-clarity
+requests-mock==1.8.0
 hypothesis==4.34.0
 pre-commit==1.18.3
 twine==1.13.0
