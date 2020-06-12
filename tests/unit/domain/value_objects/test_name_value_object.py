@@ -5,7 +5,7 @@ from meiga.decorators import meiga
 
 from petisco.domain.value_objects.name import Name
 from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
-from petisco.domain.errors.exceed_length_limit_value_error_error import (
+from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
 )
 
@@ -25,7 +25,7 @@ def test_should_declare_a_name_that_exceeds_default_length_limits():
 
     with pytest.raises(ExceedLengthLimitValueObjectError):
         Name(
-            'Rosalia de Castro: "Adios rios adios fontes; adios, regatos pequenos; adios, vista dos meus ollos: non sei cando nos veremos."'
+            "Rosalia de Castro. Adios rios adios fontes, adios, regatos pequenos, adios, vista dos meus ollos, non sei cando nos veremos."
         )
 
 
@@ -77,7 +77,7 @@ def test_should_fail_when_declare_a_large_name_on_a_meiga_decorated_method():
     @meiga
     def controller():
         name = Name(
-            'Rosalia de Castro: "Adios rios adios fontes; adios, regatos pequenos; adios, vista dos meus ollos: non sei cando nos veremos."'
+            "Rosalia de Castro. Adios rios adios fontes, adios, regatos pequenos, adios, vista dos meus ollos, non sei cando nos veremos."
         )
         return Success(name)
 

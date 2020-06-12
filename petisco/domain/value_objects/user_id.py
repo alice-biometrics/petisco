@@ -2,7 +2,7 @@ import base64
 import os
 
 from petisco.domain.value_objects.uuid import Uuid
-from petisco.domain.errors.exceed_length_limit_value_error_error import (
+from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
 )
 

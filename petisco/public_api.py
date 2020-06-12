@@ -13,8 +13,9 @@ from petisco.application.singleton import Singleton
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.domain.errors.empty_value_object_error import EmptyValueObjectError
-from petisco.domain.errors.exceed_length_limit_value_error_error import (
+from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
+    NotReachMinimumValueObjectError,
 )
 from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
 from petisco.domain.errors.unknown_error import UnknownError
@@ -107,6 +108,7 @@ classes = [
     "Config",
     "EmptyValueObjectError",
     "ExceedLengthLimitValueObjectError",
+    "NotReachMinimumValueObjectError",
     "subscriber_handler",
     "ConfigEventSubscriber",
     "IEventPublisher",
@@ -118,7 +120,6 @@ classes = [
     "NotifierMessage",
     "LogMessage",
 ]
-
 # Controllers & Use Cases
 from petisco.modules.environment.application.environment import environment
 from petisco.modules.environment.application.environment_provider import (

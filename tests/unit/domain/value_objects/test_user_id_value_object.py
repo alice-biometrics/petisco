@@ -4,7 +4,7 @@ from meiga.assertions import assert_failure, assert_success
 from meiga.decorators import meiga
 
 from petisco.domain.value_objects.user_id import UserId
-from petisco.domain.errors.exceed_length_limit_value_error_error import (
+from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
 )
 

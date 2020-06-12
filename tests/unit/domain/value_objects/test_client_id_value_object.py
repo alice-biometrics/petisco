@@ -7,7 +7,7 @@ from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
 )
-from petisco.domain.errors.exceed_length_limit_value_error_error import (
+from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
 )
 
