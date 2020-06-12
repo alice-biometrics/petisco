@@ -66,6 +66,7 @@ setup(
         "petisco/frameworks",
         "petisco/frameworks/flask",
         "petisco/frameworks/flask/application",
+        "petisco/http",
         "petisco/logger",
         "petisco/persistence",
         "petisco/persistence/sqlalchemy",
