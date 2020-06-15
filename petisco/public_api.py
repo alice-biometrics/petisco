@@ -44,6 +44,15 @@ from petisco.events.subscriber.infrastructure.not_implemented_event_subscriber i
     NotImplementedEventSubscriber,
 )
 from petisco.frameworks.interface_application import IApplication
+from petisco.http.request import Request
+from petisco.http.request_errors import (
+    MultipartFormatRequestError,
+    MissingSchemaRequestError,
+    TimeoutRequestError,
+    ConnectionRequestError,
+    UnknownRequestError,
+)
+from petisco.http.response import Response
 from petisco.logger.log_message import LogMessage
 from petisco.logger.logging_based_logger import LoggingBasedLogger
 from petisco.logger.interface_logger import ILogger
@@ -119,7 +128,15 @@ classes = [
     "NotImplementedNotifier",
     "NotifierMessage",
     "LogMessage",
+    "Request",
+    "Response",
+    "MultipartFormatRequestError",
+    "MissingSchemaRequestError",
+    "TimeoutRequestError",
+    "ConnectionRequestError",
+    "UnknownRequestError",
 ]
+
 # Controllers & Use Cases
 from petisco.modules.environment.application.environment import environment
 from petisco.modules.environment.application.environment_provider import (
@@ -142,7 +159,6 @@ controllers_and_use_cases = [
     "HealthcheckProvider",
     "PersistenceError",
 ]
-
 
 # Constants
 from petisco.logger.interface_logger import (
@@ -210,7 +226,6 @@ try:
     ]
 except (RuntimeError, ImportError):
     rabbitmq = []
-
 
 # Slack
 try:
