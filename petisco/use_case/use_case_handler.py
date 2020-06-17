@@ -1,3 +1,4 @@
+import traceback
 from typing import List, Any
 
 from meiga import Result, Failure
@@ -63,7 +64,13 @@ class _UseCaseHandler:
                 try:
                     result = self._run_execute(*args, **kwargs)
                 except Exception as exception:
-                    result = Failure(UnknownError(exception))
+                    result = Failure(
+                        UnknownError(
+                            exception=exception,
+                            executor=cls.__name__,
+                            traceback=traceback.format_exc(),
+                        )
+                    )
 
                 if not isinstance(result, Result):
                     return result

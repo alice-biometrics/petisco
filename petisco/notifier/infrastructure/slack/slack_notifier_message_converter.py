@@ -24,16 +24,16 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
     def _info_id_block(self, info_id: InfoId) -> Optional[Dict]:
         if not info_id:
             return None
-        info_id_text = f":information_source: *Info*\n"
+        info_id_text = f":information_source: *InfoId*\n"
         info_id_available = False
         if info_id.client_id:
-            info_id_text += f"*Client:* {info_id.client_id}\n"
+            info_id_text += f"*ClientId:* {info_id.client_id.value}\n"
             info_id_available = True
         if info_id.user_id:
-            info_id_text += f"*UserID:* {info_id.user_id}\n"
+            info_id_text += f"*UserId:* {info_id.user_id.value}\n"
             info_id_available = True
         if info_id.correlation_id:
-            info_id_text += f"*CorrelationID:* {info_id.correlation_id}\n"
+            info_id_text += f"*CorrelationId:* {info_id.correlation_id.value}\n"
             info_id_available = True
         if info_id.correlation_id:
             info_id_text += f"*IP:* {info_id.ip}"
@@ -65,23 +65,23 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
             },
         }
 
-        function_block = {
+        executor_block = {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f":pushpin: *Function*\n{notifier_message.function}",
+                "text": f":pushpin: *Executor*\n{notifier_message.executor}",
             },
         }
         traceback_block = {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f":scroll: *Traceback*\n{notifier_message.traceback}",
+                "text": f":scroll: *Traceback*\n```{notifier_message.traceback[:2970]}```",
             },
         }
         blocks += self.__get_common_blocks(notifier_message)
         blocks.append(exception_block)
-        blocks.append(function_block)
+        blocks.append(executor_block)
         blocks.append(traceback_block)
         return blocks
 

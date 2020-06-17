@@ -68,6 +68,16 @@ def test_should_convert_a_notifier_exception_message(
     assert "text" in blocks[3].keys()
     assert str(given_any_exception) in blocks[3]["text"]["text"]
     assert "text" in blocks[4].keys()
-    assert "function" in blocks[4]["text"]["text"]
+    assert "Executor" in blocks[4]["text"]["text"]
     assert "text" in blocks[5].keys()
     assert str(given_any_traceback) in blocks[5]["text"]["text"]
+
+
+@pytest.mark.integration
+def test_should_truncate_a_long_block_when_convert_slack_notifier(
+    given_long_traceback_complete_notifier_exception_message,
+):
+    converter = SlackNotifierMessageConverter()
+    blocks = converter.convert(given_long_traceback_complete_notifier_exception_message)
+    assert "text" in blocks[5].keys()
+    assert len(blocks[5]["text"]["text"]) < 3000

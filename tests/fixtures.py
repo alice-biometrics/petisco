@@ -168,6 +168,18 @@ TypeError: Again !?!
 
 
 @pytest.fixture
+def given_long_traceback():
+    return (
+        """Traceback (most recent call last):
+  File "e.py", line 7, in <module>
+    raise TypeError("Again !?!")
+TypeError: Again !?!
+"""
+        * 500
+    )
+
+
+@pytest.fixture
 def given_any_complete_notifier_exception_message(
     given_any_client_id,
     given_any_user_id,
@@ -177,9 +189,27 @@ def given_any_complete_notifier_exception_message(
     given_any_traceback,
 ):
     return NotifierExceptionMessage(
-        function="test_function",
+        executor="test_function",
         exception=given_any_exception,
         traceback=given_any_traceback,
+        info_id=InfoId(client_id=given_any_client_id, user_id=given_any_user_id),
+        info_petisco=given_any_info_petisco,
+    )
+
+
+@pytest.fixture
+def given_long_traceback_complete_notifier_exception_message(
+    given_any_client_id,
+    given_any_user_id,
+    given_any_message,
+    given_any_info_petisco,
+    given_any_exception,
+    given_long_traceback,
+):
+    return NotifierExceptionMessage(
+        executor="test_function",
+        exception=given_any_exception,
+        traceback=given_long_traceback,
         info_id=InfoId(client_id=given_any_client_id, user_id=given_any_user_id),
         info_petisco=given_any_info_petisco,
     )

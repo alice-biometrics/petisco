@@ -12,6 +12,7 @@ from petisco.controller.errors.known_result_failure_handler import (
 )
 
 from petisco.domain.aggregate_roots.info_id import InfoId
+from petisco.domain.errors.unknown_error import UnknownError
 from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.request_responded import RequestResponded
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
@@ -148,6 +149,18 @@ class _ControllerHandler:
                     layer="controller", operation=f"{func.__name__}"
                 )
                 if result_kwargs.is_failure:
+                    error = result_kwargs.value
+                    if isinstance(error, UnknownError):
+                        self.notifier.publish(
+                            NotifierExceptionMessage(
+                                exception=error.exception,
+                                executor=error.executor,
+                                traceback=error.traceback,
+                                info_id=info_id,
+                                info_petisco=Petisco.get_info(),
+                            )
+                        )
+
                     http_response = self.handle_failure(log_message, result_kwargs)
                 else:
                     kwargs, info_id = result_kwargs.value
@@ -177,15 +190,15 @@ class _ControllerHandler:
                 message = f"Error {func.__name__}: {repr(e.__class__)} {e} | {traceback.format_exc()}"
                 self.logger.log(ERROR, log_message.set_message(message))
                 http_response = InternalHttpError().handle()
-                if self.notifier:
-                    message = NotifierExceptionMessage(
+                self.notifier.publish(
+                    NotifierExceptionMessage(
                         exception=e,
-                        function=func.__name__,
+                        executor=func.__name__,
                         traceback=traceback.format_exc(),
                         info_id=info_id,
                         info_petisco=Petisco.get_info(),
                     )
-                    self.notifier.publish(message)
+                )
 
             if self.send_request_responded_event:
 
