@@ -46,6 +46,12 @@ def test_should_declare_a_name_with_empty_string():
 
 
 @pytest.mark.unit
+def test_should_raise_given_name_is_not_valid_when_value_is_not_a_string():
+
+    with pytest.raises(GivenNameIsNotValidError):
+        Name([0, 0])
+
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "input_name",
     [

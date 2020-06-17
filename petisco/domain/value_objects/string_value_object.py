@@ -43,7 +43,7 @@ class StringValueObject(ValueObject):
     def _ensure_value_contains_valid_char(
         self, raise_cls=InvalidStringValueObjectError
     ):
-        if not re.search(r"^[\w]*(([',. -][\s]?[\w]?)?[\w]*)*$", self.value):
+        if not isinstance(self.value, str) or not re.search(r"^[\w]*(([',. -][\s]?[\w]?)?[\w]*)*$", self.value):
             self._raise_error(raise_cls)
 
     def _ensure_value_is_less_than_n_char(
