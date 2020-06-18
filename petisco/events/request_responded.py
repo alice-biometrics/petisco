@@ -55,6 +55,8 @@ def get_content(response, status_code):
                         "message_size": content_size,
                     }
                 }
+        else:
+            content = json.dumps(content)
 
         return content
 
