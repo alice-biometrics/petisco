@@ -47,17 +47,15 @@ def get_content(response, status_code):
                 }
             else:
                 error_type = content.get("error", {}).get("type", "Error")
-
                 content = {
                     "error": {
                         "type": error_type,
                         "message": "Response Error (Trimmed message: message too long)",
-                        "message_size": content_size,
-                    }
+                    },
+                    "message_size": content_size,
                 }
         else:
-            content = json.dumps(content)
-
+            content = {"message": json.dumps(content), "message_size": content_size}
         return content
 
 

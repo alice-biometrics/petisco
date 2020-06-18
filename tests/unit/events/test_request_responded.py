@@ -43,7 +43,10 @@ def test_should_construct_request_responded_from_a_tuple_http_response(
     ).add_info_id(given_any_info_id)
 
     assert request_responded.event_name == "request.responded"
-    assert request_responded.http_response["content"] == '{"message": "ok"}'
+    assert request_responded.http_response["content"] == {
+        "message": '{"message": "ok"}',
+        "message_size": 17,
+    }
     assert request_responded.http_response["status_code"] == 200
 
 
@@ -86,8 +89,8 @@ def test_should_construct_request_responded_from_a_tuple_http_response_with_long
         "error": {
             "type": "MyError",
             "message": "Response Error (Trimmed message: message too long)",
-            "message_size": 645,
-        }
+        },
+        "message_size": 645,
     }
     assert request_responded.http_response["status_code"] == 406
 
