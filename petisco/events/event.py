@@ -18,11 +18,11 @@ class Event:
     event_occurred_on: str = None
     event_version: int = None
     event_info_id: Dict = None
+    event_meta: Dict = None
 
     def __init__(self, dictionary=None):
 
         self.event_version = 1
-
         if dictionary:
             self.__dict__.update(dictionary)
             self.event_version = dictionary.get("event_version", 1)
@@ -76,7 +76,7 @@ class Event:
                 "version": str(raw_dict.pop("event_version")),
                 "occurred_on": raw_dict.pop("event_occurred_on").strftime(TIME_FORMAT),
                 "attributes": {},
-                "meta": {},
+                "meta": raw_dict.pop("event_meta", {}),
             }
         }
 
@@ -112,6 +112,9 @@ class Event:
             event_dictionary["event_occurred_on"] = datetime.strptime(
                 data["occurred_on"], TIME_FORMAT
             )
+
+        if "meta" in data and isinstance(data["meta"], dict):
+            event_dictionary["event_meta"] = data["meta"]
 
         event_dictionary["event_info_id"] = data.get("meta", {}).get("info_id")
 

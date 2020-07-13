@@ -19,6 +19,18 @@ class VersionedUserCreated(Event):
         super().__init__({"event_version": 2})
 
 
+@pytest.fixture
+def given_any_meta_dict():
+    return {"platform_name": "python"}
+
+
+@pytest.fixture
+def given_any_event_dict_with_meta(given_any_name, given_any_meta_dict):
+    event_dict = UserCreated(given_any_name).to_dict()
+    event_dict["data"]["meta"] = given_any_meta_dict
+    return event_dict
+
+
 @pytest.mark.unit
 def test_should_create_an_event_and_check_to_dict_from_dict(
     given_any_info_id, given_any_name
@@ -130,3 +142,18 @@ def test_should_check_unique_events():
 
     events = unique_events([user_one, user_one, user_two, user_two])
     assert len(events) == 2
+
+
+@pytest.mark.unit
+def test_should_update_event_with_info_id_without_deleting_meta_info(
+    given_any_info_id, given_any_event_dict_with_meta, given_any_meta_dict
+):
+
+    event = Event.from_dict(given_any_event_dict_with_meta)
+    assert event.event_meta == given_any_meta_dict
+
+    event.add_info_id(given_any_info_id)
+
+    expected_event_dict = {"info_id": given_any_info_id.to_dict()}
+    expected_event_dict.update(given_any_meta_dict)
+    assert event.to_dict()["data"]["meta"] == expected_event_dict
