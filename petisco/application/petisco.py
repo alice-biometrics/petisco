@@ -44,6 +44,8 @@ class Petisco(metaclass=Singleton):
     event_publisher: IEventPublisher = None
     event_subscriber: IEventSubscriber = None
     environment: str = None
+    repositories: Dict[str, Any] = None
+    services: Dict[str, Any] = None
 
     def __init__(self, config: Config):
         self.config = config
@@ -209,6 +211,8 @@ class Petisco(metaclass=Singleton):
         self.event_subscriber.start()
         self._schedule_tasks()
         self._log_status()
+        self.load_repositories()
+        self.load_services()
         self.publish_deploy_event()
         self.notify_deploy()
 
@@ -224,17 +228,17 @@ class Petisco(metaclass=Singleton):
         self.event_subscriber.stop()
         self._unschedule_tasks()
 
-    @staticmethod
-    def services() -> Dict[str, IService]:
-        return Petisco.get_instance().services_provider()
+    def load_repositories(self):
+        if self.repositories is None and self.repositories_provider:
+            self.repositories = self.repositories_provider()
 
-    @staticmethod
-    def repositories() -> Dict[str, IRepository]:
-        return Petisco.get_instance().repositories_provider()
+    def load_services(self):
+        if self.services is None and self.services_provider:
+            self.services = self.services_provider()
 
     @staticmethod
     def get_service(key: str) -> IService:
-        service = Petisco.services().get(key)
+        service = Petisco.get_instance().services.get(key)
         if not service:
             raise ValueError(
                 f"Petisco: {key} service is not defined. Please, add it to petisco.yml"
@@ -243,7 +247,7 @@ class Petisco(metaclass=Singleton):
 
     @staticmethod
     def get_repository(key: str) -> IRepository:
-        repository = Petisco.repositories().get(key)
+        repository = Petisco.get_instance().repositories.get(key)
         if not repository:
             raise ValueError(
                 f"Petisco: {key} repository is not defined. Please, add it to petisco.yml"
