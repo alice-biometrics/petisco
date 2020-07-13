@@ -2,6 +2,7 @@ from typing import Dict, Any, Callable
 
 from meiga import Result, Error, isSuccess, Success, Failure
 
+from petisco import Petisco
 from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.user_id import UserId
@@ -18,6 +19,13 @@ from tests.integration.flask_app.toy_app.domain.repositories.user_not_found_erro
 
 
 class SqlUserRepository(IUserRepository):
+    @staticmethod
+    def build():
+        return SqlUserRepository(
+            session_scope=Petisco.persistence_session_scope(),
+            user_model=Petisco.get_persistence_model("user"),
+        )
+
     def __init__(self, session_scope: Callable, user_model: Any):
         self.session_scope = session_scope
         self.UserModel = user_model

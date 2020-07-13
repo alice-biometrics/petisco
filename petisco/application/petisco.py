@@ -63,7 +63,6 @@ class Petisco(metaclass=Singleton):
         }
         self.notifier = config.get_notifier()
         self._set_persistence()
-        self._set_providers()
         self._set_events()
         self.set_tasks()
         self.options = config.options
@@ -141,7 +140,7 @@ class Petisco(metaclass=Singleton):
             self.persistence_configured = True
             self._persistence_models = config_persistence.get_models()
 
-    def _set_providers(self):
+    def _set_services_and_repositories_from_providers(self):
         config_providers = self.config.config_providers
         if not config_providers:
             return
@@ -149,10 +148,11 @@ class Petisco(metaclass=Singleton):
             config_providers.config_dependencies()
 
         if config_providers.services_provider:
-            self.services_provider = config_providers.services_provider
+
+            self.services = self._load_services(config_providers.services_provider)
 
             info_services = {}
-            for key, service in self.services_provider().items():
+            for key, service in self.services.items():
                 if hasattr(service, "info"):
                     info_services[key] = service.info()
                 else:
@@ -161,10 +161,11 @@ class Petisco(metaclass=Singleton):
                     )
             self.info["services"] = info_services
         if config_providers.repositories_provider:
-            self.repositories_provider = config_providers.repositories_provider
-
+            self.repositories = self._load_repositories(
+                config_providers.repositories_provider
+            )
             info_repositories = {}
-            for key, repository in self.repositories_provider().items():
+            for key, repository in self.repositories.items():
                 if hasattr(repository, "info"):
                     info_repositories[key] = repository.info()
                 else:
@@ -212,13 +213,13 @@ class Petisco(metaclass=Singleton):
     def _start(self):
         self.event_subscriber.start()
         self._schedule_tasks()
-        self.load_repositories()
-        self.load_services()
+        self._set_services_and_repositories_from_providers()
         self._log_status()
-        self.load_repositories()
-        self.load_services()
         self.publish_deploy_event()
         self.notify_deploy()
+
+    def load_services_and_repositories(self):
+        self._set_services_and_repositories_from_providers()
 
     def start(self):
         self._start()
@@ -232,27 +233,30 @@ class Petisco(metaclass=Singleton):
         self.event_subscriber.stop()
         self._unschedule_tasks()
 
-    def load_repositories(self):
-        if self.repositories is None and self.repositories_provider:
-            start_time = time.time()
-            self.repositories = self.repositories_provider()
-            elapsed_time = time.time() - start_time
-            self.info["elapsed_time"][
-                "load_repositories"
-            ] = f"{int(elapsed_time*1000.0)} ms"
+    def _load_repositories(self, repositories_provider: Callable):
+        start_time = time.time()
+        repositories = repositories_provider()
+        elapsed_time = time.time() - start_time
+        self.info["elapsed_time"][
+            "load_repositories"
+        ] = f"{int(elapsed_time*1000.0)} ms"
+        return repositories
 
-    def load_services(self):
-        if self.services is None and self.services_provider:
-            start_time = time.time()
-            self.services = self.services_provider()
-            elapsed_time = time.time() - start_time
-            self.info["elapsed_time"][
-                "load_services"
-            ] = f"{int(elapsed_time*1000.0)} ms"
+    def _load_services(self, services_provider: Callable):
+        start_time = time.time()
+        services = services_provider()
+        elapsed_time = time.time() - start_time
+        self.info["elapsed_time"]["load_services"] = f"{int(elapsed_time*1000.0)} ms"
+        return services
 
     @staticmethod
     def get_service(key: str) -> IService:
-        service = Petisco.get_instance().services.get(key)
+        services = Petisco.get_instance().services
+        if not services:
+            raise ValueError(
+                f"Petisco: any service has been declared. Please, add it to petisco.yml."
+            )
+        service = services.get(key)
         if not service:
             raise ValueError(
                 f"Petisco: {key} service is not defined. Please, add it to petisco.yml"
@@ -261,7 +265,12 @@ class Petisco(metaclass=Singleton):
 
     @staticmethod
     def get_repository(key: str) -> IRepository:
-        repository = Petisco.get_instance().repositories.get(key)
+        repositories = Petisco.get_instance().repositories
+        if not repositories:
+            raise ValueError(
+                f"Petisco: any repository has been declared. Please, add it to petisco.yml"
+            )
+        repository = repositories.get(key)
         if not repository:
             raise ValueError(
                 f"Petisco: {key} repository is not defined. Please, add it to petisco.yml"
@@ -288,10 +297,6 @@ class Petisco(metaclass=Singleton):
         )
 
         return session_scope
-
-    @staticmethod
-    def providers():
-        return Petisco.services(), Petisco.repositories()
 
     @staticmethod
     def get_event_publisher():

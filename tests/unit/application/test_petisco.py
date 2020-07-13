@@ -46,3 +46,23 @@ def test_should_schedule_tasks(petisco_yml_path):
     petisco = Petisco.from_filename(filename)
 
     petisco._schedule_tasks()
+
+
+@pytest.mark.unit
+def test_should_raise_exception_if_repository_not_exist(petisco_yml_path):
+
+    filename = f"{petisco_yml_path}/ymls/petisco.all.yml"
+
+    petisco = Petisco.from_filename(filename)
+    with pytest.raises(ValueError):
+        petisco.get_repository("repo")
+
+
+@pytest.mark.unit
+def test_should_raise_exception_if_service_not_exist(petisco_yml_path):
+
+    filename = f"{petisco_yml_path}/ymls/petisco.all.yml"
+
+    petisco = Petisco.from_filename(filename)
+    with pytest.raises(ValueError):
+        petisco.get_service("repo")
