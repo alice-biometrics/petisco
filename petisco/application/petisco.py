@@ -45,6 +45,8 @@ class Petisco(metaclass=Singleton):
     event_publisher: IEventPublisher = None
     event_subscriber: IEventSubscriber = None
     environment: str = None
+    repositories: Dict[str, Any] = None
+    services: Dict[str, Any] = None
 
     def __init__(self, config: Config):
         self.config = config
@@ -213,6 +215,8 @@ class Petisco(metaclass=Singleton):
         self.load_repositories()
         self.load_services()
         self._log_status()
+        self.load_repositories()
+        self.load_services()
         self.publish_deploy_event()
         self.notify_deploy()
 
@@ -233,22 +237,22 @@ class Petisco(metaclass=Singleton):
             start_time = time.time()
             self.repositories = self.repositories_provider()
             elapsed_time = time.time() - start_time
-            self.info["elapsed_time"]["load_repositories"] = time.strftime(
-                "%H:%M:%S", time.gmtime(elapsed_time)
-            )
+            self.info["elapsed_time"][
+                "load_repositories"
+            ] = f"{int(elapsed_time*1000.0)} ms"
 
     def load_services(self):
         if self.services is None and self.services_provider:
             start_time = time.time()
             self.services = self.services_provider()
             elapsed_time = time.time() - start_time
-            self.info["elapsed_time"]["load_services"] = time.strftime(
-                "%H:%M:%S", time.gmtime(elapsed_time)
-            )
+            self.info["elapsed_time"][
+                "load_services"
+            ] = f"{int(elapsed_time*1000.0)} ms"
 
     @staticmethod
     def get_service(key: str) -> IService:
-        service = Petisco.services().get(key)
+        service = Petisco.get_instance().services.get(key)
         if not service:
             raise ValueError(
                 f"Petisco: {key} service is not defined. Please, add it to petisco.yml"
@@ -257,7 +261,7 @@ class Petisco(metaclass=Singleton):
 
     @staticmethod
     def get_repository(key: str) -> IRepository:
-        repository = Petisco.repositories().get(key)
+        repository = Petisco.get_instance().repositories.get(key)
         if not repository:
             raise ValueError(
                 f"Petisco: {key} repository is not defined. Please, add it to petisco.yml"
