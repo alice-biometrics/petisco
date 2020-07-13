@@ -31,6 +31,10 @@ def test_should_load_petisco_from_yml(petisco_yml_path, given_petisco_version):
 
     petisco = Petisco.from_filename(filename)
 
+    assert "elapsed_time" in petisco.info
+    assert "load_repositories" in petisco.info["elapsed_time"]
+    assert "load_services" in petisco.info["elapsed_time"]
+    petisco.info.pop("elapsed_time")
     assert petisco.info == expected_petisco_info
 
 

@@ -1,4 +1,5 @@
 import inspect
+import time
 from os import environ
 from typing import Callable, Dict, Any
 
@@ -56,6 +57,7 @@ class Petisco(metaclass=Singleton):
             "app_version": self.app_version,
             "petisco_version": __version__,
             "environment": self.environment,
+            "elapsed_time": {},
         }
         self.notifier = config.get_notifier()
         self._set_persistence()
@@ -208,6 +210,8 @@ class Petisco(metaclass=Singleton):
     def _start(self):
         self.event_subscriber.start()
         self._schedule_tasks()
+        self.load_repositories()
+        self.load_services()
         self._log_status()
         self.publish_deploy_event()
         self.notify_deploy()
@@ -224,13 +228,23 @@ class Petisco(metaclass=Singleton):
         self.event_subscriber.stop()
         self._unschedule_tasks()
 
-    @staticmethod
-    def services() -> Dict[str, IService]:
-        return Petisco.get_instance().services_provider()
+    def load_repositories(self):
+        if self.repositories is None and self.repositories_provider:
+            start_time = time.time()
+            self.repositories = self.repositories_provider()
+            elapsed_time = time.time() - start_time
+            self.info["elapsed_time"]["load_repositories"] = time.strftime(
+                "%H:%M:%S", time.gmtime(elapsed_time)
+            )
 
-    @staticmethod
-    def repositories() -> Dict[str, IRepository]:
-        return Petisco.get_instance().repositories_provider()
+    def load_services(self):
+        if self.services is None and self.services_provider:
+            start_time = time.time()
+            self.services = self.services_provider()
+            elapsed_time = time.time() - start_time
+            self.info["elapsed_time"]["load_services"] = time.strftime(
+                "%H:%M:%S", time.gmtime(elapsed_time)
+            )
 
     @staticmethod
     def get_service(key: str) -> IService:
