@@ -71,8 +71,8 @@ class Request:
             return Failure(TimeoutRequestError())
         except ConnectionError:
             return Failure(ConnectionRequestError())
-        except Exception:
-            return Failure(UnknownRequestError())
+        except Exception as e:
+            return Failure(UnknownRequestError(error_message=e))
 
         if isinstance(response, requests.models.Response):
             if Request.__is_binary_content(response.headers.get("Content-Type", [])):

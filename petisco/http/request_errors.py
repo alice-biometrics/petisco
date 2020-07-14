@@ -22,5 +22,6 @@ class ConnectionRequestError(Error):
 
 
 class UnknownRequestError(Error):
-    error_name = str(__name__)
-    error_message = {"error": "General connection error"}
+    def __init__(self, error_message="General connection error"):
+        self.error_name = str(__name__)
+        self.error_message = {"error": error_message}
