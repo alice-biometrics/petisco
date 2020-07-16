@@ -77,3 +77,5 @@ def test_should_capture_an_exception_with_additional_context():
     assert result.value.executor == "executor"
     assert "Traceback" in result.value.traceback
     assert "File" in result.value.traceback
+
+    assert "Traceback" in str(result)
