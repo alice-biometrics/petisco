@@ -2,4 +2,12 @@ from meiga import Error
 
 
 class CriticalError(Error):
-    pass
+    def __init__(self, exception: Exception, executor=None, traceback=None):
+        self.message = f"{exception.__class__.__name__}: {str(exception)}"
+        self.exception = exception
+        self.executor = executor
+        self.traceback = traceback
+
+    def __repr__(self):
+
+        return f"{self.__class__.__name__} ({self.executor}): {self.message}.\n{self.traceback}"
