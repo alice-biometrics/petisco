@@ -5,6 +5,7 @@ from slack.errors import SlackApiError
 
 from petisco.notifier.domain.interface_notifier import INotifier
 from petisco.notifier.domain.notifier_message import NotifierMessage
+from petisco.notifier.infrastructure.slack.errors import SlackError
 from petisco.notifier.infrastructure.slack.interface_slack_notifier_message_converter import (
     ISlackNotifierMessageConverter,
 )
@@ -37,4 +38,4 @@ class SlackNotifier(INotifier):
                 blocks=self.converter.convert(notifier_message=notifier_message),
             )
         except SlackApiError as e:
-            raise ConnectionError(f"SlackApiError: {e.response['error']}")
+            raise SlackError(e.response["error"])

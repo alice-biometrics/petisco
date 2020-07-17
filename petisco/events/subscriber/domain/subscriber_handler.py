@@ -7,6 +7,7 @@ import random
 import traceback
 
 from petisco.application.petisco import Petisco
+from petisco.domain.errors.critical_error import CriticalError
 from petisco.domain.errors.unknown_error import UnknownError
 from petisco.events.routing_key import RoutingKey
 from petisco.logger.interface_logger import INFO, ERROR
@@ -16,7 +17,7 @@ from meiga import Result, Failure
 from meiga.decorators import meiga
 
 from petisco.logger.log_message import LogMessage
-from petisco.notifier.domain.notifier_message import NotifierMessage
+from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 from petisco.notifier.infrastructure.not_implemented_notifier import (
     NotImplementedNotifier,
 )
@@ -157,21 +158,30 @@ class _SubscriberHandler:
             if self.delay_after:
                 time.sleep(self.delay_after)
 
+            self.notify(result)
+
             if result is None or result.is_failure:
                 message = f"{result}: {traceback.format_exc()}"
                 self.logger.log(ERROR, log_message.set_message(message))
-                self.notifier.publish(
-                    NotifierMessage(
-                        title=f"Subscriber: {func.__name__}",
-                        message=f"{result}: {traceback.format_exc()}",
-                        info_petisco=Petisco.get_info(),
-                    )
-                )
                 ch.basic_nack(delivery_tag=method.delivery_tag)
             else:
                 ch.basic_ack(delivery_tag=method.delivery_tag)
 
         return wrapper
+
+    @meiga
+    def notify(self, result):
+        if result.is_failure:
+            error = result.value
+            if issubclass(error.__class__, CriticalError):
+                self.notifier.publish(
+                    NotifierExceptionMessage(
+                        exception=error.exception,
+                        executor=error.executor,
+                        traceback=error.traceback,
+                        info_petisco=Petisco.get_info(),
+                    )
+                )
 
 
 subscriber_handler = _SubscriberHandler
