@@ -9,5 +9,8 @@ class CriticalError(Error):
         self.traceback = traceback
 
     def __repr__(self):
-
-        return f"{self.__class__.__name__} ({self.executor}): {self.message}.\n{self.traceback}"
+        executor_str = f" ({self.executor})" if self.executor else ""
+        traceback_str = f"\n{self.traceback}" if self.traceback else ""
+        return (
+            f"{self.__class__.__name__}{executor_str}: {self.message}.{traceback_str}"
+        )
