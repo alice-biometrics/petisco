@@ -1,9 +1,5 @@
-from meiga import Error
+from petisco.domain.errors.critical_error import CriticalError
 
 
-class UnknownError(Error):
-    def __init__(self, exception: Exception, executor=None, traceback=None):
-        self.message = f"{exception.__class__.__name__}: {str(exception)}"
-        self.exception = exception
-        self.executor = executor
-        self.traceback = traceback
+class UnknownError(CriticalError):
+    pass

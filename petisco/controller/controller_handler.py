@@ -12,7 +12,7 @@ from petisco.controller.errors.known_result_failure_handler import (
 )
 
 from petisco.domain.aggregate_roots.info_id import InfoId
-from petisco.domain.errors.unknown_error import UnknownError
+from petisco.domain.errors.critical_error import CriticalError
 from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.request_responded import RequestResponded
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
@@ -145,22 +145,12 @@ class _ControllerHandler:
                 kwargs = add_headers(kwargs)
                 result_kwargs = add_info_id(kwargs)
 
+                self.notify(result_kwargs, info_id)
+
                 log_message = LogMessage(
                     layer="controller", operation=f"{func.__name__}"
                 )
                 if result_kwargs.is_failure:
-                    error = result_kwargs.value
-                    if isinstance(error, UnknownError):
-                        self.notifier.publish(
-                            NotifierExceptionMessage(
-                                exception=error.exception,
-                                executor=error.executor,
-                                traceback=error.traceback,
-                                info_id=info_id,
-                                info_petisco=Petisco.get_info(),
-                            )
-                        )
-
                     http_response = self.handle_failure(log_message, result_kwargs)
                 else:
                     kwargs, info_id = result_kwargs.value
@@ -168,6 +158,8 @@ class _ControllerHandler:
                     self.logger.log(INFO, log_message.set_message("Processing Request"))
 
                     result_controller, elapsed_time = run_controller(*args, **kwargs)
+
+                    self.notify(result_controller, info_id)
 
                     if result_controller.is_failure:
                         http_response = self.handle_failure(
@@ -234,6 +226,20 @@ class _ControllerHandler:
             return Success((kwargs, info_id))
 
         return wrapper
+
+    def notify(self, result, info_id: InfoId = None):
+        if result.is_failure:
+            error = result.value
+            if issubclass(error.__class__, CriticalError):
+                self.notifier.publish(
+                    NotifierExceptionMessage(
+                        exception=error.exception,
+                        executor=error.executor,
+                        traceback=error.traceback,
+                        info_id=info_id,
+                        info_petisco=Petisco.get_info(),
+                    )
+                )
 
     def handle_failure(
         self, log_message: LogMessage, result: Result

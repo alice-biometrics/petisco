@@ -4,30 +4,41 @@ from typing import List, Any
 from meiga import Result, Failure
 from meiga.decorators import meiga
 
+from petisco.domain.aggregate_roots.info_id import InfoId
+from petisco.domain.errors.critical_error import CriticalError
 from petisco.domain.errors.unknown_error import UnknownError
 from petisco.logger.interface_logger import ERROR, INFO, DEBUG
 from petisco.logger.log_message import LogMessage
-from petisco.logger.not_implemented_logger import NotImplementedLogger
-from petisco.notifier.domain.notifier_message import NotifierMessage
-from petisco.notifier.infrastructure.not_implemented_notifier import (
-    NotImplementedNotifier,
-)
+from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 from petisco.use_case.use_case import UseCase
 from petisco.application.petisco import Petisco
+
+DEFAULT_LOGGER = None
+DEFAULT_NOTIFIER = None
 
 
 class _UseCaseHandler:
     def __init__(
         self,
-        logger=NotImplementedLogger(),
+        logger=DEFAULT_LOGGER,
         logging_parameters_whitelist: List[str] = None,
         logging_types_blacklist: List[Any] = None,
-        notifier=NotImplementedNotifier(),
+        notifier=DEFAULT_NOTIFIER,
     ):
         self.logger = logger
         self.logging_parameters_whitelist = logging_parameters_whitelist
         self.logging_types_blacklist = logging_types_blacklist
         self.notifier = notifier
+        self._check_logger()
+        self._check_notifier()
+
+    def _check_logger(self):
+        if self.logger == DEFAULT_LOGGER:
+            self.logger = Petisco.get_logger()
+
+    def _check_notifier(self):
+        if self.notifier == DEFAULT_NOTIFIER:
+            self.notifier = Petisco.get_notifier()
 
     def __call__(self, cls):
         if not issubclass(cls, UseCase):
@@ -85,14 +96,7 @@ class _UseCaseHandler:
                     self.logger.log(
                         ERROR, log_message.set_message(f"{result} {detail}")
                     )
-                    self.notifier.publish(
-                        NotifierMessage(
-                            title=f"Use case: {cls.__name__}",
-                            message=f"{result} {detail}",
-                            info_petisco=Petisco.get_info(),
-                            info_id=info_id,
-                        )
-                    )
+                    self.notify(result, info_id)
                 else:
                     if not self._is_logging_type(result.value):
                         message = (
@@ -114,6 +118,20 @@ class _UseCaseHandler:
             @meiga
             def _run_execute(self, *args, **kwargs) -> Result:
                 return super().execute(*args, **kwargs)
+
+            def notify(self, result, info_id: InfoId = None):
+                if result.is_failure:
+                    error = result.value
+                    if issubclass(error.__class__, CriticalError):
+                        self.notifier.publish(
+                            NotifierExceptionMessage(
+                                exception=error.exception,
+                                executor=error.executor,
+                                traceback=error.traceback,
+                                info_id=info_id,
+                                info_petisco=Petisco.get_info(),
+                            )
+                        )
 
         return UseCaseWrapped
 

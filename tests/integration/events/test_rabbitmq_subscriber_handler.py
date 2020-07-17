@@ -282,6 +282,6 @@ def test_should_subscriber_handler_return_a_failure_with_unknown_error_when_rais
         ERROR,
         LogMessageMother.get_subscriber(
             operation="main_handler",
-            message="Result[status: failure | value: UnknownError: RuntimeError: uncontrolled exception]: NoneType: None\n",
+            message="Result[status: failure | value: UnknownError: RuntimeError: uncontrolled exception.]: NoneType: None\n",
         ).to_dict(),
     )
