@@ -119,6 +119,7 @@ class _UseCaseHandler:
             def _run_execute(self, *args, **kwargs) -> Result:
                 return super().execute(*args, **kwargs)
 
+            @meiga
             def notify(self, result, info_id: InfoId = None):
                 if result.is_failure:
                     error = result.value

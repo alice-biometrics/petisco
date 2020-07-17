@@ -227,6 +227,7 @@ class _ControllerHandler:
 
         return wrapper
 
+    @meiga
     def notify(self, result, info_id: InfoId = None):
         if result.is_failure:
             error = result.value
