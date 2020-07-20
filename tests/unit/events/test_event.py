@@ -25,6 +25,12 @@ def given_any_meta_dict():
 
 
 @pytest.fixture
+def given_json_event_data_without_attributes():
+    json_data = '{"data":{"meta":{"plataform_name":"iPhone 6s","system_version":"12.4","sdk_version":"1.3.7"},"version":"1","attributes":null,"id":"83D28391-A14E-4122-996D-1A8A63A0B2EA","occurred_on":"2020-07-20 10:14:54.007000","type":"sdk.onboarding.ran"}}'
+    return json_data
+
+
+@pytest.fixture
 def given_any_event_dict_with_meta(given_any_name, given_any_meta_dict):
     event_dict = UserCreated(given_any_name).to_dict()
     event_dict["data"]["meta"] = given_any_meta_dict
@@ -157,3 +163,13 @@ def test_should_update_event_with_info_id_without_deleting_meta_info(
     expected_event_dict = {"info_id": given_any_info_id.to_dict()}
     expected_event_dict.update(given_any_meta_dict)
     assert event.to_dict()["data"]["meta"] == expected_event_dict
+
+
+@pytest.mark.unit
+def test_should_load_json_when_there_is_not_attribute(
+    given_json_event_data_without_attributes
+):
+
+    event = Event.from_json(given_json_event_data_without_attributes)
+
+    assert not event.to_dict()["data"]["attributes"]

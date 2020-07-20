@@ -118,7 +118,9 @@ class Event:
 
         event_dictionary["event_info_id"] = data.get("meta", {}).get("info_id")
 
-        event_dictionary.update(data.get("attributes"))
+        attributes = data.get("attributes", {})
+        if attributes:
+            event_dictionary.update(attributes)
 
         return Event(event_dictionary)
 
