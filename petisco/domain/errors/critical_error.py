@@ -3,24 +3,24 @@ from meiga import Error
 
 class CriticalError(Error):
     def __init__(
-        self, exception: Exception, input_params=None, executor=None, traceback=None
+        self, exception: Exception, input_parameters=None, executor=None, traceback=None
     ):
         self.message = f"{exception.__class__.__name__}: {str(exception)}"
-        self.input_params = self._sanitize_input_params(input_params)
+        self.input_parameters = self._sanitize_input_params(input_parameters)
         self.exception = exception
         self.executor = executor
         self.traceback = traceback
 
-    def _sanitize_input_params(self, input_params):
-        if isinstance(input_params, tuple):
+    def _sanitize_input_params(self, input_parameters):
+        if isinstance(input_parameters, tuple):
             return {
-                f"param_{i}": param if not isinstance(param, bytes) else "bytest"
-                for i, param in enumerate(input_params)
+                f"param_{i+1}": param if not isinstance(param, bytes) else "bytes"
+                for i, param in enumerate(input_parameters)
             }
-        elif isinstance(input_params, dict):
+        elif isinstance(input_parameters, dict):
             return {
-                k: v if not isinstance(v, bytes) else "bytest"
-                for k, v in input_params.items()
+                k: v if not isinstance(v, bytes) else "bytes"
+                for k, v in input_parameters.items()
             }
         else:
             return None
@@ -28,8 +28,10 @@ class CriticalError(Error):
     def __repr__(self):
         executor_str = f" ({self.executor})" if self.executor else ""
         traceback_str = f"\n{self.traceback}" if self.traceback else ""
-        input_params_str = (
-            f"\nInput Parameters: {str(self.input_params)}" if self.input_params else ""
+        input_parameters_str = (
+            f"\nInput Parameters: {str(self.input_parameters)}"
+            if self.input_parameters
+            else ""
         )
 
-        return f"{self.__class__.__name__}{executor_str}: {self.message}.{traceback_str}.{input_params_str}"
+        return f"{self.__class__.__name__}{executor_str}: {self.message}.{traceback_str}.{input_parameters_str}"

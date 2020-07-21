@@ -277,11 +277,9 @@ def test_should_subscriber_handler_return_a_failure_with_unknown_error_when_rais
     subscriber.stop()
 
     second_logging_message = logger.get_logging_messages()[1]
-
-    assert second_logging_message == (
-        ERROR,
-        LogMessageMother.get_subscriber(
-            operation="main_handler",
-            message="Result[status: failure | value: UnknownError: RuntimeError: uncontrolled exception.]: NoneType: None\n",
-        ).to_dict(),
+    assert second_logging_message[0] == ERROR
+    assert (
+        "Result[status: failure | value: UnknownError (main_handler): RuntimeError: uncontrolled exception."
+        in second_logging_message[1]["data"]["message"]
     )
+    assert "Input Parameters:" in second_logging_message[1]["data"]["message"]

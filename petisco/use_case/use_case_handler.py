@@ -78,6 +78,7 @@ class _UseCaseHandler:
                     result = Failure(
                         UnknownError(
                             exception=exception,
+                            input_parameters=kwargs if len(kwargs) > 0 else args,
                             executor=cls.__name__,
                             traceback=traceback.format_exc(),
                         )
@@ -128,6 +129,7 @@ class _UseCaseHandler:
                             NotifierExceptionMessage(
                                 exception=error.exception,
                                 executor=error.executor,
+                                input_parameters=error.input_parameters,
                                 traceback=error.traceback,
                                 info_id=info_id,
                                 info_petisco=Petisco.get_info(),

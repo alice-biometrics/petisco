@@ -18,6 +18,9 @@ class RoutingKey(ValueObject):
             self.event_name = ".".join(self.value.split(".")[4:])
             self.version = int(self.version)
 
+    def __repr__(self):
+        return f"[RoutingKey: {self.value}"
+
     def to_result(self) -> Result[Any, Error]:
         value = None if self == "None" else self
         return Success(value)

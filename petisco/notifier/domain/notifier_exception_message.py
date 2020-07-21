@@ -13,6 +13,7 @@ class NotifierExceptionMessage(NotifierMessage):
         executor: str,
         exception: Exception,
         traceback: str,
+        input_parameters: dict = None,
         info_id: InfoId = None,
         info_petisco: Dict = None,
     ):
@@ -20,6 +21,7 @@ class NotifierExceptionMessage(NotifierMessage):
         self.executor = executor
         self.exception = exception
         self.traceback = traceback
+        self.input_parameters = input_parameters
 
     def __str__(self) -> str:
-        return f"Error {self.executor}: {repr(self.exception.__class__)} {self.exception} | {self.traceback}"
+        return f"Error {self.executor}: {repr(self.exception.__class__)} {self.exception} | {self.traceback} | {self.input_parameters}"

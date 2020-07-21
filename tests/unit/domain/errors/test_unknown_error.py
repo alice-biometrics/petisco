@@ -85,7 +85,7 @@ def test_should_capture_an_exception_with_additional_context():
 def test_should_construct_unknown_error_from_base_exception_and_valid_input_parameters():
     valid_input_parameters = ("hola", 2)
 
-    error = UnknownError(Exception("my_trace"), input_params=valid_input_parameters)
+    error = UnknownError(Exception("my_trace"), input_parameters=valid_input_parameters)
 
     assert error.message == "Exception: my_trace"
-    assert "Input Parameters:{'param_0': 'hola', 'param_1': 2}" in str(error)
+    assert "Input Parameters: {'param_1': 'hola', 'param_2': 2}" in error.__repr__()

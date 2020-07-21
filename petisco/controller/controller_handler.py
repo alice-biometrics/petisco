@@ -236,6 +236,7 @@ class _ControllerHandler:
                     NotifierExceptionMessage(
                         exception=error.exception,
                         executor=error.executor,
+                        input_parameters=error.input_parameters,
                         traceback=error.traceback,
                         info_id=info_id,
                         info_petisco=Petisco.get_info(),
