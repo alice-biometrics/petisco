@@ -71,6 +71,19 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
                 "text": f":pushpin: *Executor*\n{notifier_message.executor}",
             },
         }
+
+        input_parameters_block_text = f":arrow_right: *Input Parameters*\n"
+
+        if notifier_message.input_parameters:
+            for k, v in notifier_message.input_parameters.items():
+                input_parameters_block_text += f"* {k}: {v}\n"
+        else:
+            input_parameters_block_text += "No data :heavy_multiplication_x:"
+
+        input_parameters_block = {
+            "type": "section",
+            "text": {"type": "mrkdwn", "text": input_parameters_block_text},
+        }
         traceback_block = {
             "type": "section",
             "text": {
@@ -81,15 +94,7 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
         blocks += self.__get_common_blocks(notifier_message)
         blocks.append(exception_block)
         blocks.append(executor_block)
-        if notifier_message.input_parameters:
-            input_parameters_block = {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f":arrow_right: *Input Parameters*\n{notifier_message.input_parameters}",
-                },
-            }
-            blocks.append(input_parameters_block)
+        blocks.append(input_parameters_block)
         blocks.append(traceback_block)
         return blocks
 
