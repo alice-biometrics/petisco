@@ -180,17 +180,24 @@ TypeError: Again !?!
 
 
 @pytest.fixture
+def given_any_input_parameters():
+    return {"parameter_1": 1, "parameter_2": 2}
+
+
+@pytest.fixture
 def given_any_complete_notifier_exception_message(
     given_any_client_id,
     given_any_user_id,
     given_any_message,
     given_any_info_petisco,
     given_any_exception,
+    given_any_input_parameters,
     given_any_traceback,
 ):
     return NotifierExceptionMessage(
         executor="test_function",
         exception=given_any_exception,
+        input_parameters=given_any_input_parameters,
         traceback=given_any_traceback,
         info_id=InfoId(client_id=given_any_client_id, user_id=given_any_user_id),
         info_petisco=given_any_info_petisco,

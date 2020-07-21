@@ -346,3 +346,79 @@ def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_
         "value: UnknownError (MyUseCase): RuntimeError: uncontrolled exception.\nTraceback (most recent call last):\n  File"
         in second_logging_message[1]["data"]["message"]
     )
+
+
+@pytest.mark.unit
+def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception_with_input_parameters():
+
+    logger = FakeLogger()
+    expected_raised_exception = RuntimeError("uncontrolled exception")
+    input_text = "my-text"
+    input_verbose = True
+
+    @use_case_handler(logger=logger)
+    class MyUseCase(UseCase):
+        def execute(self, text: str, verbose: bool):
+            raise expected_raised_exception
+
+    result = MyUseCase().execute(text=input_text, verbose=input_verbose)
+
+    assert_failure(
+        result,
+        value_is_instance_of=UnknownError,
+        value_is_equal_to=UnknownError(expected_raised_exception),
+    )
+
+    assert {"text": "my-text", "verbose": True} == result.value.input_parameters
+
+    first_logging_message = logger.get_logging_messages()[0]
+    second_logging_message = logger.get_logging_messages()[1]
+
+    assert first_logging_message == (
+        INFO,
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
+    )
+    assert (
+        "value: UnknownError (MyUseCase): RuntimeError: uncontrolled exception.\nTraceback (most recent call last):\n  File"
+        in second_logging_message[1]["data"]["message"]
+    )
+
+
+@pytest.mark.unit
+def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception_with_non_defined_input_parameters():
+
+    logger = FakeLogger()
+    expected_raised_exception = RuntimeError("uncontrolled exception")
+    input_text = "my-text"
+    input_verbose = True
+
+    @use_case_handler(logger=logger)
+    class MyUseCase(UseCase):
+        def execute(self, text: str, verbose: bool):
+            raise expected_raised_exception
+
+    result = MyUseCase().execute(input_text, input_verbose)
+
+    assert_failure(
+        result,
+        value_is_instance_of=UnknownError,
+        value_is_equal_to=UnknownError(expected_raised_exception),
+    )
+
+    assert {"param_1": "my-text", "param_2": True} == result.value.input_parameters
+
+    first_logging_message = logger.get_logging_messages()[0]
+    second_logging_message = logger.get_logging_messages()[1]
+
+    assert first_logging_message == (
+        INFO,
+        LogMessageMother.get_use_case(
+            operation="MyUseCase", message="Running Use Case"
+        ).to_dict(),
+    )
+    assert (
+        "value: UnknownError (MyUseCase): RuntimeError: uncontrolled exception.\nTraceback (most recent call last):\n  File"
+        in second_logging_message[1]["data"]["message"]
+    )

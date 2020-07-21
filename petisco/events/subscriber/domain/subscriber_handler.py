@@ -153,7 +153,14 @@ class _SubscriberHandler:
             try:
                 result = run_subscriber(**kwargs)
             except Exception as exception:
-                result = Failure(UnknownError(exception))
+                result = Failure(
+                    UnknownError(
+                        exception=exception,
+                        input_parameters=kwargs if len(kwargs) > 0 else args,
+                        executor=func.__name__,
+                        traceback=traceback.format_exc(),
+                    )
+                )
 
             if self.delay_after:
                 time.sleep(self.delay_after)
@@ -178,6 +185,7 @@ class _SubscriberHandler:
                     NotifierExceptionMessage(
                         exception=error.exception,
                         executor=error.executor,
+                        input_parameters=error.input_parameters,
                         traceback=error.traceback,
                         info_petisco=Petisco.get_info(),
                     )

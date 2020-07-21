@@ -64,7 +64,6 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
                 "text": f":fire: *Exception* \n*Class*: {notifier_message.exception.__class__} *Description:* {notifier_message.exception}",
             },
         }
-
         executor_block = {
             "type": "section",
             "text": {
@@ -72,16 +71,30 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
                 "text": f":pushpin: *Executor*\n{notifier_message.executor}",
             },
         }
+
+        input_parameters_block_text = f":arrow_right: *Input Parameters*\n"
+
+        if notifier_message.input_parameters:
+            for k, v in notifier_message.input_parameters.items():
+                input_parameters_block_text += f"* {k}: {v}\n"
+        else:
+            input_parameters_block_text += "No data :heavy_multiplication_x:"
+
+        input_parameters_block = {
+            "type": "section",
+            "text": {"type": "mrkdwn", "text": input_parameters_block_text},
+        }
         traceback_block = {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f":scroll: *Traceback*\n```{notifier_message.traceback[:2970]}```",
+                "text": f":scroll: *Traceback*\n```{notifier_message.traceback[:2500]}```",
             },
         }
         blocks += self.__get_common_blocks(notifier_message)
         blocks.append(exception_block)
         blocks.append(executor_block)
+        blocks.append(input_parameters_block)
         blocks.append(traceback_block)
         return blocks
 

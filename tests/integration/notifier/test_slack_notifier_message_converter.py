@@ -58,7 +58,7 @@ def test_should_convert_a_notifier_exception_message(
 ):
     converter = SlackNotifierMessageConverter()
     blocks = converter.convert(given_any_complete_notifier_exception_message)
-    assert len(blocks) == 6
+    assert len(blocks) == 7
     assert "Petisco" in blocks[0]["text"]["text"]
     assert "Application" in blocks[0]["text"]["text"]
     assert "information" in blocks[1]["text"]["text"]
@@ -70,7 +70,8 @@ def test_should_convert_a_notifier_exception_message(
     assert "text" in blocks[4].keys()
     assert "Executor" in blocks[4]["text"]["text"]
     assert "text" in blocks[5].keys()
-    assert str(given_any_traceback) in blocks[5]["text"]["text"]
+    assert "text" in blocks[6].keys()
+    assert str(given_any_traceback) in blocks[6]["text"]["text"]
 
 
 @pytest.mark.integration
