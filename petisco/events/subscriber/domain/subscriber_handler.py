@@ -157,7 +157,7 @@ class _SubscriberHandler:
                     UnknownError(
                         exception=exception,
                         input_parameters=kwargs if len(kwargs) > 0 else args,
-                        executor=func.__name__,
+                        executor=f"{func.__name__} (Subscriber)",
                         traceback=traceback.format_exc(),
                     )
                 )

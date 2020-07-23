@@ -79,8 +79,9 @@ class _UseCaseHandler:
                         UnknownError(
                             exception=exception,
                             input_parameters=kwargs if len(kwargs) > 0 else args,
-                            executor=cls.__name__,
+                            executor=f"{cls.__name__} (Use Case)",
                             traceback=traceback.format_exc(),
+                            filter_parameters=["headers"],
                         )
                     )
 

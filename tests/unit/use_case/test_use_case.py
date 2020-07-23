@@ -343,7 +343,7 @@ def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_
         ).to_dict(),
     )
     assert (
-        "value: UnknownError (MyUseCase): RuntimeError: uncontrolled exception.\nTraceback (most recent call last):\n  File"
+        "value: UnknownError (MyUseCase (Use Case)): RuntimeError: uncontrolled exception.\nTraceback (most recent call last):\n  File"
         in second_logging_message[1]["data"]["message"]
     )
 
@@ -381,7 +381,7 @@ def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_
         ).to_dict(),
     )
     assert (
-        "value: UnknownError (MyUseCase): RuntimeError: uncontrolled exception.\nTraceback (most recent call last):\n  File"
+        "value: UnknownError (MyUseCase (Use Case)): RuntimeError: uncontrolled exception.\nTraceback (most recent call last):\n  File"
         in second_logging_message[1]["data"]["message"]
     )
 
@@ -419,6 +419,6 @@ def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_
         ).to_dict(),
     )
     assert (
-        "value: UnknownError (MyUseCase): RuntimeError: uncontrolled exception.\nTraceback (most recent call last):\n  File"
+        "value: UnknownError (MyUseCase (Use Case)): RuntimeError: uncontrolled exception.\nTraceback (most recent call last):\n  File"
         in second_logging_message[1]["data"]["message"]
     )
