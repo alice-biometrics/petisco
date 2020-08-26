@@ -1,3 +1,5 @@
+from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
+
 import pytest
 import os
 
@@ -38,16 +40,49 @@ def test_should_load_petisco_from_yml(petisco_yml_path, given_petisco_version):
     assert "load_services" in petisco.info["elapsed_time"]
     petisco.info.pop("elapsed_time")
     assert petisco.info == expected_petisco_info
+    Petisco.clear()
 
 
 @pytest.mark.unit
-def test_should_schedule_tasks(petisco_yml_path):
+def test_should_load_petisco_from_yml_and_schedule_tasks(petisco_yml_path):
 
     filename = f"{petisco_yml_path}/ymls/petisco.all.yml"
 
     petisco = Petisco.from_filename(filename)
 
     petisco._schedule_tasks()
+
+    Petisco.clear()
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "logging_level, logging_level_num",
+    [
+        ("DEBUG", DEBUG),
+        ("INFO", INFO),
+        ("WARNING", WARNING),
+        ("ERROR", ERROR),
+        ("CRITICAL", CRITICAL),
+    ],
+)
+def test_should_load_petisco_from_yml_and_check_logger_level(
+    logging_level, logging_level_num, petisco_yml_path
+):
+
+    Petisco.clear()
+    os.environ["PETISCO_LOGGING_LEVEL"] = logging_level
+
+    filename = f"{petisco_yml_path}/ymls/petisco.all.withlogging.yml"
+
+    petisco = Petisco.from_filename(filename)
+
+    assert hasattr(petisco.get_logger(), "logging_level")
+    assert petisco.get_logger().logging_level == logging_level
+    assert petisco.get_logger().logger.level == logging_level_num
+
+    del os.environ["PETISCO_LOGGING_LEVEL"]
+    Petisco.clear()
 
 
 @pytest.mark.unit

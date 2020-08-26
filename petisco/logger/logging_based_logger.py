@@ -14,6 +14,14 @@ from petisco.logger.interface_logger import (
     FATAL,
 )
 
+CORRESPONDENCES_LOGGING_LEVEL = {
+    "DEBUG": logging.DEBUG,
+    "INFO": logging.INFO,
+    "WARNING": logging.WARNING,
+    "ERROR": logging.ERROR,
+    "CRITICAL": logging.CRITICAL,
+}
+
 
 class LoggingBasedLogger(ILogger):
     def __init__(
@@ -22,13 +30,16 @@ class LoggingBasedLogger(ILogger):
         format: str = "%(name)s - %(levelname)s - %(message)s",
         config: Callable = None,
     ):
-        PETISCO_LOGGING_LEVEL = os.environ.get("PETISCO_LOGGING_LEVEL", "INFO").upper()
-
-        logging.basicConfig(format=format, level=PETISCO_LOGGING_LEVEL)
+        self.logging_level = os.environ.get("PETISCO_LOGGING_LEVEL", "INFO").upper()
+        logging_level_value = CORRESPONDENCES_LOGGING_LEVEL.get(
+            self.logging_level, logging.INFO
+        )
+        logging.basicConfig(format=format, level=logging_level_value)
         if config:
             config()
         self.logger = logging.getLogger(logger_name)
-        self.logger.info(f"Set PETISCO_LOGGING_LEVEL: {PETISCO_LOGGING_LEVEL}")
+        self.logger.setLevel(logging_level_value)
+        self.logger.info(f"Set PETISCO_LOGGING_LEVEL: {self.logging_level}")
 
     def log(self, logging_level, log_message: LogMessage):
         message = log_message.to_dict()

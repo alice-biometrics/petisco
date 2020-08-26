@@ -83,7 +83,6 @@ class Config:
         config_tasks = ConfigTasks.from_dict(yaml_dict.get("tasks"))
 
         config_framework = ConfigFramework.from_dict(yaml_dict.get("framework"))
-
         config_logger = Config.get_config_logger(
             yaml_dict.get("logger")
         ).unwrap_or_return()
