@@ -11,9 +11,9 @@ from petisco import (
     RabbitMQEventSubscriber,
     ConfigEventSubscriber,
     RabbitMQConnector,
-    INFO,
     RoutingKey,
     ERROR,
+    WARNING,
 )
 
 from petisco.events.rabbitmq.rabbitmq_is_running_locally import (
@@ -161,7 +161,7 @@ def test_should_subscriber_handler_always_simulate_a_nack(
     second_logging_message = logger.get_logging_messages()[1]
 
     assert second_logging_message == (
-        INFO,
+        WARNING,
         LogMessageMother.get_subscriber(
             operation="main_handler",
             message="Message rejected (Simulation rejecting 100.0% of the messages)",
@@ -203,7 +203,7 @@ def test_should_subscriber_handler_always_returns_nack_filtering_by_invalid_rout
     second_logging_message = logger.get_logging_messages()[1]
 
     assert second_logging_message == (
-        INFO,
+        WARNING,
         LogMessageMother.get_subscriber(
             operation="main_handler",
             message=f"Message rejected (filtering by routing_key {invalid_routing_key})",
