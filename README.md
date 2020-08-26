@@ -12,6 +12,7 @@ Petisco is a framework for helping Python developers to build clean Applications
 - [Getting Started :chart_with_upwards_trend:](#getting-started-chart_with_upwards_trend)
     * [Flask Application (by petisco :cookie:)](#flask-application-by-petisco-cookie)
     * [Configure your Application :rocket:](#configure-your-application-rocket)
+    * [Logging](#logging)
     * [Handlers](#handlers)
       - [Controller Handler](#controller-handler)
     * [Model your Domain](#model-your-domain)
@@ -117,6 +118,30 @@ logger:
     config: taskmanager.src.config.logging.logging_config
 providers:
    services_provider: taskmanager.src.config.services.services_provider
+```
+
+### Logging
+
+If you use a logging-based logger
+
+```yaml
+logger:
+    selected_logger: logging # <---
+    name: petisco
+    format: "%(name)s - %(levelname)s - %(message)s"
+    config: taskmanager.src.config.logging.logging_config
+```
+
+You can set logging level with the environment variable `PETISCO_LOGGING_LEVEL`.
+
+Options:
+
+```
+PETISCO_LOGGING_LEVEL: DEBUG
+PETISCO_LOGGING_LEVEL: INFO
+PETISCO_LOGGING_LEVEL: WARNING
+PETISCO_LOGGING_LEVEL: ERROR
+PETISCO_LOGGING_LEVEL: CRITICAL
 ```
 
 ### Handlers

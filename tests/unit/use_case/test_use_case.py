@@ -3,7 +3,7 @@ from typing import NamedTuple
 import pytest
 from meiga.assertions import assert_failure, assert_success
 
-from petisco import UseCase, use_case_handler, INFO, ERROR, DEBUG, UnknownError
+from petisco import UseCase, use_case_handler, ERROR, DEBUG, UnknownError
 from meiga import Success, Failure, isFailure, isSuccess, Error
 
 from tests.unit.mocks.fake_logger import FakeLogger
@@ -26,7 +26,7 @@ def test_should_log_successfully_a_non_error_use_case_without_input_parameters_a
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -55,7 +55,7 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters_but_
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -89,7 +89,7 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters():
     third_logging_message = logger.get_logging_messages()[2]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -127,7 +127,7 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_python_type
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -163,7 +163,7 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_own_named_t
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -195,7 +195,7 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_a_tuple():
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -234,7 +234,7 @@ def test_should_log_successfully_a_large_type_with_its_repr():
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -265,7 +265,7 @@ def test_should_log_successfully_an_error_returned_on_a_use_case():
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -300,7 +300,7 @@ def test_should_log_successfully_an_error_raised_by_a_meiga_handler():
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -337,7 +337,7 @@ def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -375,7 +375,7 @@ def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),
@@ -413,7 +413,7 @@ def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_use_case(
             operation="MyUseCase", message="Running Use Case"
         ).to_dict(),

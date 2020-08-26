@@ -16,7 +16,7 @@ from petisco.domain.errors.critical_error import CriticalError
 from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
 from petisco.events.request_responded import RequestResponded
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
-from petisco.logger.interface_logger import ERROR, INFO, DEBUG
+from petisco.logger.interface_logger import ERROR, DEBUG
 from petisco.controller.errors.http_error import HttpError
 from petisco.notifier.domain.interface_notifier import INotifier
 from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
@@ -155,7 +155,9 @@ class _ControllerHandler:
                 else:
                     kwargs, info_id = result_kwargs.value
                     log_message.info_id = info_id
-                    self.logger.log(INFO, log_message.set_message("Processing Request"))
+                    self.logger.log(
+                        DEBUG, log_message.set_message("Processing Request")
+                    )
 
                     result_controller, elapsed_time = run_controller(*args, **kwargs)
 
