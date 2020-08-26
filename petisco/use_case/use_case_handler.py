@@ -7,7 +7,7 @@ from meiga.decorators import meiga
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.domain.errors.critical_error import CriticalError
 from petisco.domain.errors.unknown_error import UnknownError
-from petisco.logger.interface_logger import ERROR, INFO, DEBUG
+from petisco.logger.interface_logger import ERROR, DEBUG
 from petisco.logger.log_message import LogMessage
 from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 from petisco.use_case.use_case import UseCase
@@ -57,7 +57,7 @@ class _UseCaseHandler:
                     layer="use_case", operation=f"{cls.__name__}", info_id=info_id
                 )
 
-                self.logger.log(INFO, log_message.set_message(f"Running Use Case"))
+                self.logger.log(DEBUG, log_message.set_message(f"Running Use Case"))
 
                 if self.logging_parameters_whitelist:
                     loggable_kwargs = {}

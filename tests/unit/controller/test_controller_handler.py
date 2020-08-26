@@ -1,7 +1,7 @@
 import pytest
 from meiga import Success, isFailure, Failure
 
-from petisco import controller_handler, ERROR, INFO, __version__, DEBUG
+from petisco import controller_handler, ERROR, __version__, DEBUG
 from petisco.domain.errors.critical_error import CriticalError
 from petisco.events.request_responded import RequestResponded
 from tests.unit.mocks.fake_event_publisher import FakeEventPublisher
@@ -37,7 +37,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Processing Request",
@@ -88,7 +88,7 @@ def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_o
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Processing Request",
@@ -130,7 +130,7 @@ def test_should_execute_with_a_failure_a_empty_controller_without_input_paramete
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Processing Request",
@@ -173,7 +173,7 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Processing Request",
@@ -223,7 +223,7 @@ def test_should_execute_successfully_a_filtered_object_by_blacklist(
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Processing Request",
@@ -265,7 +265,7 @@ def test_should_log_an_exception_occurred_on_the_controller(
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Processing Request",

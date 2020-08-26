@@ -148,7 +148,6 @@ class Petisco(metaclass=Singleton):
             config_providers.config_dependencies()
 
         if config_providers.services_provider:
-
             self.services = self._load_services(config_providers.services_provider)
 
             info_services = {}

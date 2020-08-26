@@ -10,7 +10,7 @@ from petisco.application.petisco import Petisco
 from petisco.domain.errors.critical_error import CriticalError
 from petisco.domain.errors.unknown_error import UnknownError
 from petisco.events.routing_key import RoutingKey
-from petisco.logger.interface_logger import INFO, ERROR
+from petisco.logger.interface_logger import ERROR, DEBUG, WARNING
 from petisco.events.event import Event
 from functools import wraps
 from meiga import Result, Failure
@@ -83,7 +83,7 @@ class _SubscriberHandler:
 
     def _log_nack_simulation(self, log_message: LogMessage):
         self.logger.log(
-            INFO,
+            WARNING,
             log_message.set_message(
                 f"Message rejected (Simulation rejecting {self.percentage_simulate_nack * 100}% of the messages)"
             ),
@@ -97,14 +97,16 @@ class _SubscriberHandler:
 
     def _log_filter_by_routing_key(self, log_message: LogMessage):
         self.logger.log(
-            INFO,
+            WARNING,
             log_message.set_message(
                 f"Message rejected (filtering by routing_key {self.filter_routing_key})"
             ),
         )
 
     def _log_invalid_event_format(self, log_message: LogMessage, body: Dict):
-        self.logger.log(INFO, log_message.set_message(f"Invalid event format: {body})"))
+        self.logger.log(
+            ERROR, log_message.set_message(f"Invalid event format: {body})")
+        )
 
     def __call__(self, func, *args, **kwargs):
         @wraps(func)
@@ -124,7 +126,7 @@ class _SubscriberHandler:
             log_message = LogMessage(layer="subscriber", operation=f"{func.__name__}")
 
             self.logger.log(
-                INFO,
+                DEBUG,
                 log_message.set_message(
                     {"routing_key": method.routing_key, "body": json.loads(body)}
                 ),

@@ -13,6 +13,7 @@ def petisco_yml_path():
 def test_should_load_petisco_from_yml(petisco_yml_path, given_petisco_version):
 
     filename = f"{petisco_yml_path}/ymls/petisco.all.yml"
+
     expected_petisco_info = {
         "app_name": "toy-app",
         "app_version": "1.0.0",
@@ -30,6 +31,7 @@ def test_should_load_petisco_from_yml(petisco_yml_path, given_petisco_version):
     }
 
     petisco = Petisco.from_filename(filename)
+    petisco.load_services_and_repositories()
 
     assert "elapsed_time" in petisco.info
     assert "load_repositories" in petisco.info["elapsed_time"]

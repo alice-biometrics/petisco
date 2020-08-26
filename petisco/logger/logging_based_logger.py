@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Callable
 
 from petisco.logger.log_message import LogMessage
@@ -18,15 +19,16 @@ class LoggingBasedLogger(ILogger):
     def __init__(
         self,
         logger_name: str,
-        logging_level=logging.INFO,
         format: str = "%(name)s - %(levelname)s - %(message)s",
         config: Callable = None,
     ):
+        PETISCO_LOGGING_LEVEL = os.environ.get("PETISCO_LOGGING_LEVEL", "INFO").upper()
 
-        logging.basicConfig(format=format, level=logging_level)
+        logging.basicConfig(format=format, level=PETISCO_LOGGING_LEVEL)
         if config:
             config()
         self.logger = logging.getLogger(logger_name)
+        self.logger.info(f"Set PETISCO_LOGGING_LEVEL: {PETISCO_LOGGING_LEVEL}")
 
     def log(self, logging_level, log_message: LogMessage):
         message = log_message.to_dict()

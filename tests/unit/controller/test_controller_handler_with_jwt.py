@@ -1,7 +1,7 @@
 import pytest
 from meiga import Success
 
-from petisco import controller_handler, INFO, ERROR, InfoId, DEBUG
+from petisco import controller_handler, ERROR, InfoId, DEBUG
 from petisco.security.token_manager.token_manager import TokenManager
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.log_message_mother import LogMessageMother
@@ -39,7 +39,7 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Processing Request",
@@ -102,7 +102,7 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     second_logging_message = logger.get_logging_messages()[1]
 
     assert first_logging_message == (
-        INFO,
+        DEBUG,
         LogMessageMother.get_controller(
             operation="my_controller",
             message="Processing Request",
