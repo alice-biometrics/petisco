@@ -37,3 +37,10 @@ events:
         dead_letter: True
         handler: tests.integration.flask_app.toy_app.application.handlers.store_event.store_event
 
+commands:
+  bus:
+    provider: tests.integration.flask_app.toy_app.config.commands.command_bus_provider
+  consumer:
+    provider: ests.integration.flask_app.toy_app.config.commands.command_consumer_provider
+    handlers:
+      SendEmailCommand: tests.integration.flask_app.toy_app.config.commands.send_email_command

@@ -41,6 +41,7 @@ setup(
         "petisco/application/cli",
         "petisco/controller",
         "petisco/controller/errors",
+        "petisco/cqrs/command" "petisco/cqrs/config",
         "petisco/domain",
         "petisco/domain/value_objects",
         "petisco/domain/aggregate_roots",
