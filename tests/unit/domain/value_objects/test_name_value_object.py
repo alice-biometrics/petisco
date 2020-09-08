@@ -53,6 +53,13 @@ def test_should_raise_given_name_is_not_valid_when_value_is_not_a_string():
 
 
 @pytest.mark.unit
+def test_should_raise_given_name_is_not_valid_when_value_is_a_string_with_4_byte_utf_chars():
+
+    with pytest.raises(GivenNameIsNotValidError):
+        Name("𝘼𝙡𝙚𝙭")
+
+
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "input_name",
     [
