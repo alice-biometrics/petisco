@@ -8,6 +8,8 @@ class Name(StringValueObject):
         super(Name, self).__init__(self.value)
 
     def guard(self):
-        self._ensure_value_contains_valid_char(raise_cls=GivenNameIsNotValidError)
+        self._ensure_value_contains_valid_char(
+            raise_cls=GivenNameIsNotValidError, allow_utf8mb4=False
+        )
         self._ensure_value_is_less_than_n_char(50)
         self._ensure_value_is_greater_than_n_char(0)
