@@ -15,7 +15,7 @@ on:
       - master
 
 jobs:
-  build:
+  ci:
 
     strategy:
       max-parallel: 4
