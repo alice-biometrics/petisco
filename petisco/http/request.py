@@ -21,21 +21,49 @@ class Request:
 
     @staticmethod
     def get(
-        url: str, binary_info: dict = None, string_info: dict = None, headers=None
+        url: str,
+        binary_info: dict = None,
+        string_info: dict = None,
+        json_info: dict = None,
+        headers=None,
     ) -> Result[Response, Error]:
-        return Request.execute(url, "GET", binary_info, string_info, headers)
+        return Request.execute(url, "GET", binary_info, string_info, json_info, headers)
 
     @staticmethod
     def post(
-        url: str, binary_info: dict = None, string_info: dict = None, headers=None
+        url: str,
+        binary_info: dict = None,
+        string_info: dict = None,
+        json_info: dict = None,
+        headers=None,
     ) -> Result[Response, Error]:
-        return Request.execute(url, "POST", binary_info, string_info, headers)
+        return Request.execute(
+            url, "POST", binary_info, string_info, json_info, headers
+        )
+
+    @staticmethod
+    def patch(
+        url: str,
+        binary_info: dict = None,
+        string_info: dict = None,
+        json_info: dict = None,
+        headers=None,
+    ) -> Result[Response, Error]:
+        return Request.execute(
+            url, "PATCH", binary_info, string_info, json_info, headers
+        )
 
     @staticmethod
     def delete(
-        url: str, binary_info: dict = None, string_info: dict = None, headers=None
+        url: str,
+        binary_info: dict = None,
+        string_info: dict = None,
+        json_info: dict = None,
+        headers=None,
     ) -> Result[Response, Error]:
-        return Request.execute(url, "DELETE", binary_info, string_info, headers)
+        return Request.execute(
+            url, "DELETE", binary_info, string_info, json_info, headers
+        )
 
     @staticmethod
     def execute(
@@ -43,28 +71,35 @@ class Request:
         request: str = "POST",
         binary_info: dict = None,
         string_info: dict = None,
+        json_info: dict = None,
         headers=None,
     ) -> Result[Response, Error]:
         response = None
         try:
             if request == "GET":
                 response = requests.get(
-                    url=url,
-                    files=binary_info,
-                    data=string_info,
-                    headers=headers,
-                    timeout=(5, 25),
+                    url=url, params=string_info, headers=headers, timeout=(5, 25),
                 )
             elif request == "POST":
                 response = requests.post(
                     url=url,
                     files=binary_info,
                     data=string_info,
+                    json=json_info,
+                    headers=headers,
+                    timeout=(5, 25),
+                )
+            elif request == "PATCH":
+                response = requests.patch(
+                    url=url,
+                    data=string_info,
+                    json=json_info,
                     headers=headers,
                     timeout=(5, 25),
                 )
             elif request == "DELETE":
                 response = requests.delete(url=url, headers=headers, timeout=(5, 25))
+
         except MissingSchema:
             return Failure(MissingSchemaRequestError())
         except Timeout:

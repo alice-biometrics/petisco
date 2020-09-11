@@ -38,6 +38,14 @@ def test_should_success_when_request_post(given_any_url):
 
 
 @pytest.mark.integration
+def test_should_success_when_request_patch(given_any_url):
+    with requests_mock.Mocker() as m:
+        m.patch(given_any_url)
+        result = Request.patch(given_any_url)
+        assert_success(result)
+
+
+@pytest.mark.integration
 def test_should_success_when_request_delete(given_any_url):
     with requests_mock.Mocker() as m:
         m.delete(given_any_url)
@@ -46,7 +54,7 @@ def test_should_success_when_request_delete(given_any_url):
 
 
 @pytest.mark.integration
-@pytest.mark.parametrize("method", ["GET", "POST", "DELETE"])
+@pytest.mark.parametrize("method", ["GET", "POST", "PATCH", "DELETE"])
 def test_should_fail_when_request_method_raise_missing_schema_error(
     method, given_any_url
 ):
@@ -57,7 +65,7 @@ def test_should_fail_when_request_method_raise_missing_schema_error(
 
 
 @pytest.mark.integration
-@pytest.mark.parametrize("method", ["GET", "POST", "DELETE"])
+@pytest.mark.parametrize("method", ["GET", "POST", "PATCH", "DELETE"])
 def test_should_fail_when_request_method_raise_timeout_error(method, given_any_url):
     with requests_mock.Mocker() as m:
         m.register_uri(method, given_any_url, exc=requests.exceptions.ConnectTimeout)
@@ -66,7 +74,7 @@ def test_should_fail_when_request_method_raise_timeout_error(method, given_any_u
 
 
 @pytest.mark.integration
-@pytest.mark.parametrize("method", ["GET", "POST", "DELETE"])
+@pytest.mark.parametrize("method", ["GET", "POST", "PATCH", "DELETE"])
 def test_should_fail_when_request_method_raise_connection_error(method, given_any_url):
     with requests_mock.Mocker() as m:
         m.register_uri(method, given_any_url, exc=requests.exceptions.ConnectionError)
