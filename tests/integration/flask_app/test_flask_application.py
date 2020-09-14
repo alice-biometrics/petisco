@@ -5,11 +5,21 @@ from petisco.domain.value_objects.user_id import UserId
 from petisco.frameworks.flask.flask_extension_is_installed import (
     flask_extension_is_installed,
 )
+from petisco.persistence.pymongo.mongodb_is_running_locally import (
+    mongodb_is_running_locally,
+)
+from tests.integration.flask_app.fixtures import host, username, password, port
 
 
 @pytest.mark.integration
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
+)
+@pytest.mark.skipif(
+    not mongodb_is_running_locally(
+        host=host, username=username, password=password, port=port
+    ),
+    reason="MongoDB is not running locally",
 )
 def test_should_return_200_when_call_healthcheck_with_happy_path(petisco_client):
     headers = {"Accept": "toy_app/json"}
@@ -28,6 +38,12 @@ def test_should_return_200_when_call_healthcheck_with_happy_path(petisco_client)
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
+@pytest.mark.skipif(
+    not mongodb_is_running_locally(
+        host=host, username=username, password=password, port=port
+    ),
+    reason="MongoDB is not running locally",
+)
 def test_should_return_200_when_call_environment_with_happy_path_with_apikey(
     petisco_client, given_any_apikey
 ):
@@ -40,6 +56,12 @@ def test_should_return_200_when_call_environment_with_happy_path_with_apikey(
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
+@pytest.mark.skipif(
+    not mongodb_is_running_locally(
+        host=host, username=username, password=password, port=port
+    ),
+    reason="MongoDB is not running locally",
+)
 def test_should_return_401_when_call_environment_with_happy_path_without_apikey(
     petisco_client
 ):
@@ -51,6 +73,12 @@ def test_should_return_401_when_call_environment_with_happy_path_without_apikey(
 @pytest.mark.integration
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
+)
+@pytest.mark.skipif(
+    not mongodb_is_running_locally(
+        host=host, username=username, password=password, port=port
+    ),
+    reason="MongoDB is not running locally",
 )
 def test_should_return_200_when_call_sum_with_valid_values(petisco_client):
     headers = {
@@ -72,6 +100,12 @@ def test_should_return_200_when_call_sum_with_valid_values(petisco_client):
 @pytest.mark.integration
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
+)
+@pytest.mark.skipif(
+    not mongodb_is_running_locally(
+        host=host, username=username, password=password, port=port
+    ),
+    reason="MongoDB is not running locally",
 )
 def test_should_return_200_when_call_sum_with_valid_values_with_external_headers(
     petisco_client
@@ -98,6 +132,12 @@ def test_should_return_200_when_call_sum_with_valid_values_with_external_headers
 @pytest.mark.integration
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
+)
+@pytest.mark.skipif(
+    not mongodb_is_running_locally(
+        host=host, username=username, password=password, port=port
+    ),
+    reason="MongoDB is not running locally",
 )
 def test_should_return_400_when_call_sum_without_required_value(petisco_client):
     headers = {"Content-Type": "multipart/form-data"}

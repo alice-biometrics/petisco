@@ -11,6 +11,7 @@ from petisco.application.config.raise_petisco_config_error import (
 
 @dataclass
 class SingleConfigPersistence:
+    type: str
     config: Optional[Callable] = None
     models: Optional[Dict[str, Any]] = None
 
@@ -35,7 +36,7 @@ class ConfigPersistence:
                 .unwrap()
             )
             configs[entry["name"]] = SingleConfigPersistence(
-                config=config, models=entry.get("models")
+                type=entry["type"], config=config, models=entry.get("models")
             )
         return ConfigPersistence(configs=configs)
 
