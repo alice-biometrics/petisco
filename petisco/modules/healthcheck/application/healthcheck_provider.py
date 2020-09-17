@@ -17,7 +17,7 @@ class HealthcheckProvider(UseCase):
                 session_scope,
             )
 
-            with session_scope() as session:
+            with session_scope("petisco") as session:
                 try:
                     session.execute("SELECT 1")
                 except Exception as e:

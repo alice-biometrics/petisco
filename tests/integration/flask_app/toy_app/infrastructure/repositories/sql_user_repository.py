@@ -23,7 +23,7 @@ class SqlUserRepository(IUserRepository):
     def build():
         return SqlUserRepository(
             session_scope=Petisco.persistence_session_scope(),
-            user_model=Petisco.get_persistence_model("user"),
+            user_model=Petisco.get_persistence_model("petisco", "user"),
         )
 
     def __init__(self, session_scope: Callable, user_model: Any):
@@ -39,7 +39,7 @@ class SqlUserRepository(IUserRepository):
         if result.is_success:
             return Failure(UserAlreadyExistError(user.user_id))
 
-        with self.session_scope() as session:
+        with self.session_scope("petisco") as session:
             user = self.UserModel(
                 client_id=user.client_id.value,
                 user_id=user.user_id.value,
@@ -50,7 +50,7 @@ class SqlUserRepository(IUserRepository):
 
     def retrieve(self, client_id: ClientId, user_id: UserId) -> Result[User, Error]:
 
-        with self.session_scope() as session:
+        with self.session_scope("petisco") as session:
             user_model = (
                 session.query(self.UserModel)
                 .filter(self.UserModel.client_id == client_id.value)
@@ -69,7 +69,7 @@ class SqlUserRepository(IUserRepository):
             )
 
     def exists(self, user_id: UserId) -> Result[bool, Error]:
-        with self.session_scope() as session:
+        with self.session_scope("petisco") as session:
             user = (
                 session.query(self.UserModel)
                 .filter(self.UserModel.user_id == user_id.value)

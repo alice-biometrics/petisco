@@ -21,8 +21,8 @@ def petisco_sql_database():
                 "Please add required SQL_DATABASE env variable (e.g pytest.ini, pytest.end2end.ini)"
             )
 
-        Base = SqlAlchemyPersistence.get_instance().base
-        Session = SqlAlchemyPersistence.get_instance().session
+        Base = SqlAlchemyPersistence.get_instance().connections["petisco"]["base"]
+        Session = SqlAlchemyPersistence.get_instance().connections["petisco"]["session"]
         connection = f"sqlite:///{sql_database}"
         engine = create_engine(connection)
         Base.metadata.create_all(engine)

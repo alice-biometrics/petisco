@@ -6,6 +6,5 @@ class SqlAlchemyPersistence(metaclass=Singleton):
     def get_instance():
         return SqlAlchemyPersistence()
 
-    def __init__(self, session=None, base=None):
-        self.session = session
-        self.base = base
+    def __init__(self):
+        self.connections = {}

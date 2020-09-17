@@ -8,9 +8,11 @@ from petisco.persistence.sqlalchemy.sqlalchemy_persistence import SqlAlchemyPers
 
 
 @contextmanager
-def session_scope():
+def session_scope(connection: str):
     """Provide a transactional scope around a series of operations."""
-    transactional_scope = SqlAlchemyPersistence.get_instance().session()
+    transactional_scope = SqlAlchemyPersistence.get_instance().connections[connection][
+        "session"
+    ]()
     try:
         yield transactional_scope
         transactional_scope.commit()

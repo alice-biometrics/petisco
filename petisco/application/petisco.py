@@ -39,8 +39,8 @@ class Petisco(metaclass=Singleton):
     repositories_provider: Callable = None
     options: Dict[str, Any] = None
     info: Dict = None
-    _persistence_models: Dict[str, Any] = False
-    persistence_configured: bool = False
+    _persistence_models: Dict[str, Dict[str, Any]] = None
+    persistence_configured: Dict[str, bool] = None
     config: Config = None
     event_publisher: IEventPublisher = None
     event_subscriber: IEventSubscriber = None
@@ -131,14 +131,18 @@ class Petisco(metaclass=Singleton):
 
     def _set_persistence(self):
         self._persistence_models = {}
+        self.persistence_configured = {}
         config_persistence = self.config.config_persistence
-        if config_persistence.config:
-            import_database_models_func = (
-                config_persistence.get_import_database_models_func()
-            )
-            config_persistence.config(import_database_models_func)
-            self.persistence_configured = True
-            self._persistence_models = config_persistence.get_models()
+        if config_persistence.configs:
+            for config_key, config_value in config_persistence.configs.items():
+                import_database_models_func = config_persistence.get_import_database_models_func(
+                    config_key
+                )
+                config_value.config(import_database_models_func)
+                self.persistence_configured[config_key] = True
+                self._persistence_models[config_key] = config_persistence.get_models(
+                    config_key
+                )
 
     def _set_services_and_repositories_from_providers(self):
         config_providers = self.config.config_providers
@@ -253,7 +257,7 @@ class Petisco(metaclass=Singleton):
         services = Petisco.get_instance().services
         if not services:
             raise ValueError(
-                f"Petisco: any service has been declared. Please, add it to petisco.yml."
+                "Petisco: no service has been declared. Please, add it to petisco.yml."
             )
         service = services.get(key)
         if not service:
@@ -267,7 +271,7 @@ class Petisco(metaclass=Singleton):
         repositories = Petisco.get_instance().repositories
         if not repositories:
             raise ValueError(
-                f"Petisco: any repository has been declared. Please, add it to petisco.yml"
+                "Petisco: no repository has been declared. Please, add it to petisco.yml"
             )
         repository = repositories.get(key)
         if not repository:
@@ -277,17 +281,19 @@ class Petisco(metaclass=Singleton):
         return repository
 
     @staticmethod
-    def persistence_models() -> Dict[str, str]:
+    def persistence_models(persistence_entry: str) -> Dict[str, str]:
         persistence_models = {}
         try:
-            persistence_models = Petisco.get_instance()._persistence_models
+            persistence_models = Petisco.get_instance()._persistence_models[
+                persistence_entry
+            ]
         except:  # noqa E722
             pass
         return persistence_models
 
     @staticmethod
-    def get_persistence_model(key: str) -> Any:
-        return Petisco.persistence_models().get(key)
+    def get_persistence_model(persistence_entry: str, key: str) -> Any:
+        return Petisco.persistence_models(persistence_entry).get(key)
 
     @staticmethod
     def persistence_session_scope():

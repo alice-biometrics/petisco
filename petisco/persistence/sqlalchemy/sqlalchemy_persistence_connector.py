@@ -10,10 +10,12 @@ class SqlAlchemyPersistenceConnector(IPersistenceConnector):
     def __init__(
         self,
         config: SqlAlchemyPersistenceConfig,
+        name: str,
         import_database_models: Callable = None,
     ):
         self.config = config
         self.import_database_models = import_database_models
+        self.name = name
 
     def get_connection(self):
         connection = None
@@ -40,7 +42,10 @@ class SqlAlchemyPersistenceConnector(IPersistenceConnector):
 
         connection = self.get_connection()
 
-        persistence = SqlAlchemyPersistence(base=declarative_base())
+        base = declarative_base()
+
+        persistence = SqlAlchemyPersistence()
+        persistence.connections[self.name] = {"base": base}
 
         self.import_database_models()
 
@@ -66,6 +71,7 @@ class SqlAlchemyPersistenceConnector(IPersistenceConnector):
 
         if not database_exists(engine.url):
             create_database(engine.url)
-            persistence.base.metadata.create_all(engine)
+            persistence.connections[self.name]["base"].metadata.create_all(engine)
 
-        persistence.session = sessionmaker(bind=engine)
+        session = sessionmaker(bind=engine)
+        persistence.connections[self.name]["session"] = session
