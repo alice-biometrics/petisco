@@ -135,14 +135,18 @@ class Petisco(metaclass=Singleton):
         config_persistence = self.config.config_persistence
         if config_persistence.configs:
             for config_key, config_value in config_persistence.configs.items():
-                import_database_models_func = config_persistence.get_import_database_models_func(
-                    config_key
-                )
-                config_value.config(import_database_models_func)
+                if config_value.type == "sql":
+                    import_database_models_func = config_persistence.get_import_database_models_func(
+                        config_key
+                    )
+                    config_value.config(import_database_models_func)
+
+                    self._persistence_models[
+                        config_key
+                    ] = config_persistence.get_models(config_key)
+                else:
+                    config_value.config()
                 self.persistence_configured[config_key] = True
-                self._persistence_models[config_key] = config_persistence.get_models(
-                    config_key
-                )
 
     def _set_services_and_repositories_from_providers(self):
         config_providers = self.config.config_providers
@@ -302,6 +306,18 @@ class Petisco(metaclass=Singleton):
         )
 
         return session_scope
+
+    @staticmethod
+    def persistence_mongodb_database():
+        from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
+
+        return PyMongoPersistence().database
+
+    @staticmethod
+    def persistence_mongodb_client():
+        from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
+
+        return PyMongoPersistence().client
 
     @staticmethod
     def get_event_publisher():

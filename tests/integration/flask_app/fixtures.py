@@ -1,8 +1,16 @@
+import os
+
 import pytest
 
 from tests.integration.flask_app.toy_app import petisco_config
 
 petisco_config()
+
+username = os.getenv("MONGODB_USERNAME")
+password = os.getenv("MONGODB_PASSWORD")
+port = int(os.getenv("MONGODB_PORT"))
+host = os.getenv("MONGODB_HOST")
+database = os.getenv("MONGODB_DATABASE")
 
 
 @pytest.fixture

@@ -18,6 +18,7 @@ logger:
   selected_logger: not_implemented_logger
 persistence:
   - name: petisco
+    type: sql
     config: tests.integration.flask_app.toy_app.config.config_persistence.config_persistence
     models:
       user: tests.integration.flask_app.toy_app.infrastructure.repositories.user_model.UserModel
