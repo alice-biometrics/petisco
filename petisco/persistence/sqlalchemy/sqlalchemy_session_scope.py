@@ -8,9 +8,9 @@ from petisco.persistence.sqlalchemy.sqlalchemy_persistence import SqlAlchemyPers
 
 
 @contextmanager
-def session_scope(connection: str):
+def session_scope(source: str):
     """Provide a transactional scope around a series of operations."""
-    transactional_scope = SqlAlchemyPersistence.get_instance().connections[connection][
+    transactional_scope = SqlAlchemyPersistence.get_instance().sources[source][
         "session"
     ]()
     try:
