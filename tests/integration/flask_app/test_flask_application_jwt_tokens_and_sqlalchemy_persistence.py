@@ -4,13 +4,9 @@ from petisco.domain.value_objects.user_id import UserId
 from petisco.frameworks.flask.flask_extension_is_installed import (
     flask_extension_is_installed,
 )
-from petisco.persistence.pymongo.mongodb_is_running_locally import (
-    mongodb_is_running_locally,
-)
 from petisco.persistence.sqlalchemy.sqlalchemy_extension_is_installed import (
     sqlalchemy_extension_is_installed,
 )
-from tests.integration.flask_app.fixtures import host, username, password, port
 
 
 @pytest.mark.integration
@@ -20,12 +16,6 @@ from tests.integration.flask_app.fixtures import host, username, password, port
 @pytest.mark.skipif(
     not sqlalchemy_extension_is_installed(),
     reason="SQLAlchemy extension is not installed",
-)
-@pytest.mark.skipif(
-    not mongodb_is_running_locally(
-        host=host, username=username, password=password, port=port
-    ),
-    reason="MongoDB is not running locally",
 )
 def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token(
     petisco_client, given_auth_token_headers_creator, given_any_name
@@ -47,12 +37,6 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token(
     not sqlalchemy_extension_is_installed(),
     reason="SQLAlchemy extension is not installed",
 )
-@pytest.mark.skipif(
-    not mongodb_is_running_locally(
-        host=host, username=username, password=password, port=port
-    ),
-    reason="MongoDB is not running locally",
-)
 def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token(
     petisco_client, given_auth_token_headers_creator, given_any_name
 ):
@@ -73,12 +57,6 @@ def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token(
 @pytest.mark.skipif(
     not sqlalchemy_extension_is_installed(),
     reason="SQLAlchemy extension is not installed",
-)
-@pytest.mark.skipif(
-    not mongodb_is_running_locally(
-        host=host, username=username, password=password, port=port
-    ),
-    reason="MongoDB is not running locally",
 )
 def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token_and_user_id(
     petisco_client, given_auth_token_headers_creator, given_any_name
@@ -106,12 +84,6 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token_
     not sqlalchemy_extension_is_installed(),
     reason="SQLAlchemy extension is not installed",
 )
-@pytest.mark.skipif(
-    not mongodb_is_running_locally(
-        host=host, username=username, password=password, port=port
-    ),
-    reason="MongoDB is not running locally",
-)
 def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token_with_user_and_user_is_not_available(
     petisco_client, given_auth_token_headers_creator
 ):
@@ -130,12 +102,6 @@ def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token_
 @pytest.mark.skipif(
     not sqlalchemy_extension_is_installed(),
     reason="SQLAlchemy extension is not installed",
-)
-@pytest.mark.skipif(
-    not mongodb_is_running_locally(
-        host=host, username=username, password=password, port=port
-    ),
-    reason="MongoDB is not running locally",
 )
 def test_should_return_409_when_call_create_user_with_invalid_name(
     petisco_client, given_auth_token_headers_creator, given_code_injection_name

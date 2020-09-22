@@ -45,7 +45,7 @@ class SqlAlchemyPersistenceConnector(IPersistenceConnector):
         base = declarative_base()
 
         persistence = SqlAlchemyPersistence()
-        persistence.connections[self.name] = {"base": base}
+        persistence.sources[self.name] = {"base": base}
 
         self.import_database_models()
 
@@ -71,7 +71,7 @@ class SqlAlchemyPersistenceConnector(IPersistenceConnector):
 
         if not database_exists(engine.url):
             create_database(engine.url)
-            persistence.connections[self.name]["base"].metadata.create_all(engine)
+            persistence.sources[self.name]["base"].metadata.create_all(engine)
 
         session = sessionmaker(bind=engine)
-        persistence.connections[self.name]["session"] = session
+        persistence.sources[self.name]["session"] = session

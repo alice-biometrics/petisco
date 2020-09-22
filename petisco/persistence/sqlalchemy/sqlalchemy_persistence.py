@@ -7,4 +7,4 @@ class SqlAlchemyPersistence(metaclass=Singleton):
         return SqlAlchemyPersistence()
 
     def __init__(self):
-        self.connections = {}
+        self.sources = {}

@@ -262,6 +262,7 @@ We can use [petisco_client](petisco/fixtures/client.py) to simulate our client i
 import pytest
 
 @pytest.mark.acceptance
+@pytest.mark.persistence_source("acme")
 def test_should_return_200_when_call_healthcheck(
     petisco_client
 ):
@@ -271,6 +272,9 @@ def test_should_return_200_when_call_healthcheck(
 
 Included in *petisco_client* we can find [petisco_sql_database](petisco/fixtures/persistence.py).
 This fixture will create and connect a database and after the test this will be deleted.
+
+Note that to use these fixtures you must indicate with a marker the persistence source. In the above example the 
+persistence source is named `acme`.
 
 
 #### Extras

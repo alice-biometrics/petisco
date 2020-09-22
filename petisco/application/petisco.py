@@ -40,7 +40,7 @@ class Petisco(metaclass=Singleton):
     options: Dict[str, Any] = None
     info: Dict = None
     _persistence_models: Dict[str, Dict[str, Any]] = None
-    persistence_configured: Dict[str, bool] = None
+    persistence_sources: Dict[str, Dict] = None
     config: Config = None
     event_publisher: IEventPublisher = None
     event_subscriber: IEventSubscriber = None
@@ -131,7 +131,7 @@ class Petisco(metaclass=Singleton):
 
     def _set_persistence(self):
         self._persistence_models = {}
-        self.persistence_configured = {}
+        self.persistence_sources = {}
         config_persistence = self.config.config_persistence
         if config_persistence.configs:
             for config_key, config_value in config_persistence.configs.items():
@@ -146,7 +146,10 @@ class Petisco(metaclass=Singleton):
                     ] = config_persistence.get_models(config_key)
                 else:
                     config_value.config()
-                self.persistence_configured[config_key] = True
+                self.persistence_sources[config_key] = {
+                    "configured": True,
+                    "type": config_value.type,
+                }
 
     def _set_services_and_repositories_from_providers(self):
         config_providers = self.config.config_providers
