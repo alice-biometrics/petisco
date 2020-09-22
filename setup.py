@@ -70,6 +70,7 @@ setup(
         "petisco/logger",
         "petisco/persistence",
         "petisco/persistence/sqlalchemy",
+        "petisco/persistence/pymongo",
         "petisco/security/token_decoder",
         "petisco/security/token_manager",
         "petisco/tools",
