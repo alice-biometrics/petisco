@@ -36,7 +36,7 @@ What is happening here?
   * x-dead-letter-routing-key`: `alice.petisco.1.event.user.created.send_mail_handler`
 7. Then, the process will return to 2, however in this case, only will be requed to `alice.petisco.1.event.user.created.send_mail_handler` thanks to the additional binding key `retry.alice.petisco.1.event.user.created.send_mail_handler`.
 
-## Naming
+## Queue Naming
 
 The queues naming uses the following convention:
 
@@ -49,3 +49,117 @@ where:
 * **type** is used for represent the type of source that triggers the process (event|command)
 * **event_name** is used to represent the name of the event in snake case (`UserCreate` -> `user.created`) 
 * **action_handler** is used to represent the name of the callback which will trigger the event (e.g `send_mail_handler`) 
+
+## Let's code
+
+##### Create a domain event
+Create an `event` in petisco is as easy as:
+
+```python
+from petisco import Event, UserId
+
+class UserCreated(Event):
+    user_id: UserId
+
+    def __init__(self, user_id: UserId):
+        self.user_id = user_id
+        super().__init__()
+
+
+event = UserCreated()
+```
+
+##### Configure RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
+Now we need to configure subscribers on RabbitMQ. For example, we can use the `send_mail_handler` subscriber from the example below.
+
+```python
+from petisco import RabbitMqConnector, RabbitMqEventConfigurer, Event
+from meiga import Result, Error, isSuccess, isFailure
+
+connector = RabbitMqConnector()
+organization = "alice"
+service = "petisco"
+retry_ttl = 5000 # default
+
+configurer = RabbitMqEventConfigurer(connector, organization, service, retry_ttl=retry_ttl)
+
+def send_mail_handler(event: Event) -> Result[bool, Error]:
+  # Do your stuff here
+  return isSuccess # if fails, returns isFailure
+
+event = UserCreated()
+
+subscribers = [EventSubscriber(event, [send_mail_handler])]  
+configurer.configure_subscribers(subscribers)
+```
+
+##### Start Consuming Events from RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
+
+```python
+
+organization = "alice"
+service = "petisco"
+max_retries = 5 
+
+consumer = RabbitMqEventConsumer(connector, organization, service, max_retries)
+
+def send_mail_handler(event: Event) -> Result[bool, Error]:
+  # Do your stuff here
+  return isSuccess # if fails, returns isFailure
+
+event = UserCreated()
+subscribers = [EventSubscriber(event, [send_mail_handler])]  
+
+consumer.consume(subscribers)
+consumer.start()
+```
+
+##### Publish Events with the EventBus
+
+
+```python
+connector = RabbitMqConnector()
+organization = "alice"
+service = "petisco"
+
+bus = RabbitMqEventBus(connector, organization, service)
+
+event = UserCreated()
+
+bus.publish(event)
+```
+
+## Examples 
+
+Configure RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> exchanges and queues with the following script:
+
+```console
+python examples/rabbitmq/configure.py
+```
+
+You can check your RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> on `http://localhost:15672/`
+
+
+Then, you can start consuming events from queues with:
+
+```console
+python examples/rabbitmq/consume.py
+```
+
+Then, in another terminal, you can start publishing events:
+
+```console
+python examples/rabbitmq/publish.py
+```
+            
+## Tricks
+
+To prevent the propagation of Id parameters throughout your domain, you can compose your Event with a [`InfoId`](petisco/domain/aggregate_roots/info_id.py)
+
+```python
+user_created = UserCreated(user_id, name).add_info_id(info_id)
+```
+
+This will add `InfoId` information using the meta dictionary on message body. 
+ 
+        
