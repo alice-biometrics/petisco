@@ -50,7 +50,46 @@ where:
 * **event_name** is used to represent the name of the event in snake case (`UserCreate` -> `user.created`) 
 * **action_handler** is used to represent the name of the callback which will trigger the event (e.g `send_mail_handler`) 
 
+## Examples 
+
+*"Show me this example working!"* :raised_hand:
+
+Ok, let's execute the following scripts :point_down:
+
+
+If you haven't already done so, install petisco in your development environment:
+
+```console
+pip install petisco
+```
+
+Configure RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> exchanges and queues with the following script:
+
+```console
+python examples/rabbitmq/configure.py
+```
+
+You can check your RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> on `http://localhost:15672/`
+
+
+Then, you can start consuming events from queues with:
+
+```console
+python examples/rabbitmq/consume.py
+```
+
+Then, in another terminal, you can start publishing events:
+
+```console
+python examples/rabbitmq/publish.py
+```
+
+
 ## Let's code
+
+*"Show me the code!"* :raised_hand:
+
+Ok, there is the code :point_down:
 
 ##### Create a domain event
 Create an `event` in petisco is as easy as:
@@ -127,29 +166,6 @@ bus = RabbitMqEventBus(connector, organization, service)
 event = UserCreated()
 
 bus.publish(event)
-```
-
-## Examples 
-
-Configure RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> exchanges and queues with the following script:
-
-```console
-python examples/rabbitmq/configure.py
-```
-
-You can check your RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> on `http://localhost:15672/`
-
-
-Then, you can start consuming events from queues with:
-
-```console
-python examples/rabbitmq/consume.py
-```
-
-Then, in another terminal, you can start publishing events:
-
-```console
-python examples/rabbitmq/publish.py
 ```
             
 ## Tricks
