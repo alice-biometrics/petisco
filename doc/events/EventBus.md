@@ -4,4 +4,4 @@
 
 Given an organization (e.g `alice`) and a service (e.g `petisco`)
 
-![Event Bus Example](images/event-bus-example.jpg?raw=true "Event Bus Example")
+![Event Bus Example](event-bus-example.jpg)
