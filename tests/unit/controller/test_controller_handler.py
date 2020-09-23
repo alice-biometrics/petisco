@@ -3,7 +3,7 @@ from meiga import Success, isFailure, Failure
 
 from petisco import controller_handler, ERROR, __version__, DEBUG
 from petisco.domain.errors.critical_error import CriticalError
-from petisco.events.request_responded import RequestResponded
+from petisco.event.shared.domain.request_responded import RequestResponded
 from tests.unit.mocks.fake_event_publisher import FakeEventPublisher
 from tests.unit.mocks.fake_logger import FakeLogger
 from tests.unit.mocks.fake_notifier import FakeNotifier

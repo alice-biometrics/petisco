@@ -3,7 +3,9 @@ from meiga import Result, Success, Error
 from petisco import UseCase, use_case_handler, InfoId, Petisco
 from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.user_id import UserId
-from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
+from petisco.event.legacy.publisher.domain.interface_event_publisher import (
+    IEventPublisher,
+)
 from tests.integration.flask_app.toy_app.domain.aggregate_roots.user import User
 from tests.integration.flask_app.toy_app.domain.repositories.interface_user_repository import (
     IUserRepository,

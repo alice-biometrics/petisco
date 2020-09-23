@@ -6,7 +6,7 @@ from petisco import (
     RabbitMQEventSubscriber,
     ConfigEventSubscriber,
     Event,
-    RabbitMQConnector,
+    RabbitMqConnector,
 )
 
 
@@ -23,7 +23,7 @@ def b_handler(event: Event):
 
 
 subscriber = RabbitMQEventSubscriber(
-    connector=RabbitMQConnector(),
+    connector=RabbitMqConnector(),
     subscribers={
         "a": ConfigEventSubscriber(
             organization="acme", service="a", topic="a-events", handler=a_handler

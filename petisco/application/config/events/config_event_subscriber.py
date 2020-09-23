@@ -6,10 +6,10 @@ from petisco.application.config.get_funtion_from_string import get_function_from
 from petisco.application.config.raise_petisco_config_error import (
     raise_petisco_config_exception,
 )
-from petisco.events.subscriber.domain.config_event_subscriber import (
+from petisco.event.legacy.subscriber.domain.config_event_subscriber import (
     ConfigEventSubscriber,
 )
-from petisco.events.subscriber.infrastructure.not_implemented_event_subscriber import (
+from petisco.event.legacy.subscriber.infrastructure.not_implemented_event_subscriber import (
     NotImplementedEventSubscriber,
 )
 
@@ -33,7 +33,7 @@ class ConfigEventsSubscriber:
             get_function_from_string(provider)
             .handle(
                 on_failure=raise_petisco_config_exception,
-                failure_args=(kdict, "events:subscriber:provider"),
+                failure_args=(kdict, "event:subscriber:provider"),
             )
             .unwrap()
         )

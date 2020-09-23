@@ -1,5 +1,5 @@
 from petisco import Event
-from petisco.events.subscriber.domain.subscriber_handler import subscriber_handler
+from petisco.event.legacy.subscriber.domain.subscriber_handler import subscriber_handler
 
 
 @subscriber_handler()

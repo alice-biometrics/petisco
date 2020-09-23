@@ -1,7 +1,9 @@
 from typing import Dict
 
-from petisco.events.event import Event
-from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
+from petisco.event.shared.domain.event import Event
+from petisco.event.legacy.publisher.domain.interface_event_publisher import (
+    IEventPublisher,
+)
 
 
 class FakeEventPublisher(IEventPublisher):

@@ -6,9 +6,13 @@ from typing import Callable, Dict, Any
 from dataclasses import dataclass
 
 
-from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
-from petisco.events.service_deployed import ServiceDeployed
-from petisco.events.subscriber.domain.interface_event_subscriber import IEventSubscriber
+from petisco.event.legacy.publisher.domain.interface_event_publisher import (
+    IEventPublisher,
+)
+from petisco.event.shared.domain.service_deployed import ServiceDeployed
+from petisco.event.legacy.subscriber.domain.interface_event_subscriber import (
+    IEventSubscriber,
+)
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import INFO, ILogger
 from petisco.logger.log_message import LogMessage

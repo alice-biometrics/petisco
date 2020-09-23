@@ -3,7 +3,7 @@ import pytest
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.user_id import UserId
-from petisco.events.event import Event
+from petisco.event.shared.domain.event import Event
 
 
 class UserCreated(Event):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from time import sleep
 
-from petisco import Event, RabbitMQConnector
+from petisco import Event, RabbitMqConnector
 from petisco.domain.value_objects.user_id import UserId
 from petisco.events.publisher.infrastructure.rabbitmq_event_publisher import (
     RabbitMQEventPublisher,
@@ -19,7 +19,7 @@ class UserCreated(Event):
 publishers = {}
 for service in ["a", "b"]:
     publisher = RabbitMQEventPublisher(
-        connector=RabbitMQConnector(),
+        connector=RabbitMqConnector(),
         organization="acme",
         service=service,
         topic=f"{service}-events",

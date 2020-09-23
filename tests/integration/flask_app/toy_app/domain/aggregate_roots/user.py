@@ -1,7 +1,7 @@
 from petisco import InfoId, ClientId, UserId
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.domain.value_objects.name import Name
-from tests.unit.events.test_event import UserCreated
+from tests.event.unit.test_event import UserCreated
 
 
 class User(AggregateRoot):

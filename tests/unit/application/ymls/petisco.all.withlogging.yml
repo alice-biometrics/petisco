@@ -34,7 +34,7 @@ events:
       sub:
         organization: "acme"
         service: "toy-app"
-        topic: "toy-app-events"
+        topic: "toy-app-event"
         dead_letter: True
         handler: tests.integration.flask_app.toy_app.application.handlers.store_event.store_event
 notifier:

@@ -6,7 +6,7 @@ from petisco.application.config.get_funtion_from_string import get_function_from
 from petisco.application.config.raise_petisco_config_error import (
     raise_petisco_config_exception,
 )
-from petisco.events.publisher.infrastructure.not_implemented_event_publisher import (
+from petisco.event.legacy.publisher.infrastructure.not_implemented_event_publisher import (
     NotImplementedEventPublisher,
 )
 
@@ -28,7 +28,7 @@ class ConfigEventsPublisher:
             get_function_from_string(provider)
             .handle(
                 on_failure=raise_petisco_config_exception,
-                failure_args=(kdict, "events:publisher:provider"),
+                failure_args=(kdict, "event:publisher:provider"),
             )
             .unwrap()
         )
