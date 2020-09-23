@@ -63,6 +63,13 @@ If you haven't already done so, install petisco in your development environment:
 pip install petisco
 ```
 
+Run a RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16" instance using default configuration:
+
+```console
+docker run -d --rm --name petisco-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+```
+
+
 Configure RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> exchanges and queues with the following script:
 
 ```console
@@ -105,7 +112,7 @@ class UserCreated(Event):
         super().__init__()
 
 
-event = UserCreated()
+event = UserCreated(UserId.generate())
 ```
 
 ##### Configure RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
@@ -126,7 +133,7 @@ def send_mail_handler(event: Event) -> Result[bool, Error]:
   # Do your stuff here
   return isSuccess # if fails, returns isFailure
 
-event = UserCreated()
+event = UserCreated(UserId.generate())
 
 subscribers = [EventSubscriber(event, [send_mail_handler])]  
 configurer.configure_subscribers(subscribers)
@@ -146,7 +153,7 @@ def send_mail_handler(event: Event) -> Result[bool, Error]:
   # Do your stuff here
   return isSuccess # if fails, returns isFailure
 
-event = UserCreated()
+event = UserCreated(UserId.generate())
 subscribers = [EventSubscriber(event, [send_mail_handler])]  
 
 consumer.consume(subscribers)
