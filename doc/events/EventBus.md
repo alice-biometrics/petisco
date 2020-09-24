@@ -193,5 +193,6 @@ This will add `InfoId` information using the meta dictionary on message body.
  
 ## Acknowledgments :ok_hand:
 
-Thanks to [Dani](https://github.com/dgarcoe) for helping us with RabbitMQ and Queues Management. :metal:
+Thanks to [Dani](https://github.com/dgarcoe) for helping us with RabbitMQ and Queues Management. :ok_hand: :metal:
+
 Thanks to [CodelyTv](https://github.com/codelytv) for guiding us with such a good examples in their repositories. :rocket:
