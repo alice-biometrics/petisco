@@ -78,10 +78,10 @@ python examples/rabbitmq/configure.py
 You can check your RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> on `http://localhost:15672/` (guest:guest)
 
 **Exchanges:**
-![Exchanges](rabbitmq_exchanges.jpeg)
+![Exchanges](rabbitmq_queues.jpeg)
 
 **Queues:**
-![Queues](rabbitmq_queues.jpeg)
+![Queues](rabbitmq_exchanges.jpeg)
 
 Then, you can start consuming events from queues with:
 
