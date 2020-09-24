@@ -149,7 +149,9 @@ configurer.configure_subscribers(subscribers)
 
 organization = "alice"
 service = "petisco"
-max_retries = 5 
+max_retries = 5
+
+connector = RabbitMqConnector()
 
 consumer = RabbitMqEventConsumer(connector, organization, service, max_retries)
 
