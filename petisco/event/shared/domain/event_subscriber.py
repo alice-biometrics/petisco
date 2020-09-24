@@ -2,7 +2,7 @@ from typing import List, Callable
 
 from dataclasses import dataclass
 
-from petisco import Event
+from petisco.event.shared.domain.event import Event
 
 
 @dataclass

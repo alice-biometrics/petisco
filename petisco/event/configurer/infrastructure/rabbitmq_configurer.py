@@ -1,6 +1,6 @@
 from typing import List
 
-from petisco import Event
+from petisco.event.shared.domain.event import Event
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
 from petisco.event.configurer.domain.interface_event_configurer import IEventConfigurer
 from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_exchange_name_formatter import (
@@ -29,6 +29,9 @@ class RabbitMqEventConfigurer(IEventConfigurer):
         self._configured_subscribers = []
         self.retry_ttl = retry_ttl
 
+    def configure(self):
+        self.configure_subscribers([])
+
     def configure_event(self, event: Event):
         self.configure_subscribers([EventSubscriber(event, [])])
 
@@ -36,8 +39,8 @@ class RabbitMqEventConfigurer(IEventConfigurer):
         self._configure_exchanges()
         self._declare_queues(
             self._exchange_name,
-            self.retry_exchange_name,
-            self.dead_letter_exchange_name,
+            self._retry_exchange_name,
+            self._dead_letter_exchange_name,
             subscribers,
         )
         self._configured_subscribers.append(subscribers)
@@ -49,8 +52,8 @@ class RabbitMqEventConfigurer(IEventConfigurer):
     def _delete_exchange(self):
         channel = self._connector.get_channel(self._exchange_name)
         channel.exchange_delete(self._exchange_name)
-        channel.exchange_delete(self.retry_exchange_name)
-        channel.exchange_delete(self.dead_letter_exchange_name)
+        channel.exchange_delete(self._retry_exchange_name)
+        channel.exchange_delete(self._dead_letter_exchange_name)
 
     def _delete_queues(self):
         channel = self._connector.get_channel(self._exchange_name)
@@ -77,15 +80,15 @@ class RabbitMqEventConfigurer(IEventConfigurer):
                     channel.queue_delete(dead_letter_name)
 
     def _configure_exchanges(self):
-        self.retry_exchange_name = RabbitMqExchangeNameFormatter.retry(
+        self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(
             self._exchange_name
         )
-        self.dead_letter_exchange_name = RabbitMqExchangeNameFormatter.dead_letter(
+        self._dead_letter_exchange_name = RabbitMqExchangeNameFormatter.dead_letter(
             self._exchange_name
         )
         self._declare_exchange(self._exchange_name)
-        self._declare_exchange(self.retry_exchange_name)
-        self._declare_exchange(self.dead_letter_exchange_name)
+        self._declare_exchange(self._retry_exchange_name)
+        self._declare_exchange(self._dead_letter_exchange_name)
 
     def _declare_exchange(self, exchange_name: str):
         channel = self._connector.get_channel(self._exchange_name)
@@ -105,8 +108,16 @@ class RabbitMqEventConfigurer(IEventConfigurer):
         dead_letter_exchange_name: str,
         subscribers: List[EventSubscriber],
     ):
+        if self._use_store_queues:
+            self._declare_store_queues(
+                exchange_name,
+                "store",
+                retry_exchange_name,
+                dead_letter_exchange_name,
+                "alice.#",
+            )
+
         for subscriber in subscribers:
-            # routing_key = f"{exchange_name}.{subscriber.event.event_version}.{subscriber.event.event_name}"
             base_queue_name = RabbitMqQueueNameFormatter.format(
                 subscriber.event, exchange_name=exchange_name
             )
@@ -118,29 +129,19 @@ class RabbitMqEventConfigurer(IEventConfigurer):
             )
             routing_key = base_queue_name
 
-            # if self._use_store_queues:
-            #     self._declare_store_queues(
-            #         exchange_name,
-            #         retry_exchange_name,
-            #         dead_letter_exchange_name,
-            #         queue_name,
-            #         routing_key,
-            #     )
-
-            # for suffix in ["store"] + subscriber.get_handlers_names():
             for suffix in subscriber.get_handlers_names():
                 queue_name = f"{base_queue_name}.{suffix}"
                 retry_queue_name = f"{base_retry_queue_name}.{suffix}"
                 dead_letter_queue_name = f"{base_dead_letter_queue_name}.{suffix}"
 
-                self._declare_queue(exchange_name=queue_name)
+                self._declare_queue(queue_name=queue_name)
                 self._declare_queue(
-                    exchange_name=retry_queue_name,
+                    queue_name=retry_queue_name,
                     dead_letter_exchange=exchange_name,
                     dead_letter_routing_key=f"retry.{queue_name}",
                     message_ttl=self.retry_ttl,
                 )
-                self._declare_queue(exchange_name=dead_letter_queue_name)
+                self._declare_queue(queue_name=dead_letter_queue_name)
 
                 self._bind_queue(
                     exchange_name=exchange_name,
@@ -166,26 +167,41 @@ class RabbitMqEventConfigurer(IEventConfigurer):
     def _declare_store_queues(
         self,
         exchange_name: str,
+        queue_name: str,
         retry_exchange_name: str,
         dead_letter_exchange_name: str,
-        queue_name: str,
         routing_key: str,
     ):
-        self._declare_queue(exchange_name="store")
+        self._declare_queue(queue_name="store")
         self._declare_queue(
-            exchange_name="retry.store",
-            dead_letter_exchange=exchange_name,
+            queue_name="retry.store",
+            dead_letter_exchange=queue_name,
             dead_letter_routing_key=queue_name,
             message_ttl=self.retry_ttl,
         )
-        self._declare_queue(exchange_name="dead_letter.store")
-        self._bind_queue(exchange_name, "store", routing_key)
-        self._bind_queue(retry_exchange_name, "retry.store", routing_key)
-        self._bind_queue(dead_letter_exchange_name, "dead_letter.store", routing_key)
+        self._declare_queue(queue_name="dead_letter.store")
+        self._bind_queue(
+            exchange_name=exchange_name, queue_name="store", routing_key="alice.#"
+        )
+        self._bind_queue(
+            exchange_name=exchange_name,
+            queue_name="store",
+            routing_key=f"retry.{queue_name}",
+        )
+        self._bind_queue(
+            exchange_name=retry_exchange_name,
+            queue_name="retry.store",
+            routing_key=f"retry.{queue_name}",
+        )
+        self._bind_queue(
+            exchange_name=dead_letter_exchange_name,
+            queue_name="dead_letter.store",
+            routing_key=f"dead_letter.{queue_name}",
+        )
 
     def _declare_queue(
         self,
-        exchange_name: str,
+        queue_name: str,
         dead_letter_exchange: str = None,
         dead_letter_routing_key: str = None,
         message_ttl: int = None,
@@ -203,7 +219,7 @@ class RabbitMqEventConfigurer(IEventConfigurer):
             queue_arguments["x-message-ttl"] = message_ttl
 
         result = channel.queue_declare(
-            queue=exchange_name, arguments=queue_arguments, durable=True
+            queue=queue_name, arguments=queue_arguments, durable=True
         )
 
         return result.method.queue

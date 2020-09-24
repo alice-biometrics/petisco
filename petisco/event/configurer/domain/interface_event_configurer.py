@@ -1,7 +1,7 @@
 from typing import Dict, List
 from abc import ABCMeta, abstractmethod
 
-from petisco import Event
+from petisco.event.shared.domain.event import Event
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
 
 

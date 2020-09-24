@@ -26,6 +26,19 @@ def send_mail_handler(event: Event) -> Result[bool, Error]:
     return isSuccess  # if fails, returns isFailure
 
 
+def send_sms_handler(event: Event) -> Result[bool, Error]:
+    print(f"Send sms on {event}")
+    return isSuccess  # if fails, returns isFailure
+
+
+def offer_promotion_handler(event: Event) -> Result[bool, Error]:
+    print(f"Promotion  on {event}")
+    return isSuccess  # if fails, returns isFailure
+
+
 event = UserCreated.random()
 
-subscribers = [EventSubscriber(event, [send_mail_handler])]
+subscribers = [
+    EventSubscriber(event, [send_mail_handler, send_sms_handler]),
+    EventSubscriber(event, [offer_promotion_handler]),
+]

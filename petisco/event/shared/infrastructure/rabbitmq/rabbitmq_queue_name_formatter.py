@@ -1,4 +1,4 @@
-from petisco import Event
+from petisco.event.shared.domain.event import Event
 
 
 class RabbitMqQueueNameFormatter:

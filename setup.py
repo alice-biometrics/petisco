@@ -36,10 +36,6 @@ setup(
     packages=find_packages()
     + [
         "petisco",
-        "petisco/application",
-        "petisco/application/config",
-        "petisco/application/config/event",
-        "petisco/application/cli",
         "petisco/controller",
         "petisco/controller/errors",
         "petisco/domain",

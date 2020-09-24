@@ -8,7 +8,6 @@ def configure():
     configurer = RabbitMqEventConfigurer(
         connector, ORGANIZATION, SERVICE, retry_ttl=RETRY_TTL
     )
-
     configurer.configure_subscribers(subscribers)
 
 

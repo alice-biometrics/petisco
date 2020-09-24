@@ -7,7 +7,7 @@ from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 
-from petisco import Event
+from petisco.event.shared.domain.event import Event
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
 from petisco.event.consumer.domain.interface_event_consumer import IEventConsumer
 from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_exchange_name_formatter import (
@@ -31,15 +31,16 @@ class RabbitMqEventConsumer(IEventConsumer):
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
+        self.rabbitmq_key = f"consumer-{self.exchange_name}"
         self.max_retries = max_retries
-        self._subscribers = []
-        self._channels = {}
+        self._channel = self.connector.get_channel(self.rabbitmq_key)
 
     def start(self):
-        if not self._subscribers:
+        if not self._channel:
             raise RuntimeError(
                 "RabbitMqEventConsumer: cannot start consuming event without any subscriber defined."
             )
+
         self._thread = threading.Thread(target=self._start)
         self._thread.start()
 
@@ -47,59 +48,51 @@ class RabbitMqEventConsumer(IEventConsumer):
         self._start_consuming()
 
     def _start_consuming(self):
-        for subscriber in self._subscribers:
-            channel_name = self._get_channel_name(subscriber)
-            self._channels[channel_name].start_consuming()
-
-    def _get_channel_name(self, subscriber: EventSubscriber):
-        queue_name = RabbitMqQueueNameFormatter.format(
-            subscriber.event, exchange_name=self.exchange_name
-        )
-        key_channel = f"{self.exchange_name}.{queue_name}"
-        return key_channel
+        self._channel.start_consuming()
 
     def consume(self, subscribers: List[EventSubscriber]):
         for subscriber in subscribers:
             queue_name = RabbitMqQueueNameFormatter.format(
                 subscriber.event, exchange_name=self.exchange_name
             )
-
-            channel_name = self._get_channel_name(subscriber)
-            self._channels[channel_name] = self.connector.get_channel(
-                self.exchange_name
-            )
+            # channel_name = f"{self.exchange_name}.{queue_name}"
+            # channel_name = self._get_channel_name(subscriber)
+            # self._channels[channel_name] = self.connector.get_channel(
+            #     self.exchange_name
+            # )
             for handler in subscriber.handlers:
-                self._channels[channel_name].basic_consume(
+                self._channel.basic_consume(
                     queue=f"{queue_name}.{handler.__name__}",
                     on_message_callback=self.consumer(handler),
                 )
 
-        self._subscribers.extend(subscribers)
-
-    # consumer.consume_dead_letter_from_subscriber(subscriber, dead_letter_consumer)
+            # self._consumers.append(channel_name)
 
     def consume_dead_letter(self, subscriber: EventSubscriber, handler: Callable):
         queue_name = RabbitMqQueueNameFormatter.format_dead_letter(
             subscriber.event, exchange_name=self.exchange_name
         )
         for handler_name in subscriber.get_handlers_names():
-            channel_name = f"{self.exchange_name}.{queue_name}.{handler_name}"
-            self._channels[channel_name] = self.connector.get_channel(
-                self.exchange_name
-            )
-            self._channels[channel_name].basic_consume(
+            # channel_name = f"{self.exchange_name}.{queue_name}.{handler_name}"
+            # self._channels[channel_name] = self.connector.get_channel(
+            #     self.exchange_name
+            # )
+            self._channel.basic_consume(
                 queue=f"{queue_name}.{handler_name}",
                 on_message_callback=self.consumer(handler),
             )
+            # self._consumers.append(channel_name)
 
-    # self._subscribers.extend(subscribers)
+    def consume_store(self, handler: Callable):
+        self.consume_queue("store", handler)
 
     def consume_queue(self, queue_name: str, handler: Callable):
-        channel = self.connector.get_channel(self.exchange_name)
-
-        channel.basic_consume(
+        # channel_name = f"{self.exchange_name}.{queue_name}"
+        # self._channels[channel_name] = self.connector.get_channel(self.exchange_name)
+        self._channel.basic_consume(
             queue=queue_name, on_message_callback=self.consumer(handler)
         )
+        # self._consumers.append(channel_name)
 
     def consumer(self, handler: Callable) -> Callable:
         def rabbitmq_consumer(
@@ -243,19 +236,18 @@ class RabbitMqEventConsumer(IEventConsumer):
                 _log_stop_exception(e)
 
     def _unsubscribe_all(self):
-        def _stop_consuming_channels():
-            for subscriber in self._subscribers:
-                try:
-                    channel_name = self._get_channel_name(subscriber)
-                    self._channels[channel_name].stop_consuming()
-                    self._channels[channel_name].cancel()
-                except ValueError:
-                    pass
+        def _stop_consuming_consumer_channel():
+            try:
+                self._channel.stop_consuming()
+                self._channel.cancel()
+            except ValueError:
+                pass
 
-        def _await_for_stop_consuming_channels():
+        def _await_for_stop_consuming_consumer_channel():
             sleep(2.0)
 
-        self.connector.get_connection(self.exchange_name).call_later(
-            0, _stop_consuming_channels
+        self.connector.get_connection(self.rabbitmq_key).call_later(
+            0, _stop_consuming_consumer_channel
         )
-        _await_for_stop_consuming_channels()
+
+        _await_for_stop_consuming_consumer_channel()

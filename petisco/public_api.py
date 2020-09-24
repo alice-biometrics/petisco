@@ -82,6 +82,8 @@ from petisco.event.legacy.subscriber.domain.subscriber_handler import subscriber
 from petisco.event.legacy.subscriber.infrastructure.not_implemented_event_subscriber import (
     NotImplementedEventSubscriber,
 )
+from petisco.event.shared.domain.event_subscriber import EventSubscriber
+
 
 classes = [
     "IService",
@@ -125,6 +127,7 @@ classes = [
     "EmptyValueObjectError",
     "ExceedLengthLimitValueObjectError",
     "NotReachMinimumValueObjectError",
+    "EventSubscriber",
     "subscriber_handler",
     "ConfigEventSubscriber",
     "IEventPublisher",
@@ -220,7 +223,15 @@ try:
     from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
         RabbitMqConnector,
     )
+    from petisco.event.configurer.infrastructure.rabbitmq_configurer import (
+        RabbitMqEventConfigurer,
+    )
 
+    from petisco.event.consumer.infrastructure.rabbitmq_event_comsumer import (
+        RabbitMqEventConsumer,
+    )
+
+    # deprecated
     from petisco.event.legacy.publisher.infrastructure.rabbitmq_event_publisher import (
         RabbitMQEventPublisher,
     )
@@ -232,6 +243,8 @@ try:
         "RabbitMQEventPublisher",
         "RabbitMQEventSubscriber",
         "RabbitMqConnector",
+        "RabbitMqEventConfigurer",
+        "RabbitMqEventConsumer",
     ]
 except (RuntimeError, ImportError):
     rabbitmq = []
