@@ -56,7 +56,6 @@ where:
 
 Ok, let's execute the following scripts :point_down:
 
-
 If you haven't already done so, install petisco in your development environment:
 
 ```console
@@ -69,8 +68,13 @@ Configure RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/b
 python examples/rabbitmq/configure.py
 ```
 
-You can check your RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> on `http://localhost:15672/`
+You can check your RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> on `http://localhost:15672/` (guest:guest)
 
+**Exchanges:**
+![Exchanges](rabbitmq_exchanges.jpeg)
+
+**Queues:**
+![Queues](rabbitmq_queues.jpeg)
 
 Then, you can start consuming events from queues with:
 
