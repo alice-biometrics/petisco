@@ -52,7 +52,7 @@ where:
 
 ## Examples 
 
-*"Show me this example working!"* :raised_hand:
+*"Show me this example working:exclamation:"* :raised_hand:
 
 Ok, let's execute the following scripts :point_down:
 
@@ -98,7 +98,7 @@ python examples/rabbitmq/publish.py
 
 ## Let's code
 
-*"Show me the code!"* :raised_hand:
+*"Show me the code:exclamation:"* :raised_hand:
 
 Ok, there is the code :point_down:
 
