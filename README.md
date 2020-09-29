@@ -218,6 +218,14 @@ To prevent the propagation of Id parameters throughout your domain, you can comp
 user_created = UserCreated(user_id, name).add_info_id(info_id)
 ```
 
+How can we publish and consume events?
+
+* We publish events using an `EventBus`, and
+* Consume events using an `EventConsumer`.
+
+To learn more about this topic, and how to configure it, please take a look to [EventManagement](doc/events/EventManagement) documentation.
+
+
 #### Aggregate Root
 
 Extend `AggregateRoot` to model your Aggregate Roots

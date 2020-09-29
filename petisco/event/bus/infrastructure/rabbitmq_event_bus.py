@@ -21,6 +21,7 @@ class RabbitMqEventBus(IEventBus):
     def __init__(self, connector: RabbitMqConnector, organization: str, service: str):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
+        self.rabbitmq_key = f"publisher-{self.exchange_name}"
         self.configurer = RabbitMqEventConfigurer(connector, organization, service)
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
 
@@ -38,7 +39,7 @@ class RabbitMqEventBus(IEventBus):
             raise TypeError("Bus only publishes petisco.Event objects")
 
         try:
-            channel = self.connector.get_channel(self.exchange_name)
+            channel = self.connector.get_channel(self.rabbitmq_key)
 
             routing_key = RabbitMqQueueNameFormatter.format(
                 event, exchange_name=self.exchange_name
@@ -58,5 +59,5 @@ class RabbitMqEventBus(IEventBus):
             self.publish(event)
 
     def close(self):
-        if self.connector.get_connection(self.exchange_name).is_open:
-            self.connector.get_connection(self.exchange_name).close()
+        if self.connector.get_connection(self.rabbitmq_key).is_open:
+            self.connector.get_connection(self.rabbitmq_key).close()

@@ -1,4 +1,4 @@
-# EventBus :trolleybus:
+# Event Management :trolleybus:
 
 <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png" width=auto>
 
