@@ -187,7 +187,7 @@ class RabbitMqEventConfigurer(IEventConfigurer):
         self._bind_queue(
             exchange_name=retry_exchange_name,
             queue_name="retry.store",
-            routing_key=f"retry.{routing_key_any_event}",
+            routing_key="retry.store",
         )
         self._bind_queue(
             exchange_name=retry_exchange_name,

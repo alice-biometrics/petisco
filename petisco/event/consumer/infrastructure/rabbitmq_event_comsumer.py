@@ -176,8 +176,11 @@ class RabbitMqEventConsumer(IEventConsumer):
         exchange_name = RabbitMqExchangeNameFormatter.retry(self.exchange_name)
 
         routing_key = method.routing_key
-        if properties.headers and not is_store:
+        if properties.headers:
             routing_key = properties.headers.get("queue", routing_key)
+
+        if is_store:
+            routing_key = "store"
 
         routing_key = self._get_routing_key(routing_key, "retry.")
         self.send_message_to(exchange_name, ch, routing_key, properties, body)
