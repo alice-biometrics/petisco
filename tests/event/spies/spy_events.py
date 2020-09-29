@@ -23,7 +23,9 @@ class SpyEvents:
         return self.counter_events.get(str(event_id), {}).get("counter", 0)
 
     def assert_count_by_event_id(self, event_id: EventId, expected_count: int):
-        assert self.get_counter_by_event_id(event_id) == expected_count
+        assert (
+            self.get_counter_by_event_id(event_id) == expected_count
+        ), f"Expected events is {expected_count}, actual {self.get_counter_by_event_id(event_id)}. [{self.counter_events}]"
 
     def assert_first_event(self, expected_event: Event):
         self.assert_number_unique_events(1)

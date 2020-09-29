@@ -84,17 +84,17 @@ class RabbitMqEventConsumer(IEventConsumer):
             # self._consumers.append(channel_name)
 
     def consume_store(self, handler: Callable):
-        self.consume_queue("store", handler)
+        is_store = True
+        self._channel.basic_consume(
+            queue="store", on_message_callback=self.consumer(handler, is_store)
+        )
 
     def consume_queue(self, queue_name: str, handler: Callable):
-        # channel_name = f"{self.exchange_name}.{queue_name}"
-        # self._channels[channel_name] = self.connector.get_channel(self.exchange_name)
         self._channel.basic_consume(
             queue=queue_name, on_message_callback=self.consumer(handler)
         )
-        # self._consumers.append(channel_name)
 
-    def consumer(self, handler: Callable) -> Callable:
+    def consumer(self, handler: Callable, is_store: bool = False) -> Callable:
         def rabbitmq_consumer(
             ch: BlockingChannel,
             method: Basic.Deliver,
@@ -123,7 +123,7 @@ class RabbitMqEventConsumer(IEventConsumer):
                     properties.headers = {
                         "queue": f"{method.routing_key}.{handler.__name__}"
                     }
-                self.handle_consumption_error(ch, method, properties, body)
+                self.handle_consumption_error(ch, method, properties, body, is_store)
             else:
                 ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -139,11 +139,12 @@ class RabbitMqEventConsumer(IEventConsumer):
         method: Basic.Deliver,
         properties: BasicProperties,
         body: bytes,
+        is_store: bool,
     ):
         if self.has_been_redelivered_too_much(properties):
             self.send_to_dead_letter(ch, method, properties, body)
         else:
-            self.send_to_retry(ch, method, properties, body)
+            self.send_to_retry(ch, method, properties, body, is_store)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -169,12 +170,13 @@ class RabbitMqEventConsumer(IEventConsumer):
         method: Basic.Deliver,
         properties: BasicProperties,
         body: bytes,
+        is_store: bool = False,
     ):
         print(" [>] send_to_retry")
         exchange_name = RabbitMqExchangeNameFormatter.retry(self.exchange_name)
 
         routing_key = method.routing_key
-        if properties.headers:
+        if properties.headers and not is_store:
             routing_key = properties.headers.get("queue", routing_key)
 
         routing_key = self._get_routing_key(routing_key, "retry.")

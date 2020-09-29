@@ -4,7 +4,8 @@ from petisco.event.shared.domain.event import Event
 class RabbitMqQueueNameFormatter:
     @staticmethod
     def format(event: Event, exchange_name: str = None) -> str:
-        event_name = f"{event.event_version}.event.{event.event_name}"
+        event_name = event.event_name.replace(".", "_")
+        event_name = f"{event.event_version}.event.{event_name}"
         return f"{exchange_name}.{event_name}" if exchange_name else event_name
 
     @staticmethod

@@ -110,11 +110,7 @@ class RabbitMqEventConfigurer(IEventConfigurer):
     ):
         if self._use_store_queues:
             self._declare_store_queues(
-                exchange_name,
-                "store",
-                retry_exchange_name,
-                dead_letter_exchange_name,
-                "alice.#",
+                exchange_name, retry_exchange_name, dead_letter_exchange_name
             )
 
         for subscriber in subscribers:
@@ -167,36 +163,41 @@ class RabbitMqEventConfigurer(IEventConfigurer):
     def _declare_store_queues(
         self,
         exchange_name: str,
-        queue_name: str,
         retry_exchange_name: str,
         dead_letter_exchange_name: str,
-        routing_key: str,
     ):
         self._declare_queue(queue_name="store")
         self._declare_queue(
             queue_name="retry.store",
-            dead_letter_exchange=queue_name,
-            dead_letter_routing_key=queue_name,
+            dead_letter_exchange=exchange_name,
+            dead_letter_routing_key="retry.store",
             message_ttl=self.retry_ttl,
         )
         self._declare_queue(queue_name="dead_letter.store")
-        self._bind_queue(
-            exchange_name=exchange_name, queue_name="store", routing_key="alice.#"
-        )
+
+        routing_key_any_event = f"*.*.*.event.*"
         self._bind_queue(
             exchange_name=exchange_name,
             queue_name="store",
-            routing_key=f"retry.{queue_name}",
+            routing_key=routing_key_any_event,
+        )
+        self._bind_queue(
+            exchange_name=exchange_name, queue_name="store", routing_key="retry.store"
         )
         self._bind_queue(
             exchange_name=retry_exchange_name,
             queue_name="retry.store",
-            routing_key=f"retry.{queue_name}",
+            routing_key=f"retry.{routing_key_any_event}",
+        )
+        self._bind_queue(
+            exchange_name=retry_exchange_name,
+            queue_name="retry.store",
+            routing_key=f"retry.store",
         )
         self._bind_queue(
             exchange_name=dead_letter_exchange_name,
             queue_name="dead_letter.store",
-            routing_key=f"dead_letter.{queue_name}",
+            routing_key=f"dead_letter.{routing_key_any_event}",
         )
 
     def _declare_queue(
