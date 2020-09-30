@@ -12,16 +12,21 @@ class HealthcheckProvider(UseCase):
 
         healthcheck = {"app_name": petisco.app_name, "app_version": petisco.app_version}
 
-        if petisco.persistence_configured:
+        if petisco.persistence_sources:
             from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import (
                 session_scope,
             )
 
-            with session_scope() as session:
-                try:
-                    session.execute("SELECT 1")
-                except Exception as e:
-                    return Failure(PersistenceError(str(e)))
+            for (
+                persistence_source_name,
+                persistence_source,
+            ) in petisco.persistence_sources.items():
+                if persistence_source["type"] == "sql":
+                    with session_scope(persistence_source_name) as session:
+                        try:
+                            session.execute("SELECT 1")
+                        except Exception as e:
+                            return Failure(PersistenceError(str(e)))
             healthcheck["persistence_available"] = True
 
         return Success(healthcheck)

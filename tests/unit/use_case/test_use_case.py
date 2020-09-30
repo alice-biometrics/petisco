@@ -11,7 +11,9 @@ from tests.unit.mocks.log_message_mother import LogMessageMother
 
 
 @pytest.mark.unit
-def test_should_log_successfully_a_non_error_use_case_without_input_parameters_and_returning_a_string_result():
+def test_should_log_successfully_a_non_error_use_case_without_input_parameters_and_returning_a_string_result(
+    given_any_petisco
+):
 
     logger = FakeLogger()
 
@@ -40,7 +42,9 @@ def test_should_log_successfully_a_non_error_use_case_without_input_parameters_a
 
 
 @pytest.mark.unit
-def test_should_log_successfully_a_non_error_use_case_with_input_parameters_but_not_in_the_whitelist():
+def test_should_log_successfully_a_non_error_use_case_with_input_parameters_but_not_in_the_whitelist(
+    given_any_petisco
+):
 
     logger = FakeLogger()
 
@@ -69,7 +73,9 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters_but_
 
 
 @pytest.mark.unit
-def test_should_log_successfully_a_non_error_use_case_with_input_parameters():
+def test_should_log_successfully_a_non_error_use_case_with_input_parameters(
+    given_any_petisco
+):
 
     logger = FakeLogger()
 
@@ -110,7 +116,9 @@ def test_should_log_successfully_a_non_error_use_case_with_input_parameters():
 
 
 @pytest.mark.unit
-def test_should_log_successfully_a_filtered_object_by_blacklist_with_python_type_bytest():
+def test_should_log_successfully_a_filtered_object_by_blacklist_with_python_type_bytes(
+    given_any_petisco
+):
 
     logger = FakeLogger()
 
@@ -141,7 +149,9 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_python_type
 
 
 @pytest.mark.unit
-def test_should_log_successfully_a_filtered_object_by_blacklist_with_own_named_tuple():
+def test_should_log_successfully_a_filtered_object_by_blacklist_with_own_named_tuple(
+    given_any_petisco
+):
 
     logger = FakeLogger()
 
@@ -177,7 +187,9 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_own_named_t
 
 
 @pytest.mark.unit
-def test_should_log_successfully_a_filtered_object_by_blacklist_with_a_tuple():
+def test_should_log_successfully_a_filtered_object_by_blacklist_with_a_tuple(
+    given_any_petisco
+):
 
     logger = FakeLogger()
 
@@ -209,7 +221,7 @@ def test_should_log_successfully_a_filtered_object_by_blacklist_with_a_tuple():
 
 
 @pytest.mark.unit
-def test_should_log_successfully_a_large_type_with_its_repr():
+def test_should_log_successfully_a_large_type_with_its_repr(given_any_petisco):
 
     logger = FakeLogger()
 
@@ -248,7 +260,7 @@ def test_should_log_successfully_a_large_type_with_its_repr():
 
 
 @pytest.mark.unit
-def test_should_log_successfully_an_error_returned_on_a_use_case():
+def test_should_log_successfully_an_error_returned_on_a_use_case(given_any_petisco):
 
     logger = FakeLogger()
 
@@ -279,7 +291,7 @@ def test_should_log_successfully_an_error_returned_on_a_use_case():
 
 
 @pytest.mark.unit
-def test_should_log_successfully_an_error_raised_by_a_meiga_handler():
+def test_should_log_successfully_an_error_raised_by_a_meiga_handler(given_any_petisco):
 
     logger = FakeLogger()
 
@@ -315,7 +327,9 @@ def test_should_log_successfully_an_error_raised_by_a_meiga_handler():
 
 
 @pytest.mark.unit
-def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception():
+def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception(
+    given_any_petisco
+):
 
     logger = FakeLogger()
     expected_raised_exception = RuntimeError("uncontrolled exception")
@@ -349,7 +363,9 @@ def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_
 
 
 @pytest.mark.unit
-def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception_with_input_parameters():
+def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception_with_input_parameters(
+    given_any_petisco
+):
 
     logger = FakeLogger()
     expected_raised_exception = RuntimeError("uncontrolled exception")
@@ -387,7 +403,9 @@ def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_
 
 
 @pytest.mark.unit
-def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception_with_non_defined_input_parameters():
+def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_an_uncontrolled_exception_with_non_defined_input_parameters(
+    given_any_petisco
+):
 
     logger = FakeLogger()
     expected_raised_exception = RuntimeError("uncontrolled exception")

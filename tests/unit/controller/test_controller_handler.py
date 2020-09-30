@@ -12,7 +12,7 @@ from tests.unit.mocks.log_message_mother import LogMessageMother
 
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_without_input_parameters(
-    given_any_info_id, given_headers_provider
+    given_any_petisco, given_any_info_id, given_headers_provider
 ):
 
     logger = FakeLogger()
@@ -68,7 +68,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_only_input_parameter(
-    given_any_info_id, given_headers_provider
+    given_any_petisco, given_any_info_id, given_headers_provider
 ):
 
     logger = FakeLogger()
@@ -107,7 +107,7 @@ def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_o
 
 @pytest.mark.unit
 def test_should_execute_with_a_failure_a_empty_controller_without_input_parameters(
-    given_any_info_id, given_headers_provider
+    given_any_petisco, given_any_info_id, given_headers_provider
 ):
 
     logger = FakeLogger()
@@ -150,7 +150,7 @@ def test_should_execute_with_a_failure_a_empty_controller_without_input_paramete
 
 @pytest.mark.unit
 def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as_only_input_parameter(
-    given_any_info_id, given_headers_provider
+    given_any_petisco, given_any_info_id, given_headers_provider
 ):
 
     logger = FakeLogger()
@@ -191,7 +191,9 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
 
 
 @pytest.mark.unit
-def test_should_execute_successfully_a_empty_controller_without_input_parameters_and_logger():
+def test_should_execute_successfully_a_empty_controller_without_input_parameters_and_logger(
+    given_any_petisco
+):
     @controller_handler()
     def my_controller(headers=None):
         return Success("Hello Petisco")
@@ -203,7 +205,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 
 @pytest.mark.unit
 def test_should_execute_successfully_a_filtered_object_by_blacklist(
-    given_any_info_id, given_headers_provider
+    given_any_petisco, given_any_info_id, given_headers_provider
 ):
 
     logger = FakeLogger()
@@ -242,7 +244,7 @@ def test_should_execute_successfully_a_filtered_object_by_blacklist(
 
 @pytest.mark.unit
 def test_should_log_an_exception_occurred_on_the_controller(
-    given_any_info_id, given_headers_provider
+    given_any_petisco, given_any_info_id, given_headers_provider
 ):
 
     logger = FakeLogger()
@@ -281,7 +283,7 @@ def test_should_log_an_exception_occurred_on_the_controller(
 
 @pytest.mark.unit
 def test_should_notify_an_exception_occurred_on_the_controller(
-    given_any_info_id, given_headers_provider
+    given_any_petisco, given_any_info_id, given_headers_provider
 ):
 
     notifier = FakeNotifier()
@@ -306,7 +308,7 @@ def test_should_notify_an_exception_occurred_on_the_controller(
 
 @pytest.mark.unit
 def test_should_notify_a_critical_error_on_the_controller(
-    given_any_info_id, given_headers_provider
+    given_any_petisco, given_any_info_id, given_headers_provider
 ):
 
     notifier = FakeNotifier()

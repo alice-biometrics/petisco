@@ -59,6 +59,7 @@ setup(
         "petisco/logger",
         "petisco/persistence",
         "petisco/persistence/sqlalchemy",
+        "petisco/persistence/pymongo",
         "petisco/security/token_decoder",
         "petisco/security/token_manager",
         "petisco/tools",
@@ -81,5 +82,6 @@ setup(
         "gunicorn": ["gunicorn", "json-logging-py==0.2"],
         "fixtures": ["pytest"],
         "slack": ["slackclient"],
+        "pymongo": ["pymongo==3.11.0"],
     },
 )

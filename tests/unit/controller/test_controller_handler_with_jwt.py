@@ -9,6 +9,7 @@ from tests.unit.mocks.log_message_mother import LogMessageMother
 
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_without_user(
+    given_any_petisco,
     given_any_token_type,
     given_any_headers_provider_with_correlation_id,
     given_any_client_id,
@@ -58,6 +59,7 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
 
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_with_user(
+    given_any_petisco,
     given_any_token_type_with_user,
     given_headers_provider,
     given_auth_token_headers_creator,
@@ -121,6 +123,7 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
 
 @pytest.mark.unit
 def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_jwt_token(
+    given_any_petisco,
     given_other_token_type,
     given_any_info_id,
     given_headers_provider,
@@ -172,6 +175,7 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
 
 @pytest.mark.unit
 def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_token_but_missing_user(
+    given_any_petisco,
     given_any_token_type,
     given_headers_provider,
     given_auth_token_headers_creator,

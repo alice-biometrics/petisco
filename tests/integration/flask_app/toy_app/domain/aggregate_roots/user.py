@@ -17,3 +17,10 @@ class User(AggregateRoot):
         user_created = UserCreated(name=name).add_info_id(info_id)
         user.record(user_created)
         return user
+
+    def to_dict(self):
+        return {
+            "user_id": self.user_id.value,
+            "client_id": self.client_id.value,
+            "name": self.name.value,
+        }

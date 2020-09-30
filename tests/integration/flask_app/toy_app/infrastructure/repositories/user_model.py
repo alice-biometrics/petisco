@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from petisco.persistence.sqlalchemy.sqlalchemy_persistence import SqlAlchemyPersistence
 
-Base = SqlAlchemyPersistence.get_instance().base
+Base = SqlAlchemyPersistence.get_instance().sources["petisco"]["base"]
 
 
 class UserModel(Base):

@@ -257,6 +257,24 @@ try:
 except (RuntimeError, ImportError):
     slack = []
 
+# PyMongo
+try:
+    from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
+    from petisco.persistence.pymongo.pymongo_persistence_config import (
+        PyMongoPersistenceConfig,
+    )
+    from petisco.persistence.pymongo.pymongo_persistence_connector import (
+        PyMongoPersistenceConnector,
+    )
+
+    pymongo = [
+        "PyMongoPersistence",
+        "PyMongoPersistenceConfig",
+        "PyMongoPersistenceConnector",
+    ]
+except (RuntimeError, ImportError):
+    pymongo = []
+
 __all__ = (
     classes
     + controllers_and_use_cases
@@ -265,4 +283,5 @@ __all__ = (
     + sqlalchemy
     + rabbitmq
     + slack
+    + pymongo
 )

@@ -103,3 +103,11 @@ def test_should_raise_exception_if_service_not_exist(petisco_yml_path):
     petisco = Petisco.from_filename(filename)
     with pytest.raises(ValueError):
         petisco.get_service("repo")
+
+
+@pytest.mark.unit
+def test_should_check_if_given_any_petisco_fixture_is_working_as_expected(
+    given_any_petisco
+):
+    assert given_any_petisco.app_name == "petisco"
+    assert given_any_petisco.app_version == "1.0.0"

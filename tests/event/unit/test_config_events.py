@@ -5,22 +5,23 @@ from petisco.event.shared.domain.config_events import ConfigEvents
 
 @pytest.fixture
 def given_valid_event_config():
-    """
-    {'events': {'message_broker': 'rabbitmq', 'organization': 'alice', 'service': 'petisco', 'subscribers': {'UserCreated': {'version': 1, 'handlers': 'tests.application.callable_functions.handlers.send_mail_handler'}, 'UserUpdated': {'version': 1, 'handlers': ['tests.application.callable_functions.handlers.send_mail_handler', 'tests.application.callable_functions.handlers.send_sms_handler']}}}}
-    :return:
-    """
     return {
         "events": {
-            "UserCreated": {
-                "version": 1,
-                "handlers": "tests.application.handlers.send_mail_handler",
-            },
-            "UserUpdated": {
-                "version": 1,
-                "handlers": [
-                    "tests.application.handlers.send_mail_handler",
-                    "tests.application.handlers.send_sms_handler",
-                ],
+            "message_broker": "not_implemented",
+            "organization": "alice",
+            "service": "petisco",
+            "subscribers": {
+                "UserCreated": {
+                    "version": 1,
+                    "handlers": "tests.application.callable_functions.handlers.send_mail_handler",
+                },
+                "UserUpdated": {
+                    "version": 1,
+                    "handlers": [
+                        "tests.application.callable_functions.handlers.send_mail_handler",
+                        "tests.application.callable_functions.handlers.send_sms_handler",
+                    ],
+                },
             },
         }
     }
@@ -30,13 +31,21 @@ def given_valid_event_config():
 def given_invalid_handlers_on_event_config():
     return {
         "events": {
-            "UserCreated": {"version": 1, "handlers": "not.valid.send_mail_handler"},
-            "UserUpdated": {
-                "version": 1,
-                "handlers": [
-                    "tests.application.handlers.send_mail_handler",
-                    "tests.application.handlers.send_sms_handler",
-                ],
+            "message_broker": "not_implemented",
+            "organization": "alice",
+            "service": "petisco",
+            "subscribers": {
+                "UserCreated": {
+                    "version": 1,
+                    "handlers": "not.valid.handlers.send_mail_handler",
+                },
+                "UserUpdated": {
+                    "version": 1,
+                    "handlers": [
+                        "tests.application.callable_functions.handlers.send_mail_handler",
+                        "tests.application.callable_functions.handlers.send_sms_handler",
+                    ],
+                },
             },
         }
     }
