@@ -41,7 +41,13 @@ def test_should_publish_consume_and_retry_event_from_rabbitmq_when_fail_consumer
         return result
 
     event = EventUserCreatedMother.random()
-    subscribers = [EventSubscriber(event, [assert_consumer])]
+    subscribers = [
+        EventSubscriber(
+            event_name=event.event_name,
+            event_version=event.event_version,
+            handlers=[assert_consumer],
+        )
+    ]
 
     configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
     configurer.configure_subscribers(subscribers)
@@ -50,7 +56,7 @@ def test_should_publish_consume_and_retry_event_from_rabbitmq_when_fail_consumer
     bus.publish(event)
 
     consumer = RabbitMqEventConsumerMother.with_max_retries(max_retries_allowed)
-    consumer.consume(subscribers)
+    consumer.consume_subscribers(subscribers)
     consumer.start()
 
     sleep(1.0)
@@ -80,7 +86,13 @@ def test_should_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq(
         return isSuccess
 
     event = EventUserCreatedMother.random()
-    subscribers = [EventSubscriber(event, [assert_consumer_1, assert_consumer_2])]
+    subscribers = [
+        EventSubscriber(
+            event_name=event.event_name,
+            event_version=event.event_version,
+            handlers=[assert_consumer_1, assert_consumer_2],
+        )
+    ]
 
     configurer = RabbitMqEventConfigurerMother.default()
     configurer.configure_subscribers(subscribers)
@@ -89,7 +101,7 @@ def test_should_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq(
     bus.publish(event)
 
     consumer = RabbitMqEventConsumerMother.default()
-    consumer.consume(subscribers)
+    consumer.consume_subscribers(subscribers)
     consumer.start()
 
     sleep(1.0)
@@ -138,7 +150,13 @@ def test_should_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq_
         return result
 
     event = EventUserCreatedMother.random()
-    subscribers = [EventSubscriber(event, [assert_consumer_1, assert_consumer_2])]
+    subscribers = [
+        EventSubscriber(
+            event_name=event.event_name,
+            event_version=event.event_version,
+            handlers=[assert_consumer_1, assert_consumer_2],
+        )
+    ]
 
     configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
     configurer.configure_subscribers(subscribers)
@@ -147,10 +165,10 @@ def test_should_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq_
     bus.publish(event)
 
     consumer = RabbitMqEventConsumerMother.with_max_retries(max_retries_allowed)
-    consumer.consume(subscribers)
+    consumer.consume_subscribers(subscribers)
     consumer.start()
 
-    sleep(2.0)
+    sleep(1.0)
 
     consumer.stop()
     configurer.clear()
@@ -196,7 +214,13 @@ def test_should_publish_consume_and_retry_event_not_affecting_store_queue_from_r
         return result
 
     event = EventUserCreatedMother.random()
-    subscribers = [EventSubscriber(event, [assert_consumer_handler])]
+    subscribers = [
+        EventSubscriber(
+            event_name=event.event_name,
+            event_version=event.event_version,
+            handlers=[assert_consumer_handler],
+        )
+    ]
 
     configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
     configurer.configure_subscribers(subscribers)
@@ -205,12 +229,12 @@ def test_should_publish_consume_and_retry_event_not_affecting_store_queue_from_r
     bus.publish(event)
 
     consumer = RabbitMqEventConsumerMother.with_max_retries(max_retries_allowed)
-    consumer.consume(subscribers)
+    consumer.consume_subscribers(subscribers)
     consumer.consume_queue("store", assert_consumer_event_store)
 
     consumer.start()
 
-    sleep(2.0)
+    sleep(1.0)
 
     consumer.stop()
     configurer.clear()
@@ -240,7 +264,11 @@ def test_should_publish_consume_retry_and_send_to_dead_letter_event_from_rabbitm
         return isFailure
 
     event = EventUserCreatedMother.random()
-    subscriber = EventSubscriber(event, [assert_consumer])
+    subscriber = EventSubscriber(
+        event_name=event.event_name,
+        event_version=event.event_version,
+        handlers=[assert_consumer],
+    )
     subscribers = [subscriber]
 
     configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
@@ -250,7 +278,7 @@ def test_should_publish_consume_retry_and_send_to_dead_letter_event_from_rabbitm
     bus.publish(event)
 
     consumer = RabbitMqEventConsumerMother.with_max_retries(max_retries_allowed)
-    consumer.consume(subscribers)
+    consumer.consume_subscribers(subscribers)
 
     def dead_letter_consumer(event: Event) -> Result[bool, Error]:
         spy_dead_letter.append(event)
@@ -328,7 +356,11 @@ def test_should_publish_consume_and_retry_event_not_affecting_other_queue_includ
 
     event = EventUserCreatedMother.random()
     subscribers = [
-        EventSubscriber(event, [assert_consumer_handler_1, assert_consumer_handler_2])
+        EventSubscriber(
+            event_name=event.event_name,
+            event_version=event.event_version,
+            handlers=[assert_consumer_handler_1, assert_consumer_handler_2],
+        )
     ]
 
     configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
@@ -338,7 +370,7 @@ def test_should_publish_consume_and_retry_event_not_affecting_other_queue_includ
     bus.publish(event)
 
     consumer = RabbitMqEventConsumerMother.with_max_retries(max_retries_allowed)
-    consumer.consume(subscribers)
+    consumer.consume_subscribers(subscribers)
     consumer.consume_store(assert_consumer_event_store)
 
     consumer.start()

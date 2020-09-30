@@ -5,13 +5,16 @@ from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
 
-
 from petisco.event.legacy.publisher.domain.interface_event_publisher import (
     IEventPublisher,
 )
+from petisco.event.shared.domain.config_events import ConfigEvents
 from petisco.event.shared.domain.service_deployed import ServiceDeployed
 from petisco.event.legacy.subscriber.domain.interface_event_subscriber import (
     IEventSubscriber,
+)
+from petisco.event.shared.infrastructure.configure_events_infrastructure import (
+    configure_events_infrastructure,
 )
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import INFO, ILogger
@@ -100,6 +103,25 @@ class Petisco(metaclass=Singleton):
         config = Config.from_filename(filename).unwrap_or_throw()
 
         return Petisco(config=config)
+
+    def configure_events(self, filename: str):
+        """
+        Parameters
+        ----------
+        filename
+            YAML-based event management configuration file (default petisco.events.yml)
+        """
+        config_events = ConfigEvents.from_filename(filename).unwrap_or_throw()
+        self.event_bus, self.event_configurer, self.event_consumer = configure_events_infrastructure(
+            config_events
+        )
+
+        self.event_configurer.configure_subscribers(config_events.event_subscribers)
+        self.event_consumer.consume_subscribers(config_events.event_subscribers)
+        self.event_consumer.start()
+
+    def stop_consuming_events(self):
+        self.event_consumer.stop()
 
     def publish_deploy_event(self):
         if self.config.config_events.publish_deploy_event:
@@ -300,6 +322,10 @@ class Petisco(metaclass=Singleton):
         )
 
         return session_scope
+
+    @staticmethod
+    def get_event_bus():
+        return Petisco.get_instance().event_bus
 
     @staticmethod
     def get_event_publisher():

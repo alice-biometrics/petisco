@@ -23,3 +23,7 @@ class IEventConfigurer:
     @abstractmethod
     def configure_event(self, event: Event):
         raise NotImplementedError
+
+    @abstractmethod
+    def clear(self):
+        raise NotImplementedError

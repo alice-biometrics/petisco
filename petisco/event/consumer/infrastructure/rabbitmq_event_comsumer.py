@@ -13,8 +13,8 @@ from petisco.event.consumer.domain.interface_event_consumer import IEventConsume
 from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_exchange_name_formatter import (
     RabbitMqExchangeNameFormatter,
 )
-from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_queue_name_formatter import (
-    RabbitMqQueueNameFormatter,
+from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_event_subscriber_queue_name_formatter import (
+    RabbitMqEventSubscriberQueueNameFormatter,
 )
 from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
     RabbitMqConnector,
@@ -50,38 +50,26 @@ class RabbitMqEventConsumer(IEventConsumer):
     def _start_consuming(self):
         self._channel.start_consuming()
 
-    def consume(self, subscribers: List[EventSubscriber]):
+    def consume_subscribers(self, subscribers: List[EventSubscriber]):
         for subscriber in subscribers:
-            queue_name = RabbitMqQueueNameFormatter.format(
-                subscriber.event, exchange_name=self.exchange_name
+            queue_name = RabbitMqEventSubscriberQueueNameFormatter.format(
+                subscriber, exchange_name=self.exchange_name
             )
-            # channel_name = f"{self.exchange_name}.{queue_name}"
-            # channel_name = self._get_channel_name(subscriber)
-            # self._channels[channel_name] = self.connector.get_channel(
-            #     self.exchange_name
-            # )
             for handler in subscriber.handlers:
                 self._channel.basic_consume(
                     queue=f"{queue_name}.{handler.__name__}",
                     on_message_callback=self.consumer(handler),
                 )
 
-            # self._consumers.append(channel_name)
-
     def consume_dead_letter(self, subscriber: EventSubscriber, handler: Callable):
-        queue_name = RabbitMqQueueNameFormatter.format_dead_letter(
-            subscriber.event, exchange_name=self.exchange_name
+        queue_name = RabbitMqEventSubscriberQueueNameFormatter.format_dead_letter(
+            subscriber, exchange_name=self.exchange_name
         )
         for handler_name in subscriber.get_handlers_names():
-            # channel_name = f"{self.exchange_name}.{queue_name}.{handler_name}"
-            # self._channels[channel_name] = self.connector.get_channel(
-            #     self.exchange_name
-            # )
             self._channel.basic_consume(
                 queue=f"{queue_name}.{handler_name}",
                 on_message_callback=self.consumer(handler),
             )
-            # self._consumers.append(channel_name)
 
     def consume_store(self, handler: Callable):
         is_store = True

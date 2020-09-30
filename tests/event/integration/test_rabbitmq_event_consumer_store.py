@@ -40,7 +40,7 @@ def test_should_publish_consume_from_store_queue_from_rabbitmq():
     consumer.consume_store(assert_consumer_event_store)
     consumer.start()
 
-    sleep(2.0)
+    sleep(1.0)
     consumer.stop()
     configurer.clear()
 
@@ -121,7 +121,13 @@ def test_should_publish_consume_and_retry_from_store_queue_not_affecting_other_q
         return isSuccess
 
     event = EventUserCreatedMother.random()
-    subscribers = [EventSubscriber(event, [assert_consumer_handler])]
+    subscribers = [
+        EventSubscriber(
+            event_name=event.event_name,
+            event_version=event.event_version,
+            handlers=[assert_consumer_handler],
+        )
+    ]
 
     configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
     configurer.configure_subscribers(subscribers)
@@ -130,7 +136,7 @@ def test_should_publish_consume_and_retry_from_store_queue_not_affecting_other_q
     bus.publish(event)
 
     consumer = RabbitMqEventConsumerMother.with_max_retries(max_retries_allowed)
-    consumer.consume(subscribers)
+    consumer.consume_subscribers(subscribers)
     consumer.consume_store(assert_consumer_event_store)
 
     consumer.start()
@@ -149,3 +155,48 @@ def test_should_publish_consume_and_retry_from_store_queue_not_affecting_other_q
     spy_consumer_handler.assert_number_unique_events(1)
     spy_consumer_handler.assert_first_event(event)
     spy_consumer_handler.assert_count_by_event_id(event.event_id, 1)
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
+@pytest.mark.parametrize(
+    "max_retries_allowed,simulated_results",
+    [
+        (1, [isFailure, isSuccess, isSuccess]),
+        (2, [isFailure, isFailure, isSuccess, isSuccess]),
+        (3, [isFailure, isFailure, isFailure, isSuccess, isSuccess]),
+        (4, [isFailure, isFailure, isFailure, isFailure, isSuccess, isSuccess]),
+    ],
+)
+def test_should_publish_two_event_and_consume_from_store_queue_from_rabbitmq(
+    max_retries_allowed, simulated_results
+):
+
+    spy = SpyEvents()
+
+    def assert_consumer_event_store(event: Event) -> Result[bool, Error]:
+        spy.append(event)
+        result = simulated_results.pop(0)
+        return result
+
+    event_1 = EventUserCreatedMother.random()
+    event_2 = EventUserCreatedMother.random()
+
+    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer.configure_event(event_1)
+    configurer.configure_event(event_2)
+
+    bus = RabbitMqEventBusMother.default()
+    bus.publish(event_1)
+    bus.publish(event_2)
+
+    consumer = RabbitMqEventConsumerMother.with_max_retries(max_retries_allowed)
+
+    consumer.consume_store(assert_consumer_event_store)
+    consumer.start()
+
+    sleep(1.0)
+    consumer.stop()
+    configurer.clear()
+
+    spy.assert_number_unique_events(2)

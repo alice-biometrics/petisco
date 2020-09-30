@@ -36,9 +36,13 @@ def offer_promotion_handler(event: Event) -> Result[bool, Error]:
     return isSuccess  # if fails, returns isFailure
 
 
-event = UserCreated.random()
-
 subscribers = [
-    EventSubscriber(event, [send_mail_handler, send_sms_handler]),
-    EventSubscriber(event, [offer_promotion_handler]),
+    EventSubscriber(
+        event_name="UserCreated",
+        event_version=1,
+        handlers=[send_mail_handler, send_sms_handler],
+    ),
+    EventSubscriber(
+        event_name="UserCreated", event_version=1, handlers=[offer_promotion_handler]
+    ),
 ]

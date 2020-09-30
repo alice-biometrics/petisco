@@ -1,7 +1,7 @@
 from petisco.event.shared.domain.event import Event
 
 
-class RabbitMqQueueNameFormatter:
+class RabbitMqEventQueueNameFormatter:
     @staticmethod
     def format(event: Event, exchange_name: str = None) -> str:
         event_name = event.event_name.replace(".", "_")
@@ -10,10 +10,10 @@ class RabbitMqQueueNameFormatter:
 
     @staticmethod
     def format_retry(event: Event, exchange_name: str = None) -> str:
-        queue_name = RabbitMqQueueNameFormatter.format(event, exchange_name)
+        queue_name = RabbitMqEventQueueNameFormatter.format(event, exchange_name)
         return f"retry.{queue_name}"
 
     @staticmethod
     def format_dead_letter(event: Event, exchange_name: str = None) -> str:
-        queue_name = RabbitMqQueueNameFormatter.format(event, exchange_name)
+        queue_name = RabbitMqEventQueueNameFormatter.format(event, exchange_name)
         return f"dead_letter.{queue_name}"

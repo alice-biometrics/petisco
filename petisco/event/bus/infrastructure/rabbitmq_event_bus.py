@@ -7,8 +7,8 @@ from petisco.event.bus.domain.interface_event_bus import IEventBus
 from petisco.event.configurer.infrastructure.rabbitmq_configurer import (
     RabbitMqEventConfigurer,
 )
-from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_queue_name_formatter import (
-    RabbitMqQueueNameFormatter,
+from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_event_queue_name_formatter import (
+    RabbitMqEventQueueNameFormatter,
 )
 from petisco.event.shared.domain.event import Event
 
@@ -41,7 +41,7 @@ class RabbitMqEventBus(IEventBus):
         try:
             channel = self.connector.get_channel(self.rabbitmq_key)
 
-            routing_key = RabbitMqQueueNameFormatter.format(
+            routing_key = RabbitMqEventQueueNameFormatter.format(
                 event, exchange_name=self.exchange_name
             )
 

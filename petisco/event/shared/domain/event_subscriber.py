@@ -2,12 +2,11 @@ from typing import List, Callable
 
 from dataclasses import dataclass
 
-from petisco.event.shared.domain.event import Event
-
 
 @dataclass
 class EventSubscriber:
-    event: Event
+    event_name: str
+    event_version: int
     handlers: List[Callable]
 
     def get_handlers_names(self) -> List[str]:
