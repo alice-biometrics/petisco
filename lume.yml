@@ -16,6 +16,8 @@ steps:
     - flake8 petisco
   test:
     run: pytest
+  test-end2end:
+    run: pytest -c pytest.end2end.ini
   test-with-rabbitmq:
     envs:
       LUME_WAIT_HTTP_200_NUM_MAX_ATTEMPTS: 30

@@ -12,7 +12,6 @@ def petisco_sql_database(request):
         persistence_source_name = "petisco"
     else:
         persistence_source_name = persistence_source_marker.args[0]
-
     persistence_source_config = Petisco.get_instance().persistence_sources[
         persistence_source_name
     ]

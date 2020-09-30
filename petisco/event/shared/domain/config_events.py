@@ -53,6 +53,11 @@ class ConfigEvents:
     message_broker: Optional[str] = "not_implemented"
     event_subscribers: Optional[List[EventSubscriber]] = None
 
+    def __post_init__(self):
+        message_broker = os.environ.get("PETISCO_EVENT_MESSAGE_BROKER")
+        if message_broker:
+            self.message_broker = message_broker
+
     @staticmethod
     @meiga
     def from_filename(filename: str) -> Result[Any, Error]:
