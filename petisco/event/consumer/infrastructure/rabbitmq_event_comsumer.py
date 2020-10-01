@@ -28,12 +28,14 @@ class RabbitMqEventConsumer(IEventConsumer):
         organization: str,
         service: str,
         max_retries: int,
+        verbose: bool = False,
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"consumer-{self.exchange_name}"
         self.max_retries = max_retries
         self._channel = self.connector.get_channel(self.rabbitmq_key)
+        self.verbose = verbose
 
     def start(self):
         if not self._channel:
@@ -85,18 +87,30 @@ class RabbitMqEventConsumer(IEventConsumer):
         )
 
     def consumer(self, handler: Callable, is_store: bool = False) -> Callable:
+        def print_received_message(
+            method: Basic.Deliver, properties: BasicProperties, body: bytes
+        ):
+            if self.verbose:
+                print(
+                    "\n#####################################################################################################################"
+                )
+                print(" [x] Received %r" % (body,))
+                print(" [x] Properties %r" % (properties,))
+                print(" [x] method %r" % (method,))
+
+        def print_separator():
+            if self.verbose:
+                print(
+                    "#####################################################################################################################\n"
+                )
+
         def rabbitmq_consumer(
             ch: BlockingChannel,
             method: Basic.Deliver,
             properties: BasicProperties,
             body: bytes,
         ):
-            print(
-                "\n#####################################################################################################################"
-            )
-            print(" [x] Received %r" % (body,))
-            print(" [x] Properties %r" % (properties,))
-            print(" [x] method %r" % (method,))
+            print_received_message(method, properties, body)
 
             try:
                 event = Event.from_json(body)
@@ -117,9 +131,7 @@ class RabbitMqEventConsumer(IEventConsumer):
             else:
                 ch.basic_ack(delivery_tag=method.delivery_tag)
 
-            print(
-                "#####################################################################################################################\n"
-            )
+            print_separator()
 
         return rabbitmq_consumer
 
@@ -162,7 +174,8 @@ class RabbitMqEventConsumer(IEventConsumer):
         body: bytes,
         is_store: bool = False,
     ):
-        print(" [>] send_to_retry")
+        if self.verbose:
+            print(" [>] send_to_retry")
         exchange_name = RabbitMqExchangeNameFormatter.retry(self.exchange_name)
 
         routing_key = method.routing_key
@@ -182,7 +195,8 @@ class RabbitMqEventConsumer(IEventConsumer):
         properties: BasicProperties,
         body: bytes,
     ):
-        print(" [>] send_to_dead_letter")
+        if self.verbose:
+            print(" [>] send_to_dead_letter")
         exchange_name = RabbitMqExchangeNameFormatter.dead_letter(self.exchange_name)
         routing_key = self._get_routing_key(method.routing_key, "dead_letter.")
         self.send_message_to(exchange_name, ch, routing_key, properties, body)
@@ -200,9 +214,10 @@ class RabbitMqEventConsumer(IEventConsumer):
             properties.headers["redelivery_count"] = redelivery_count + 1
         else:
             properties.headers = {"redelivery_count": 1}
-
-        print(f" [>] send: [{exchange_name} |{routing_key}] -> {properties.headers}")
-        # ch.basic_reject(delivery_tag=method.delivery_tag, requeue=False)
+        if self.verbose:
+            print(
+                f" [>] send: [{exchange_name} |{routing_key}] -> {properties.headers}"
+            )
 
         ch.basic_publish(
             exchange=exchange_name,

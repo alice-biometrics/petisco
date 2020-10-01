@@ -47,6 +47,3 @@ jobs:
     - name: Test
       run: |
         lume -build -test -test-command-line
-    - name: Test end2end
-      run: |
-        lume -test-end2end

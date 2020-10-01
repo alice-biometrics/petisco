@@ -6,6 +6,7 @@ from tests.modules.event.mothers.defaults import (
     DEFAULT_ORGANIZATION,
     DEFAULT_SERVICE,
     DEFAULT_MAX_RETRIES,
+    DEFAULT_VERBOSE,
 )
 
 
@@ -14,12 +15,20 @@ class RabbitMqEventConsumerMother:
     def default(connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqEventConsumer(
-            connector, DEFAULT_ORGANIZATION, DEFAULT_SERVICE, DEFAULT_MAX_RETRIES
+            connector,
+            DEFAULT_ORGANIZATION,
+            DEFAULT_SERVICE,
+            DEFAULT_MAX_RETRIES,
+            DEFAULT_VERBOSE,
         )
 
     @staticmethod
     def with_max_retries(max_retries: int, connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqEventConsumer(
-            connector, DEFAULT_ORGANIZATION, DEFAULT_SERVICE, max_retries
+            connector,
+            DEFAULT_ORGANIZATION,
+            DEFAULT_SERVICE,
+            max_retries,
+            DEFAULT_VERBOSE,
         )
