@@ -17,6 +17,8 @@ steps:
   test:
     run: pytest
   test-end2end:
+    envs:
+      PETISCO_END2END_TESTS: True
     run: pytest -c pytest.end2end.ini
   test-with-rabbitmq:
     envs:
