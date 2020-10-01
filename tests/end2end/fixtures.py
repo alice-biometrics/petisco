@@ -58,6 +58,7 @@ def given_petisco_flask_app_with_mongodb(petisco_yml_path_flask_app):
     )
     yield petisco
     Petisco.clear()
+    Petisco.stop()
 
 
 @pytest.fixture

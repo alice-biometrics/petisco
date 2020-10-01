@@ -5,6 +5,15 @@ from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
 
+from petisco.event.bus.infrastructure.not_implemented_event_bus import (
+    NotImplementedEventBus,
+)
+from petisco.event.configurer.infrastructure.not_implemented_configurer import (
+    NotImplementedEventConfigurer,
+)
+from petisco.event.consumer.infrastructure.not_implemented_event_comsumer import (
+    NotImplementedEventConsumer,
+)
 from petisco.event.legacy.publisher.domain.interface_event_publisher import (
     IEventPublisher,
 )
@@ -70,7 +79,7 @@ class Petisco(metaclass=Singleton):
         }
         self.notifier = config.get_notifier()
         self._set_persistence()
-        self._set_events()
+        self._set_events_configuration()
         self.set_tasks()
         self.options = config.options
 
@@ -211,7 +220,13 @@ class Petisco(metaclass=Singleton):
 
             self.info["repositories"] = info_repositories
 
-    def _set_events(self):
+    def _set_events_configuration(self):
+        # New Approach
+        self.bus = NotImplementedEventBus()
+        self.configurer = NotImplementedEventConfigurer()
+        self.consumer = NotImplementedEventConsumer()
+
+        # Legacy Approach
         config_events = self.config.config_events
         if not config_events:
             return
@@ -267,6 +282,7 @@ class Petisco(metaclass=Singleton):
 
     def stop(self):
         self.event_subscriber.stop()
+        self.event_consumer.stop()
         self._unschedule_tasks()
 
     def _load_repositories(self, repositories_provider: Callable):
