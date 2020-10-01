@@ -16,7 +16,6 @@ on:
 
 jobs:
   ci:
-
     strategy:
       max-parallel: 4
       matrix:
@@ -48,8 +47,8 @@ jobs:
       run: |
         lume -build -test-with-rabbitmq -test-command-line
     - name: Test end2end
-        run: |
-          lume -test-end2end
+      run: |
+        lume -test-end2end
     - name: Check Installation (--no-binary)
       run: |
         pip install wheel

@@ -126,7 +126,7 @@ class Petisco(metaclass=Singleton):
         )
 
         self.event_configurer.configure_subscribers(config_events.event_subscribers)
-        self.event_consumer.consume_subscribers(config_events.event_subscribers)
+        self.event_consumer.add_subscribers(config_events.event_subscribers)
         self.event_consumer.start()
 
     def stop_consuming_events(self):

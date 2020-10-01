@@ -162,7 +162,7 @@ def send_mail_handler(event: Event) -> Result[bool, Error]:
 event = UserCreated(UserId.generate())
 subscribers = [EventSubscriber(event, [send_mail_handler])]  
 
-consumer.consume_subscribers(subscribers)
+consumer.add_subscribers(subscribers)
 consumer.start()
 ```
 

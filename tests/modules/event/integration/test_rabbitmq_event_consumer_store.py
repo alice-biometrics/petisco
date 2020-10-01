@@ -37,7 +37,7 @@ def test_should_publish_consume_from_store_queue_from_rabbitmq():
 
     consumer = RabbitMqEventConsumerMother.default()
 
-    consumer.consume_store(assert_consumer_event_store)
+    consumer.add_handler_on_store(assert_consumer_event_store)
     consumer.start()
 
     sleep(1.0)
@@ -80,7 +80,7 @@ def test_should_publish_consume_and_retry_from_store_queue_from_rabbitmq(
 
     consumer = RabbitMqEventConsumerMother.with_max_retries(max_retries_allowed)
 
-    consumer.consume_store(assert_consumer_event_store)
+    consumer.add_handler_on_store(assert_consumer_event_store)
     consumer.start()
 
     sleep(1.0)
@@ -136,8 +136,8 @@ def test_should_publish_consume_and_retry_from_store_queue_not_affecting_other_q
     bus.publish(event)
 
     consumer = RabbitMqEventConsumerMother.with_max_retries(max_retries_allowed)
-    consumer.consume_subscribers(subscribers)
-    consumer.consume_store(assert_consumer_event_store)
+    consumer.add_subscribers(subscribers)
+    consumer.add_handler_on_store(assert_consumer_event_store)
 
     consumer.start()
 
@@ -192,7 +192,7 @@ def test_should_publish_two_event_and_consume_from_store_queue_from_rabbitmq(
 
     consumer = RabbitMqEventConsumerMother.with_max_retries(max_retries_allowed)
 
-    consumer.consume_store(assert_consumer_event_store)
+    consumer.add_handler_on_store(assert_consumer_event_store)
     consumer.start()
 
     sleep(1.0)

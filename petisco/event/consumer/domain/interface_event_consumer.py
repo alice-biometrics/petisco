@@ -16,19 +16,21 @@ class IEventConsumer:
         return {"name": cls.__name__}
 
     @abstractmethod
-    def consume_subscribers(self, subscribers: List[EventSubscriber]):
+    def add_subscribers(self, subscribers: List[EventSubscriber]):
         raise NotImplementedError
 
     @abstractmethod
-    def consume_dead_letter(self, subscriber: EventSubscriber, handler: Callable):
+    def add_subscriber_on_dead_letter(
+        self, subscriber: EventSubscriber, handler: Callable
+    ):
         raise NotImplementedError
 
     @abstractmethod
-    def consume_store(self, handler: Callable):
+    def add_handler_on_store(self, handler: Callable):
         raise NotImplementedError
 
     @abstractmethod
-    def consume_queue(self, queue_name: str, handler: Callable):
+    def add_handler_on_queue(self, queue_name: str, handler: Callable):
         raise NotImplementedError
 
     @abstractmethod

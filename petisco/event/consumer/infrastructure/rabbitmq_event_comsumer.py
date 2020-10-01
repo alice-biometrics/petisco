@@ -50,7 +50,7 @@ class RabbitMqEventConsumer(IEventConsumer):
     def _start_consuming(self):
         self._channel.start_consuming()
 
-    def consume_subscribers(self, subscribers: List[EventSubscriber]):
+    def add_subscribers(self, subscribers: List[EventSubscriber]):
         for subscriber in subscribers:
             queue_name = RabbitMqEventSubscriberQueueNameFormatter.format(
                 subscriber, exchange_name=self.exchange_name
@@ -61,7 +61,9 @@ class RabbitMqEventConsumer(IEventConsumer):
                     on_message_callback=self.consumer(handler),
                 )
 
-    def consume_dead_letter(self, subscriber: EventSubscriber, handler: Callable):
+    def add_subscriber_on_dead_letter(
+        self, subscriber: EventSubscriber, handler: Callable
+    ):
         queue_name = RabbitMqEventSubscriberQueueNameFormatter.format_dead_letter(
             subscriber, exchange_name=self.exchange_name
         )
@@ -71,13 +73,13 @@ class RabbitMqEventConsumer(IEventConsumer):
                 on_message_callback=self.consumer(handler),
             )
 
-    def consume_store(self, handler: Callable):
+    def add_handler_on_store(self, handler: Callable):
         is_store = True
         self._channel.basic_consume(
             queue="store", on_message_callback=self.consumer(handler, is_store)
         )
 
-    def consume_queue(self, queue_name: str, handler: Callable):
+    def add_handler_on_queue(self, queue_name: str, handler: Callable):
         self._channel.basic_consume(
             queue=queue_name, on_message_callback=self.consumer(handler)
         )
