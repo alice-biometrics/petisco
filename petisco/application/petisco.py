@@ -171,6 +171,7 @@ class Petisco(metaclass=Singleton):
                     import_database_models_func = config_persistence.get_import_database_models_func(
                         config_key
                     )
+
                     config_value.config(import_database_models_func)
 
                     self._persistence_models[

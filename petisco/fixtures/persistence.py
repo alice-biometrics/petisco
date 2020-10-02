@@ -37,9 +37,10 @@ def petisco_sql_database(request):
         ]
         connection = f"sqlite:///{sql_database}"
         engine = create_engine(connection)
-        Base.metadata.create_all(engine)
-
-        print(f"CREATE DATABASE {connection}")
+        # Base.metadata.create_all(engine)
+        print(f"\nCREATE DATABASE {connection}")
+        ee = Petisco.get_instance()
+        print(ee)
 
         yield
 
@@ -49,5 +50,4 @@ def petisco_sql_database(request):
         Base.metadata.drop_all(bind=engine)
         os.remove(sql_database)
 
-        print(f"DELETE DATABASE {connection}")
-        print(f"REMOVE DATABASE {sql_database}")
+        print(f"\nDELETE DATABASE {connection}")

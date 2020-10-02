@@ -44,11 +44,21 @@ def given_petisco_flask_app(petisco_yml_path_flask_app):
     petisco.configure_events(petisco_yml_path_flask_app + "/petisco.events.yml")
     yield petisco
     Petisco.clear()
-    petisco.event_consumer.stop()
+    petisco.stop()
 
 
 @pytest.fixture
-def petisco_client_flask_app(given_petisco_flask_app, petisco_sql_database):
+def given_clear_database():
+    sql_database = os.environ.get("SQL_DATABASE")
+    if os.path.exists(sql_database):
+        os.remove(sql_database)
+    yield
+    if os.path.exists(sql_database):
+        os.remove(sql_database)
+
+
+@pytest.fixture
+def petisco_client_flask_app(given_clear_database, given_petisco_flask_app):
     app = given_petisco_flask_app.get_app()
     with app.app.test_client() as c:
         yield c

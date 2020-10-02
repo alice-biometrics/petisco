@@ -16,7 +16,8 @@ def session_scope(source: str):
     try:
         yield transactional_scope
         transactional_scope.commit()
-    except OperationalError:
+    except OperationalError as e:
+        print(e)
         transactional_scope.rollback()
         raise SqlAlchemyOperationalDatabaseError
     except Exception as e:

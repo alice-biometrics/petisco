@@ -1,3 +1,5 @@
+from time import sleep
+
 import pytest
 
 from petisco.domain.value_objects.user_id import UserId
@@ -18,10 +20,7 @@ from petisco.persistence.sqlalchemy.sqlalchemy_extension_is_installed import (
     reason="SQLAlchemy extension is not installed",
 )
 def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token(
-    petisco_client_flask_app,
-    petisco_sql_database,
-    given_auth_token_headers_creator,
-    given_any_name,
+    petisco_client_flask_app, given_auth_token_headers_creator, given_any_name
 ):
 
     headers = given_auth_token_headers_creator(type_token="ADMIN_TOKEN")
@@ -29,6 +28,9 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token(
     response = petisco_client_flask_app.post(
         "/petisco/user", headers=headers, data=dict(name=given_any_name.value)
     )
+
+    sleep(1.0)
+
     assert response.status_code == 200
 
 
@@ -41,10 +43,7 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token(
     reason="SQLAlchemy extension is not installed",
 )
 def test_should_return_401_when_call_a_entry_point_with_required_jwt_type_token(
-    petisco_client_flask_app,
-    petisco_sql_database,
-    given_auth_token_headers_creator,
-    given_any_name,
+    petisco_client_flask_app, given_auth_token_headers_creator, given_any_name
 ):
 
     headers = given_auth_token_headers_creator(type_token="INVALID_TOKEN")
@@ -71,6 +70,9 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token_
     response = petisco_client_flask_app.post(
         "/petisco/user", headers=headers, data=dict(name=given_any_name.value)
     )
+
+    sleep(1.0)
+
     assert response.status_code == 200
     user_id = response.json["user_id"]
 

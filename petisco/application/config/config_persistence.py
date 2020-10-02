@@ -1,4 +1,5 @@
 import importlib
+import sys
 from typing import Optional, Dict, Any, Callable, List
 
 from dataclasses import dataclass
@@ -49,9 +50,19 @@ class ConfigPersistence:
         return loaded_models
 
     def get_import_database_models_func(self, persistence_entry):
+        def _delete_module_if_already_imported(module_name: str):
+            # Important. SqlAlchemy needs models to be imported
+            # Base = SqlAlchemyPersistence.get_instance().sources["petisco"]["base"]
+            # If module is already imported and Base has not tables, Tables won't be imported.
+            # e.g len(Base.metadata.tables) == 0
+            # With this function we ensure that model can be imported to help SqlAlchemy loading models
+            if module_name in sys.modules:
+                del sys.modules[module_name]
+
         def _import_database_models_func():
             for name, model_string in self.configs[persistence_entry].models.items():
-                mod_name, model_name = model_string.rsplit(".", 1)
-                __import__(mod_name, fromlist=[model_name])
+                module_name, class_model_name = model_string.rsplit(".", 1)
+                _delete_module_if_already_imported(module_name)
+                importlib.import_module(module_name, class_model_name)
 
         return _import_database_models_func
