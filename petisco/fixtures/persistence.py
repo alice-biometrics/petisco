@@ -39,6 +39,8 @@ def petisco_sql_database(request):
         engine = create_engine(connection)
         Base.metadata.create_all(engine)
 
+        print(f"CREATE DATABASE {connection}")
+
         yield
 
         session = Session()
@@ -46,3 +48,6 @@ def petisco_sql_database(request):
         session.close()
         Base.metadata.drop_all(bind=engine)
         os.remove(sql_database)
+
+        print(f"DELETE DATABASE {connection}")
+        print(f"REMOVE DATABASE {sql_database}")

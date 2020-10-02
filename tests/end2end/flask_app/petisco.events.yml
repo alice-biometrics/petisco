@@ -5,9 +5,4 @@ events:
   subscribers:
     UserCreated:
       version: 1
-      handlers: tests.end2end.callable_functions.handlers.send_mail_handler
-    UserUpdated:
-      version: 1
-      handlers:
-      - tests.end2end.callable_functions.handlers.send_mail_handler
-      - tests.end2end.callable_functions.handlers.send_sms_handler
+      handlers: tests.end2end.flask_app.users_count.application.increase_user_count_on_user_created.increase_user_count_on_user_created

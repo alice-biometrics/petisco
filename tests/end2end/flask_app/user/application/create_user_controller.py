@@ -19,6 +19,7 @@ class GivenInputIsNotValidHttpError(HttpError):
 
 
 def error_handler(result: Result):
+    print(f"error_handler: {result}")
     domain_error = result.value
     if isinstance(domain_error, (GivenNameIsNotValidError, GivenInputIsNotValidError)):
         return GivenInputIsNotValidHttpError()

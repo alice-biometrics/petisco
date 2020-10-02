@@ -106,6 +106,22 @@ paths:
         401:
           description: Access token or API key is missing or invalid.
 
+  /users/count:
+    get:
+      summary: Get users count
+      operationId: tests.end2end.flask_app.users_count.application.get_users_count.get_users_count
+      security:
+        - BearerAuth: [ ]
+      responses:
+        200:
+          description: The information has been returned.
+          content:
+            application/json:
+              schema:
+                type: string
+        401:
+          description: Access token or API key is missing or invalid.
+
 
 servers:
   - url: 'https://apis.alicebiometrics.com/petisco'

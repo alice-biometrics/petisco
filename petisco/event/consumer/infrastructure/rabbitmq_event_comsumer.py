@@ -47,9 +47,6 @@ class RabbitMqEventConsumer(IEventConsumer):
         self._thread.start()
 
     def _start(self):
-        self._start_consuming()
-
-    def _start_consuming(self):
         self._channel.start_consuming()
 
     def add_subscribers(self, subscribers: List[EventSubscriber]):

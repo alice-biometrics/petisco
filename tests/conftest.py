@@ -6,8 +6,7 @@ from .fixtures import *
 from tests.modules.event.fixtures import *
 from tests.modules.unit.controller.fixtures import *
 
-
-if os.getenv("PETISCO_END2END_TESTS"):
+if "PETISCO_END2END_TESTS" in os.environ:
     from tests.end2end.fixtures import *
 
 

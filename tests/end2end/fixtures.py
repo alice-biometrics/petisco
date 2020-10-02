@@ -2,9 +2,8 @@ from petisco import Petisco
 import os
 import pytest
 
-from tests.end2end.flask_app import petisco_config
-
-petisco_config()
+# from tests.end2end.flask_app import petisco_config
+# petisco_config()
 
 username = os.getenv("MONGODB_USERNAME")
 password = os.getenv("MONGODB_PASSWORD")
@@ -30,21 +29,26 @@ def given_code_injection_name():
 
 @pytest.fixture
 def petisco_yml_path_flask_app():
-    return f"{os.path.dirname(os.path.abspath(__file__))}"
+    return f"{os.path.dirname(os.path.abspath(__file__))}/flask_app"
+
+
+@pytest.fixture
+def petisco_yml_path_end2end():
+    return f"{os.path.dirname(os.path.abspath(__file__))}/ymls"
 
 
 @pytest.fixture
 def given_petisco_flask_app(petisco_yml_path_flask_app):
     Petisco.clear()
-    petisco = Petisco.from_filename(
-        f"{petisco_yml_path_flask_app}/flask_app/petisco.yml"
-    )
+    petisco = Petisco.from_filename(f"{petisco_yml_path_flask_app}/petisco.yml")
+    petisco.configure_events(petisco_yml_path_flask_app + "/petisco.events.yml")
     yield petisco
     Petisco.clear()
+    petisco.event_consumer.stop()
 
 
 @pytest.fixture
-def petisco_client_flask_app(given_petisco_flask_app):
+def petisco_client_flask_app(given_petisco_flask_app, petisco_sql_database):
     app = given_petisco_flask_app.get_app()
     with app.app.test_client() as c:
         yield c
@@ -54,11 +58,12 @@ def petisco_client_flask_app(given_petisco_flask_app):
 def given_petisco_flask_app_with_mongodb(petisco_yml_path_flask_app):
     Petisco.clear()
     petisco = Petisco.from_filename(
-        f"{petisco_yml_path_flask_app}/flask_app/petisco_with_mongo.yml"
+        f"{petisco_yml_path_flask_app}/petisco_with_mongo.yml"
     )
+    petisco.configure_events(petisco_yml_path_flask_app + "/petisco.events.yml")
     yield petisco
     Petisco.clear()
-    Petisco.stop()
+    petisco.stop()
 
 
 @pytest.fixture

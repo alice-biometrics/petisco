@@ -27,21 +27,21 @@ def configure_events_infrastructure(config_events: ConfigEvents):
             RabbitMqEventConsumer,
         )
 
-        connector = RabbitMqConnector()
+        # connector = RabbitMqConnector()
         bus = RabbitMqEventBus(
-            connector=connector,
+            connector=RabbitMqConnector(),
             organization=config_events.organization,
             service=config_events.service,
         )
         configurer = RabbitMqEventConfigurer(
-            connector=connector,
+            connector=RabbitMqConnector(),
             organization=config_events.organization,
             service=config_events.service,
             use_store_queues=config_events.use_store_queues,
             retry_ttl=config_events.retry_ttl,
         )
         consumer = RabbitMqEventConsumer(
-            connector=connector,
+            connector=RabbitMqConnector(),
             organization=config_events.organization,
             service=config_events.service,
             max_retries=config_events.max_retries,

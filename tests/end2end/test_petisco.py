@@ -7,11 +7,9 @@ from petisco import Petisco
 
 
 @pytest.mark.end2end
-def test_should_load_petisco_from_yml(
-    petisco_yml_path_flask_app, given_petisco_version
-):
+def test_should_load_petisco_from_yml(petisco_yml_path_end2end, given_petisco_version):
 
-    filename = f"{petisco_yml_path_flask_app}/ymls/petisco.all.yml"
+    filename = f"{petisco_yml_path_end2end}/petisco.all.yml"
 
     expected_petisco_info = {
         "app_name": "toy-app",
@@ -19,7 +17,10 @@ def test_should_load_petisco_from_yml(
         "petisco_version": given_petisco_version,
         "environment": None,
         "services": {"sum": {"name": "SumExecutor"}},
-        "repositories": {"user": {"name": "SqlUserRepository"}},
+        "repositories": {
+            "user": {"name": "SqlUserRepository"},
+            "users_count": {"name": "SqlUsersCountRepository"},
+        },
         "event_publisher": {"name": "NotImplementedEventPublisher"},
         "event_subscriber": {"name": "NotImplementedEventSubscriber"},
         "tasks": {
@@ -41,9 +42,9 @@ def test_should_load_petisco_from_yml(
 
 
 @pytest.mark.end2end
-def test_should_load_petisco_from_yml_and_schedule_tasks(petisco_yml_path_flask_app):
+def test_should_load_petisco_from_yml_and_schedule_tasks(petisco_yml_path_end2end):
 
-    filename = f"{petisco_yml_path_flask_app}/ymls/petisco.all.yml"
+    filename = f"{petisco_yml_path_end2end}/petisco.all.yml"
 
     petisco = Petisco.from_filename(filename)
 
@@ -64,13 +65,13 @@ def test_should_load_petisco_from_yml_and_schedule_tasks(petisco_yml_path_flask_
     ],
 )
 def test_should_load_petisco_from_yml_and_check_logger_level(
-    logging_level, logging_level_num, petisco_yml_path_flask_app
+    logging_level, logging_level_num, petisco_yml_path_end2end
 ):
 
     Petisco.clear()
     os.environ["PETISCO_LOGGING_LEVEL"] = logging_level
 
-    filename = f"{petisco_yml_path_flask_app}/ymls/petisco.all.withlogging.yml"
+    filename = f"{petisco_yml_path_end2end}/petisco.all.withlogging.yml"
 
     petisco = Petisco.from_filename(filename)
 
@@ -83,23 +84,27 @@ def test_should_load_petisco_from_yml_and_check_logger_level(
 
 
 @pytest.mark.end2end
-def test_should_raise_exception_if_repository_not_exist(petisco_yml_path_flask_app):
+def test_should_raise_exception_if_repository_not_exist(petisco_yml_path_end2end):
 
-    filename = f"{petisco_yml_path_flask_app}/ymls/petisco.all.yml"
+    filename = f"{petisco_yml_path_end2end}/petisco.all.yml"
 
     petisco = Petisco.from_filename(filename)
     with pytest.raises(ValueError):
         petisco.get_repository("repo")
 
+    Petisco.clear()
+
 
 @pytest.mark.end2end
-def test_should_raise_exception_if_service_not_exist(petisco_yml_path_flask_app):
+def test_should_raise_exception_if_service_not_exist(petisco_yml_path_end2end):
 
-    filename = f"{petisco_yml_path_flask_app}/ymls/petisco.all.yml"
+    filename = f"{petisco_yml_path_end2end}/petisco.all.yml"
 
     petisco = Petisco.from_filename(filename)
     with pytest.raises(ValueError):
         petisco.get_service("repo")
+
+    Petisco.clear()
 
 
 @pytest.mark.end2end

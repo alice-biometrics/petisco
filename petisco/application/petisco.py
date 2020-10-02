@@ -127,10 +127,6 @@ class Petisco(metaclass=Singleton):
 
         self.event_configurer.configure_subscribers(config_events.event_subscribers)
         self.event_consumer.add_subscribers(config_events.event_subscribers)
-        self.event_consumer.start()
-
-    def stop_consuming_events(self):
-        self.event_consumer.stop()
 
     def publish_deploy_event(self):
         if self.config.config_events.publish_deploy_event:
@@ -138,6 +134,7 @@ class Petisco(metaclass=Singleton):
                 app_name=self.app_name, app_version=self.app_version
             )
             self.event_publisher.publish(event)
+            self.event_bus.publish(event)
 
     def notify_deploy(self):
         self.notifier.publish(
@@ -222,9 +219,9 @@ class Petisco(metaclass=Singleton):
 
     def _set_events_configuration(self):
         # New Approach
-        self.bus = NotImplementedEventBus()
-        self.configurer = NotImplementedEventConfigurer()
-        self.consumer = NotImplementedEventConsumer()
+        self.event_bus = NotImplementedEventBus()
+        self.event_configurer = NotImplementedEventConfigurer()
+        self.event_consumer = NotImplementedEventConsumer()
 
         # Legacy Approach
         config_events = self.config.config_events
@@ -262,9 +259,10 @@ class Petisco(metaclass=Singleton):
             )
 
     def _start(self):
-        self.event_subscriber.start()
-        self._schedule_tasks()
         self._set_services_and_repositories_from_providers()
+        self.event_subscriber.start()
+        self.event_consumer.start()
+        self._schedule_tasks()
         self._log_status()
         self.publish_deploy_event()
         self.notify_deploy()
@@ -318,7 +316,7 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def get_repository(key: str) -> IRepository:
         repositories = Petisco.get_instance().repositories
-        if not repositories:
+        if repositories is None:
             raise ValueError(
                 "Petisco: no repository has been declared. Please, add it to petisco.yml"
             )

@@ -40,6 +40,7 @@ class SqlUserRepository(IUserRepository):
             return Failure(UserAlreadyExistError(user.user_id))
 
         with self.session_scope("petisco") as session:
+
             user = self.UserModel(
                 client_id=user.client_id.value,
                 user_id=user.user_id.value,
