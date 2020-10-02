@@ -1,5 +1,5 @@
 from petisco.domain.base_object import BaseObject
-from petisco.events.event import Event, Events
+from petisco.event.shared.domain.event import Event, Events
 
 
 class AggregateRoot(BaseObject):

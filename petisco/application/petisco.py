@@ -5,10 +5,26 @@ from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
 
-
-from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
-from petisco.events.service_deployed import ServiceDeployed
-from petisco.events.subscriber.domain.interface_event_subscriber import IEventSubscriber
+from petisco.event.bus.infrastructure.not_implemented_event_bus import (
+    NotImplementedEventBus,
+)
+from petisco.event.configurer.infrastructure.not_implemented_configurer import (
+    NotImplementedEventConfigurer,
+)
+from petisco.event.consumer.infrastructure.not_implemented_event_comsumer import (
+    NotImplementedEventConsumer,
+)
+from petisco.event.legacy.publisher.domain.interface_event_publisher import (
+    IEventPublisher,
+)
+from petisco.event.shared.domain.config_events import ConfigEvents
+from petisco.event.shared.domain.service_deployed import ServiceDeployed
+from petisco.event.legacy.subscriber.domain.interface_event_subscriber import (
+    IEventSubscriber,
+)
+from petisco.event.shared.infrastructure.configure_events_infrastructure import (
+    configure_events_infrastructure,
+)
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import INFO, ILogger
 from petisco.logger.log_message import LogMessage
@@ -63,7 +79,7 @@ class Petisco(metaclass=Singleton):
         }
         self.notifier = config.get_notifier()
         self._set_persistence()
-        self._set_events()
+        self._set_events_configuration()
         self.set_tasks()
         self.options = config.options
 
@@ -97,12 +113,28 @@ class Petisco(metaclass=Singleton):
 
         return Petisco(config=config)
 
+    def configure_events(self, filename: str):
+        """
+        Parameters
+        ----------
+        filename
+            YAML-based event management configuration file (default petisco.events.yml)
+        """
+        config_events = ConfigEvents.from_filename(filename).unwrap_or_throw()
+        self.event_bus, self.event_configurer, self.event_consumer = configure_events_infrastructure(
+            config_events
+        )
+
+        self.event_configurer.configure_subscribers(config_events.event_subscribers)
+        self.event_consumer.add_subscribers(config_events.event_subscribers)
+
     def publish_deploy_event(self):
         if self.config.config_events.publish_deploy_event:
             event = ServiceDeployed(
                 app_name=self.app_name, app_version=self.app_version
             )
             self.event_publisher.publish(event)
+            self.event_bus.publish(event)
 
     def notify_deploy(self):
         self.notifier.publish(
@@ -115,7 +147,7 @@ class Petisco(metaclass=Singleton):
 
     def set_tasks(self):
         config_tasks = self.config.config_tasks
-        if config_tasks.tasks:
+        if config_tasks and config_tasks.tasks:
             self.info["tasks"] = {}
             for task_name, config_task in config_tasks.tasks.items():
                 self.info["tasks"][task_name] = config_task.to_dict()
@@ -133,12 +165,13 @@ class Petisco(metaclass=Singleton):
         self._persistence_models = {}
         self.persistence_sources = {}
         config_persistence = self.config.config_persistence
-        if config_persistence.configs:
+        if config_persistence and config_persistence.configs:
             for config_key, config_value in config_persistence.configs.items():
                 if config_value.type == "sql":
                     import_database_models_func = config_persistence.get_import_database_models_func(
                         config_key
                     )
+
                     config_value.config(import_database_models_func)
 
                     self._persistence_models[
@@ -185,7 +218,13 @@ class Petisco(metaclass=Singleton):
 
             self.info["repositories"] = info_repositories
 
-    def _set_events(self):
+    def _set_events_configuration(self):
+        # New Approach
+        self.event_bus = NotImplementedEventBus()
+        self.event_configurer = NotImplementedEventConfigurer()
+        self.event_consumer = NotImplementedEventConsumer()
+
+        # Legacy Approach
         config_events = self.config.config_events
         if not config_events:
             return
@@ -221,9 +260,10 @@ class Petisco(metaclass=Singleton):
             )
 
     def _start(self):
-        self.event_subscriber.start()
-        self._schedule_tasks()
         self._set_services_and_repositories_from_providers()
+        self.event_subscriber.start()
+        self.event_consumer.start()
+        self._schedule_tasks()
         self._log_status()
         self.publish_deploy_event()
         self.notify_deploy()
@@ -241,6 +281,7 @@ class Petisco(metaclass=Singleton):
 
     def stop(self):
         self.event_subscriber.stop()
+        self.event_consumer.stop()
         self._unschedule_tasks()
 
     def _load_repositories(self, repositories_provider: Callable):
@@ -276,7 +317,7 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def get_repository(key: str) -> IRepository:
         repositories = Petisco.get_instance().repositories
-        if not repositories:
+        if repositories is None:
             raise ValueError(
                 "Petisco: no repository has been declared. Please, add it to petisco.yml"
             )
@@ -309,6 +350,10 @@ class Petisco(metaclass=Singleton):
         )
 
         return session_scope
+
+    @staticmethod
+    def get_event_bus():
+        return Petisco.get_instance().event_bus
 
     @staticmethod
     def persistence_mongodb_database():

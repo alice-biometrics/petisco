@@ -1,0 +1,8 @@
+events:
+  message_broker: rabbitmq
+  organization: alice
+  service: petisco
+  subscribers:
+    UserCreated:
+      version: 1
+      handlers: tests.end2end.flask_app.users_count.application.increase_user_count_on_user_created.increase_user_count_on_user_created

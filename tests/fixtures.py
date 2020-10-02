@@ -1,7 +1,3 @@
-import os
-import string
-import random
-
 import pytest
 
 from petisco import Event, EventId, NotifierMessage, InfoId
@@ -27,45 +23,6 @@ class TrackedEventsSpy:
 
     def get_counter_by_event_id(self, event_id: EventId):
         return self.events.get(str(event_id), {}).get("counter", 0)
-
-
-@pytest.fixture
-def given_any_topic():
-    return "topic"
-
-
-@pytest.fixture
-def given_random_str() -> str:
-    letters = string.ascii_letters
-    return "".join(random.choice(letters) for i in range(5)).lower()
-
-
-@pytest.fixture
-def given_random_organization(given_random_str) -> str:
-    return f"acme-{given_random_str}"
-
-
-@pytest.fixture
-def given_random_service(given_random_str) -> str:
-    return f"service-{given_random_str}"
-
-
-@pytest.fixture
-def given_random_topic(given_random_str) -> str:
-    return f"topic-{given_random_str}"
-
-
-@pytest.fixture
-def given_a_short_message_ttl():
-
-    original_value = os.environ.get("RABBITMQ_MESSAGE_TTL")
-
-    os.environ["RABBITMQ_MESSAGE_TTL"] = "10"
-
-    yield
-
-    if original_value:
-        os.environ["RABBITMQ_MESSAGE_TTL"] = original_value
 
 
 @pytest.fixture

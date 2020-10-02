@@ -1,6 +1,6 @@
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 PACKAGE_NAME = "petisco"
@@ -33,26 +33,15 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
     ],
-    packages=[
+    packages=find_packages()
+    + [
         "petisco",
-        "petisco/application",
-        "petisco/application/config",
-        "petisco/application/config/events",
-        "petisco/application/cli",
         "petisco/controller",
         "petisco/controller/errors",
         "petisco/domain",
         "petisco/domain/value_objects",
         "petisco/domain/aggregate_roots",
         "petisco/domain/errors",
-        "petisco/events",
-        "petisco/events/rabbitmq",
-        "petisco/events/publisher",
-        "petisco/events/publisher/domain",
-        "petisco/events/publisher/infrastructure",
-        "petisco/events/subscriber",
-        "petisco/events/subscriber/domain",
-        "petisco/events/subscriber/infrastructure",
         "petisco/notifier",
         "petisco/notifier/config",
         "petisco/notifier/infrastructure",

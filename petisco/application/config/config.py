@@ -11,6 +11,9 @@ from petisco.application.config.config_persistence import ConfigPersistence
 from petisco.application.config.config_providers import ConfigProviders
 from petisco.notifier.config.config_notifier import ConfigNotifier
 from petisco.notifier.domain.interface_notifier import INotifier
+from petisco.notifier.infrastructure.not_implemented_notifier import (
+    NotImplementedNotifier,
+)
 from petisco.tasks.config.config_tasks import ConfigTasks
 from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import ILogger
@@ -155,6 +158,8 @@ class Config:
             )
 
     def get_notifier(self) -> INotifier:
+        if not self.config_notifier:
+            return NotImplementedNotifier()
         return self.config_notifier.provider()
 
     def get_application(self) -> IApplication:

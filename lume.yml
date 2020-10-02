@@ -16,6 +16,13 @@ steps:
     - flake8 petisco
   test:
     run: pytest
+  test-end2end:
+    envs:
+      PETISCO_END2END_TESTS: True
+      LUME_WAIT_HTTP_200_NUM_MAX_ATTEMPTS: 30
+    setup: docker run -d --rm --name petisco-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management && docker run -d  --rm --name petisco-mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=password123 mongo
+    wait_http_200: http://localhost:15672
+    run: pytest -c pytest.end2end.ini
   test-with-rabbitmq:
     envs:
       LUME_WAIT_HTTP_200_NUM_MAX_ATTEMPTS: 30

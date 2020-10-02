@@ -30,19 +30,6 @@ from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.value_objects.uuid import Uuid, InvalidUuidError
 from petisco.domain.value_objects.value_object import ValueObject
-from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
-from petisco.events.publisher.infrastructure.not_implemented_event_publisher import (
-    NotImplementedEventPublisher,
-)
-from petisco.events.routing_key import RoutingKey
-from petisco.events.subscriber.domain.config_event_subscriber import (
-    ConfigEventSubscriber,
-)
-from petisco.events.subscriber.domain.interface_event_subscriber import IEventSubscriber
-from petisco.events.subscriber.domain.subscriber_handler import subscriber_handler
-from petisco.events.subscriber.infrastructure.not_implemented_event_subscriber import (
-    NotImplementedEventSubscriber,
-)
 from petisco.frameworks.interface_application import IApplication
 from petisco.http.request import Request
 from petisco.http.request_errors import (
@@ -73,8 +60,30 @@ from petisco.use_case import UseCase
 from petisco.use_case import use_case_handler
 from petisco.controller.controller_handler import controller_handler
 from petisco.controller.errors.http_error import HttpError
-from petisco.events.event import Event, Events, unique_events
-from petisco.events.event_id import EventId, InvalidEventIdError
+
+from petisco.event.shared.domain.event import Event, Events, unique_events
+from petisco.event.shared.domain.event_id import EventId, InvalidEventIdError
+
+# Legacy Events
+from petisco.event.legacy.publisher.domain.interface_event_publisher import (
+    IEventPublisher,
+)
+from petisco.event.legacy.publisher.infrastructure.not_implemented_event_publisher import (
+    NotImplementedEventPublisher,
+)
+from petisco.event.legacy.routing_key import RoutingKey
+from petisco.event.legacy.subscriber.domain.config_event_subscriber import (
+    ConfigEventSubscriber,
+)
+from petisco.event.legacy.subscriber.domain.interface_event_subscriber import (
+    IEventSubscriber,
+)
+from petisco.event.legacy.subscriber.domain.subscriber_handler import subscriber_handler
+from petisco.event.legacy.subscriber.infrastructure.not_implemented_event_subscriber import (
+    NotImplementedEventSubscriber,
+)
+from petisco.event.shared.domain.event_subscriber import EventSubscriber
+
 
 classes = [
     "IService",
@@ -118,6 +127,7 @@ classes = [
     "EmptyValueObjectError",
     "ExceedLengthLimitValueObjectError",
     "NotReachMinimumValueObjectError",
+    "EventSubscriber",
     "subscriber_handler",
     "ConfigEventSubscriber",
     "IEventPublisher",
@@ -210,19 +220,31 @@ except (RuntimeError, ImportError):
 
 # RabbitMQ
 try:
-    from petisco.events.rabbitmq.rabbitmq_connector import RabbitMQConnector
+    from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
+        RabbitMqConnector,
+    )
+    from petisco.event.configurer.infrastructure.rabbitmq_configurer import (
+        RabbitMqEventConfigurer,
+    )
 
-    from petisco.events.publisher.infrastructure.rabbitmq_event_publisher import (
+    from petisco.event.consumer.infrastructure.rabbitmq_event_comsumer import (
+        RabbitMqEventConsumer,
+    )
+
+    # deprecated
+    from petisco.event.legacy.publisher.infrastructure.rabbitmq_event_publisher import (
         RabbitMQEventPublisher,
     )
-    from petisco.events.subscriber.infrastructure.rabbitmq_event_subscriber import (
+    from petisco.event.legacy.subscriber.infrastructure.rabbitmq_event_subscriber import (
         RabbitMQEventSubscriber,
     )
 
     rabbitmq = [
         "RabbitMQEventPublisher",
         "RabbitMQEventSubscriber",
-        "RabbitMQConnector",
+        "RabbitMqConnector",
+        "RabbitMqEventConfigurer",
+        "RabbitMqEventConsumer",
     ]
 except (RuntimeError, ImportError):
     rabbitmq = []

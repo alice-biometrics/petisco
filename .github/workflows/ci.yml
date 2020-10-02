@@ -16,12 +16,11 @@ on:
 
 jobs:
   ci:
-
     strategy:
       max-parallel: 4
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7] # 3.8 is not enable (waiting for new version of pika (https://github.com/pika/pika/pull/1254)
     runs-on: ${{matrix.os}}
 
     steps:
@@ -47,7 +46,9 @@ jobs:
     - name: Test
       run: |
         lume -build -test-with-rabbitmq -test-command-line
-
+    - name: Test end2end
+      run: |
+        lume -test-end2end
     - name: Check Installation (--no-binary)
       run: |
         pip install wheel

@@ -12,7 +12,6 @@ def petisco_sql_database(request):
         persistence_source_name = "petisco"
     else:
         persistence_source_name = persistence_source_marker.args[0]
-
     persistence_source_config = Petisco.get_instance().persistence_sources[
         persistence_source_name
     ]
@@ -38,7 +37,10 @@ def petisco_sql_database(request):
         ]
         connection = f"sqlite:///{sql_database}"
         engine = create_engine(connection)
-        Base.metadata.create_all(engine)
+        # Base.metadata.create_all(engine)
+        print(f"\nCREATE DATABASE {connection}")
+        ee = Petisco.get_instance()
+        print(ee)
 
         yield
 
@@ -47,3 +49,5 @@ def petisco_sql_database(request):
         session.close()
         Base.metadata.drop_all(bind=engine)
         os.remove(sql_database)
+
+        print(f"\nDELETE DATABASE {connection}")

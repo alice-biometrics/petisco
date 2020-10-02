@@ -122,4 +122,7 @@ def given_any_header_with_valid_token_with_user_id(
 
 @pytest.fixture
 def given_any_petisco():
-    return Petisco(config=Config(app_name="petisco", app_version="1.0.0"))
+    Petisco.clear()
+    petisco = Petisco(config=Config(app_name="petisco", app_version="1.0.0"))
+    yield petisco
+    Petisco.clear()

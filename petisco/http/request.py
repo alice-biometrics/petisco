@@ -78,7 +78,7 @@ class Request:
         try:
             if request == "GET":
                 response = requests.get(
-                    url=url, params=string_info, headers=headers, timeout=(5, 25),
+                    url=url, params=string_info, headers=headers, timeout=(5, 25)
                 )
             elif request == "POST":
                 response = requests.post(

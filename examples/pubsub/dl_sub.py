@@ -7,15 +7,15 @@ from petisco import (
     RabbitMQEventPublisher,
     ConfigEventSubscriber,
     subscriber_handler,
-    RabbitMQConnector,
+    RabbitMqConnector,
 )
 
 a_publisher = RabbitMQEventPublisher(
-    connector=RabbitMQConnector(), organization="acme", service="a", topic=f"a-events"
+    connector=RabbitMqConnector(), organization="acme", service="a", topic=f"a-events"
 )
 
 b_publisher = RabbitMQEventPublisher(
-    connector=RabbitMQConnector(), organization="acme", service="b", topic=f"b-events"
+    connector=RabbitMqConnector(), organization="acme", service="b", topic=f"b-events"
 )
 
 
@@ -34,7 +34,7 @@ def b_requeue(event: Event):
 
 
 subscriber = RabbitMQEventSubscriber(
-    connector=RabbitMQConnector(),
+    connector=RabbitMqConnector(),
     subscribers={
         "dl-a": ConfigEventSubscriber(
             organization="acme",

@@ -1,0 +1,44 @@
+app:
+  name: toy-app
+  version: 1.0.0
+tasks:
+  recurring-task:
+    run_in: 0.0 # seconds
+    interval: 10 # seconds
+    handler: tests.end2end.flask_app.shared.shared.application.tasks.tasks.recurring_task
+  scheduled-task:
+    run_in: 10 # seconds
+    handler: tests.end2end.flask_app.shared.shared.application.tasks.tasks.scheduled_task
+  instant-task:
+    handler: tests.end2end.flask_app.shared.shared.application.tasks.tasks.instant_task
+framework:
+    selected_framework: flask
+    config_file: swagger.yaml
+    port: 8080
+logger:
+    selected_logger: not_implemented_logger
+persistence:
+  - name: petisco
+    type: sql
+    config: tests.end2end.flask_app.config.config_persistence.config_persistence
+    models:
+      user: tests.end2end.flask_app.shared.infrastructure.repositories.user_model.UserModel
+  - name: mongo
+    type: mongo
+    config: tests.end2end.flask_app.config.config_mongo_persistence.config_mongo_persistence
+providers:
+   services_provider: tests.end2end.flask_app.config.services_provider.services_provider
+   repositories_provider: tests.end2end.flask_app.config.repositories_provider.repositories_provider
+events:
+  publisher:
+    provider: tests.end2end.flask_app.config.events.event_publisher_provider
+  subscriber:
+    provider: tests.end2end.flask_app.config.events.event_subscriber_provider
+    subscribers:
+      sub:
+        organization: "acme"
+        service: "toy-app"
+        topic: "toy-app-events"
+        dead_letter: True
+        handler: tests.end2end.flask_app.application.handlers.store_event.store_event
+

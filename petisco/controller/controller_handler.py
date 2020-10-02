@@ -13,8 +13,10 @@ from petisco.controller.errors.known_result_failure_handler import (
 
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.domain.errors.critical_error import CriticalError
-from petisco.events.publisher.domain.interface_event_publisher import IEventPublisher
-from petisco.events.request_responded import RequestResponded
+from petisco.event.legacy.publisher.domain.interface_event_publisher import (
+    IEventPublisher,
+)
+from petisco.event.shared.domain.request_responded import RequestResponded
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, DEBUG
 from petisco.controller.errors.http_error import HttpError
