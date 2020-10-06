@@ -12,9 +12,19 @@ def petisco_sql_database(request):
         persistence_source_name = "petisco"
     else:
         persistence_source_name = persistence_source_marker.args[0]
-    persistence_source_config = Petisco.get_instance().persistence_sources[
-        persistence_source_name
-    ]
+
+    try:
+        petisco = Petisco.get_instance()
+        persistence_source_config = petisco.persistence_sources[persistence_source_name]
+    except ImportError as e:
+        raise ImportError(
+            f"{e}\n petisco_sql_database needs a preconfigured Petisco to have available Model definitions"
+        )
+    except KeyError as e:
+        raise KeyError(
+            f"{e}\n petisco_sql_database needs a preconfigured Petisco with persistence. Required persistence ({persistence_source_name}) is not available"
+        )
+
     if not persistence_source_config or not persistence_source_config["configured"]:
         yield
     else:
@@ -37,10 +47,7 @@ def petisco_sql_database(request):
         ]
         connection = f"sqlite:///{sql_database}"
         engine = create_engine(connection)
-        # Base.metadata.create_all(engine)
-        print(f"\nCREATE DATABASE {connection}")
-        ee = Petisco.get_instance()
-        print(ee)
+        Base.metadata.create_all(engine)
 
         yield
 
@@ -49,5 +56,3 @@ def petisco_sql_database(request):
         session.close()
         Base.metadata.drop_all(bind=engine)
         os.remove(sql_database)
-
-        print(f"\nDELETE DATABASE {connection}")
