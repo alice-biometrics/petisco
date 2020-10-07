@@ -87,11 +87,13 @@ class _EventHandler:
 
             self.notify(result)
 
+            return result
+
         return wrapper
 
     @meiga
     def notify(self, result):
-        if result.is_failure:
+        if result is not None and result.is_failure:
             error = result.value
             if issubclass(error.__class__, CriticalError):
                 self.notifier.publish(

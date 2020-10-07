@@ -230,7 +230,7 @@ try:
         RabbitMqEventConfigurer,
     )
 
-    from petisco.event.consumer.infrastructure.rabbitmq_event_comsumer import (
+    from petisco.event.consumer.infrastructure.rabbitmq_event_consumer import (
         RabbitMqEventConsumer,
     )
 

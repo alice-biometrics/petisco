@@ -23,7 +23,7 @@ def configure_events_infrastructure(config_events: ConfigEvents):
         from petisco.event.configurer.infrastructure.rabbitmq_configurer import (
             RabbitMqEventConfigurer,
         )
-        from petisco.event.consumer.infrastructure.rabbitmq_event_comsumer import (
+        from petisco.event.consumer.infrastructure.rabbitmq_event_consumer import (
             RabbitMqEventConsumer,
         )
 

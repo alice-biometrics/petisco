@@ -3,13 +3,15 @@ import traceback
 from time import sleep
 from typing import Callable, List
 
-from meiga import Result
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 
 from petisco.event.consumer.infrastructure.rabbitmq_event_comsumer_printer import (
     RabbitMqEventConsumerPrinter,
+)
+from petisco.event.consumer.infrastructure.rabbitmq_event_consumer_return_error import (
+    RabbitMqEventConsumerReturnError,
 )
 from petisco.event.shared.domain.event import Event
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
@@ -88,29 +90,6 @@ class RabbitMqEventConsumer(IEventConsumer):
         )
 
     def consumer(self, handler: Callable, is_store: bool = False) -> Callable:
-        def print_received_message(
-            method: Basic.Deliver, properties: BasicProperties, body: bytes
-        ):
-            if self.verbose:
-                print(
-                    "\n#####################################################################################################################"
-                )
-                print(" [x] Received %r" % (body,))
-                print(" [x] Properties %r" % (properties,))
-                print(" [x] method %r" % (method,))
-
-        def print_separator():
-            if self.verbose:
-                print(
-                    "#####################################################################################################################\n"
-                )
-
-        def print_context(handler: Callable, result: Result):
-            if self.verbose:
-                handler_name = getattr(handler, "__name__", repr(handler))
-                print(f" [x] event_handler: {handler_name}")
-                print(f" [x] result from event_handler: {result}")
-
         def rabbitmq_consumer(
             ch: BlockingChannel,
             method: Basic.Deliver,
@@ -130,7 +109,10 @@ class RabbitMqEventConsumer(IEventConsumer):
             result = handler(event)
             self.printer.print_context(handler, result)
 
-            if result is None or result.is_failure:
+            if result is None:
+                raise RabbitMqEventConsumerReturnError(handler)
+
+            if result.is_failure:
                 if not properties.headers:
                     properties.headers = {
                         "queue": f"{method.routing_key}.{handler.__name__}"

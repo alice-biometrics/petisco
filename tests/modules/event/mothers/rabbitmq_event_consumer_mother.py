@@ -1,5 +1,5 @@
 from petisco import RabbitMqConnector
-from petisco.event.consumer.infrastructure.rabbitmq_event_comsumer import (
+from petisco.event.consumer.infrastructure.rabbitmq_event_consumer import (
     RabbitMqEventConsumer,
 )
 from tests.modules.event.mothers.defaults import (
