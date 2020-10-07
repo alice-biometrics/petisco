@@ -73,6 +73,47 @@ def test_should_publish_consume_with_event_handler_when_success_consumer():
 
 @pytest.mark.integration
 @testing_with_rabbitmq
+def test_should_publish_consume_with_event_handler_with_default_parameters_when_success_consumer(
+    given_any_petisco
+):
+    spy = SpyEvents()
+
+    @event_handler()
+    def assert_consumer(event: Event) -> Result[bool, Error]:
+        spy.append(event)
+        return isSuccess
+
+    event = EventUserCreatedMother.random()
+    subscribers = [
+        EventSubscriber(
+            event_name=event.event_name,
+            event_version=event.event_version,
+            handlers=[assert_consumer],
+        )
+    ]
+
+    configurer = RabbitMqEventConfigurerMother.default()
+    configurer.configure_subscribers(subscribers)
+
+    bus = RabbitMqEventBusMother.default()
+    bus.publish(event)
+
+    consumer = RabbitMqEventConsumerMother.without_retry()
+    consumer.add_subscribers(subscribers)
+    consumer.start()
+
+    sleep(1.0)
+
+    consumer.stop()
+    configurer.clear()
+
+    spy.assert_number_unique_events(1)
+    spy.assert_first_event(event)
+    spy.assert_count_by_event_id(event.event_id, 1)
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
 def test_should_publish_consume_with_event_handler_when_fail_consumer():
     spy = SpyEvents()
     logger = FakeLogger()

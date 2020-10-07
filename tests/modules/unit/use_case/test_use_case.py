@@ -440,3 +440,15 @@ def test_should_use_case_handler_return_a_failure_with_unknown_error_when_raise_
         "value: UnknownError (MyUseCase (Use Case)): RuntimeError: uncontrolled exception.\nTraceback (most recent call last):\n  File"
         in second_logging_message[1]["data"]["message"]
     )
+
+
+@pytest.mark.unit
+def test_should_log_successfully_a_non_error_use_case_with_default_parameters(
+    given_any_petisco
+):
+    @use_case_handler()
+    class MyUseCase(UseCase):
+        def execute(self):
+            return Success("Hello Petisco")
+
+    MyUseCase().execute()

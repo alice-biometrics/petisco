@@ -3,10 +3,14 @@ import traceback
 from time import sleep
 from typing import Callable, List
 
+from meiga import Result
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 
+from petisco.event.consumer.infrastructure.rabbitmq_event_comsumer_printer import (
+    RabbitMqEventConsumerPrinter,
+)
 from petisco.event.shared.domain.event import Event
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
 from petisco.event.consumer.domain.interface_event_consumer import IEventConsumer
@@ -35,7 +39,7 @@ class RabbitMqEventConsumer(IEventConsumer):
         self.rabbitmq_key = f"consumer-{self.exchange_name}"
         self.max_retries = max_retries
         self._channel = self.connector.get_channel(self.rabbitmq_key)
-        self.verbose = verbose
+        self.printer = RabbitMqEventConsumerPrinter(verbose)
 
     def start(self):
         if not self._channel:
@@ -101,13 +105,19 @@ class RabbitMqEventConsumer(IEventConsumer):
                     "#####################################################################################################################\n"
                 )
 
+        def print_context(handler: Callable, result: Result):
+            if self.verbose:
+                handler_name = getattr(handler, "__name__", repr(handler))
+                print(f" [x] event_handler: {handler_name}")
+                print(f" [x] result from event_handler: {result}")
+
         def rabbitmq_consumer(
             ch: BlockingChannel,
             method: Basic.Deliver,
             properties: BasicProperties,
             body: bytes,
         ):
-            print_received_message(method, properties, body)
+            self.printer.print_received_message(method, properties, body)
 
             try:
                 event = Event.from_json(body)
@@ -118,6 +128,7 @@ class RabbitMqEventConsumer(IEventConsumer):
                 return
 
             result = handler(event)
+            self.printer.print_context(handler, result)
 
             if result is None or result.is_failure:
                 if not properties.headers:
@@ -128,7 +139,7 @@ class RabbitMqEventConsumer(IEventConsumer):
             else:
                 ch.basic_ack(delivery_tag=method.delivery_tag)
 
-            print_separator()
+            self.printer.print_separator()
 
         return rabbitmq_consumer
 
@@ -171,8 +182,8 @@ class RabbitMqEventConsumer(IEventConsumer):
         body: bytes,
         is_store: bool = False,
     ):
-        if self.verbose:
-            print(" [>] send_to_retry")
+        self.printer.print_action("send_to_retry")
+
         exchange_name = RabbitMqExchangeNameFormatter.retry(self.exchange_name)
 
         routing_key = method.routing_key
@@ -192,8 +203,8 @@ class RabbitMqEventConsumer(IEventConsumer):
         properties: BasicProperties,
         body: bytes,
     ):
-        if self.verbose:
-            print(" [>] send_to_dead_letter")
+        self.printer.print_action("send_to_dead_letter")
+
         exchange_name = RabbitMqExchangeNameFormatter.dead_letter(self.exchange_name)
         routing_key = self._get_routing_key(method.routing_key, "dead_letter.")
         self.send_message_to(exchange_name, ch, routing_key, properties, body)
@@ -211,10 +222,10 @@ class RabbitMqEventConsumer(IEventConsumer):
             properties.headers["redelivery_count"] = redelivery_count + 1
         else:
             properties.headers = {"redelivery_count": 1}
-        if self.verbose:
-            print(
-                f" [>] send: [{exchange_name} |{routing_key}] -> {properties.headers}"
-            )
+
+        self.printer.print_send_message_to(
+            exchange_name, routing_key, properties.headers
+        )
 
         ch.basic_publish(
             exchange=exchange_name,

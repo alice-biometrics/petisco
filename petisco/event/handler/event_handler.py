@@ -33,6 +33,8 @@ class _EventHandler:
         """
         self.logger = logger
         self.notifier = notifier
+        self._check_logger()
+        self._check_notifier()
 
     def _check_logger(self):
         if self.logger == DEFAULT_LOGGER:
