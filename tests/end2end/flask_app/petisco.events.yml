@@ -1,4 +1,5 @@
 events:
+  publish_deploy_event: True
   message_broker: rabbitmq
   organization: alice
   service: petisco
@@ -7,3 +8,7 @@ events:
     UserCreated:
       version: 1
       handlers: tests.end2end.flask_app.users_count.application.increase_user_count_on_user_created.increase_user_count_on_user_created
+queues:
+  store: tests.end2end.flask_app.event_store.application.event_store.event_store
+  subscribers:
+    dead_letter.store: tests.end2end.flask_app.event_store.application.requeue_event.requeue_event

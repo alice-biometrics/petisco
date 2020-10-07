@@ -47,12 +47,15 @@ def get_handlers(handlers_names: List[str], kdict: Dict) -> List[Callable]:
 class ConfigEvents:
     organization: str
     service: str
+    publish_deploy_event: bool = False
     consumer_verbose: bool = False
     use_store_queues: bool = True
     retry_ttl: int = 5000
     max_retries: int = 5
     message_broker: Optional[str] = "not_implemented"
     event_subscribers: Optional[List[EventSubscriber]] = None
+    store_queue_subscriber: Optional[Callable] = None
+    queues_subscribers: Optional[Dict[str, Callable]] = None
 
     def __post_init__(self):
         message_broker = os.environ.get("PETISCO_EVENT_MESSAGE_BROKER")
@@ -76,35 +79,60 @@ class ConfigEvents:
     @staticmethod
     def from_dict(kdict):
         event_subscribers = None
+        queues_subscribers = None
+        store_queue_subscriber = None
+
         events = kdict.get("events")
+        queues = kdict.get("queues")
 
-        subscribers = events.get("subscribers")
-        if subscribers:
-            event_subscribers = []
-            for src_event_name, event_info in subscribers.items():
-                handlers_names = check_list_or_str_item(
-                    event_info, "handlers", typename="EventHandler"
-                )
-
-                event_name = get_event_name(src_event_name)
-                event_version = event_info.get("version", 1)
-                handlers = get_handlers(handlers_names, kdict)
-
-                event_subscribers.append(
-                    EventSubscriber(
-                        event_name=event_name,
-                        event_version=event_version,
-                        handlers=handlers,
+        if events:
+            dict_events_subscribers = events.get("subscribers")
+            if dict_events_subscribers:
+                event_subscribers = []
+                for src_event_name, event_info in dict_events_subscribers.items():
+                    handlers_names = check_list_or_str_item(
+                        event_info, "handlers", typename="EventHandler"
                     )
-                )
+
+                    event_name = get_event_name(src_event_name)
+                    event_version = event_info.get("version", 1)
+                    handlers = get_handlers(handlers_names, kdict)
+
+                    event_subscribers.append(
+                        EventSubscriber(
+                            event_name=event_name,
+                            event_version=event_version,
+                            handlers=handlers,
+                        )
+                    )
+
+        if queues:
+            str_store_queue_subscriber = queues.get("store")
+            if str_store_queue_subscriber:
+                store_queue_subscriber = get_handlers(
+                    [str_store_queue_subscriber], kdict
+                )[0]
+
+            dict_queues_subscribers = queues.get("subscribers")
+            if dict_queues_subscribers:
+                queues_subscribers = {}
+                for queue_name in dict_queues_subscribers.keys():
+                    handlers_names = check_list_or_str_item(
+                        dict_queues_subscribers, queue_name, typename="QueueHandler"
+                    )
+                    handlers = get_handlers(handlers_names, kdict)
+                    queues_subscribers[queue_name] = handlers
 
         return ConfigEvents(
             organization=events.get("organization"),
             service=events.get("service"),
+            publish_deploy_event=events.get("publish_deploy_event"),
             consumer_verbose=events.get("consumer_verbose", False),
             use_store_queues=events.get("use_store_queues", True),
             retry_ttl=events.get("retry_ttl", 5000),
             max_retries=events.get("max_retries", 5),
             message_broker=events.get("message_broker", "not_implemented"),
             event_subscribers=event_subscribers,
+            store_queue_subscriber=store_queue_subscriber,
+            queues_subscribers=queues_subscribers,
         )

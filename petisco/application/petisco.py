@@ -132,13 +132,26 @@ class Petisco(metaclass=Singleton):
         self.event_configurer.configure_subscribers(config_events.event_subscribers)
         self.event_consumer.add_subscribers(config_events.event_subscribers)
 
-    def publish_deploy_event(self):
-        if self.config.config_events.publish_deploy_event:
-            event = ServiceDeployed(
-                app_name=self.app_name, app_version=self.app_version
+        if config_events.store_queue_subscriber:
+            self.event_consumer.add_handler_on_store(
+                config_events.store_queue_subscriber
             )
-            self.event_publisher.publish(event)
+
+        if config_events.queues_subscribers:
+            for queue, handler in config_events.queues_subscribers.items():
+                self.event_consumer.add_handler_on_queue(queue, handler)
+
+        self.config_events = config_events
+
+    def publish_deploy_event(self):
+        event = ServiceDeployed(app_name=self.app_name, app_version=self.app_version)
+
+        if self.config_events and self.config_events.publish_deploy_event:
             self.event_bus.publish(event)
+
+        # Legacy Approach
+        if self.config.config_events.publish_deploy_event:
+            self.event_publisher.publish(event)
 
     def notify_deploy(self):
         self.notifier.publish(
@@ -227,6 +240,7 @@ class Petisco(metaclass=Singleton):
         self.event_bus = NotImplementedEventBus()
         self.event_configurer = NotImplementedEventConfigurer()
         self.event_consumer = NotImplementedEventConsumer()
+        self.config_events = None
 
         # Legacy Approach
         config_events = self.config.config_events
