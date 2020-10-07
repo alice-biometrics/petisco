@@ -2,6 +2,7 @@ events:
   message_broker: rabbitmq
   organization: alice
   service: petisco
+  consumer_verbose: true
   subscribers:
     UserCreated:
       version: 1

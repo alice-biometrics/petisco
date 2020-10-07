@@ -47,6 +47,7 @@ def get_handlers(handlers_names: List[str], kdict: Dict) -> List[Callable]:
 class ConfigEvents:
     organization: str
     service: str
+    consumer_verbose: bool = False
     use_store_queues: bool = True
     retry_ttl: int = 5000
     max_retries: int = 5
@@ -100,6 +101,7 @@ class ConfigEvents:
         return ConfigEvents(
             organization=events.get("organization"),
             service=events.get("service"),
+            consumer_verbose=events.get("consumer_verbose", False),
             use_store_queues=events.get("use_store_queues", True),
             retry_ttl=events.get("retry_ttl", 5000),
             max_retries=events.get("max_retries", 5),

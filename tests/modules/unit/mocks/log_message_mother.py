@@ -43,3 +43,9 @@ class LogMessageMother:
         return LogMessage(
             layer="subscriber", operation=operation, data={"message": message}
         )
+
+    @staticmethod
+    def get_event_handler(operation: str = None, message: str = None) -> LogMessage:
+        return LogMessage(
+            layer="event_handler", operation=operation, data={"message": message}
+        )

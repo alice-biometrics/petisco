@@ -32,3 +32,10 @@ class RabbitMqEventConsumerMother:
             max_retries,
             DEFAULT_VERBOSE,
         )
+
+    @staticmethod
+    def without_retry(connector: RabbitMqConnector = None):
+        connector = RabbitMqConnector() if not connector else connector
+        return RabbitMqEventConsumer(
+            connector, DEFAULT_ORGANIZATION, DEFAULT_SERVICE, 0, DEFAULT_VERBOSE
+        )

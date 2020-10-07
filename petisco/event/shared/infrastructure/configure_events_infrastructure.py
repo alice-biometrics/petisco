@@ -45,6 +45,7 @@ def configure_events_infrastructure(config_events: ConfigEvents):
             organization=config_events.organization,
             service=config_events.service,
             max_retries=config_events.max_retries,
+            verbose=config_events.consumer_verbose,
         )
 
     return bus, configurer, consumer

@@ -30,6 +30,8 @@ from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.value_objects.uuid import Uuid, InvalidUuidError
 from petisco.domain.value_objects.value_object import ValueObject
+from petisco.event.bus.domain.interface_event_bus import IEventBus
+from petisco.event.handler.event_handler import event_handler
 from petisco.frameworks.interface_application import IApplication
 from petisco.http.request import Request
 from petisco.http.request_errors import (
@@ -83,7 +85,6 @@ from petisco.event.legacy.subscriber.infrastructure.not_implemented_event_subscr
     NotImplementedEventSubscriber,
 )
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
-
 
 classes = [
     "IService",
@@ -145,6 +146,8 @@ classes = [
     "TimeoutRequestError",
     "ConnectionRequestError",
     "UnknownRequestError",
+    "IEventBus",
+    "event_handler",
 ]
 
 # Controllers & Use Cases
@@ -238,6 +241,7 @@ try:
     from petisco.event.legacy.subscriber.infrastructure.rabbitmq_event_subscriber import (
         RabbitMQEventSubscriber,
     )
+    from petisco.event.bus.infrastructure.rabbitmq_event_bus import RabbitMqEventBus
 
     rabbitmq = [
         "RabbitMQEventPublisher",
@@ -245,6 +249,7 @@ try:
         "RabbitMqConnector",
         "RabbitMqEventConfigurer",
         "RabbitMqEventConsumer",
+        "RabbitMqEventBus",
     ]
 except (RuntimeError, ImportError):
     rabbitmq = []

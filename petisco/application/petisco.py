@@ -96,7 +96,11 @@ class Petisco(metaclass=Singleton):
                 f"\tfilename: {frame_info.filename}\n"
                 f"\tlineno: {frame_info.lineno}\n"
                 f"\tfunction: {frame_info.function}\n"
-                f"\tcode_context: {frame_info.code_context}"
+                f"\tcode_context: {frame_info.code_context}\n\n"
+                f"\t Possible Solutions:\n"
+                f"\t  * If you are testing and need any preconfigured Petisco, you can use the fixture given_any_petisco.\n"
+                f"\t  * If you are testing and need specific preconfigured Petisco, you can create a fixture loading a petisco and then clearing.\n"
+                f"\t  * If you are running a Petisco application, please review your loading process, petisco.yml is probably failing.\n"
             )
 
     @staticmethod
