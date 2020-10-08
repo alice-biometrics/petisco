@@ -129,8 +129,9 @@ class Petisco(metaclass=Singleton):
             config_events
         )
 
-        self.event_configurer.configure_subscribers(config_events.event_subscribers)
-        self.event_consumer.add_subscribers(config_events.event_subscribers)
+        if config_events.event_subscribers:
+            self.event_configurer.configure_subscribers(config_events.event_subscribers)
+            self.event_consumer.add_subscribers(config_events.event_subscribers)
 
         if config_events.store_queue_subscriber:
             self.event_consumer.add_handler_on_store(
