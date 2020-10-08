@@ -11,5 +11,8 @@ class NotImplementedEventBus(IEventBus):
     def publish(self, event: Event):
         pass
 
+    def retry_publish_only_on_store_queue(self, event: Event):
+        pass
+
     def stop(self):
         pass

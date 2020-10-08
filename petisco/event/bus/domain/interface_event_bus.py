@@ -25,5 +25,13 @@ class IEventBus:
             self.publish(event)
 
     @abstractmethod
+    def retry_publish_only_on_store_queue(self, event: Event):
+        raise NotImplementedError
+
+    def retry_publish_events_only_on_store_queue(self, events: Events):
+        for event in events:
+            self.retry_publish_only_on_store_queue(event)
+
+    @abstractmethod
     def stop(self):
         raise NotImplementedError

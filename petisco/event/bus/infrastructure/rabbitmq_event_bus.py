@@ -58,6 +58,18 @@ class RabbitMqEventBus(IEventBus):
             self.configurer.configure_event(event)
             self.publish(event)
 
+    def retry_publish_only_on_store_queue(self, event: Event):
+        if not event or not issubclass(event.__class__, Event):
+            raise TypeError("Bus only publishes petisco.Event objects")
+        channel = self.connector.get_channel(self.rabbitmq_key)
+        channel.basic_publish(
+            exchange=self.exchange_name,
+            routing_key="retry.store",
+            body=event.to_json(),
+            properties=self.properties,
+        )
+        channel.close()
+
     def close(self):
         if self.connector.get_connection(self.rabbitmq_key).is_open:
             self.connector.get_connection(self.rabbitmq_key).close()
