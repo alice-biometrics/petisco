@@ -126,3 +126,16 @@ def test_should_check_error_when_petisco_is_not_initialized():
             f"\t  * If you are running a Petisco application, please review your loading process, petisco.yml is probably failing.\n"
         )
         assert solutions_text in str(excinfo.value)
+
+
+@pytest.mark.end2end
+def test_should_stop_petisco_without_configured_task(petisco_yml_path_end2end):
+
+    Petisco.clear()
+
+    filename = f"{petisco_yml_path_end2end}/../flask_app/petisco.notasks.yml"
+
+    petisco = Petisco.from_filename(filename)
+
+    petisco.stop()
+    Petisco.clear()

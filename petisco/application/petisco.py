@@ -42,6 +42,9 @@ from petisco.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )
 from petisco import __version__
+from petisco.tasks.infrastructure.not_implemented_task_executor import (
+    NotImplementedTaskExecutor,
+)
 
 
 @dataclass
@@ -80,7 +83,7 @@ class Petisco(metaclass=Singleton):
         self.notifier = config.get_notifier()
         self._set_persistence()
         self._set_events_configuration()
-        self.set_tasks()
+        self._set_tasks()
         self.options = config.options
 
     @staticmethod
@@ -165,13 +168,15 @@ class Petisco(metaclass=Singleton):
             )
         )
 
-    def set_tasks(self):
+    def _set_tasks(self):
         config_tasks = self.config.config_tasks
         if config_tasks and config_tasks.tasks:
             self.info["tasks"] = {}
             for task_name, config_task in config_tasks.tasks.items():
                 self.info["tasks"][task_name] = config_task.to_dict()
             self.task_executor = APSchedulerTaskExecutor()
+        else:
+            self.task_executor = NotImplementedTaskExecutor()
 
     def _schedule_tasks(self):
         config_tasks = self.config.config_tasks

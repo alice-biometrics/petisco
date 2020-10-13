@@ -184,7 +184,7 @@ class Config:
                 FlaskApplication,
             )
 
-            conf_file_split: List = self.config_framework.config_file.split("/")
+            conf_file_split: List = self.config_framework.config_file.rsplit("/", 1)
 
             if len(conf_file_split) == 1:
                 swagger_dir = self.petisco_yml_folder
