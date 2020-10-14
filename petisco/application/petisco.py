@@ -1,4 +1,5 @@
 import inspect
+import os
 import time
 from os import environ
 from typing import Callable, Dict, Any
@@ -49,42 +50,42 @@ from petisco.tasks.infrastructure.not_implemented_task_executor import (
 
 @dataclass
 class Petisco(metaclass=Singleton):
-    app_name: str
-    app_version: str
-    logger: ILogger = NotImplementedLogger()
-    notifier: INotifier = NotImplementedNotifier()
+    _app_name: str
+    _app_version: str
+    _logger: ILogger = NotImplementedLogger()
+    _notifier: INotifier = NotImplementedNotifier()
     application: IApplication = None
     services_provider: Callable = None
     repositories_provider: Callable = None
-    options: Dict[str, Any] = None
+    _options: Dict[str, Any] = None
     info: Dict = None
     _persistence_models: Dict[str, Dict[str, Any]] = None
     persistence_sources: Dict[str, Dict] = None
     config: Config = None
     event_publisher: IEventPublisher = None
     event_subscriber: IEventSubscriber = None
-    environment: str = None
+    _environment: str = None
     repositories: Dict[str, Any] = None
     services: Dict[str, Any] = None
 
     def __init__(self, config: Config):
         self.config = config
-        self.app_name = config.app_name
-        self.app_version = config.app_version
-        self.logger = config.get_logger()
-        self.environment = environ.get("ENVIRONMENT", None)
+        self._app_name = config.app_name
+        self._app_version = config.app_version
+        self._logger = config.get_logger()
+        self._environment = environ.get("ENVIRONMENT", None)
         self.info = {
-            "app_name": self.app_name,
-            "app_version": self.app_version,
+            "app_name": self._app_name,
+            "app_version": self._app_version,
             "petisco_version": __version__,
-            "environment": self.environment,
+            "environment": self._environment,
             "elapsed_time": {},
         }
-        self.notifier = config.get_notifier()
+        self._notifier = config.get_notifier()
         self._set_persistence()
         self._set_events_configuration()
         self._set_tasks()
-        self.options = config.options
+        self._options = config.options
 
     @staticmethod
     def get_instance():
@@ -127,6 +128,11 @@ class Petisco(metaclass=Singleton):
         filename
             YAML-based event management configuration file (default petisco.events.yml)
         """
+
+        message_broker_type = os.environ.get("PETISCO_EVENT_MESSAGE_BROKER")
+        if message_broker_type and message_broker_type == "notimplemented":
+            return
+
         config_events = ConfigEvents.from_filename(filename).unwrap_or_throw()
         self.event_bus, self.event_configurer, self.event_consumer = configure_events_infrastructure(
             config_events
@@ -149,8 +155,8 @@ class Petisco(metaclass=Singleton):
 
         self.config_events = config_events
 
-    def publish_deploy_event(self):
-        event = ServiceDeployed(app_name=self.app_name, app_version=self.app_version)
+    def _publish_deploy_event(self):
+        event = ServiceDeployed(app_name=self._app_name, app_version=self._app_version)
 
         if self.config_events and self.config_events.publish_deploy_event:
             self.event_bus.publish(event)
@@ -159,11 +165,11 @@ class Petisco(metaclass=Singleton):
         if self.config.config_events.publish_deploy_event:
             self.event_publisher.publish(event)
 
-    def notify_deploy(self):
-        self.notifier.publish(
+    def _notify_deploy(self):
+        self._notifier.publish(
             NotifierMessage(
                 title="Service deployed",
-                message=f"{self.app_name} has been deployed",
+                message=f"{self._app_name} has been deployed",
                 info_petisco=self.get_info(),
             )
         )
@@ -278,11 +284,11 @@ class Petisco(metaclass=Singleton):
 
     def _log_status(self):
         if self.info:
-            self.logger.log(INFO, LogMessage(data={"message": {"info": self.info}}))
+            self._logger.log(INFO, LogMessage(data={"message": {"info": self.info}}))
 
-        if self.options:
-            self.logger.log(
-                INFO, LogMessage(data={"message": {"options": self.options}})
+        if self._options:
+            self._logger.log(
+                INFO, LogMessage(data={"message": {"options": self._options}})
             )
 
     def _start(self):
@@ -291,8 +297,8 @@ class Petisco(metaclass=Singleton):
         self.event_consumer.start()
         self._schedule_tasks()
         self._log_status()
-        self.publish_deploy_event()
-        self.notify_deploy()
+        self._publish_deploy_event()
+        self._notify_deploy()
 
     def load_services_and_repositories(self):
         self._set_services_and_repositories_from_providers()
@@ -323,7 +329,7 @@ class Petisco(metaclass=Singleton):
         start_time = time.time()
         services = services_provider()
         elapsed_time = time.time() - start_time
-        self.info["elapsed_time"]["load_services"] = f"{int(elapsed_time*1000.0)} ms"
+        self.info["elapsed_time"]["load_services"] = f"{int(elapsed_time * 1000.0)} ms"
         return services
 
     @staticmethod
@@ -403,23 +409,23 @@ class Petisco(metaclass=Singleton):
 
     @staticmethod
     def get_logger():
-        return Petisco.get_instance().logger
+        return Petisco.get_instance()._logger
 
     @staticmethod
     def get_notifier():
-        return Petisco.get_instance().notifier
+        return Petisco.get_instance()._notifier
 
     @staticmethod
     def get_app_name():
-        return Petisco.get_instance().app_name
+        return Petisco.get_instance()._app_name
 
     @staticmethod
     def get_app_version():
-        return Petisco.get_instance().app_version
+        return Petisco.get_instance()._app_version
 
     @staticmethod
     def get_environment():
-        return Petisco.get_instance().environment
+        return Petisco.get_instance()._environment
 
     @staticmethod
     def get_info():

@@ -71,3 +71,25 @@ def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_not_imp
     petisco.stop()
 
     Petisco.clear()
+
+
+@pytest.mark.end2end
+@testing_with_rabbitmq
+def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_environ_rabbitmq_message_broker_not_implemented(
+    petisco_yml_path_end2end
+):
+    Petisco.clear()
+    os.environ["PETISCO_EVENT_MESSAGE_BROKER"] = "notimplemented"
+
+    filename = f"{petisco_yml_path_end2end}/petisco.all.yml"
+    filename_events = f"{petisco_yml_path_end2end}/petisco.events.yml"
+
+    petisco = Petisco.from_filename(filename)
+    petisco.configure_events(filename_events)
+    petisco._start()
+    assert isinstance(Petisco.get_event_bus(), NotImplementedEventBus)
+
+    del os.environ["PETISCO_EVENT_MESSAGE_BROKER"]
+
+    petisco.stop()
+    Petisco.clear()

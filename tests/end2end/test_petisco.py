@@ -111,8 +111,8 @@ def test_should_raise_exception_if_service_not_exist(petisco_yml_path_end2end):
 def test_should_check_if_given_any_petisco_fixture_is_working_as_expected(
     given_any_petisco
 ):
-    assert given_any_petisco.app_name == "petisco"
-    assert given_any_petisco.app_version == "1.0.0"
+    assert given_any_petisco._app_name == "petisco"
+    assert given_any_petisco._app_version == "1.0.0"
 
 
 @pytest.mark.end2end

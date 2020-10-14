@@ -10,7 +10,10 @@ from petisco.modules.healthcheck.domain.persistence_error import PersistenceErro
 class HealthcheckProvider(UseCase):
     def execute(self, petisco: Petisco) -> Result[Dict, Error]:
 
-        healthcheck = {"app_name": petisco.app_name, "app_version": petisco.app_version}
+        healthcheck = {
+            "app_name": petisco._app_name,
+            "app_version": petisco._app_version,
+        }
 
         if petisco.persistence_sources:
             from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import (
