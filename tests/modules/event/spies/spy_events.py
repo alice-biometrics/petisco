@@ -13,6 +13,12 @@ class SpyEvents:
         else:
             self.counter_events[str(event.event_id)]["counter"] += 1
 
+    def assert_number_total_events(self, expected_number_events: int):
+        actual_number_total_events = len(self.events)
+        assert (
+            expected_number_events == actual_number_total_events
+        ), f"Expected total events is {expected_number_events}, actual {actual_number_total_events}. [{self.counter_events}]"
+
     def assert_number_unique_events(self, expected_number_events: int):
         actual_number_events = len(self.counter_events.keys())
         assert (

@@ -226,7 +226,7 @@ try:
     from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
         RabbitMqConnector,
     )
-    from petisco.event.configurer.infrastructure.rabbitmq_configurer import (
+    from petisco.event.configurer.infrastructure.rabbitmq_event_configurer import (
         RabbitMqEventConfigurer,
     )
 

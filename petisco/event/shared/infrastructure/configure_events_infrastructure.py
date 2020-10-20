@@ -20,7 +20,7 @@ def configure_events_infrastructure(config_events: ConfigEvents):
             RabbitMqConnector,
         )
         from petisco.event.bus.infrastructure.rabbitmq_event_bus import RabbitMqEventBus
-        from petisco.event.configurer.infrastructure.rabbitmq_configurer import (
+        from petisco.event.configurer.infrastructure.rabbitmq_event_configurer import (
             RabbitMqEventConfigurer,
         )
         from petisco.event.consumer.infrastructure.rabbitmq_event_consumer import (
