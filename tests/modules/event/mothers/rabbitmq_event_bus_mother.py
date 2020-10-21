@@ -8,3 +8,8 @@ class RabbitMqEventBusMother:
     def default(connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqEventBus(connector, DEFAULT_ORGANIZATION, DEFAULT_SERVICE)
+
+    @staticmethod
+    def with_service(service: str, connector: RabbitMqConnector = None):
+        connector = RabbitMqConnector() if not connector else connector
+        return RabbitMqEventBus(connector, DEFAULT_ORGANIZATION, service)

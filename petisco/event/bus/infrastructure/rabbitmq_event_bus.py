@@ -4,7 +4,7 @@ from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
 from petisco.event.bus.domain.interface_event_bus import IEventBus
-from petisco.event.configurer.infrastructure.rabbitmq_configurer import (
+from petisco.event.configurer.infrastructure.rabbitmq_event_configurer import (
     RabbitMqEventConfigurer,
 )
 from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_event_queue_name_formatter import (

@@ -5,7 +5,7 @@ import random
 import pytest
 
 from petisco import RabbitMqConnector
-from petisco.event.configurer.infrastructure.rabbitmq_configurer import (
+from petisco.event.configurer.infrastructure.rabbitmq_event_configurer import (
     RabbitMqEventConfigurer,
 )
 

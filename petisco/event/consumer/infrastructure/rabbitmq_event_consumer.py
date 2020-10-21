@@ -39,6 +39,7 @@ class RabbitMqEventConsumer(IEventConsumer):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"consumer-{self.exchange_name}"
+        self._fallback_store_exchange_name = f"retry.{organization}.store"
         self.max_retries = max_retries
         self._channel = self.connector.get_channel(self.rabbitmq_key)
         self.printer = RabbitMqEventConsumerPrinter(verbose)
@@ -141,11 +142,10 @@ class RabbitMqEventConsumer(IEventConsumer):
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def has_been_redelivered_too_much(self, properties: BasicProperties):
-        return (
-            False
-            if not properties.headers or "redelivery_count" not in properties.headers
-            else properties.headers.get("redelivery_count") >= self.max_retries
-        )
+        if not properties.headers or "redelivery_count" not in properties.headers:
+            return False if self.max_retries > 1 else True
+        else:
+            return properties.headers.get("redelivery_count") >= self.max_retries - 1
 
     def _get_routing_key(self, routing_key: str, prefix: str):
         if routing_key.startswith("retry."):
@@ -165,7 +165,6 @@ class RabbitMqEventConsumer(IEventConsumer):
         is_store: bool = False,
     ):
         self.printer.print_action("send_to_retry")
-
         exchange_name = RabbitMqExchangeNameFormatter.retry(self.exchange_name)
 
         routing_key = method.routing_key
@@ -174,6 +173,7 @@ class RabbitMqEventConsumer(IEventConsumer):
 
         if is_store:
             routing_key = "store"
+            exchange_name = self._fallback_store_exchange_name
 
         routing_key = self._get_routing_key(routing_key, "retry.")
         self.send_message_to(exchange_name, ch, routing_key, properties, body)
@@ -186,7 +186,6 @@ class RabbitMqEventConsumer(IEventConsumer):
         body: bytes,
     ):
         self.printer.print_action("send_to_dead_letter")
-
         exchange_name = RabbitMqExchangeNameFormatter.dead_letter(self.exchange_name)
         routing_key = self._get_routing_key(method.routing_key, "dead_letter.")
         self.send_message_to(exchange_name, ch, routing_key, properties, body)

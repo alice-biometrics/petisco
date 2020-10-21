@@ -23,6 +23,17 @@ class RabbitMqEventConsumerMother:
         )
 
     @staticmethod
+    def with_service(service: str, connector: RabbitMqConnector = None):
+        connector = RabbitMqConnector() if not connector else connector
+        return RabbitMqEventConsumer(
+            connector,
+            DEFAULT_ORGANIZATION,
+            service,
+            DEFAULT_MAX_RETRIES,
+            DEFAULT_VERBOSE,
+        )
+
+    @staticmethod
     def with_max_retries(max_retries: int, connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqEventConsumer(
