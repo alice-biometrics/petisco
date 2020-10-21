@@ -190,7 +190,9 @@ class Petisco(metaclass=Singleton):
             self.task_executor.start(config_tasks)
 
     def _unschedule_tasks(self):
-        self.task_executor.stop()
+        config_tasks = self.config.config_tasks
+        if config_tasks.tasks:
+            self.task_executor.stop()
 
     def _set_persistence(self):
         self._persistence_models = {}
