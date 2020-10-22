@@ -46,4 +46,15 @@ steps:
       - python examples/pubsub/pub.py
       - sleep 2
     teardown: cat pubsub.log
+  example-webhooks:
+    envs:
+      FLASK_APP: examples/webhooks/subscribed_app.py
+    setup_detach:
+      log_filename: webhook.log
+      run: python -m flask run
+    wait_http_200: http://localhost:5000/healthcheck
+    run: python examples/webhooks/execute_webhook.py
+    teardown: sleep 5; cat webhook.log
+
+
 
