@@ -10,7 +10,7 @@ class IEventBus:
     __metaclass__ = ABCMeta
 
     def __repr__(self):
-        return f"IEventPublisher"
+        return f"IEventBus"
 
     @abstractmethod
     def info(self) -> Dict:
