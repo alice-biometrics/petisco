@@ -307,11 +307,12 @@ class Petisco(metaclass=Singleton):
 
     def start(self):
         self._start()
-        self.config.get_application().start()
+        self._application.start()
 
     def get_app(self):
         self._start()
-        return self.config.get_application().get_app()
+        self._application = self.config.get_application().get_app()
+        return self._application
 
     def stop(self):
         self.event_subscriber.stop()
