@@ -1,10 +1,11 @@
+from unittest.mock import Mock
+
 import pytest
 from meiga import Success, isFailure, Failure
 
-from petisco import controller_handler, ERROR, __version__, DEBUG
+from petisco import controller_handler, ERROR, __version__, DEBUG, IEventBus
 from petisco.domain.errors.critical_error import CriticalError
 from petisco.event.shared.domain.request_responded import RequestResponded
-from tests.modules.unit.mocks.fake_event_publisher import FakeEventPublisher
 from tests.modules.unit.mocks.fake_logger import FakeLogger
 from tests.modules.unit.mocks.fake_notifier import FakeNotifier
 from tests.modules.unit.mocks.log_message_mother import LogMessageMother
@@ -16,14 +17,14 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
 ):
 
     logger = FakeLogger()
-    publisher = FakeEventPublisher()
+    mock_event_bus = Mock(IEventBus)
 
     @controller_handler(
         app_name="petisco",
         app_version=__version__,
         logger=logger,
         send_request_responded_event=True,
-        publisher=publisher,
+        event_bus=mock_event_bus,
         headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
     )
     def my_controller():
@@ -53,7 +54,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
         ).to_dict(),
     )
 
-    request_responded = publisher.get_sent_events()[0]
+    request_responded = mock_event_bus.publish.call_args[0][0]
     assert isinstance(request_responded, RequestResponded)
     assert request_responded.app_name == "petisco"
     assert request_responded.app_version == __version__

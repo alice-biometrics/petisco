@@ -5,6 +5,8 @@ from functools import wraps
 from typing import Callable, Tuple, Dict, List, Any
 from meiga import Result, Error, Success
 from meiga.decorators import meiga
+
+from petisco.event.bus.domain.interface_event_bus import IEventBus
 from petisco.application.petisco import Petisco
 from petisco.controller.errors.internal_http_error import InternalHttpError
 from petisco.controller.errors.known_result_failure_handler import (
@@ -13,9 +15,7 @@ from petisco.controller.errors.known_result_failure_handler import (
 
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.domain.errors.critical_error import CriticalError
-from petisco.event.legacy.publisher.domain.interface_event_publisher import (
-    IEventPublisher,
-)
+
 from petisco.event.shared.domain.request_responded import RequestResponded
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
 from petisco.logger.interface_logger import ERROR, DEBUG
@@ -34,7 +34,7 @@ DEFAULT_ERROR_MESSAGE = HttpError().handle()
 DEFAULT_APP_NAME = "app-undefined"
 DEFAULT_APP_VERSION = "version-undefined"
 DEFAULT_LOGGER = None
-DEFAULT_PUBLISHER = None
+DEFAULT_EVENT_BUS = None
 DEFAULT_NOTIFIER = None
 
 
@@ -50,7 +50,7 @@ class _ControllerHandler:
         error_handler: Callable[[Result], HttpError] = None,
         headers_provider: Callable = flask_headers_provider,
         logging_types_blacklist: List[Any] = [bytes],
-        publisher: IEventPublisher = DEFAULT_PUBLISHER,
+        event_bus: IEventBus = DEFAULT_EVENT_BUS,
         send_request_responded_event: bool = False,
     ):
         """
@@ -74,8 +74,8 @@ class _ControllerHandler:
             Injectable function to provide headers. By default is used headers_provider
         logging_types_blacklist
             Logging Blacklist. Object of defined Type will not be logged. By default ( [bytes] ) bytes object won't be logged.
-        publisher
-            A IEventPublisher implementation. If not specified it will get it from Petisco.get_event_publisher().
+        event_bus
+            A IEventBus implementation. If not specified it will get it from Petisco.get_event_bus().
         send_request_responded_event
             Boolean to select if RequestResponded event is send. It will use provided publisher
         """
@@ -83,7 +83,7 @@ class _ControllerHandler:
         self.app_version = app_version
         self.logger = logger
         self.notifier = notifier
-        self.publisher = publisher
+        self.event_bus = event_bus
         self.token_manager = token_manager
         self.success_handler = success_handler
         self.error_handler = error_handler
@@ -108,8 +108,8 @@ class _ControllerHandler:
             self.notifier = Petisco.get_notifier()
 
     def _check_publisher(self):
-        if self.publisher == DEFAULT_PUBLISHER:
-            self.publisher = Petisco.get_event_publisher()
+        if self.event_bus == DEFAULT_EVENT_BUS:
+            self.event_bus = Petisco.get_event_bus()
 
     def _configure_petisco_dependencies(self):
         self.petisco = Petisco.get_instance()
@@ -207,7 +207,7 @@ class _ControllerHandler:
                     elapsed_time=elapsed_time,
                 ).add_info_id(info_id)
 
-                self.publisher.publish(request_responded)
+                self.event_bus.publish(request_responded)
 
             return http_response
 

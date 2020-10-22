@@ -10,7 +10,7 @@ class IEventConfigurer:
     __metaclass__ = ABCMeta
 
     def __repr__(self):
-        return f"IEventPublisher"
+        return f"IEventConfigurer"
 
     @classmethod
     def info(cls) -> Dict:
