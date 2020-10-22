@@ -1,4 +1,5 @@
 import connexion
+from flask_bcrypt import Bcrypt
 
 from flask_cors import CORS
 
@@ -22,6 +23,8 @@ class FlaskApplication(IApplication):
 
     def _configure(self):
         CORS(self.app.app)
+        self.app.app.config["BCRYPT_HANDLE_LONG_PASSWORDS"] = True
+        self.bcrypt = Bcrypt(self.app.app)
         self.app.app.json_encoder = JSONEncoder
         self.app.add_api(self.config_file, arguments={"title": self.application_name})
 
