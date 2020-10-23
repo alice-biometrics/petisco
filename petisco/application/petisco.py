@@ -314,6 +314,9 @@ class Petisco(metaclass=Singleton):
         self._application = self.config.get_application()
         return self._application.get_app()
 
+    def get_application(self):
+        return self._application
+
     def stop(self):
         self.event_subscriber.stop()
         self.event_consumer.stop()
