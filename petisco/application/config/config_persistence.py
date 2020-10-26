@@ -62,7 +62,11 @@ class ConfigPersistence:
         def _import_database_models_func():
             for name, model_string in self.configs[persistence_entry].models.items():
                 module_name, class_model_name = model_string.rsplit(".", 1)
-                _delete_module_if_already_imported(module_name)
+                # We don't use delete_module_if_already_imported` because it is not working with Models dependencies.
+                # It throws the following error:
+                #  sqlalchemy.exc.InvalidRequestError: Table 'XXXX' is already defined for this MetaData instance.
+                #  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+                # delete_module_if_already_imported(module_name)
                 importlib.import_module(module_name, class_model_name)
 
         return _import_database_models_func
