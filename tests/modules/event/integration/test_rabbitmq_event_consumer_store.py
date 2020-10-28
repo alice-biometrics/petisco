@@ -1,7 +1,7 @@
 from time import sleep
 
 import pytest
-from meiga import isSuccess, Result, Error, isFailure
+from meiga import isSuccess, Result, Error, isFailure, BoolResult
 
 from petisco import Event, EventSubscriber
 
@@ -23,7 +23,7 @@ def test_should_publish_consume_from_store_queue_from_rabbitmq():
 
     spy = SpyEvents()
 
-    def assert_consumer_event_store(event: Event) -> Result[bool, Error]:
+    def assert_consumer_event_store(event: Event) -> BoolResult:
         spy.append(event)
         return isSuccess
 

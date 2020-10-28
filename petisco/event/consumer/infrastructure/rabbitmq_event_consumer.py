@@ -7,6 +7,10 @@ from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 
+from petisco.event.chaos.domain.interface_event_chaos import IEventChaos
+from petisco.event.chaos.infrastructure.not_implemented_event_chaos import (
+    NotImplementedEventChaos,
+)
 from petisco.event.consumer.infrastructure.rabbitmq_event_comsumer_printer import (
     RabbitMqEventConsumerPrinter,
 )
@@ -35,6 +39,7 @@ class RabbitMqEventConsumer(IEventConsumer):
         service: str,
         max_retries: int,
         verbose: bool = False,
+        chaos: IEventChaos = NotImplementedEventChaos(),
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
@@ -43,6 +48,7 @@ class RabbitMqEventConsumer(IEventConsumer):
         self.max_retries = max_retries
         self._channel = self.connector.get_channel(self.rabbitmq_key)
         self.printer = RabbitMqEventConsumerPrinter(verbose)
+        self.chaos = chaos
 
     def start(self):
         if not self._channel:
@@ -99,6 +105,8 @@ class RabbitMqEventConsumer(IEventConsumer):
         ):
             self.printer.print_received_message(method, properties, body)
 
+            self.chaos.nack_simulation(ch, method)
+
             try:
                 event = Event.from_json(body)
             except TypeError:
@@ -109,6 +117,8 @@ class RabbitMqEventConsumer(IEventConsumer):
 
             result = handler(event)
             self.printer.print_context(handler, result)
+
+            result = self.chaos.simulate_failure_on_result(result)
 
             if result is None:
                 raise RabbitMqEventConsumerReturnError(handler)
@@ -121,6 +131,8 @@ class RabbitMqEventConsumer(IEventConsumer):
                 self.handle_consumption_error(ch, method, properties, body, is_store)
             else:
                 ch.basic_ack(delivery_tag=method.delivery_tag)
+
+            self.chaos.delay()
 
             self.printer.print_separator()
 
