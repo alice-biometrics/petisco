@@ -24,9 +24,9 @@ def verify_webhook_requests(f=None):
         event_version = request.headers["X-Alice-Event-Version"]
         data = request.data.decode("latin1")
 
-        # e.g `1.user_created:2020-10-27 14:13:05.723716:b'{"user": "created"}'`
+        # e.g `user_created.1:2020-10-28 07:33:37.243390:{"is_ping": true}`
         format_req = str.encode(f"{event_name}.{event_version}:{timestamp}:{data}")
-
+        print(format_req)
         request_hash = hmac.new(SECRET, format_req, hashlib.sha512).hexdigest()
         calculated_signature = request_hash
         if hmac.compare_digest(calculated_signature, signature):
