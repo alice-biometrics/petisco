@@ -1,13 +1,25 @@
 import threading
 import traceback
 from time import sleep
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 
-from petisco.event.consumer.infrastructure.rabbitmq_event_comsumer_printer import (
+from petisco.logger.interface_logger import ILogger
+from petisco.logger.not_implemented_logger import NotImplementedLogger
+
+from petisco.event.chaos.domain.interface_event_chaos import IEventChaos
+from petisco.event.chaos.infrastructure.not_implemented_event_chaos import (
+    NotImplementedEventChaos,
+)
+
+from petisco.event.consumer.domain.consumer_derived_action import ConsumerDerivedAction
+from petisco.event.consumer.infrastructure.rabbitmq_event_consumer_logger import (
+    RabbitMqEventConsumerLogger,
+)
+from petisco.event.consumer.infrastructure.rabbitmq_event_consumer_printer import (
     RabbitMqEventConsumerPrinter,
 )
 from petisco.event.consumer.infrastructure.rabbitmq_event_consumer_return_error import (
@@ -35,6 +47,8 @@ class RabbitMqEventConsumer(IEventConsumer):
         service: str,
         max_retries: int,
         verbose: bool = False,
+        chaos: IEventChaos = NotImplementedEventChaos(),
+        logger: Optional[ILogger] = NotImplementedLogger(),
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
@@ -43,6 +57,8 @@ class RabbitMqEventConsumer(IEventConsumer):
         self.max_retries = max_retries
         self._channel = self.connector.get_channel(self.rabbitmq_key)
         self.printer = RabbitMqEventConsumerPrinter(verbose)
+        self.consumer_logger = RabbitMqEventConsumerLogger(logger)
+        self.chaos = chaos
 
     def start(self):
         if not self._channel:
@@ -99,6 +115,12 @@ class RabbitMqEventConsumer(IEventConsumer):
         ):
             self.printer.print_received_message(method, properties, body)
 
+            if self.chaos.nack_simulation(ch, method):
+                self.consumer_logger.log_nack_simulation(
+                    method, properties, body, handler
+                )
+                return
+
             try:
                 event = Event.from_json(body)
             except TypeError:
@@ -107,21 +129,31 @@ class RabbitMqEventConsumer(IEventConsumer):
                 ch.basic_nack(delivery_tag=method.delivery_tag)
                 return
 
+            self.chaos.delay()
+
             result = handler(event)
+            result = self.chaos.simulate_failure_on_result(result)
+
             self.printer.print_context(handler, result)
 
             if result is None:
                 raise RabbitMqEventConsumerReturnError(handler)
 
+            derived_action = ConsumerDerivedAction()
             if result.is_failure:
                 if not properties.headers:
                     properties.headers = {
                         "queue": f"{method.routing_key}.{handler.__name__}"
                     }
-                self.handle_consumption_error(ch, method, properties, body, is_store)
+                derived_action = self.handle_consumption_error(
+                    ch, method, properties, body, is_store
+                )
             else:
                 ch.basic_ack(delivery_tag=method.delivery_tag)
 
+            self.consumer_logger.log(
+                method, properties, body, handler, result, derived_action
+            )
             self.printer.print_separator()
 
         return rabbitmq_consumer
@@ -134,18 +166,23 @@ class RabbitMqEventConsumer(IEventConsumer):
         body: bytes,
         is_store: bool,
     ):
+
         if self.has_been_redelivered_too_much(properties):
-            self.send_to_dead_letter(ch, method, properties, body)
+            derived_action = self.send_to_dead_letter(ch, method, properties, body)
         else:
-            self.send_to_retry(ch, method, properties, body, is_store)
+            derived_action = self.send_to_retry(ch, method, properties, body, is_store)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
+        return derived_action
+
     def has_been_redelivered_too_much(self, properties: BasicProperties):
         if not properties.headers or "redelivery_count" not in properties.headers:
-            return False if self.max_retries > 1 else True
+            if self.max_retries < 1:
+                return True
+            return False
         else:
-            return properties.headers.get("redelivery_count") >= self.max_retries - 1
+            return properties.headers.get("redelivery_count") >= self.max_retries
 
     def _get_routing_key(self, routing_key: str, prefix: str):
         if routing_key.startswith("retry."):
@@ -176,7 +213,15 @@ class RabbitMqEventConsumer(IEventConsumer):
             exchange_name = self._fallback_store_exchange_name
 
         routing_key = self._get_routing_key(routing_key, "retry.")
-        self.send_message_to(exchange_name, ch, routing_key, properties, body)
+        updated_headers = self.send_message_to(
+            exchange_name, ch, routing_key, properties, body
+        )
+        return ConsumerDerivedAction(
+            action="send_to_retry",
+            exchange_name=exchange_name,
+            routing_key=routing_key,
+            headers=updated_headers,
+        )
 
     def send_to_dead_letter(
         self,
@@ -188,7 +233,15 @@ class RabbitMqEventConsumer(IEventConsumer):
         self.printer.print_action("send_to_dead_letter")
         exchange_name = RabbitMqExchangeNameFormatter.dead_letter(self.exchange_name)
         routing_key = self._get_routing_key(method.routing_key, "dead_letter.")
-        self.send_message_to(exchange_name, ch, routing_key, properties, body)
+        updated_headers = self.send_message_to(
+            exchange_name, ch, routing_key, properties, body
+        )
+        return ConsumerDerivedAction(
+            action="send_to_dead_letter",
+            exchange_name=exchange_name,
+            routing_key=routing_key,
+            headers=updated_headers,
+        )
 
     def send_message_to(
         self,
@@ -214,6 +267,8 @@ class RabbitMqEventConsumer(IEventConsumer):
             body=body,
             properties=properties,
         )
+
+        return properties.headers
 
     def stop(self):
         def _log_stop_exception(e: Exception):
