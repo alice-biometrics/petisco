@@ -31,6 +31,7 @@ from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.value_objects.uuid import Uuid, InvalidUuidError
 from petisco.domain.value_objects.value_object import ValueObject
 from petisco.event.bus.domain.interface_event_bus import IEventBus
+from petisco.event.chaos.domain.interface_event_chaos import IEventChaos
 from petisco.event.handler.event_handler import event_handler
 from petisco.frameworks.interface_application import IApplication
 from petisco.http.request import Request
@@ -148,6 +149,7 @@ classes = [
     "UnknownRequestError",
     "IEventBus",
     "event_handler",
+    "IEventChaos",
 ]
 
 # Controllers & Use Cases
@@ -234,6 +236,10 @@ try:
         RabbitMqEventConsumer,
     )
 
+    from petisco.event.chaos.infrastructure.rabbitmq_event_chaos import (
+        RabbitMqEventChaos,
+    )
+
     # deprecated
     from petisco.event.legacy.publisher.infrastructure.rabbitmq_event_publisher import (
         RabbitMQEventPublisher,
@@ -250,6 +256,7 @@ try:
         "RabbitMqEventConfigurer",
         "RabbitMqEventConsumer",
         "RabbitMqEventBus",
+        "RabbitMqEventChaos",
     ]
 except (RuntimeError, ImportError):
     rabbitmq = []

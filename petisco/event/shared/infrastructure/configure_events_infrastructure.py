@@ -1,3 +1,4 @@
+from petisco.event.chaos.infrastructure.rabbitmq_event_chaos import RabbitMqEventChaos
 from petisco.event.shared.domain.config_events import ConfigEvents
 from petisco.event.bus.infrastructure.not_implemented_event_bus import (
     NotImplementedEventBus,
@@ -48,6 +49,7 @@ def configure_events_infrastructure(config_events: ConfigEvents):
             max_retries=config_events.max_retries,
             verbose=config_events.consumer_verbose,
             logger=Petisco.get_logger(),
+            chaos=RabbitMqEventChaos(),
         )
 
     return bus, configurer, consumer
