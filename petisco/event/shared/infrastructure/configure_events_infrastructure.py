@@ -27,7 +27,6 @@ def configure_events_infrastructure(config_events: ConfigEvents):
             RabbitMqEventConsumer,
         )
 
-        # connector = RabbitMqConnector()
         bus = RabbitMqEventBus(
             connector=RabbitMqConnector(),
             organization=config_events.organization,
@@ -40,12 +39,15 @@ def configure_events_infrastructure(config_events: ConfigEvents):
             use_store_queues=config_events.use_store_queues,
             retry_ttl=config_events.retry_ttl,
         )
+        from petisco import Petisco
+
         consumer = RabbitMqEventConsumer(
             connector=RabbitMqConnector(),
             organization=config_events.organization,
             service=config_events.service,
             max_retries=config_events.max_retries,
             verbose=config_events.consumer_verbose,
+            logger=Petisco.get_logger(),
         )
 
     return bus, configurer, consumer

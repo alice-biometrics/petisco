@@ -54,10 +54,11 @@ def test_should_publish_consume_from_store_queue_from_rabbitmq():
 @pytest.mark.parametrize(
     "max_retries_allowed,expected_number_event_consumed,simulated_results",
     [
-        (1, 1, [isFailure, isSuccess]),
-        (2, 2, [isFailure, isFailure, isSuccess]),
-        (3, 3, [isFailure, isFailure, isFailure, isSuccess]),
-        (4, 4, [isFailure, isFailure, isFailure, isFailure, isSuccess]),
+        (0, 1, [isFailure]),
+        (1, 2, [isFailure, isSuccess]),
+        (2, 3, [isFailure, isFailure, isSuccess]),
+        (3, 4, [isFailure, isFailure, isFailure, isSuccess]),
+        (4, 5, [isFailure, isFailure, isFailure, isFailure, isSuccess]),
     ],
 )
 def test_should_publish_consume_and_retry_from_store_queue_from_rabbitmq(
@@ -99,10 +100,11 @@ def test_should_publish_consume_and_retry_from_store_queue_from_rabbitmq(
 @pytest.mark.parametrize(
     "max_retries_allowed,expected_number_event_consumed,simulated_results",
     [
-        (1, 1, [isFailure, isSuccess]),
-        (2, 2, [isFailure, isFailure, isSuccess]),
-        (3, 3, [isFailure, isFailure, isFailure, isSuccess]),
-        (4, 4, [isFailure, isFailure, isFailure, isFailure, isSuccess]),
+        (0, 1, [isFailure]),
+        (1, 2, [isFailure, isSuccess]),
+        (2, 3, [isFailure, isFailure, isSuccess]),
+        (3, 4, [isFailure, isFailure, isFailure, isSuccess]),
+        (4, 5, [isFailure, isFailure, isFailure, isFailure, isSuccess]),
     ],
 )
 def test_should_publish_consume_and_retry_from_store_queue_not_affecting_other_queue_from_rabbitmq_when_fail_event_storer_consumer(

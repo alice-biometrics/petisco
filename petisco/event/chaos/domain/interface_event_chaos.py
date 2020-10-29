@@ -11,7 +11,7 @@ class IEventChaos:
         return NotImplementedError
 
     @abstractmethod
-    def nack_simulation(self, *args, **kwargs):
+    def nack_simulation(self, *args, **kwargs) -> bool:
         raise NotImplementedError
 
     @abstractmethod

@@ -57,13 +57,19 @@ def test_should_configure_two_services_without_subscribers():
 @pytest.mark.parametrize(
     "publish_events_service_1, publish_events_service_2, expected_unique_events, expected_total_received_events, simulated_results_store",
     [
-        (1, 0, 1, 5, 500 * [isFailure]),
-        (100, 0, 100, 500, 500 * [isFailure]),
+        (
+            1,
+            0,
+            1,
+            6,
+            [isFailure, isFailure, isFailure, isFailure, isFailure, isSuccess],
+        ),
+        (100, 0, 100, 100, 100 * [isSuccess]),
         (1, 0, 1, 2, [isFailure, isSuccess]),
         (1, 0, 1, 3, [isFailure, isFailure, isSuccess]),
         (1, 1, 2, 2, [isSuccess, isSuccess]),
         (5, 10, 15, 15, 15 * [isSuccess]),
-        (5, 5, 10, 50, 50 * [isFailure]),
+        (5, 5, 10, 20, 50 * [isFailure, isSuccess]),
     ],
 )
 def test_should_configure_two_services_without_subscribers_and_consuming_event_from_store_queues(

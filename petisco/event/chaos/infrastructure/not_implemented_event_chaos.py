@@ -11,7 +11,7 @@ class NotImplementedEventChaos(IEventChaos):
         }
 
     def nack_simulation(self, *args, **kwargs):
-        pass
+        return False
 
     def simulate_failure_on_result(self, result: Result) -> Result:
         return result
