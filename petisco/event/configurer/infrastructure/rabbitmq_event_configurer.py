@@ -22,13 +22,14 @@ class RabbitMqEventConfigurer(IEventConfigurer):
         service: str,
         use_store_queues: bool = True,
         retry_ttl: int = 5000,
+        main_ttl: int = 5000,
     ):
         self._use_store_queues = use_store_queues
         self.event_subscribers_configurer = RabbitMqEventSubcribersConfigurer(
-            connector, organization, service, retry_ttl
+            connector, organization, service, retry_ttl, main_ttl
         )
         self.event_store_configurer = RabbitMqEventStoreConfigurer(
-            connector, organization, service, retry_ttl
+            connector, organization, service, retry_ttl, main_ttl
         )
 
     def configure(self):

@@ -73,7 +73,7 @@ def test_should_publish_consume_and_retry_from_store_queue_from_rabbitmq(
 
     event = EventUserCreatedMother.random()
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_event(event)
 
     bus = RabbitMqEventBusMother.default()
@@ -131,7 +131,7 @@ def test_should_publish_consume_and_retry_from_store_queue_not_affecting_other_q
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
@@ -184,7 +184,7 @@ def test_should_publish_two_event_and_consume_from_store_queue_from_rabbitmq(
     event_1 = EventUserCreatedMother.random()
     event_2 = EventUserCreatedMother.random()
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_event(event_1)
     configurer.configure_event(event_2)
 

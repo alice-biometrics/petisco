@@ -20,6 +20,7 @@ class RabbitMqEventSubcribersConfigurer:
         organization: str,
         service: str,
         retry_ttl: int = 5000,
+        main_ttl: int = 5000,
     ):
         self._connector = connector
         self._exchange_name = f"{organization}.{service}"
@@ -28,6 +29,7 @@ class RabbitMqEventSubcribersConfigurer:
         )
         self._configured_subscribers = []
         self.retry_ttl = retry_ttl
+        self.main_ttl = main_ttl
 
     def execute(self, subscribers):
         self._configure_exchanges()
@@ -104,7 +106,12 @@ class RabbitMqEventSubcribersConfigurer:
                 retry_queue_name = f"{base_retry_queue_name}.{suffix}"
                 dead_letter_queue_name = f"{base_dead_letter_queue_name}.{suffix}"
 
-                self.rabbitmq.declare_queue(queue_name=queue_name)
+                self.rabbitmq.declare_queue(
+                    queue_name=queue_name,
+                    dead_letter_exchange=f"dead_letter.{exchange_name}",
+                    dead_letter_routing_key="dead_letter",
+                    message_ttl=self.main_ttl,
+                )
                 self.rabbitmq.declare_queue(
                     queue_name=retry_queue_name,
                     dead_letter_exchange=exchange_name,
@@ -132,4 +139,9 @@ class RabbitMqEventSubcribersConfigurer:
                     exchange_name=dead_letter_exchange_name,
                     queue_name=dead_letter_queue_name,
                     routing_key=f"dead_letter.{queue_name}",
+                )
+                self.rabbitmq.bind_queue(
+                    exchange_name=dead_letter_exchange_name,
+                    queue_name=dead_letter_queue_name,
+                    routing_key=f"dead_letter",
                 )

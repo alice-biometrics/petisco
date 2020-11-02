@@ -14,6 +14,7 @@ class RabbitMqEventStoreConfigurer:
         organization: str,
         service: str,
         retry_ttl: int = 5000,
+        main_ttl: int = 5000,
     ):
         self._connector = connector
         self._exchange_name = f"{organization}.{service}"
@@ -22,6 +23,7 @@ class RabbitMqEventStoreConfigurer:
             connector=self._connector, channel_name=self._exchange_name
         )
         self.retry_ttl = retry_ttl
+        self.main_ttl = main_ttl
 
     def execute(self):
         self._configure_exchanges()
@@ -64,7 +66,12 @@ class RabbitMqEventStoreConfigurer:
         retry_exchange_name: str,
         dead_letter_exchange_name: str,
     ):
-        self.rabbitmq.declare_queue(queue_name="store")
+        self.rabbitmq.declare_queue(
+            queue_name="store",
+            dead_letter_exchange="dead_letter.store",
+            dead_letter_routing_key="dead_letter",
+            message_ttl=self.main_ttl,
+        )
         self.rabbitmq.declare_queue(
             queue_name="retry.store",
             dead_letter_exchange=self._fallback_store_exchange_name,  # exchange_name
@@ -106,4 +113,9 @@ class RabbitMqEventStoreConfigurer:
             exchange_name=dead_letter_exchange_name,
             queue_name="dead_letter.store",
             routing_key=f"dead_letter.{routing_key_any_event}",
+        )
+        self.rabbitmq.bind_queue(
+            exchange_name=dead_letter_exchange_name,
+            queue_name="dead_letter.store",
+            routing_key=f"dead_letter",
         )

@@ -50,7 +50,7 @@ def test_should_publish_consume_and_retry_event_from_rabbitmq_when_fail_consumer
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
@@ -160,7 +160,7 @@ def test_should_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq_
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
@@ -228,7 +228,7 @@ def test_should_publish_consume_and_retry_event_not_affecting_store_queue_from_r
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
@@ -277,7 +277,7 @@ def test_should_publish_consume_retry_and_send_to_dead_letter_event_from_rabbitm
     )
     subscribers = [subscriber]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
@@ -373,7 +373,7 @@ def test_should_publish_consume_and_retry_event_not_affecting_other_queue_includ
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
