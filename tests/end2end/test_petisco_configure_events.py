@@ -44,6 +44,8 @@ def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_rabbitm
     petisco._start()
     assert isinstance(Petisco.get_event_bus(), RabbitMqEventBus)
 
+    assert "config_events" in petisco.info
+
     petisco.stop()
     Petisco.clear()
 

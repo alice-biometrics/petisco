@@ -23,6 +23,55 @@ from tests.modules.unit.mocks.fake_logger import FakeLogger
 
 @pytest.mark.integration
 @testing_with_rabbitmq
+def test_should_consumer_react_to_default_chaos():
+
+    spy = SpyEvents()
+    logger = FakeLogger()
+
+    def assert_consumer(event: Event) -> Result[bool, Error]:
+        spy.append(event)
+        return isSuccess
+
+    event = EventUserCreatedMother.random()
+    subscribers = [
+        EventSubscriber(
+            event_name=event.event_name,
+            event_version=event.event_version,
+            handlers=[assert_consumer],
+        )
+    ]
+
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
+    configurer.configure_subscribers(subscribers)
+
+    bus = RabbitMqEventBusMother.default()
+    bus.publish(event)
+
+    max_retries_allowed = 5
+    chaos = RabbitMqEventChaos()
+    consumer = RabbitMqEventConsumerMother.with_chaos(
+        chaos, max_retries_allowed, logger
+    )
+    consumer.add_subscribers(subscribers)
+    consumer.start()
+
+    sleep(1.0)
+
+    consumer.stop()
+    configurer.clear()
+
+    spy.assert_number_unique_events(1)
+    spy.assert_first_event(event)
+    spy.assert_count_by_event_id(event.event_id, 1)
+
+    assert len(logger.get_logging_messages()) == 1
+    logging_message = logger.get_logging_messages()[0]
+    assert logging_message[0] == DEBUG
+    assert logging_message[1]["data"]["message"]["derived_action"] == {}
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
 def test_should_consumer_react_to_chaos_with_zero_probability():
 
     spy = SpyEvents()

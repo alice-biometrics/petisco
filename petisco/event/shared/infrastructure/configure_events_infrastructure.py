@@ -1,4 +1,4 @@
-from petisco.event.chaos.infrastructure.rabbitmq_event_chaos import RabbitMqEventChaos
+from petisco.logger.interface_logger import ILogger
 from petisco.event.shared.domain.config_events import ConfigEvents
 from petisco.event.bus.infrastructure.not_implemented_event_bus import (
     NotImplementedEventBus,
@@ -11,7 +11,7 @@ from petisco.event.consumer.infrastructure.not_implemented_event_comsumer import
 )
 
 
-def configure_events_infrastructure(config_events: ConfigEvents):
+def configure_events_infrastructure(config_events: ConfigEvents, logger: ILogger):
     bus = NotImplementedEventBus()
     configurer = NotImplementedEventConfigurer()
     consumer = NotImplementedEventConsumer()
@@ -40,7 +40,6 @@ def configure_events_infrastructure(config_events: ConfigEvents):
             use_store_queues=config_events.use_store_queues,
             retry_ttl=config_events.retry_ttl,
         )
-        from petisco import Petisco
 
         consumer = RabbitMqEventConsumer(
             connector=RabbitMqConnector(),
@@ -48,8 +47,8 @@ def configure_events_infrastructure(config_events: ConfigEvents):
             service=config_events.service,
             max_retries=config_events.max_retries,
             verbose=config_events.consumer_verbose,
-            logger=Petisco.get_logger(),
-            chaos=RabbitMqEventChaos(),
+            logger=logger,
+            chaos=config_events.chaos,
         )
 
     return bus, configurer, consumer

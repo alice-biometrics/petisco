@@ -1,7 +1,7 @@
 import os
 import random
 from time import sleep
-from typing import Optional
+from typing import Optional, Dict
 
 from meiga import Failure, Result
 from pika.adapters.blocking_connection import BlockingChannel
@@ -46,7 +46,7 @@ class RabbitMqEventChaos(IEventChaos):
         self.delay_before_even_handler_second = delay_before_even_handler_second
         self.percentage_simulate_failures = percentage_simulate_failures
 
-    def info(self):
+    def info(self) -> Dict:
         return {
             EVENT_CHAOS_PERCENTAGE_SIMULATE_NACK_KEY: self.percentage_simulate_nack,
             EVENT_CHAOS_DELAY_BEFORE_EVENT_HANDLER_SECONDS_KEY: self.delay_before_even_handler_second,

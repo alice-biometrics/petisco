@@ -1,3 +1,5 @@
+from typing import Dict
+
 from meiga import Result
 from abc import ABCMeta, abstractmethod
 
@@ -7,8 +9,8 @@ class IEventChaos:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def info(self):
-        return NotImplementedError
+    def info(self) -> Dict:
+        raise NotImplementedError
 
     @abstractmethod
     def nack_simulation(self, *args, **kwargs) -> bool:
