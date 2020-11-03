@@ -125,7 +125,10 @@ class RabbitMqEventConsumer(IEventConsumer):
                 event = Event.from_json(body)
             except TypeError:
                 event = Event.from_deprecated_json(body)
-            except:  # noqa E722
+            except Exception as e:
+                self.consumer_logger.log_parser_error(
+                    method, properties, body, handler, e
+                )
                 ch.basic_nack(delivery_tag=method.delivery_tag)
                 return
 

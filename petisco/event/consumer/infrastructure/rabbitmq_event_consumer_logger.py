@@ -43,6 +43,25 @@ class RabbitMqEventConsumerLogger:
         }
         self.logger.log(DEBUG, log_message.set_message(message))
 
+    def log_parser_error(
+        self,
+        method: Basic.Deliver,
+        properties: BasicProperties,
+        body: bytes,
+        handler: Callable,
+        exception: Exception,
+    ):
+        log_message = self._get_base_message(handler)
+        event_handler_name = self._get_event_handler_name(handler)
+        message = {
+            "body": body,
+            "properties": properties,
+            "method": method,
+            "event_handler": event_handler_name,
+            "exception": str(exception),
+        }
+        self.logger.log(DEBUG, log_message.set_message(message))
+
     def log(
         self,
         method: Basic.Deliver,

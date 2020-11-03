@@ -4,7 +4,6 @@ import traceback
 
 from petisco.application.petisco import Petisco
 from petisco.domain.errors.critical_error import CriticalError
-from petisco.domain.errors.unknown_error import UnknownError
 from petisco.logger.interface_logger import DEBUG
 from petisco.event.shared.domain.event import Event
 from functools import wraps
@@ -77,7 +76,7 @@ class _EventHandler:
                 result = run_event_handler(**kwargs)
             except Exception as exception:
                 result = Failure(
-                    UnknownError(
+                    CriticalError(
                         exception=exception,
                         input_parameters=kwargs if len(kwargs) > 0 else args,
                         executor=f"{func.__name__} (Event Handler)",
