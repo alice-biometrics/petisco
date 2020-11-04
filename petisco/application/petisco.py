@@ -150,8 +150,9 @@ class Petisco(metaclass=Singleton):
             )
 
         if config_events.queues_subscribers:
-            for queue, handler in config_events.queues_subscribers.items():
-                self.event_consumer.add_handler_on_queue(queue, handler)
+            for queue, handlers in config_events.queues_subscribers.items():
+                for handler in handlers:
+                    self.event_consumer.add_handler_on_queue(queue, handler)
 
         self.config_events = config_events
 
