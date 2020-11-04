@@ -42,9 +42,9 @@ class RabbitMqEventChaos(IEventChaos):
         percentage_simulate_failures
             Percentage of simulate failures [0.0 -> 1.0]. Where 1.0 simulate always a failure on handlers.
         """
-        self.percentage_simulate_nack = percentage_simulate_nack
-        self.delay_before_even_handler_second = delay_before_even_handler_second
-        self.percentage_simulate_failures = percentage_simulate_failures
+        self.percentage_simulate_nack = float(percentage_simulate_nack)
+        self.delay_before_even_handler_second = float(delay_before_even_handler_second)
+        self.percentage_simulate_failures = float(percentage_simulate_failures)
 
     def info(self) -> Dict:
         return {
