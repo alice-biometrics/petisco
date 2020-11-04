@@ -40,7 +40,6 @@ class RabbitMqEventBus(IEventBus):
 
         try:
             channel = self.connector.get_channel(self.rabbitmq_key)
-
             routing_key = RabbitMqEventQueueNameFormatter.format(
                 event, exchange_name=self.exchange_name
             )

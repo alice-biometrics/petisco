@@ -8,11 +8,11 @@ class RabbitMqDeclarer:
         self._connector = connector
         self._channel_name = channel_name
 
-    def declare_exchange(self, exchange_name: str):
+    def declare_exchange(self, exchange_name: str, exchange_type: str = "topic"):
         channel = self._connector.get_channel(self._channel_name)
         try:
             channel.exchange_declare(
-                exchange=exchange_name, exchange_type="topic", durable=True
+                exchange=exchange_name, exchange_type=exchange_type, durable=True
             )
         except Exception as error:
             raise TypeError(
