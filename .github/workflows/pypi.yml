@@ -41,5 +41,5 @@ jobs:
         github_token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
     - name: Check pip installation
       run: |
-        pip install petisco==VERSION &>/dev/null
-        pip install petisco==VERSION
+        pip install petisco==${RELEASE_VERSION} || true
+        pip install petisco==${RELEASE_VERSION}
