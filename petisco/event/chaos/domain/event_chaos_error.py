@@ -1,5 +1,5 @@
-from petisco.domain.errors.critical_error import CriticalError
+from meiga import Error
 
 
-class EventChaosError(CriticalError):
+class EventChaosError(Error):
     pass

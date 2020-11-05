@@ -32,6 +32,25 @@ class RabbitMqEventConsumerLogger:
         body: bytes,
         handler: Callable,
     ):
+        self._log_simulation(method, properties, body, handler, "nack simulated")
+
+    def log_failure_simulation(
+        self,
+        method: Basic.Deliver,
+        properties: BasicProperties,
+        body: bytes,
+        handler: Callable,
+    ):
+        self._log_simulation(method, properties, body, handler, "failure simulated")
+
+    def _log_simulation(
+        self,
+        method: Basic.Deliver,
+        properties: BasicProperties,
+        body: bytes,
+        handler: Callable,
+        chaos_action: str,
+    ):
         log_message = self._get_base_message(handler)
         event_handler_name = self._get_event_handler_name(handler)
         message = {
@@ -39,7 +58,7 @@ class RabbitMqEventConsumerLogger:
             "properties": properties,
             "method": method,
             "event_handler": event_handler_name,
-            "chaos_action": f"nck simulated",
+            "chaos_action": chaos_action,
         }
         self.logger.log(DEBUG, log_message.set_message(message))
 

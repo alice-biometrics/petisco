@@ -127,7 +127,7 @@ def test_should_consumer_react_to_chaos_with_zero_probability():
     "max_retries_allowed,expected_number_event_consumed,chaos",
     [
         (5, 0, RabbitMqEventChaos(percentage_simulate_nack=1.0)),
-        (1, 2, RabbitMqEventChaos(percentage_simulate_failures=1.0)),
+        (1, 0, RabbitMqEventChaos(percentage_simulate_failures=1.0)),
         (1, 1, RabbitMqEventChaos(delay_before_even_handler_second=2.0)),
     ],
 )
@@ -214,7 +214,7 @@ def test_should_consumer_react_to_chaos_with_nck_simulation_and_check_logger():
         "operation": "assert_consumer",
     }
     assert (
-        first_logging_message[1]["data"]["message"]["chaos_action"] == "nck simulated"
+        first_logging_message[1]["data"]["message"]["chaos_action"] == "nack simulated"
     )
 
 
@@ -261,50 +261,71 @@ def test_should_consumer_react_to_chaos_with_failure_simulation_and_check_logger
 
 
 def assert_logger_represents_simulated_failure_scenario(logger, max_retries_allowed):
-    assert len(logger.get_logging_messages()) == max_retries_allowed + 1
-    for i in range(max_retries_allowed):
-        redelivery_count = i + 1
-        logging_message = logger.get_logging_messages()[i]
-
+    def assert_redelivered_message(
+        logging_message, expected_derived_action, check_headers: bool
+    ):
         assert logging_message[0] == DEBUG
         assert logging_message[1]["meta"] == {
             "layer": "rabbitmq_event_consumer",
             "operation": "assert_consumer",
         }
         assert logging_message[1]["data"]["message"]["result"] == Failure(
-            EventChaosError(Exception())
+            EventChaosError()
         )
-
         derived_action = logging_message[1]["data"]["message"]["derived_action"]
 
-        if i < 5:
-            expected_derived_action = {
-                "action": "send_to_retry",
-                "exchange_name": "retry.alice.petisco",
-                "routing_key": "retry.alice.petisco.1.event.user_created.assert_consumer",
-                "headers": {
-                    "queue": "alice.petisco.1.event.user_created.assert_consumer",
-                    "redelivery_count": redelivery_count,
-                },
-            }
-        else:
-            expected_derived_action = {
-                "action": "send_to_dead_letter",
-                "exchange_name": "dead_letter.alice.petisco",
-                "routing_key": "dead_letter.alice.petisco.1.event.user_created.assert_consumer",
-                "headers": {
-                    "queue": "alice.petisco.1.event.user_created.assert_consumer",
-                    "redelivery_count": redelivery_count,
-                },
-            }
-
-        if i > 0:
+        if check_headers:
             derived_action["headers"].pop("x-death")
             derived_action["headers"].pop("x-first-death-exchange")
             derived_action["headers"].pop("x-first-death-queue")
             derived_action["headers"].pop("x-first-death-reason")
 
         assert derived_action == expected_derived_action
+
+    def assert_send_to_retry(logging_message, redelivery_count, check_headers):
+        expected_derived_action = {
+            "action": "send_to_retry",
+            "exchange_name": "retry.alice.petisco",
+            "routing_key": "retry.alice.petisco.1.event.user_created.assert_consumer",
+            "headers": {
+                "queue": "alice.petisco.1.event.user_created.assert_consumer",
+                "redelivery_count": redelivery_count,
+            },
+        }
+        assert_redelivered_message(
+            logging_message, expected_derived_action, check_headers
+        )
+
+    def assert_send_to_dead_leter(logging_message, redelivery_count, check_headers):
+        expected_derived_action = {
+            "action": "send_to_dead_letter",
+            "exchange_name": "dead_letter.alice.petisco",
+            "routing_key": "dead_letter.alice.petisco.1.event.user_created.assert_consumer",
+            "headers": {
+                "queue": "alice.petisco.1.event.user_created.assert_consumer",
+                "redelivery_count": redelivery_count,
+            },
+        }
+        assert_redelivered_message(
+            logging_message, expected_derived_action, check_headers
+        )
+
+    def assert_failure_simulator(logging_message):
+        logging_message[1]["data"]["message"]["chaos_action"] == "failure simulated"
+
+    assert len(logger.get_logging_messages()) == (max_retries_allowed + 1) * 2
+
+    assert_send_to_retry(logger.get_logging_messages()[1], 1, False)
+
+    redelivered_count = 2
+    for i in range(3, 10, 2):
+        assert_send_to_retry(logger.get_logging_messages()[i], redelivered_count, True)
+        redelivered_count += 1
+
+    for i in range(2, 10, 2):
+        assert_failure_simulator(logger.get_logging_messages()[i])
+
+    assert_send_to_dead_leter(logger.get_logging_messages()[-1], 6, True)
 
 
 @pytest.mark.integration

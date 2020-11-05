@@ -3,10 +3,12 @@ import traceback
 from time import sleep
 from typing import Callable, List, Optional
 
+from meiga import Failure
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 
+from petisco.event.chaos.domain.event_chaos_error import EventChaosError
 from petisco.logger.interface_logger import ILogger
 from petisco.logger.not_implemented_logger import NotImplementedLogger
 
@@ -134,8 +136,13 @@ class RabbitMqEventConsumer(IEventConsumer):
 
             self.chaos.delay()
 
-            result = handler(event)
-            result = self.chaos.simulate_failure_on_result(result)
+            if self.chaos.failure_simulation():
+                self.consumer_logger.log_failure_simulation(
+                    method, properties, body, handler
+                )
+                result = Failure(EventChaosError())
+            else:
+                result = handler(event)
 
             self.printer.print_context(handler, result)
 

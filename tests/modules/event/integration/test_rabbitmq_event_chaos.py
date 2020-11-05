@@ -2,12 +2,10 @@ from typing import Any
 from unittest.mock import Mock
 
 import pytest
-from meiga import isSuccess, Failure
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 
 from petisco import RabbitMqEventChaos
-from petisco.event.chaos.domain.event_chaos_error import EventChaosError
 
 
 @pytest.mark.integration
@@ -31,7 +29,7 @@ def test_should_create_default_rabbitmq_event_chaos():
 
     assert chaos.nack_simulation(None, None) is False
     chaos.delay()
-    assert chaos.simulate_failure_on_result(isSuccess) == isSuccess
+    assert chaos.failure_simulation() is False
 
 
 @pytest.mark.integration
@@ -48,7 +46,7 @@ def test_should_create_default_rabbitmq_event_chaos_with_env_percentage_simulate
 
     assert chaos.nack_simulation(mock_channel, mock_method) is True
     chaos.delay()
-    assert chaos.simulate_failure_on_result(isSuccess) == isSuccess
+    assert chaos.failure_simulation() is False
 
     mock_channel.basic_nack.assert_called_once()
 
@@ -63,9 +61,7 @@ def test_should_create_default_rabbitmq_event_chaos_with_env_percentage_simulate
     chaos = RabbitMqEventChaos()
     assert chaos.nack_simulation(None, None) is False
     chaos.delay()
-    assert chaos.simulate_failure_on_result(isSuccess) == Failure(
-        EventChaosError(Exception())
-    )
+    assert chaos.failure_simulation() is True
 
 
 @pytest.mark.integration
@@ -78,7 +74,7 @@ def test_should_create_rabbitmq_event_chaos_with_percentage_simulate_nack_1():
 
     assert chaos.nack_simulation(mock_channel, mock_method) is True
     chaos.delay()
-    assert chaos.simulate_failure_on_result(isSuccess) == isSuccess
+    assert chaos.failure_simulation() is False
 
     mock_channel.basic_nack.assert_called_once()
 
@@ -89,6 +85,4 @@ def test_should_create_rabbitmq_event_chaos_with_percentage_simulate_failures_1(
 
     assert chaos.nack_simulation(None, None) is False
     chaos.delay()
-    assert chaos.simulate_failure_on_result(isSuccess) == Failure(
-        EventChaosError(Exception())
-    )
+    assert chaos.failure_simulation() is True

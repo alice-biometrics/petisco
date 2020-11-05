@@ -1,6 +1,5 @@
 from typing import Dict
 
-from meiga import Result
 from abc import ABCMeta, abstractmethod
 
 
@@ -17,7 +16,7 @@ class IEventChaos:
         raise NotImplementedError
 
     @abstractmethod
-    def simulate_failure_on_result(self, result: Result) -> Result:
+    def failure_simulation(self) -> bool:
         raise NotImplementedError
 
     @abstractmethod
