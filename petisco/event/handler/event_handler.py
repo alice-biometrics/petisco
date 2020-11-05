@@ -84,6 +84,8 @@ class _EventHandler:
                     )
                 )
 
+            self.logger.log(DEBUG, log_message.set_message({"result": result}))
+
             self.notify(result)
 
             return result
