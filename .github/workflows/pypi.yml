@@ -10,7 +10,7 @@ env:
   PACKAGE_NAME: petisco
 
 jobs:
-  deploy:
+  publish:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -39,3 +39,7 @@ jobs:
       uses: alice-biometrics/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+    - name: Check pip installation
+      run: |
+        pip install petisco==VERSION &>/dev/null
+        pip install petisco==VERSION
