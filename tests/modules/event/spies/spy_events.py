@@ -6,6 +6,9 @@ class SpyEvents:
         self.counter_events = {}
         self.events = []
 
+    def __repr__(self):
+        return f"SpyEvents: {self.events}"
+
     def append(self, event: Event):
         self.events.append(event)
         if str(event.event_id) not in self.counter_events:

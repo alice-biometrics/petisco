@@ -16,7 +16,7 @@ class IEventChaos:
         raise NotImplementedError
 
     @abstractmethod
-    def failure_simulation(self) -> bool:
+    def failure_simulation(self, *args, **kwargs) -> bool:
         raise NotImplementedError
 
     @abstractmethod

@@ -56,7 +56,7 @@ def test_should_configure_one_services_with_modern_event_management_an_other_wit
             spy_modern.append(event)
             return isSuccess
 
-        legacy_queue = RabbitMqQueueNamingMother.dead_letter_queue()
+        legacy_queue = RabbitMqQueueNamingMother.legacy_dead_letter_queue()
         consumer = RabbitMqEventConsumerMother.default()
         consumer.add_handler_on_queue(legacy_queue, modern_handler)
         consumer.start()
@@ -64,6 +64,9 @@ def test_should_configure_one_services_with_modern_event_management_an_other_wit
         sleep(1.0)
 
         consumer.stop()
+
+    rabbitmq = RabbitMqDeclarerMother.default()
+    rabbitmq.delete_queue(RabbitMqQueueNamingMother.legacy_dead_letter_queue())
 
     step_1_execute_legacy()
     step_2_execute_modern()
@@ -75,6 +78,5 @@ def test_should_configure_one_services_with_modern_event_management_an_other_wit
     spy_modern.assert_first_event(event)
     spy_modern.assert_count_by_event_id(event.event_id, 1)
 
-    rabbitmq = RabbitMqDeclarerMother.default()
-    rabbitmq.delete_queue(RabbitMqQueueNamingMother.main_queue())
-    rabbitmq.delete_queue(RabbitMqQueueNamingMother.dead_letter_queue())
+    rabbitmq.delete_queue(RabbitMqQueueNamingMother.legacy_main_queue())
+    rabbitmq.delete_queue(RabbitMqQueueNamingMother.legacy_dead_letter_queue())

@@ -79,7 +79,7 @@ class RabbitMqEventStoreConfigurer:
         self.rabbitmq.declare_queue(
             queue_name="retry.store",
             dead_letter_exchange=self._common_retry_exchange_name,  # exchange_name
-            dead_letter_routing_key="retry.store",
+            dead_letter_routing_key="store",
             message_ttl=self.retry_ttl,
         )
         self.rabbitmq.declare_queue(queue_name="dead_letter.store")
@@ -94,6 +94,9 @@ class RabbitMqEventStoreConfigurer:
             exchange_name=exchange_name, queue_name="store", routing_key="retry.store"
         )
         self.rabbitmq.bind_queue(
+            exchange_name=exchange_name, queue_name="store", routing_key="store"
+        )
+        self.rabbitmq.bind_queue(
             exchange_name=self._common_retry_exchange_name,
             queue_name="store",
             routing_key=routing_key_any_event,
@@ -101,18 +104,23 @@ class RabbitMqEventStoreConfigurer:
         self.rabbitmq.bind_queue(
             exchange_name=self._common_retry_exchange_name,
             queue_name="store",
-            routing_key="retry.store",
+            routing_key="store",
         )
+        # self.rabbitmq.bind_queue(
+        #     exchange_name=self._common_retry_exchange_name,
+        #     queue_name="store",
+        #     routing_key="retry.store",
+        # )
         self.rabbitmq.bind_queue(
-            exchange_name=retry_exchange_name,
+            exchange_name=self._common_retry_exchange_name,
             queue_name="retry.store",
             routing_key="retry.store",
         )
-        self.rabbitmq.bind_queue(
-            exchange_name=retry_exchange_name,
-            queue_name="retry.store",
-            routing_key=f"retry.store",
-        )
+        # self.rabbitmq.bind_queue(
+        #     exchange_name=retry_exchange_name,
+        #     queue_name="retry.store",
+        #     routing_key="retry.store",
+        # )
         self.rabbitmq.bind_queue(
             exchange_name=dead_letter_exchange_name,
             queue_name="dead_letter.store",
@@ -122,4 +130,9 @@ class RabbitMqEventStoreConfigurer:
             exchange_name=self._common_dead_letter_exchange_name,
             queue_name="dead_letter.store",
             routing_key=f"dead_letter",
+        )
+        self.rabbitmq.bind_queue(
+            exchange_name=dead_letter_exchange_name,
+            queue_name="dead_letter.store",
+            routing_key=f"dead_letter.store",
         )

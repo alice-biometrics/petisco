@@ -136,7 +136,7 @@ class RabbitMqEventConsumer(IEventConsumer):
 
             self.chaos.delay()
 
-            if self.chaos.failure_simulation():
+            if self.chaos.failure_simulation(method):
                 self.consumer_logger.log_failure_simulation(
                     method, properties, body, handler
                 )
@@ -223,6 +223,7 @@ class RabbitMqEventConsumer(IEventConsumer):
             exchange_name = self._fallback_store_exchange_name
 
         routing_key = self._get_routing_key(routing_key, "retry.")
+
         updated_headers = self.send_message_to(
             exchange_name, ch, routing_key, properties, body
         )

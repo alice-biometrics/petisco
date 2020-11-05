@@ -12,7 +12,7 @@ class NotImplementedEventChaos(IEventChaos):
     def nack_simulation(self, *args, **kwargs) -> bool:
         return False
 
-    def failure_simulation(self) -> bool:
+    def failure_simulation(self, *args, **kwargs) -> bool:
         return False
 
     def delay(self):

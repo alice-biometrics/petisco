@@ -220,13 +220,66 @@ def test_should_consumer_react_to_chaos_with_nck_simulation_and_check_logger():
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_should_consumer_react_to_chaos_with_failure_simulation_and_check_logger():
+def test_should_consumer_react_to_chaos_with_failure_simulation_and_check_logger_without_subscribers():
 
     spy = SpyEvents()
+    spy_dead_letter = SpyEvents()
+
+    logger = FakeLogger()
+
+    def assert_store_consumer(event: Event) -> Result[bool, Error]:
+        spy.append(event)
+        return isSuccess
+
+    def assert_dead_letter_store_consumer(event: Event) -> Result[bool, Error]:
+        spy_dead_letter.append(event)
+        return isSuccess
+
+    event = EventUserCreatedMother.random()
+
+    configurer = RabbitMqEventConfigurerMother.with_main_and_retry_ttl_100ms()
+    configurer.configure()
+
+    bus = RabbitMqEventBusMother.default()
+    bus.publish(event)
+
+    max_retries_allowed = 5
+    chaos = RabbitMqEventChaos(
+        percentage_simulate_failures=1.0, protected_routing_keys=["dead_letter.store"]
+    )
+    consumer = RabbitMqEventConsumerMother.with_chaos(
+        chaos, max_retries_allowed, logger
+    )
+    consumer.add_handler_on_store(assert_store_consumer)
+    consumer.add_handler_on_queue(
+        "dead_letter.store", assert_dead_letter_store_consumer
+    )
+    consumer.start()
+
+    sleep(1.5)
+
+    consumer.stop()
+    configurer.clear()
+
+    spy.assert_count_by_event_id(event.event_id, 0)
+    spy_dead_letter.assert_count_by_event_id(event.event_id, 1)
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
+def test_should_consumer_react_to_chaos_with_failure_simulation_and_check_logger_with_subscribers():
+
+    spy = SpyEvents()
+    spy_dead_letter = SpyEvents()
+
     logger = FakeLogger()
 
     def assert_consumer(event: Event) -> Result[bool, Error]:
         spy.append(event)
+        return isSuccess
+
+    def assert_dead_letter_consumer(event: Event) -> Result[bool, Error]:
+        spy_dead_letter.append(event)
         return isSuccess
 
     event = EventUserCreatedMother.random()
@@ -238,26 +291,193 @@ def test_should_consumer_react_to_chaos_with_failure_simulation_and_check_logger
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_main_and_retry_ttl_100ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
     bus.publish(event)
 
     max_retries_allowed = 5
-    chaos = RabbitMqEventChaos(percentage_simulate_failures=1.0)
+    chaos = RabbitMqEventChaos(
+        percentage_simulate_failures=1.0,
+        protected_routing_keys=[
+            "dead_letter.alice.petisco.1.event.user_created.assert_consumer"
+        ],
+    )
     consumer = RabbitMqEventConsumerMother.with_chaos(
         chaos, max_retries_allowed, logger
     )
     consumer.add_subscribers(subscribers)
+    consumer.add_handler_on_queue(
+        "dead_letter.alice.petisco.1.event.user_created.assert_consumer",
+        assert_dead_letter_consumer,
+    )
+
     consumer.start()
 
-    sleep(1.0)
+    sleep(1.5)
 
     consumer.stop()
     configurer.clear()
 
+    spy.assert_count_by_event_id(event.event_id, 0)
+    spy_dead_letter.assert_count_by_event_id(event.event_id, 1)
+
     assert_logger_represents_simulated_failure_scenario(logger, max_retries_allowed)
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
+def test_should_consumer_react_to_chaos_with_failure_simulation_on_store_and_subscriber_queue():
+
+    spy_subscriber = SpyEvents()
+    spy_store = SpyEvents()
+    spy_dead_letter_subscriber = SpyEvents()
+    spy_dead_letter_store = SpyEvents()
+
+    logger = FakeLogger()
+
+    def assert_consumer(event: Event) -> Result[bool, Error]:
+        spy_subscriber.append(event)
+        return isSuccess
+
+    def assert_store_consumer(event: Event) -> Result[bool, Error]:
+        spy_store.append(event)
+        return isSuccess
+
+    def assert_dead_letter_subscriber_consumer(event: Event) -> Result[bool, Error]:
+        spy_dead_letter_subscriber.append(event)
+        return isSuccess
+
+    def assert_dead_letter_store_consumer(event: Event) -> Result[bool, Error]:
+        spy_dead_letter_store.append(event)
+        return isSuccess
+
+    event = EventUserCreatedMother.random()
+    subscribers = [
+        EventSubscriber(
+            event_name=event.event_name,
+            event_version=event.event_version,
+            handlers=[assert_consumer],
+        )
+    ]
+
+    configurer = RabbitMqEventConfigurerMother.with_main_and_retry_ttl_100ms()
+    configurer.configure_subscribers(subscribers)
+
+    bus = RabbitMqEventBusMother.default()
+    bus.publish(event)
+
+    max_retries_allowed = 5
+    chaos = RabbitMqEventChaos(
+        percentage_simulate_failures=1.0,
+        protected_routing_keys=[
+            "dead_letter.alice.petisco.1.event.user_created.assert_consumer",
+            "dead_letter.store",
+        ],
+    )
+    consumer = RabbitMqEventConsumerMother.with_chaos(
+        chaos, max_retries_allowed, logger
+    )
+    consumer.add_subscribers(subscribers)
+    consumer.add_handler_on_store(assert_store_consumer)
+    consumer.add_handler_on_queue(
+        "dead_letter.alice.petisco.1.event.user_created.assert_consumer",
+        assert_dead_letter_subscriber_consumer,
+    )
+    consumer.add_handler_on_queue(
+        "dead_letter.store", assert_dead_letter_store_consumer
+    )
+
+    consumer.start()
+
+    sleep(1.5)
+
+    consumer.stop()
+    configurer.clear()
+
+    spy_subscriber.assert_count_by_event_id(event.event_id, 0)
+    spy_store.assert_count_by_event_id(event.event_id, 0)
+
+    spy_dead_letter_subscriber.assert_count_by_event_id(event.event_id, 1)
+    spy_dead_letter_store.assert_count_by_event_id(event.event_id, 1)
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
+def test_should_consumer_react_to_chaos_with_failure_simulation_only_on_subscriber_queue():
+
+    spy_subscriber = SpyEvents()
+    spy_store = SpyEvents()
+    spy_dead_letter_subscriber = SpyEvents()
+    spy_dead_letter_store = SpyEvents()
+
+    logger = FakeLogger()
+
+    def assert_consumer(event: Event) -> Result[bool, Error]:
+        spy_subscriber.append(event)
+        return isSuccess
+
+    def assert_store_consumer(event: Event) -> Result[bool, Error]:
+        spy_store.append(event)
+        return isSuccess
+
+    def assert_dead_letter_subscriber_consumer(event: Event) -> Result[bool, Error]:
+        spy_dead_letter_subscriber.append(event)
+        return isSuccess
+
+    def assert_dead_letter_store_consumer(event: Event) -> Result[bool, Error]:
+        spy_dead_letter_store.append(event)
+        return isSuccess
+
+    event = EventUserCreatedMother.random()
+    subscribers = [
+        EventSubscriber(
+            event_name=event.event_name,
+            event_version=event.event_version,
+            handlers=[assert_consumer],
+        )
+    ]
+
+    configurer = RabbitMqEventConfigurerMother.with_main_and_retry_ttl_100ms()
+    configurer.configure_subscribers(subscribers)
+
+    bus = RabbitMqEventBusMother.default()
+    bus.publish(event)
+
+    max_retries_allowed = 5
+    chaos = RabbitMqEventChaos(
+        percentage_simulate_failures=1.0,
+        protected_routing_keys=[
+            "dead_letter.alice.petisco.1.event.user_created.assert_consumer",
+            "dead_letter.store",
+            "store",
+        ],
+    )
+    consumer = RabbitMqEventConsumerMother.with_chaos(
+        chaos, max_retries_allowed, logger
+    )
+    consumer.add_subscribers(subscribers)
+    consumer.add_handler_on_store(assert_store_consumer)
+    consumer.add_handler_on_queue(
+        "dead_letter.alice.petisco.1.event.user_created.assert_consumer",
+        assert_dead_letter_subscriber_consumer,
+    )
+    consumer.add_handler_on_queue(
+        "dead_letter.store", assert_dead_letter_store_consumer
+    )
+
+    consumer.start()
+
+    sleep(1.5)
+
+    consumer.stop()
+    configurer.clear()
+
+    spy_subscriber.assert_count_by_event_id(event.event_id, 0)
+    spy_store.assert_count_by_event_id(event.event_id, 1)
+    spy_dead_letter_subscriber.assert_count_by_event_id(event.event_id, 1)
+    spy_dead_letter_store.assert_count_by_event_id(event.event_id, 0)
 
 
 def assert_logger_represents_simulated_failure_scenario(logger, max_retries_allowed):
@@ -313,8 +533,6 @@ def assert_logger_represents_simulated_failure_scenario(logger, max_retries_allo
     def assert_failure_simulator(logging_message):
         logging_message[1]["data"]["message"]["chaos_action"] == "failure simulated"
 
-    assert len(logger.get_logging_messages()) == (max_retries_allowed + 1) * 2
-
     assert_send_to_retry(logger.get_logging_messages()[1], 1, False)
 
     redelivered_count = 2
@@ -325,7 +543,7 @@ def assert_logger_represents_simulated_failure_scenario(logger, max_retries_allo
     for i in range(2, 10, 2):
         assert_failure_simulator(logger.get_logging_messages()[i])
 
-    assert_send_to_dead_leter(logger.get_logging_messages()[-1], 6, True)
+    assert_send_to_dead_leter(logger.get_logging_messages()[-2], 6, True)
 
 
 @pytest.mark.integration
