@@ -15,7 +15,7 @@ on:
       - master
 
 jobs:
-  ci:
+  ci-macos:
 
     strategy:
       max-parallel: 4

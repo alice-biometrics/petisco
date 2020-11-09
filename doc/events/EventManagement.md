@@ -193,7 +193,7 @@ As example, petisco provides the `RabbitMqEventChaos` implementation, where conf
 * percentage_simulate_failures: Percentage of simulate failures [0.0 -> 1.0]. Where 1.0 simulate always a failure on handlers.
     - Configurable with `EVENT_CHAOS_PERCENTAGE_SIMULATE_FAILURES` envvar.    
 * protected_routing_keys: Routing keys where chaos will not be applied  
-    - Configurable with `EVENT_CHAOS_PROTECTED_ROUTING_KEYS_KEY` envvar (e.g `"dead_letter.store,dl-legacy"`).  
+    - Configurable with `EVENT_CHAOS_PROTECTED_ROUTING_KEYS` envvar (e.g `"dead_letter.store,dl-legacy"`).  
     
     
 ## Tricks

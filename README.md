@@ -17,8 +17,9 @@ Petisco is a framework for helping Python developers to build clean Applications
       - [Controller Handler](#controller-handler)
     * [Model your Domain](#model-your-domain)
       - [Value Objects](#value-objects)
-      - [Events](#events)
       - [Aggregate Root](#aggregate-root)
+      - [Events](#events)
+      - [Webhooks](#webhooks)
 - [Testing :white_check_mark:](#testing-white_check_mark)
 - [Extras](#extras)
 - [Contact :mailbox_with_mail:](#contact-mailbox_with_mail)
@@ -195,6 +196,35 @@ Extend `ValueObject` to model your Value Objects.
 
 Find some examples in [petisco/domain/value_objects](petisco/domain/value_objects)
 
+#### Aggregate Root
+
+Extend `AggregateRoot` to model your Aggregate Roots
+ 
+```python
+from petisco import AggregateRoot, UserId, Name
+from my_code import UserCreated
+
+class User(AggregateRoot):
+
+    def __init__(self, name: Name, user_id: UserId):
+        self.name = name
+        self.user_id = user_id
+        super().__init__()
+
+    @staticmethod
+    def create(name: Name):
+        user = User(name, UserId.generate())
+        user.record(UserCreated(user.user_id, user.name))
+        return user
+```
+
+Use semantic constructors and `record` domain `Event`s very easy.
+
+```python 
+user = User.create(Name("Petisco"))
+events = user.pull_domain_events() # Events ready to be published
+```
+
 #### Events
 
 Extend `Event` to model your domain events.
@@ -225,35 +255,22 @@ How can we publish and consume events?
 
 To learn more about this topic, and how to configure it, please take a look to [EventManagement](doc/events/EventManagement.md) documentation.
 
+#### Webhooks
 
-#### Aggregate Root
+Create your webhooks easily with `Webhook` class. 
 
-Extend `AggregateRoot` to model your Aggregate Roots
- 
-```python
-from petisco import AggregateRoot, UserId, Name
-from my_code import UserCreated
+Check how to use it with a simple example:
 
-class User(AggregateRoot):
+1. Run a [service](examples/webhooks/subscribed_app.py) that will expose an entry point where webhooks will be attended:
+    ```console
+    export FLASK_APP=examples/webhooks/subscribed_app.py; python -m flask run
+    ```
+2. Execute a [Webhook](examples/webhooks/execute_webhook.py):
+     ```console
+    python examples/webhooks/execute_webhook.py
+    ```
 
-    def __init__(self, name: Name, user_id: UserId):
-        self.name = name
-        self.user_id = user_id
-        super().__init__()
 
-    @staticmethod
-    def create(name: Name):
-        user = User(name, UserId.generate())
-        user.record(UserCreated(user.user_id, user.name))
-        return user
-```
-
-Use semantic constructors and `record` domain `Event`s very easy.
-
-```python 
-user = User.create(Name("Petisco"))
-events = user.pull_domain_events() # Events ready to be published
-```
 ### Testing :white_check_mark:
 
 ###### Petisco Fixtures

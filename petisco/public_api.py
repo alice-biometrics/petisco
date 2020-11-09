@@ -86,6 +86,7 @@ from petisco.event.legacy.subscriber.infrastructure.not_implemented_event_subscr
     NotImplementedEventSubscriber,
 )
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
+from petisco.webhooks.webhook.domain.webhook import Webhook
 
 classes = [
     "IService",
@@ -149,6 +150,7 @@ classes = [
     "UnknownRequestError",
     "IEventBus",
     "event_handler",
+    "Webhook",
     "IEventChaos",
 ]
 

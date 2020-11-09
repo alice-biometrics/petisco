@@ -26,8 +26,11 @@ class Request:
         string_info: dict = None,
         json_info: dict = None,
         headers=None,
+        auth=None,
     ) -> Result[Response, Error]:
-        return Request.execute(url, "GET", binary_info, string_info, json_info, headers)
+        return Request.execute(
+            url, "GET", binary_info, string_info, json_info, headers, auth
+        )
 
     @staticmethod
     def post(
@@ -36,9 +39,10 @@ class Request:
         string_info: dict = None,
         json_info: dict = None,
         headers=None,
+        auth=None,
     ) -> Result[Response, Error]:
         return Request.execute(
-            url, "POST", binary_info, string_info, json_info, headers
+            url, "POST", binary_info, string_info, json_info, headers, auth
         )
 
     @staticmethod
@@ -48,9 +52,10 @@ class Request:
         string_info: dict = None,
         json_info: dict = None,
         headers=None,
+        auth=None,
     ) -> Result[Response, Error]:
         return Request.execute(
-            url, "PATCH", binary_info, string_info, json_info, headers
+            url, "PATCH", binary_info, string_info, json_info, headers, auth
         )
 
     @staticmethod
@@ -60,9 +65,10 @@ class Request:
         string_info: dict = None,
         json_info: dict = None,
         headers=None,
+        auth=None,
     ) -> Result[Response, Error]:
         return Request.execute(
-            url, "DELETE", binary_info, string_info, json_info, headers
+            url, "DELETE", binary_info, string_info, json_info, headers, auth
         )
 
     @staticmethod
@@ -73,12 +79,17 @@ class Request:
         string_info: dict = None,
         json_info: dict = None,
         headers=None,
+        auth=None,
     ) -> Result[Response, Error]:
         response = None
         try:
             if request == "GET":
                 response = requests.get(
-                    url=url, params=string_info, headers=headers, timeout=(5, 25)
+                    url=url,
+                    params=string_info,
+                    headers=headers,
+                    timeout=(5, 25),
+                    auth=auth,
                 )
             elif request == "POST":
                 response = requests.post(
@@ -88,6 +99,7 @@ class Request:
                     json=json_info,
                     headers=headers,
                     timeout=(5, 25),
+                    auth=auth,
                 )
             elif request == "PATCH":
                 response = requests.patch(
@@ -96,6 +108,7 @@ class Request:
                     json=json_info,
                     headers=headers,
                     timeout=(5, 25),
+                    auth=auth,
                 )
             elif request == "DELETE":
                 response = requests.delete(url=url, headers=headers, timeout=(5, 25))
