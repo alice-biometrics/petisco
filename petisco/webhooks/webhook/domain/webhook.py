@@ -47,7 +47,7 @@ class Webhook(AggregateRoot):
             "webhook_id": self.webhook_id.value,
             "post_url": self.post_url,
             "api_key": self.api_key,
-            "event_name": self.api_key,
+            "event_name": self.event_name,
             "event_version": self.event_version,
         }
 
