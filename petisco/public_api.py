@@ -90,6 +90,7 @@ from petisco.webhooks.webhook.domain.webhook import Webhook
 from petisco.webhooks.webhook.domain.webhook_id import WebhookId
 from petisco.webhooks.webhook.domain.webhook_sender import WebhookSender
 
+
 classes = [
     "IService",
     "IRepository",

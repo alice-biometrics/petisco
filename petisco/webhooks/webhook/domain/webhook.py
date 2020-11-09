@@ -9,9 +9,6 @@ from petisco.webhooks.webhook.domain.webhook_created import WebhookCreated
 from petisco.webhooks.webhook.domain.webhook_id import WebhookId
 
 
-TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
-
-
 class Webhook(AggregateRoot):
     @staticmethod
     def create(
