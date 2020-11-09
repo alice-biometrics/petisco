@@ -195,8 +195,13 @@ As example, petisco provides the `RabbitMqEventChaos` implementation, where conf
 * protected_routing_keys: Routing keys where chaos will not be applied  
     - Configurable with `EVENT_CHAOS_PROTECTED_ROUTING_KEYS` envvar (e.g `"dead_letter.store,dl-legacy"`).  
     
-    
+
 ## Tricks
+
+If you don't want to enable RabbitMq connection in some use case, you can use the following environment variable:
+
+* `export PETISCO_EVENT_MESSAGE_BROKER="notimplemented"`
+
 
 To prevent the propagation of Id parameters throughout your domain, you can compose your Event with a [`InfoId`](petisco/domain/aggregate_roots/info_id.py)
 
