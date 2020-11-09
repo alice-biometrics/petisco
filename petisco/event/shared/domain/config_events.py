@@ -8,6 +8,8 @@ from dataclasses import dataclass
 from meiga import Result, Error, Failure, Success
 from meiga.decorators import meiga
 
+from petisco.event.chaos.infrastructure.rabbitmq_event_chaos import RabbitMqEventChaos
+from petisco.event.chaos.domain.interface_event_chaos import IEventChaos
 from petisco.application.config.check_list_or_str_item import check_list_or_str_item
 from petisco.application.config.get_funtion_from_string import get_function_from_string
 from petisco.application.config.raise_petisco_config_error import (
@@ -51,11 +53,13 @@ class ConfigEvents:
     consumer_verbose: bool = False
     use_store_queues: bool = True
     retry_ttl: int = 5000
+    main_ttl: int = 5000
     max_retries: int = 5
     message_broker: Optional[str] = "not_implemented"
     event_subscribers: Optional[List[EventSubscriber]] = None
     store_queue_subscriber: Optional[Callable] = None
     queues_subscribers: Optional[Dict[str, Callable]] = None
+    chaos: Optional[IEventChaos] = None
 
     def __post_init__(self):
         message_broker = os.environ.get("PETISCO_EVENT_MESSAGE_BROKER")
@@ -130,9 +134,27 @@ class ConfigEvents:
             consumer_verbose=events.get("consumer_verbose", False),
             use_store_queues=events.get("use_store_queues", True),
             retry_ttl=events.get("retry_ttl", 5000),
+            main_ttl=events.get("main_ttl", 5000),
             max_retries=events.get("max_retries", 5),
             message_broker=events.get("message_broker", "not_implemented"),
             event_subscribers=event_subscribers,
             store_queue_subscriber=store_queue_subscriber,
             queues_subscribers=queues_subscribers,
+            chaos=RabbitMqEventChaos(),
         )
+
+    def info(self):
+        return {
+            "organization": self.organization,
+            "service": self.service,
+            "publish_deploy_event": self.publish_deploy_event,
+            "consumer_verbose": self.consumer_verbose,
+            "use_store_queues": self.use_store_queues,
+            "retry_ttl": self.retry_ttl,
+            "main_ttl": self.main_ttl,
+            "max_retries": self.max_retries,
+            "event_subscribers": self.event_subscribers,
+            "store_queue_subscriber": self.store_queue_subscriber,
+            "queues_subscribers": self.queues_subscribers,
+            "chaos": self.chaos.info(),
+        }

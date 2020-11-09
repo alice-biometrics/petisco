@@ -135,7 +135,7 @@ class Petisco(metaclass=Singleton):
 
         config_events = ConfigEvents.from_filename(filename).unwrap_or_throw()
         self.event_bus, self.event_configurer, self.event_consumer = configure_events_infrastructure(
-            config_events
+            config_events, self._logger
         )
 
         if config_events.event_subscribers:
@@ -150,10 +150,13 @@ class Petisco(metaclass=Singleton):
             )
 
         if config_events.queues_subscribers:
-            for queue, handler in config_events.queues_subscribers.items():
-                self.event_consumer.add_handler_on_queue(queue, handler)
+            for queue, handlers in config_events.queues_subscribers.items():
+                for handler in handlers:
+                    self.event_consumer.add_handler_on_queue(queue, handler)
 
         self.config_events = config_events
+
+        self.info["config_events"] = self.config_events.info()
 
     def _publish_deploy_event(self):
         event = ServiceDeployed(app_name=self._app_name, app_version=self._app_version)
@@ -313,6 +316,9 @@ class Petisco(metaclass=Singleton):
         self._start()
         self._application = self.config.get_application()
         return self._application.get_app()
+
+    def get_application(self):
+        return self._application
 
     def stop(self):
         self.event_subscriber.stop()

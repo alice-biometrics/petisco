@@ -231,7 +231,7 @@ def test_should_publish_consume_with_event_handler_return_nothing():
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()

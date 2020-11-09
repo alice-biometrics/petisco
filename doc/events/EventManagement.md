@@ -180,7 +180,22 @@ event = UserCreated()
 
 bus.publish(event)
 ```
-            
+
+## Event Chaos
+
+You can add a `IEventChaos` object as collaborator on a `RabbitMqConsumer`.
+As example, petisco provides the `RabbitMqEventChaos` implementation, where configurable parameters are the following:
+
+* percentage_simulate_nack: Percentage of simulate nack [0.0 -> 1.0]. Where 1.0 rejects all the event.
+    - Configurable with `EVENT_CHAOS_PERCENTAGE_SIMULATE_NACK` envvar.
+* delay_before_even_handler_second: Delay event handler execution for a given number of seconds.
+    - Configurable with `EVENT_CHAOS_DELAY_BEFORE_EVENT_HANDLER_SECONDS` envvar.
+* percentage_simulate_failures: Percentage of simulate failures [0.0 -> 1.0]. Where 1.0 simulate always a failure on handlers.
+    - Configurable with `EVENT_CHAOS_PERCENTAGE_SIMULATE_FAILURES` envvar.    
+* protected_routing_keys: Routing keys where chaos will not be applied  
+    - Configurable with `EVENT_CHAOS_PROTECTED_ROUTING_KEYS` envvar (e.g `"dead_letter.store,dl-legacy"`).  
+    
+    
 ## Tricks
 
 To prevent the propagation of Id parameters throughout your domain, you can compose your Event with a [`InfoId`](petisco/domain/aggregate_roots/info_id.py)

@@ -24,10 +24,11 @@ from tests.modules.event.spies.spy_events import SpyEvents
 @pytest.mark.parametrize(
     "max_retries_allowed,expected_number_event_consumed,simulated_results",
     [
-        (1, 1, [isFailure, isSuccess]),
-        (2, 2, [isFailure, isFailure, isSuccess]),
-        (3, 3, [isFailure, isFailure, isFailure, isSuccess]),
-        (4, 4, [isFailure, isFailure, isFailure, isFailure, isSuccess]),
+        (0, 1, [isFailure]),
+        (1, 2, [isFailure, isSuccess]),
+        (2, 3, [isFailure, isFailure, isSuccess]),
+        (3, 4, [isFailure, isFailure, isFailure, isSuccess]),
+        (4, 5, [isFailure, isFailure, isFailure, isFailure, isSuccess]),
     ],
 )
 def test_should_publish_consume_and_retry_event_from_rabbitmq_when_fail_consumer(
@@ -49,7 +50,7 @@ def test_should_publish_consume_and_retry_event_from_rabbitmq_when_fail_consumer
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
@@ -123,10 +124,11 @@ def test_should_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq(
 @pytest.mark.parametrize(
     "max_retries_allowed,expected_number_event_consumed,simulated_results",
     [
-        (1, 1, [isFailure, isSuccess]),
-        (2, 2, [isFailure, isFailure, isSuccess]),
-        (3, 3, [isFailure, isFailure, isFailure, isSuccess]),
-        (4, 4, [isFailure, isFailure, isFailure, isFailure, isSuccess]),
+        (0, 1, [isFailure]),
+        (1, 2, [isFailure, isSuccess]),
+        (2, 3, [isFailure, isFailure, isSuccess]),
+        (3, 4, [isFailure, isFailure, isFailure, isSuccess]),
+        (4, 5, [isFailure, isFailure, isFailure, isFailure, isSuccess]),
     ],
 )
 def test_should_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq_when_fail_consumer(
@@ -158,7 +160,7 @@ def test_should_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq_
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
@@ -194,10 +196,11 @@ def test_should_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq_
 @pytest.mark.parametrize(
     "max_retries_allowed,expected_number_event_consumed,simulated_results",
     [
-        (1, 1, [isFailure, isSuccess]),
-        (2, 2, [isFailure, isFailure, isSuccess]),
-        (3, 3, [isFailure, isFailure, isFailure, isSuccess]),
-        (4, 4, [isFailure, isFailure, isFailure, isFailure, isSuccess]),
+        (0, 1, [isFailure]),
+        (1, 2, [isFailure, isSuccess]),
+        (2, 3, [isFailure, isFailure, isSuccess]),
+        (3, 4, [isFailure, isFailure, isFailure, isSuccess]),
+        (4, 5, [isFailure, isFailure, isFailure, isFailure, isSuccess]),
     ],
 )
 def test_should_publish_consume_and_retry_event_not_affecting_store_queue_from_rabbitmq_when_fail_handler_consumer(
@@ -225,7 +228,7 @@ def test_should_publish_consume_and_retry_event_not_affecting_store_queue_from_r
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
@@ -257,7 +260,7 @@ def test_should_publish_consume_and_retry_event_not_affecting_store_queue_from_r
 @testing_with_rabbitmq
 def test_should_publish_consume_retry_and_send_to_dead_letter_event_from_rabbitmq_when_fail_consumer():
     max_retries_allowed = 2
-    expected_number_event_consumed = 2
+    expected_number_event_consumed = 3
 
     spy = SpyEvents()
     spy_dead_letter = SpyEvents()
@@ -274,7 +277,7 @@ def test_should_publish_consume_retry_and_send_to_dead_letter_event_from_rabbitm
     )
     subscribers = [subscriber]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
@@ -308,12 +311,12 @@ def test_should_publish_consume_retry_and_send_to_dead_letter_event_from_rabbitm
 @pytest.mark.integration
 @testing_with_rabbitmq
 @pytest.mark.parametrize(
-    "max_retries_allowed,expected_number_event_consumed_by_store, expected_number_event_consumed_by_handler_1, expected_number_event_consumed_by_handler_2,simulated_results_store, simulated_results_handler_1, simulated_results_handler_2",
+    "max_retries_allowed, expected_number_event_consumed_by_store, expected_number_event_consumed_by_handler_1, expected_number_event_consumed_by_handler_2,simulated_results_store, simulated_results_handler_1, simulated_results_handler_2",
     [
-        (1, 1, 1, 1, [isFailure, isSuccess], [isSuccess], [isSuccess]),
-        (1, 1, 1, 1, [isSuccess], [isFailure, isSuccess], [isSuccess]),
-        (1, 1, 1, 1, [isSuccess], [isSuccess], [isFailure, isSuccess]),
-        (1, 1, 1, 1, [isFailure, isSuccess], [isFailure, isSuccess], [isSuccess]),
+        (1, 2, 1, 1, [isFailure, isSuccess], [isSuccess], [isSuccess]),
+        (1, 1, 2, 1, [isSuccess], [isFailure, isSuccess], [isSuccess]),
+        (1, 1, 1, 2, [isSuccess], [isSuccess], [isFailure, isSuccess]),
+        (1, 2, 2, 1, [isFailure, isSuccess], [isFailure, isSuccess], [isSuccess]),
         (2, 2, 1, 1, [isFailure, isSuccess], [isSuccess], [isSuccess]),
         (2, 1, 2, 1, [isSuccess], [isFailure, isSuccess], [isSuccess]),
         (2, 1, 1, 2, [isSuccess], [isSuccess], [isFailure, isSuccess]),
@@ -370,7 +373,7 @@ def test_should_publish_consume_and_retry_event_not_affecting_other_queue_includ
         )
     ]
 
-    configurer = RabbitMqEventConfigurerMother.with_ttl_10ms()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
     configurer.configure_subscribers(subscribers)
 
     bus = RabbitMqEventBusMother.default()
