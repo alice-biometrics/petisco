@@ -1,79 +1,88 @@
 import json
-from datetime import datetime
-from typing import Dict, Optional
+from typing import Optional
 
 import validators
-from dataclasses import dataclass
-from meiga import Result, Error
 
-from petisco.domain.value_objects.uuid import Uuid
-from petisco.http.request import Request
-from petisco.http.response import Response
+from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.webhooks.webhook.domain.invalid_url_error import InvalidUrlError
-from petisco.webhooks.webhook.infrastructure.body_digest_signature import (
-    BodyDigestSignature,
-)
+from petisco.webhooks.webhook.domain.webhook_created import WebhookCreated
+from petisco.webhooks.webhook.domain.webhook_id import WebhookId
+
 
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 
-@dataclass
-class Webhook:
-    post_url: str
-    api_key: str
-    secret: bytes
-    organization: str
-    event_name: str
-    event_version: Optional[str] = "1"
+class Webhook(AggregateRoot):
+    @staticmethod
+    def create(
+        post_url: str, api_key: str, event_name: str, event_version: Optional[str] = "1"
+    ):
+        webhook_id = WebhookId.generate()
+
+        webhook = Webhook(
+            webhook_id=webhook_id,
+            post_url=post_url,
+            api_key=api_key,
+            event_name=event_name,
+            event_version=event_version,
+        )
+        webhook.record(
+            WebhookCreated(
+                webhook_id=webhook_id,
+                subscribed_event_name=event_name,
+                subscribed_event_version=event_version,
+            )
+        )
+        return webhook
+
+    @staticmethod
+    def from_dict(kdict: dict):
+        return Webhook(
+            webhook_id=WebhookId(kdict.get("webhook_id")),
+            post_url=kdict.get("post_url"),
+            api_key=kdict.get("api_key"),
+            event_name=kdict.get("event_name"),
+            event_version=kdict.get("event_version"),
+        )
+
+    def to_dict(self):
+        return {
+            "webhook_id": self.webhook_id.value,
+            "post_url": self.post_url,
+            "api_key": self.api_key,
+            "event_name": self.api_key,
+            "event_version": self.event_version,
+        }
+
+    def __init__(
+        self,
+        webhook_id: WebhookId,
+        post_url: str,
+        api_key: str,
+        event_name: str,
+        event_version: Optional[str] = "1",
+    ):
+        self.webhook_id = webhook_id
+        self.post_url = post_url
+        self.api_key = api_key
+        self.event_name = event_name
+        self.event_version = event_version
+        self.validate()
+        super().__init__()
+
+    def __repr__(self):
+        return json.dumps(self.to_dict())
+
+    def __eq__(self, other):
+        if issubclass(other.__class__, self.__class__) or issubclass(
+            self.__class__, other.__class__
+        ):
+            return self.to_dict() == other.to_dict()
+        else:
+            return False
 
     def validate(self):
         validation_result = validators.url(self.post_url)
 
         if not validation_result:
             raise InvalidUrlError()
-
-    def __post_init__(self):
-        self.validate()
-
-    def execute(self, payload: Dict) -> Result[Response, Error]:
-        headers = self._get_headers()
-        auth = self._get_auth()
-
-        return Request.post(
-            url=self.post_url,
-            string_info=json.dumps(payload),
-            headers=headers,
-            auth=auth,
-        )
-
-    def ping(self) -> Result[Response, Error]:
-        headers = self._get_headers()
-        auth = self._get_auth()
-        payload = {"is_ping": True}
-
-        return Request.post(
-            url=self.post_url,
-            string_info=json.dumps(payload),
-            headers=headers,
-            auth=auth,
-        )
-
-    def _get_auth(self):
-        return BodyDigestSignature(
-            secret=self.secret,
-            organization=self.organization,
-            header=f"X-{self.organization}-Signature",
-        )
-
-    def _get_headers(self):
-        headers = {
-            f"X-{self.organization}-Event": self.event_name,
-            f"X-{self.organization}-Event-Version": self.event_version,
-            f"X-{self.organization}-Delivery": Uuid.generate().value,
-            f"X-{self.organization}-Request-Timestamp": datetime.utcnow().strftime(
-                TIME_FORMAT
-            ),
-            f"User-Agent": f"{self.organization}-Hookshoot/",
-            "apikey": self.api_key,
-        }
-        return headers

@@ -1,19 +1,18 @@
-from petisco import Webhook
+from petisco import Webhook, WebhookSender
 
-SECRET = b"petiso-is-not-ready-for-production"
-ORGANIZATION = "Petisco"
-
-webhook = Webhook(
+webhook = Webhook.create(
     post_url="http://127.0.0.1:5000/webhook",
     api_key="'b0b905d6-228f-44bf-a130-c85d7aecd765",
-    secret=SECRET,
-    organization=ORGANIZATION,
     event_name="user_created",
     event_version="1",
 )
 
-result = webhook.ping()
+SECRET = b"petiso-is-not-ready-for-production"
+ORGANIZATION = "Petisco"
+sender = WebhookSender(secret=SECRET, organization=ORGANIZATION)
+
+result = sender.ping(webhook)
 print(result)
 
-result = webhook.execute({"user": "created"})
+result = sender.execute(webhook, {"user": "created"})
 print(result)
