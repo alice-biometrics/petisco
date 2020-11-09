@@ -14,14 +14,15 @@ def verify_webhook_requests(f=None):
     """
 
     SECRET = b"petiso-is-not-ready-for-production"
+    ORGANIZATION = "Petisco"
 
     @wraps(f)
     def wrapper(*args, **kwargs):
-        signature = request.headers["X-Alice-Signature"]
+        signature = request.headers[f"X-{ORGANIZATION}-Signature"]
 
-        timestamp = request.headers["X-Alice-Request-Timestamp"]
-        event_name = request.headers["X-Alice-Event"]
-        event_version = request.headers["X-Alice-Event-Version"]
+        timestamp = request.headers[f"X-{ORGANIZATION}-Request-Timestamp"]
+        event_name = request.headers[f"X-{ORGANIZATION}-Event"]
+        event_version = request.headers[f"X-{ORGANIZATION}-Event-Version"]
         data = request.data.decode("latin1")
 
         # e.g `user_created.1:2020-10-28 07:33:37.243390:{"is_ping": true}`

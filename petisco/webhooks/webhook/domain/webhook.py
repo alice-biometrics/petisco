@@ -2,11 +2,13 @@ import json
 from datetime import datetime
 from typing import Dict, Optional
 
-import requests
 import validators
 from dataclasses import dataclass
+from meiga import Result, Error
 
 from petisco.domain.value_objects.uuid import Uuid
+from petisco.http.request import Request
+from petisco.http.response import Response
 from petisco.webhooks.webhook.domain.invalid_url_error import InvalidUrlError
 from petisco.webhooks.webhook.infrastructure.body_digest_signature import (
     BodyDigestSignature,
@@ -26,25 +28,34 @@ class Webhook:
 
     def validate(self):
         validation_result = validators.url(self.post_url)
+
         if not validation_result:
             raise InvalidUrlError()
 
     def __post_init__(self):
         self.validate()
 
-    def execute(self, payload: Dict):
+    def execute(self, payload: Dict) -> Result[Response, Error]:
         headers = self._get_headers()
         auth = self._get_auth()
-        requests.post(
-            self.post_url, data=json.dumps(payload), headers=headers, auth=auth
+
+        return Request.post(
+            url=self.post_url,
+            string_info=json.dumps(payload),
+            headers=headers,
+            auth=auth,
         )
 
-    def ping(self):
+    def ping(self) -> Result[Response, Error]:
         headers = self._get_headers()
         auth = self._get_auth()
         payload = {"is_ping": True}
-        requests.post(
-            self.post_url, data=json.dumps(payload), headers=headers, auth=auth
+
+        return Request.post(
+            url=self.post_url,
+            string_info=json.dumps(payload),
+            headers=headers,
+            auth=auth,
         )
 
     def _get_auth(self):
