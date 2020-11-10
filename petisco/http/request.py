@@ -7,6 +7,7 @@ from petisco.http.request_errors import (
     TimeoutRequestError,
     ConnectionRequestError,
     UnknownRequestError,
+    UnauthorizedRequestError,
 )
 from petisco.http.response import Response
 
@@ -121,6 +122,9 @@ class Request:
             return Failure(ConnectionRequestError())
         except Exception as e:
             return Failure(UnknownRequestError(error_message=e))
+
+        if response.status_code == 401:
+            return Failure(UnauthorizedRequestError())
 
         if isinstance(response, requests.models.Response):
             if Request.__is_binary_content(response.headers.get("Content-Type", [])):

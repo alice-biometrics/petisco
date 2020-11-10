@@ -21,6 +21,11 @@ class ConnectionRequestError(Error):
     error_message = {"error": "Connection error"}
 
 
+class UnauthorizedRequestError(Error):
+    error_name = str(__name__)
+    error_message = {"error": "Unauthorized error"}
+
+
 class UnknownRequestError(Error):
     def __init__(self, error_message="General connection error"):
         self.error_name = str(__name__)

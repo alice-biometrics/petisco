@@ -9,6 +9,7 @@ from petisco import (
     TimeoutRequestError,
     ConnectionRequestError,
 )
+from petisco.http.request_errors import UnauthorizedRequestError
 
 
 @pytest.fixture
@@ -51,6 +52,17 @@ def test_should_success_when_request_delete(given_any_url):
         m.delete(given_any_url)
         result = Request.delete(given_any_url)
         assert_success(result)
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize("method", ["GET", "POST", "PATCH", "DELETE"])
+def test_should_fail_when_request_method_raise_unauthorized_error(
+    method, given_any_url
+):
+    with requests_mock.Mocker() as m:
+        m.register_uri(method, given_any_url, status_code=401)
+        result = Request.execute(given_any_url, method)
+        assert_failure(result, value_is_instance_of=UnauthorizedRequestError)
 
 
 @pytest.mark.integration
