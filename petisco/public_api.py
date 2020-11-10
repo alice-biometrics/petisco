@@ -41,6 +41,7 @@ from petisco.http.request_errors import (
     TimeoutRequestError,
     ConnectionRequestError,
     UnknownRequestError,
+    UnauthorizedRequestError,
 )
 from petisco.http.response import Response
 from petisco.logger.log_message import LogMessage
@@ -151,6 +152,7 @@ classes = [
     "TimeoutRequestError",
     "ConnectionRequestError",
     "UnknownRequestError",
+    "UnauthorizedRequestError",
     "IEventBus",
     "event_handler",
     "Webhook",
