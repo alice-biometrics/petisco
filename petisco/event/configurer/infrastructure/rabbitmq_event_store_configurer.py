@@ -1,4 +1,5 @@
 from petisco.event.configurer.infrastructure.rabbitmq_declarer import RabbitMqDeclarer
+from petisco.event.queue.domain.queue_config import QueueConfig
 from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_exchange_name_formatter import (
     RabbitMqExchangeNameFormatter,
 )
@@ -13,8 +14,7 @@ class RabbitMqEventStoreConfigurer:
         connector: RabbitMqConnector,
         organization: str,
         service: str,
-        retry_ttl: int = 5000,
-        main_ttl: int = 5000,
+        queue_config: QueueConfig,
     ):
         self._connector = connector
         self._exchange_name = f"{organization}.{service}"
@@ -24,8 +24,7 @@ class RabbitMqEventStoreConfigurer:
         self.rabbitmq = RabbitMqDeclarer(
             connector=self._connector, channel_name=self._exchange_name
         )
-        self.retry_ttl = retry_ttl
-        self.main_ttl = main_ttl
+        self.queue_config = queue_config
 
     def execute(self):
         self._configure_exchanges()
@@ -74,13 +73,13 @@ class RabbitMqEventStoreConfigurer:
             queue_name="store",
             dead_letter_exchange=self._common_dead_letter_exchange_name,
             dead_letter_routing_key="dead_letter",
-            message_ttl=self.main_ttl,
+            message_ttl=self.queue_config.get_main_ttl("store"),
         )
         self.rabbitmq.declare_queue(
             queue_name="retry.store",
             dead_letter_exchange=self._common_retry_exchange_name,  # exchange_name
             dead_letter_routing_key="store",
-            message_ttl=self.retry_ttl,
+            message_ttl=self.queue_config.get_retry_ttl("retry.store"),
         )
         self.rabbitmq.declare_queue(queue_name="dead_letter.store")
 
@@ -106,21 +105,11 @@ class RabbitMqEventStoreConfigurer:
             queue_name="store",
             routing_key="store",
         )
-        # self.rabbitmq.bind_queue(
-        #     exchange_name=self._common_retry_exchange_name,
-        #     queue_name="store",
-        #     routing_key="retry.store",
-        # )
         self.rabbitmq.bind_queue(
             exchange_name=self._common_retry_exchange_name,
             queue_name="retry.store",
             routing_key="retry.store",
         )
-        # self.rabbitmq.bind_queue(
-        #     exchange_name=retry_exchange_name,
-        #     queue_name="retry.store",
-        #     routing_key="retry.store",
-        # )
         self.rabbitmq.bind_queue(
             exchange_name=dead_letter_exchange_name,
             queue_name="dead_letter.store",

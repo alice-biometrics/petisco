@@ -1,6 +1,7 @@
 from typing import List
 
 from petisco.event.configurer.infrastructure.rabbitmq_declarer import RabbitMqDeclarer
+from petisco.event.queue.domain.queue_config import QueueConfig
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
 from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_exchange_name_formatter import (
     RabbitMqExchangeNameFormatter,
@@ -19,8 +20,7 @@ class RabbitMqEventSubcribersConfigurer:
         connector: RabbitMqConnector,
         organization: str,
         service: str,
-        retry_ttl: int = 5000,
-        main_ttl: int = 5000,
+        queue_config: QueueConfig,
     ):
         self._connector = connector
         self._exchange_name = f"{organization}.{service}"
@@ -28,8 +28,7 @@ class RabbitMqEventSubcribersConfigurer:
             connector=self._connector, channel_name=self._exchange_name
         )
         self._configured_subscribers = []
-        self.retry_ttl = retry_ttl
-        self.main_ttl = main_ttl
+        self.queue_config = queue_config
 
     def execute(self, subscribers):
         self._configure_exchanges()
@@ -106,17 +105,20 @@ class RabbitMqEventSubcribersConfigurer:
                 retry_queue_name = f"{base_retry_queue_name}.{suffix}"
                 dead_letter_queue_name = f"{base_dead_letter_queue_name}.{suffix}"
 
+                main_ttl = self.queue_config.get_main_ttl(queue_name)
+                retry_ttl = self.queue_config.get_retry_ttl(queue_name)
+
                 self.rabbitmq.declare_queue(
                     queue_name=queue_name,
                     dead_letter_exchange=f"dead_letter.{exchange_name}",
                     dead_letter_routing_key="dead_letter",
-                    message_ttl=self.main_ttl,
+                    message_ttl=main_ttl,
                 )
                 self.rabbitmq.declare_queue(
                     queue_name=retry_queue_name,
                     dead_letter_exchange=exchange_name,
                     dead_letter_routing_key=f"retry.{queue_name}",
-                    message_ttl=self.retry_ttl,
+                    message_ttl=retry_ttl,
                 )
                 self.rabbitmq.declare_queue(queue_name=dead_letter_queue_name)
 

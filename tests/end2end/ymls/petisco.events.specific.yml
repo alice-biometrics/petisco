@@ -1,0 +1,24 @@
+events:
+  publish_deploy_event: True
+  message_broker: rabbitmq
+  organization: alice
+  service: petisco
+  subscribers:
+    UserCreated:
+      version: 1
+      handlers: tests.end2end.callable_functions.handlers.send_mail_on_user_created
+    UserUpdated:
+      version: 1
+      handlers:
+      - tests.end2end.callable_functions.handlers.send_referral_on_user_created
+      - tests.end2end.callable_functions.handlers.send_promotion_on_user_created
+queues:
+  store: tests.end2end.callable_functions.handlers.event_store
+  subscribers:
+    dead_letter.store: tests.end2end.callable_functions.handlers.requeue_event
+  specific_config:
+    webhooks:
+      when_queue_contains: "*send_webhook*"
+      use:
+        retry_ttl: 1000
+        main_ttl: 2000
