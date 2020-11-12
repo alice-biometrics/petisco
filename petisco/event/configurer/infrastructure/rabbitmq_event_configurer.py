@@ -6,6 +6,7 @@ from petisco.event.configurer.infrastructure.rabbitmq_event_store_configurer imp
 from petisco.event.configurer.infrastructure.rabbitmq_event_subscribers_configurer import (
     RabbitMqEventSubcribersConfigurer,
 )
+from petisco.event.queue.domain.queue_config import QueueConfig
 from petisco.event.shared.domain.event import Event
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
 from petisco.event.configurer.domain.interface_event_configurer import IEventConfigurer
@@ -20,16 +21,15 @@ class RabbitMqEventConfigurer(IEventConfigurer):
         connector: RabbitMqConnector,
         organization: str,
         service: str,
+        queue_config: QueueConfig = QueueConfig.default(),
         use_store_queues: bool = True,
-        retry_ttl: int = 5000,
-        main_ttl: int = 5000,
     ):
         self._use_store_queues = use_store_queues
         self.event_subscribers_configurer = RabbitMqEventSubcribersConfigurer(
-            connector, organization, service, retry_ttl, main_ttl
+            connector, organization, service, queue_config
         )
         self.event_store_configurer = RabbitMqEventStoreConfigurer(
-            connector, organization, service, retry_ttl, main_ttl
+            connector, organization, service, queue_config
         )
 
     def configure(self):

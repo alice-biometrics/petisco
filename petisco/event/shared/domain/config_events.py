@@ -15,6 +15,8 @@ from petisco.application.config.get_funtion_from_string import get_function_from
 from petisco.application.config.raise_petisco_config_error import (
     raise_petisco_config_exception,
 )
+from petisco.event.queue.domain.queue_config import QueueConfig
+
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
 from petisco.application.config.config_file_not_found_error import (
     ConfigFileNotFoundError,
@@ -45,6 +47,10 @@ def get_handlers(handlers_names: List[str], kdict: Dict) -> List[Callable]:
     return handlers
 
 
+DEFAULT_QUEUE_RETRY_TTL = 5000
+DEFAULT_QUEUE_MAIN_TTL = 5000
+
+
 @dataclass
 class ConfigEvents:
     organization: str
@@ -60,6 +66,7 @@ class ConfigEvents:
     store_queue_subscriber: Optional[Callable] = None
     queues_subscribers: Optional[Dict[str, Callable]] = None
     chaos: Optional[IEventChaos] = None
+    queue_config: Optional[QueueConfig] = None
 
     def __post_init__(self):
         message_broker = os.environ.get("PETISCO_EVENT_MESSAGE_BROKER")
@@ -89,7 +96,15 @@ class ConfigEvents:
         events = kdict.get("events")
         queues = kdict.get("queues")
 
+        retry_ttl = DEFAULT_QUEUE_RETRY_TTL
+        main_ttl = DEFAULT_QUEUE_RETRY_TTL
+        queue_config = QueueConfig.default(retry_ttl, main_ttl)
+
         if events:
+            retry_ttl = events.get("retry_ttl", DEFAULT_QUEUE_RETRY_TTL)
+            main_ttl = events.get("retry_ttl", DEFAULT_QUEUE_RETRY_TTL)
+            queue_config = QueueConfig.default(retry_ttl, main_ttl)
+
             dict_events_subscribers = events.get("subscribers")
             if dict_events_subscribers:
                 event_subscribers = []
@@ -127,20 +142,27 @@ class ConfigEvents:
                     handlers = get_handlers(handlers_names, kdict)
                     queues_subscribers[queue_name] = handlers
 
+            specific_queues_config = queues.get("specific_config")
+            if specific_queues_config:
+                queue_config = QueueConfig.from_dict(
+                    specific_queues_config, retry_ttl, main_ttl
+                )
+
         return ConfigEvents(
             organization=events.get("organization"),
             service=events.get("service"),
             publish_deploy_event=events.get("publish_deploy_event"),
             consumer_verbose=events.get("consumer_verbose", False),
             use_store_queues=events.get("use_store_queues", True),
-            retry_ttl=events.get("retry_ttl", 5000),
-            main_ttl=events.get("main_ttl", 5000),
+            retry_ttl=retry_ttl,
+            main_ttl=main_ttl,
             max_retries=events.get("max_retries", 5),
             message_broker=events.get("message_broker", "not_implemented"),
             event_subscribers=event_subscribers,
             store_queue_subscriber=store_queue_subscriber,
             queues_subscribers=queues_subscribers,
             chaos=RabbitMqEventChaos(),
+            queue_config=queue_config,
         )
 
     def info(self):
@@ -157,4 +179,5 @@ class ConfigEvents:
             "store_queue_subscriber": self.store_queue_subscriber,
             "queues_subscribers": self.queues_subscribers,
             "chaos": self.chaos.info(),
+            "queues_specific_config": self.queue_config.info(),
         }

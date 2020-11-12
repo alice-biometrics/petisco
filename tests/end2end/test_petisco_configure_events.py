@@ -95,3 +95,23 @@ def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_environ
 
     petisco.stop()
     Petisco.clear()
+
+
+@pytest.mark.end2end
+def test_should_load_petisco_from_yml_with_specific_queue_config(
+    petisco_yml_path_end2end
+):
+    Petisco.clear()
+
+    filename = f"{petisco_yml_path_end2end}/petisco.all.yml"
+    filename_events = f"{petisco_yml_path_end2end}/petisco.events.specific.yml"
+
+    petisco = Petisco.from_filename(filename)
+    petisco.configure_events(filename_events)
+    petisco._start()
+
+    assert "config_events" in petisco.info
+    assert "queues_specific_config" in petisco.info.get("config_events")
+
+    petisco.stop()
+    Petisco.clear()

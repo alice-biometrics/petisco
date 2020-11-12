@@ -38,7 +38,7 @@ def configure_events_infrastructure(config_events: ConfigEvents, logger: ILogger
             organization=config_events.organization,
             service=config_events.service,
             use_store_queues=config_events.use_store_queues,
-            retry_ttl=config_events.retry_ttl,
+            queue_config=config_events.queue_config,
         )
 
         consumer = RabbitMqEventConsumer(
