@@ -8,9 +8,9 @@ class IService:
 
     __metaclass__ = ABCMeta
 
-    @abstractmethod
-    def info(self) -> Dict:
-        return {"Service": "Not Implemented"}
+    @classmethod
+    def info(cls) -> Dict:
+        return {"name": cls.__name__}
 
     @abstractmethod
     def execute(self, *args, **kwargs) -> Result:
