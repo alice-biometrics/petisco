@@ -12,12 +12,17 @@ from petisco.webhooks.webhook.domain.webhook_id import WebhookId
 class Webhook(AggregateRoot):
     @staticmethod
     def create(
-        post_url: str, api_key: str, event_name: str, event_version: Optional[str] = "1"
+        active: bool,
+        post_url: str,
+        api_key: str,
+        event_name: str,
+        event_version: Optional[str] = "1",
     ):
         webhook_id = WebhookId.generate()
 
         webhook = Webhook(
             webhook_id=webhook_id,
+            active=active,
             post_url=post_url,
             api_key=api_key,
             event_name=event_name,
@@ -26,6 +31,7 @@ class Webhook(AggregateRoot):
         webhook.record(
             WebhookCreated(
                 webhook_id=webhook_id,
+                active=active,
                 subscribed_event_name=event_name,
                 subscribed_event_version=event_version,
             )
@@ -36,6 +42,7 @@ class Webhook(AggregateRoot):
     def from_dict(kdict: dict):
         return Webhook(
             webhook_id=WebhookId(kdict.get("webhook_id")),
+            active=kdict.get("active"),
             post_url=kdict.get("post_url"),
             api_key=kdict.get("api_key"),
             event_name=kdict.get("event_name"),
@@ -45,6 +52,7 @@ class Webhook(AggregateRoot):
     def to_dict(self):
         return {
             "webhook_id": self.webhook_id.value,
+            "active": self.active,
             "post_url": self.post_url,
             "api_key": self.api_key,
             "event_name": self.event_name,
@@ -54,12 +62,14 @@ class Webhook(AggregateRoot):
     def __init__(
         self,
         webhook_id: WebhookId,
+        active: bool,
         post_url: str,
         api_key: str,
         event_name: str,
         event_version: Optional[str] = "1",
     ):
         self.webhook_id = webhook_id
+        self.active = active
         self.post_url = post_url
         self.api_key = api_key
         self.event_name = event_name

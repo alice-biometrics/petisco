@@ -12,6 +12,17 @@ class WebhookMother:
     def default():
         return Webhook.create(
             post_url=DEFAULT_POST_URL,
+            active=True,
+            api_key=DEFAULT_API_KEY,
+            event_name=DEFAULT_EVENT_NAME,
+            event_version=DEFAULT_EVENT_VERSION,
+        )
+
+    @staticmethod
+    def not_active():
+        return Webhook.create(
+            post_url=DEFAULT_POST_URL,
+            active=False,
             api_key=DEFAULT_API_KEY,
             event_name=DEFAULT_EVENT_NAME,
             event_version=DEFAULT_EVENT_VERSION,
@@ -21,6 +32,7 @@ class WebhookMother:
     def with_invalid_url():
         return Webhook.create(
             post_url="invalid_url",
+            active=True,
             api_key=DEFAULT_API_KEY,
             event_name=DEFAULT_EVENT_NAME,
             event_version=DEFAULT_EVENT_VERSION,

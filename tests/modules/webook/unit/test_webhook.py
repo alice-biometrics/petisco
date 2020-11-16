@@ -26,3 +26,9 @@ def test_should_serialize_successfully():
     webhook_data = original_webhook.to_dict()
     retrieved_webhook = Webhook.from_dict(webhook_data)
     assert original_webhook == retrieved_webhook
+
+
+@pytest.mark.unit
+def test_should_check_active_attribute_on_webhooks():
+    assert WebhookMother.default().active
+    assert not WebhookMother.not_active().active
