@@ -1,10 +1,9 @@
-import hashlib
 import hmac
 from functools import wraps
 
 from flask import Flask, request, Response
 
-from petisco import Secret
+from petisco import Secret, SignatureAlgorithm
 
 app = Flask(__name__)
 
@@ -15,7 +14,8 @@ def verify_webhook_requests(f=None):
     Generate a new hash using the app's signing secret and request data
     """
 
-    secret = Secret("00480065006C006C006F0020007700634222")
+    secret = Secret("9464a12f2186cdfe38fd1cfd797758c47c544e99")
+    algorithm = SignatureAlgorithm.sha512()
     ORGANIZATION = "Petisco"
 
     @wraps(f)
@@ -31,7 +31,7 @@ def verify_webhook_requests(f=None):
         format_req = str.encode(f"{event_name}.{event_version}:{timestamp}:{data}")
         print(format_req)
         request_hash = hmac.new(
-            secret.get_bytes(), format_req, hashlib.sha1
+            secret.get_bytes(), format_req, algorithm.get_algorithm()
         ).hexdigest()
         calculated_signature = request_hash
         if hmac.compare_digest(calculated_signature, signature):

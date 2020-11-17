@@ -16,6 +16,7 @@ from petisco.domain.errors.empty_value_object_error import EmptyValueObjectError
 from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
     NotReachMinimumValueObjectError,
+    NotHasSpecificLengthValueObjectError,
 )
 from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
 from petisco.domain.errors.unknown_error import UnknownError
@@ -89,6 +90,7 @@ from petisco.event.legacy.subscriber.infrastructure.not_implemented_event_subscr
 )
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
 from petisco.webhooks.webhook.domain.secret import SecretIsNotHexError, Secret
+from petisco.webhooks.webhook.domain.signature_algorithm import SignatureAlgorithm
 from petisco.webhooks.webhook.domain.webhook import Webhook
 from petisco.webhooks.webhook.domain.webhook_id import WebhookId
 from petisco.webhooks.webhook.domain.webhook_sender import WebhookSender
@@ -163,7 +165,9 @@ classes = [
     "WebhookId",
     "IEventChaos",
     "SecretIsNotHexError",
+    "NotHasSpecificLengthValueObjectError",
     "Secret",
+    "SignatureAlgorithm",
 ]
 
 # Controllers & Use Cases

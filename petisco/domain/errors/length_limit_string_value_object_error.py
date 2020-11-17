@@ -9,3 +9,8 @@ class ExceedLengthLimitValueObjectError(ValueObjectError):
 class NotReachMinimumValueObjectError(ValueObjectError):
     def __init__(self, message):
         self.message = message
+
+
+class NotHasSpecificLengthValueObjectError(ValueObjectError):
+    def __init__(self, message):
+        self.message = message

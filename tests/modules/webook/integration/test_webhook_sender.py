@@ -22,6 +22,7 @@ def test_should_be_failure_when_execute_a_webhook_and_url_is_not_reachable():
     sender = WebhookSenderMother.default()
 
     result = sender.execute(webhook, {"payload": "ok"})
+
     assert_failure(result, value_is_instance_of=ConnectionRequestError)
 
 

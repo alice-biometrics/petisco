@@ -45,6 +45,7 @@ class WebhookSender:
     def _get_auth(self, webhook: Webhook):
         return BodyDigestSignature(
             secret=webhook.secret.get_bytes(),
+            algorithm=webhook.algorithm.get_algorithm(),
             organization=self.organization,
             header=f"X-{self.organization}-Signature",
         )

@@ -6,6 +6,7 @@ import validators
 from petisco.webhooks.webhook.domain.secret import Secret
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.webhooks.webhook.domain.invalid_url_error import InvalidUrlError
+from petisco.webhooks.webhook.domain.signature_algorithm import SignatureAlgorithm
 from petisco.webhooks.webhook.domain.webhook_created import WebhookCreated
 from petisco.webhooks.webhook.domain.webhook_id import WebhookId
 
@@ -19,6 +20,7 @@ class Webhook(AggregateRoot):
         secret: Secret,
         event_name: str,
         event_version: Optional[str] = "1",
+        algorithm: Optional[SignatureAlgorithm] = SignatureAlgorithm.sha256(),
     ):
         webhook_id = WebhookId.generate()
 
@@ -30,6 +32,7 @@ class Webhook(AggregateRoot):
             secret=secret,
             event_name=event_name,
             event_version=event_version,
+            algorithm=algorithm,
         )
         webhook.record(
             WebhookCreated(
@@ -51,6 +54,7 @@ class Webhook(AggregateRoot):
             secret=Secret(kdict.get("secret")),
             event_name=kdict.get("event_name"),
             event_version=kdict.get("event_version"),
+            algorithm=SignatureAlgorithm(kdict.get("algorithm")),
         )
 
     def to_dict(self):
@@ -62,6 +66,7 @@ class Webhook(AggregateRoot):
             "secret": self.secret.value,
             "event_name": self.event_name,
             "event_version": self.event_version,
+            "algorithm": self.algorithm.value,
         }
 
     def __init__(
@@ -73,6 +78,7 @@ class Webhook(AggregateRoot):
         secret: Secret,
         event_name: str,
         event_version: Optional[str] = "1",
+        algorithm: Optional[SignatureAlgorithm] = SignatureAlgorithm.sha256(),
     ):
         self.webhook_id = webhook_id
         self.active = active
@@ -81,6 +87,7 @@ class Webhook(AggregateRoot):
         self.secret = secret
         self.event_name = event_name
         self.event_version = event_version
+        self.algorithm = algorithm
         self.validate()
         super().__init__()
 

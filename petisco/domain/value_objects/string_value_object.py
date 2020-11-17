@@ -6,6 +6,7 @@ from meiga import Error
 from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
     NotReachMinimumValueObjectError,
+    NotHasSpecificLengthValueObjectError,
 )
 from petisco.domain.value_objects.value_object import ValueObject
 
@@ -60,4 +61,10 @@ class StringValueObject(ValueObject):
         self, max_num_chars: int, raise_cls=NotReachMinimumValueObjectError
     ):
         if len(self.value) < max_num_chars:
+            self._raise_error(raise_cls)
+
+    def _ensure_value_has_specific_length(
+        self, length: int, raise_cls=NotHasSpecificLengthValueObjectError
+    ):
+        if len(self.value) != length:
             self._raise_error(raise_cls)
