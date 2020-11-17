@@ -4,6 +4,8 @@ from functools import wraps
 
 from flask import Flask, request, Response
 
+from petisco import Secret
+
 app = Flask(__name__)
 
 
@@ -13,7 +15,7 @@ def verify_webhook_requests(f=None):
     Generate a new hash using the app's signing secret and request data
     """
 
-    SECRET = b"petiso-is-not-ready-for-production"
+    secret = Secret("00480065006C006C006F0020007700634222")
     ORGANIZATION = "Petisco"
 
     @wraps(f)
@@ -28,7 +30,9 @@ def verify_webhook_requests(f=None):
         # e.g `user_created.1:2020-10-28 07:33:37.243390:{"is_ping": true}`
         format_req = str.encode(f"{event_name}.{event_version}:{timestamp}:{data}")
         print(format_req)
-        request_hash = hmac.new(SECRET, format_req, hashlib.sha512).hexdigest()
+        request_hash = hmac.new(
+            secret.get_bytes(), format_req, hashlib.sha1
+        ).hexdigest()
         calculated_signature = request_hash
         if hmac.compare_digest(calculated_signature, signature):
             return f(*args, **kwargs)

@@ -87,6 +87,7 @@ from petisco.event.legacy.subscriber.infrastructure.not_implemented_event_subscr
     NotImplementedEventSubscriber,
 )
 from petisco.event.shared.domain.event_subscriber import EventSubscriber
+from petisco.webhooks.webhook.domain.secret import SecretIsNotHexError, Secret
 from petisco.webhooks.webhook.domain.webhook import Webhook
 from petisco.webhooks.webhook.domain.webhook_id import WebhookId
 from petisco.webhooks.webhook.domain.webhook_sender import WebhookSender
@@ -159,6 +160,8 @@ classes = [
     "WebhookSender",
     "WebhookId",
     "IEventChaos",
+    "SecretIsNotHexError",
+    "Secret",
 ]
 
 # Controllers & Use Cases

@@ -3,6 +3,7 @@ from typing import Optional
 
 import validators
 
+from petisco.webhooks.webhook.domain.secret import Secret
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.webhooks.webhook.domain.invalid_url_error import InvalidUrlError
 from petisco.webhooks.webhook.domain.webhook_created import WebhookCreated
@@ -15,6 +16,7 @@ class Webhook(AggregateRoot):
         active: bool,
         post_url: str,
         api_key: str,
+        secret: Secret,
         event_name: str,
         event_version: Optional[str] = "1",
     ):
@@ -25,6 +27,7 @@ class Webhook(AggregateRoot):
             active=active,
             post_url=post_url,
             api_key=api_key,
+            secret=secret,
             event_name=event_name,
             event_version=event_version,
         )
@@ -45,6 +48,7 @@ class Webhook(AggregateRoot):
             active=kdict.get("active"),
             post_url=kdict.get("post_url"),
             api_key=kdict.get("api_key"),
+            secret=Secret(kdict.get("secret")),
             event_name=kdict.get("event_name"),
             event_version=kdict.get("event_version"),
         )
@@ -55,6 +59,7 @@ class Webhook(AggregateRoot):
             "active": self.active,
             "post_url": self.post_url,
             "api_key": self.api_key,
+            "secret": self.secret.value,
             "event_name": self.event_name,
             "event_version": self.event_version,
         }
@@ -65,6 +70,7 @@ class Webhook(AggregateRoot):
         active: bool,
         post_url: str,
         api_key: str,
+        secret: Secret,
         event_name: str,
         event_version: Optional[str] = "1",
     ):
@@ -72,6 +78,7 @@ class Webhook(AggregateRoot):
         self.active = active
         self.post_url = post_url
         self.api_key = api_key
+        self.secret = secret
         self.event_name = event_name
         self.event_version = event_version
         self.validate()

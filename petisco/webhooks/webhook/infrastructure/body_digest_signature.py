@@ -3,7 +3,7 @@ import hashlib
 
 
 class BodyDigestSignature(object):
-    def __init__(self, secret, organization, header="Sign", algorithm=hashlib.sha512):
+    def __init__(self, secret, organization, header="Sign", algorithm=hashlib.sha1):
         self.secret = secret
         self.organization = organization
         self.header = header

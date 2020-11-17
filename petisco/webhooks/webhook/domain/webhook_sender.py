@@ -16,13 +16,12 @@ TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 
 class WebhookSender:
-    def __init__(self, organization: str, secret: bytes):
+    def __init__(self, organization: str):
         self.organization = organization
-        self.secret = secret
 
     def execute(self, webhook: Webhook, payload: Dict) -> Result[Response, Error]:
         headers = self._get_headers(webhook)
-        auth = self._get_auth()
+        auth = self._get_auth(webhook)
 
         return Request.post(
             url=webhook.post_url,
@@ -33,7 +32,7 @@ class WebhookSender:
 
     def ping(self, webhook: Webhook) -> Result[Response, Error]:
         headers = self._get_headers(webhook)
-        auth = self._get_auth()
+        auth = self._get_auth(webhook)
         payload = {"is_ping": True}
 
         return Request.post(
@@ -43,9 +42,9 @@ class WebhookSender:
             auth=auth,
         )
 
-    def _get_auth(self):
+    def _get_auth(self, webhook: Webhook):
         return BodyDigestSignature(
-            secret=self.secret,
+            secret=webhook.secret.get_bytes(),
             organization=self.organization,
             header=f"X-{self.organization}-Signature",
         )
