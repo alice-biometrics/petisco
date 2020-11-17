@@ -42,6 +42,7 @@ from petisco.http.request_errors import (
     ConnectionRequestError,
     UnknownRequestError,
     UnauthorizedRequestError,
+    BadRequestError,
 )
 from petisco.http.response import Response
 from petisco.logger.log_message import LogMessage
@@ -154,6 +155,7 @@ classes = [
     "ConnectionRequestError",
     "UnknownRequestError",
     "UnauthorizedRequestError",
+    "BadRequestError",
     "IEventBus",
     "event_handler",
     "Webhook",

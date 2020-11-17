@@ -8,6 +8,7 @@ from petisco.http.request_errors import (
     ConnectionRequestError,
     UnknownRequestError,
     UnauthorizedRequestError,
+    BadRequestError,
 )
 from petisco.http.response import Response
 
@@ -113,7 +114,6 @@ class Request:
                 )
             elif request == "DELETE":
                 response = requests.delete(url=url, headers=headers, timeout=(5, 25))
-
         except MissingSchema:
             return Failure(MissingSchemaRequestError())
         except Timeout:
@@ -123,8 +123,14 @@ class Request:
         except Exception as e:
             return Failure(UnknownRequestError(error_message=e))
 
+        if response.status_code == 400:
+            return Failure(BadRequestError.from_response(response))
+
         if response.status_code == 401:
-            return Failure(UnauthorizedRequestError())
+            return Failure(UnauthorizedRequestError.from_response(response))
+
+        if response.status_code < 200 or response.status_code > 299:
+            return Failure(UnknownRequestError.from_response(response))
 
         if isinstance(response, requests.models.Response):
             if Request.__is_binary_content(response.headers.get("Content-Type", [])):
@@ -147,4 +153,4 @@ class Request:
                 )
             )
         else:
-            return Failure(UnknownRequestError())
+            return Failure(UnknownRequestError.from_response(response))

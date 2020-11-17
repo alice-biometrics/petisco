@@ -8,8 +8,10 @@ from petisco import (
     MissingSchemaRequestError,
     TimeoutRequestError,
     ConnectionRequestError,
+    BadRequestError,
+    UnauthorizedRequestError,
+    UnknownRequestError,
 )
-from petisco.http.request_errors import UnauthorizedRequestError
 
 
 @pytest.fixture
@@ -63,32 +65,78 @@ def test_should_fail_when_request_method_raise_unauthorized_error(
         m.register_uri(method, given_any_url, status_code=401)
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=UnauthorizedRequestError)
+        assert result.value.status_code == 401
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize("method", ["GET", "POST", "PATCH", "DELETE"])
-def test_should_fail_when_request_method_raise_missing_schema_error(
+def test_should_fail_when_request_method_returns_missing_schema_error(
     method, given_any_url
 ):
     with requests_mock.Mocker() as m:
         m.register_uri(method, given_any_url, exc=requests.exceptions.MissingSchema)
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=MissingSchemaRequestError)
+        assert result.value.status_code == 422
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize("method", ["GET", "POST", "PATCH", "DELETE"])
-def test_should_fail_when_request_method_raise_timeout_error(method, given_any_url):
+def test_should_fail_when_request_method_returns_timeout_error(method, given_any_url):
     with requests_mock.Mocker() as m:
         m.register_uri(method, given_any_url, exc=requests.exceptions.ConnectTimeout)
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=TimeoutRequestError)
+        assert result.value.status_code == 408
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize("method", ["GET", "POST", "PATCH", "DELETE"])
-def test_should_fail_when_request_method_raise_connection_error(method, given_any_url):
+def test_should_fail_when_request_method_returns_connection_error(
+    method, given_any_url
+):
     with requests_mock.Mocker() as m:
         m.register_uri(method, given_any_url, exc=requests.exceptions.ConnectionError)
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=ConnectionRequestError)
+        assert result.value.status_code == 503
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize("method", ["GET", "POST", "PATCH", "DELETE"])
+def test_should_fail_when_request_method_returns_bad_request_error(
+    method, given_any_url
+):
+    with requests_mock.Mocker() as m:
+        m.register_uri(method, given_any_url, status_code=400)
+        result = Request.execute(given_any_url, method)
+        assert_failure(result, value_is_instance_of=BadRequestError)
+        assert result.value.status_code == 400
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "method,status_code",
+    [
+        ("GET", 100),
+        ("POST", 100),
+        ("PATCH", 100),
+        ("DELETE", 100),
+        ("GET", 300),
+        ("POST", 300),
+        ("PATCH", 300),
+        ("DELETE", 300),
+        ("GET", 500),
+        ("POST", 500),
+        ("PATCH", 500),
+        ("DELETE", 500),
+    ],
+)
+def test_should_fail_when_request_method_returns_unknown_error(
+    method, status_code, given_any_url
+):
+    with requests_mock.Mocker() as m:
+        m.register_uri(method, given_any_url, status_code=status_code)
+        result = Request.execute(given_any_url, method)
+        assert_failure(result, value_is_instance_of=UnknownRequestError)
+        assert result.value.status_code == status_code
