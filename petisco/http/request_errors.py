@@ -17,10 +17,22 @@ def get_error_message(error_message_title, response):
 
 
 class RequestError(Error):
-    def __init__(self, error_name: str, error_message: str, status_code: int):
+    def __init__(
+        self,
+        error_name: str,
+        error_message: str,
+        status_code: int,
+        headers: dict = None,
+        content: dict = None,
+    ):
         self.error_name = error_name
         self.error_message = error_message
         self.status_code = status_code
+        self.headers = headers
+        self.content = content
+
+    def __repr__(self):
+        return f"{self.error_name} ({self.status_code}) -> {self.error_message}"
 
 
 class MultipartFormatRequestError(RequestError):
@@ -28,16 +40,18 @@ class MultipartFormatRequestError(RequestError):
     def from_response(response):
         error_message = get_error_message("Fail to create multipart", response)
         return MultipartFormatRequestError(
-            error_name=str(__name__),
+            error_name="MultipartFormatRequestError",
             error_message=json.dumps(error_message),
             status_code=response.status_code,
+            headers=response.headers,
+            content=response.content,
         )
 
 
 class MissingSchemaRequestError(RequestError):
     def __init__(self):
         super().__init__(
-            error_name=str(__name__),
+            error_name="MissingSchemaRequestError",
             error_message=json.dumps({"error": "Missing schema in request"}),
             status_code=422,
         )
@@ -46,7 +60,7 @@ class MissingSchemaRequestError(RequestError):
 class TimeoutRequestError(RequestError):
     def __init__(self):
         super().__init__(
-            error_name=str(__name__),
+            error_name="TimeoutRequestError",
             error_message=json.dumps({"error": "Timeout error"}),
             status_code=408,
         )
@@ -55,7 +69,7 @@ class TimeoutRequestError(RequestError):
 class ConnectionRequestError(RequestError):
     def __init__(self):
         super().__init__(
-            error_name=str(__name__),
+            error_name="ConnectionRequestError",
             error_message=json.dumps({"error": "Connection error"}),
             status_code=503,
         )
@@ -66,9 +80,11 @@ class BadRequestError(RequestError):
     def from_response(response):
         error_message = get_error_message("Bad request Error", response)
         return BadRequestError(
-            error_name=str(__name__),
+            error_name="BadRequestError",
             error_message=json.dumps(error_message),
             status_code=response.status_code,
+            headers=response.headers,
+            content=response.content,
         )
 
 
@@ -77,9 +93,11 @@ class UnauthorizedRequestError(RequestError):
     def from_response(response):
         error_message = get_error_message("Unauthorized error", response)
         return UnauthorizedRequestError(
-            error_name=str(__name__),
+            error_name="UnauthorizedRequestError",
             error_message=json.dumps(error_message),
             status_code=response.status_code,
+            headers=response.headers,
+            content=response.content,
         )
 
 
@@ -88,13 +106,15 @@ class UnknownRequestError(RequestError):
     def from_response(response):
         error_message = get_error_message("Unknown error", response)
         return UnknownRequestError(
-            error_name=str(__name__),
+            error_name="UnknownRequestError",
             error_message=json.dumps(error_message),
             status_code=response.status_code,
+            headers=response.headers,
+            content=response.content,
         )
 
     @staticmethod
     def from_exception(exc):
         return UnknownRequestError(
-            error_name=str(__name__), error_message=str(exc), status_code=500
+            error_name="UnknownRequestError", error_message=str(exc), status_code=500
         )

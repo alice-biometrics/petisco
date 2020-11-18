@@ -11,3 +11,4 @@ pyyaml
 deprecation
 slackclient==2.5.0
 validators==0.15.0
+python-dateutil==2.8.1
