@@ -92,3 +92,9 @@ class UnknownRequestError(RequestError):
             error_message=json.dumps(error_message),
             status_code=response.status_code,
         )
+
+    @staticmethod
+    def from_exception(exc):
+        return UnknownRequestError(
+            error_name=str(__name__), error_message=str(exc), status_code=500
+        )

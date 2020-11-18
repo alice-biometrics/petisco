@@ -140,3 +140,15 @@ def test_should_fail_when_request_method_returns_unknown_error(
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=UnknownRequestError)
         assert result.value.status_code == status_code
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize("method", ["GET", "POST", "PATCH", "DELETE"])
+def test_should_fail_when_request_method_returns_unknown_error_when_raise_an_uncontrolled_exception(
+    method, given_any_url
+):
+    with requests_mock.Mocker() as m:
+        m.register_uri(method, given_any_url, exc=InterruptedError)
+        result = Request.execute(given_any_url, method)
+        assert_failure(result, value_is_instance_of=UnknownRequestError)
+        assert result.value.status_code == 500

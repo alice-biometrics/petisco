@@ -121,7 +121,7 @@ class Request:
         except ConnectionError:
             return Failure(ConnectionRequestError())
         except Exception as e:
-            return Failure(UnknownRequestError(error_message=e))
+            return Failure(UnknownRequestError.from_exception(e))
 
         if response.status_code == 400:
             return Failure(BadRequestError.from_response(response))
