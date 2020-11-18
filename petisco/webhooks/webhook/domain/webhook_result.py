@@ -3,8 +3,11 @@ from datetime import datetime
 from dateutil import parser
 from meiga import Result
 
+from petisco.webhooks.webhook.domain.webhook_id import WebhookId
+from petisco.webhooks.webhook.domain.webhook import Webhook
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
-from petisco.webhooks.webhook.domain.webhook_delivery_id import WebhookDeliveryId
+from petisco.webhooks.webhook.domain.webhook_sender_failed import WebhookSenderFailed
+from petisco.webhooks.webhook.domain.webhook_result_id import WebhookResultId
 from petisco.webhooks.webhook.domain.webhook_request_result import WebhookRequestResult
 from petisco.webhooks.webhook.domain.webhook_response_result import (
     WebhookResponseResult,
@@ -14,7 +17,8 @@ from petisco.webhooks.webhook.domain.webhook_response_result import (
 class WebhookResult(AggregateRoot):
     @staticmethod
     def create(
-        webhook_delivery_id: WebhookDeliveryId,
+        webhook: Webhook,
+        webhook_result_id: WebhookResultId,
         sent_on: datetime,
         request_headers: dict,
         request_body: dict,
@@ -22,9 +26,23 @@ class WebhookResult(AggregateRoot):
     ):
         response = WebhookResponseResult.from_result(result)
         request = WebhookRequestResult(request_headers, request_body)
-        return WebhookResult(
-            webhook_delivery_id, sent_on, response, request, result.is_success
+        webhook_result = WebhookResult(
+            webhook_result_id,
+            webhook.webhook_id,
+            sent_on,
+            response,
+            request,
+            result.is_success,
         )
+
+        if not webhook_result.is_success:
+            webhook_result.record(
+                WebhookSenderFailed(
+                    webhook_id=webhook.webhook_id, webhook_result_id=webhook_result_id
+                )
+            )
+
+        return webhook_result
 
     @staticmethod
     def from_dict(kdict: dict):
@@ -32,7 +50,8 @@ class WebhookResult(AggregateRoot):
         if isinstance(sent_on, str):
             sent_on = parser.parse(kdict.get("sent_on"))
         return WebhookResult(
-            webhook_delivery_id=WebhookDeliveryId(kdict.get("webhook_delivery_id")),
+            webhook_result_id=WebhookResultId(kdict.get("webhook_result_id")),
+            webhook_id=WebhookId(kdict.get("webhook_id")),
             sent_on=sent_on,
             response=WebhookResponseResult.from_dict(kdict.get("response"))
             if kdict.get("response")
@@ -45,7 +64,8 @@ class WebhookResult(AggregateRoot):
 
     def to_dict(self):
         return {
-            "webhook_delivery_id": self.webhook_delivery_id.value,
+            "webhook_result_id": self.webhook_result_id.value,
+            "webhook_id": self.webhook_id.value,
             "sent_on": str(self.sent_on),
             "response": self.response.to_dict() if self.response else None,
             "request": self.request.to_dict() if self.request else None,
@@ -54,13 +74,15 @@ class WebhookResult(AggregateRoot):
 
     def __init__(
         self,
-        webhook_delivery_id: WebhookDeliveryId,
+        webhook_result_id: WebhookResultId,
+        webhook_id: WebhookId,
         sent_on: datetime,
         response: WebhookResponseResult,
         request: WebhookRequestResult,
         is_success: bool,
     ):
-        self.webhook_delivery_id = webhook_delivery_id
+        self.webhook_result_id = webhook_result_id
+        self.webhook_id = webhook_id
         self.sent_on = sent_on
         self.response = response
         self.request = request

@@ -6,7 +6,7 @@ from meiga import Result, Error, Success
 
 from petisco.webhooks.webhook.domain.webhook import Webhook
 from petisco.http.request import Request
-from petisco.webhooks.webhook.domain.webhook_delivery_id import WebhookDeliveryId
+from petisco.webhooks.webhook.domain.webhook_result_id import WebhookResultId
 from petisco.webhooks.webhook.domain.webhook_result import WebhookResult
 from petisco.webhooks.webhook.infrastructure.body_digest_signature import (
     BodyDigestSignature,
@@ -20,7 +20,7 @@ class WebhookSender:
         self.organization = organization
 
     def execute(self, webhook: Webhook, payload: Dict) -> Result[WebhookResult, Error]:
-        webhook_delivery_id = WebhookDeliveryId.generate()
+        webhook_delivery_id = WebhookResultId.generate()
         sent_on = datetime.utcnow()
         headers = self._get_headers(webhook, webhook_delivery_id, sent_on)
         auth = self._get_auth(webhook)
@@ -33,11 +33,13 @@ class WebhookSender:
         )
 
         return Success(
-            WebhookResult.create(webhook_delivery_id, sent_on, headers, payload, result)
+            WebhookResult.create(
+                webhook, webhook_delivery_id, sent_on, headers, payload, result
+            )
         )
 
     def ping(self, webhook: Webhook) -> Result[WebhookResult, Error]:
-        webhook_delivery_id = WebhookDeliveryId.generate()
+        webhook_delivery_id = WebhookResultId.generate()
         sent_on = datetime.utcnow()
         headers = self._get_headers(webhook, webhook_delivery_id, sent_on)
         auth = self._get_auth(webhook)
@@ -51,7 +53,9 @@ class WebhookSender:
         )
 
         return Success(
-            WebhookResult.create(webhook_delivery_id, sent_on, headers, payload, result)
+            WebhookResult.create(
+                webhook, webhook_delivery_id, sent_on, headers, payload, result
+            )
         )
 
     def _get_auth(self, webhook: Webhook):
@@ -63,10 +67,7 @@ class WebhookSender:
         )
 
     def _get_headers(
-        self,
-        webhook: Webhook,
-        webhook_delivery_id: WebhookDeliveryId,
-        sent_on: datetime,
+        self, webhook: Webhook, webhook_delivery_id: WebhookResultId, sent_on: datetime
     ):
         headers = {
             f"X-{self.organization}-Event": webhook.event_name,

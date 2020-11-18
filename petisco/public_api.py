@@ -92,6 +92,8 @@ from petisco.event.shared.domain.event_subscriber import EventSubscriber
 from petisco.webhooks.webhook.domain.secret import SecretIsNotHexError, Secret
 from petisco.webhooks.webhook.domain.signature_algorithm import SignatureAlgorithm
 from petisco.webhooks.webhook.domain.webhook import Webhook
+from petisco.webhooks.webhook.domain.webhook_sender_failed import WebhookSenderFailed
+from petisco.webhooks.webhook.domain.webhook_result_id import WebhookResultId
 from petisco.webhooks.webhook.domain.webhook_id import WebhookId
 from petisco.webhooks.webhook.domain.webhook_result import WebhookResult
 from petisco.webhooks.webhook.domain.webhook_sender import WebhookSender
@@ -165,6 +167,8 @@ classes = [
     "WebhookSender",
     "WebhookId",
     "WebhookResult",
+    "WebhookResultId",
+    "WebhookSenderFailed",
     "IEventChaos",
     "SecretIsNotHexError",
     "NotHasSpecificLengthValueObjectError",
