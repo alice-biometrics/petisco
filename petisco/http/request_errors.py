@@ -28,8 +28,18 @@ class RequestError(Error):
         self.error_name = error_name
         self.error_message = error_message
         self.status_code = status_code
-        self.headers = headers
-        self.content = content
+        self.headers = headers if headers else None
+        self._set_content(content)
+
+    def _set_content(self, content):
+        self.content = None
+        if content:
+            try:
+                if isinstance(content, bytes):
+                    content = content.decode()
+                self.content = json.loads(content)
+            except Exception:
+                pass
 
     def __repr__(self):
         return f"{self.error_name} ({self.status_code}) -> {self.error_message}"
@@ -84,7 +94,7 @@ class BadRequestError(RequestError):
             error_message=json.dumps(error_message),
             status_code=response.status_code,
             headers=response.headers,
-            content=response.content,
+            content=response.content if response.content else response.text,
         )
 
 

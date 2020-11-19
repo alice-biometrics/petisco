@@ -152,3 +152,41 @@ def test_should_fail_when_request_method_returns_unknown_error_when_raise_an_unc
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=UnknownRequestError)
         assert result.value.status_code == 500
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "headers,content,json,expected_headers,expected_content",
+    [
+        ({}, b"", None, None, None),
+        ({}, None, {}, None, {}),
+        ({}, b'{"body": "petisco"}', None, None, {"body": "petisco"}),
+        ({"header": "petisco"}, b"", None, {"header": "petisco"}, None),
+        ({}, None, {"body": "petisco"}, None, {"body": "petisco"}),
+        (
+            {"header": "petisco"},
+            b'{"body": "petisco"}',
+            None,
+            {"header": "petisco"},
+            {"body": "petisco"},
+        ),
+        ({}, None, {"body": "petisco"}, None, {"body": "petisco"}),
+    ],
+)
+def test_should_fail_with_expected_values_when_use_request(
+    headers, content, json, expected_headers, expected_content, given_any_url
+):
+    with requests_mock.Mocker() as m:
+        m.register_uri(
+            "GET",
+            given_any_url,
+            headers=headers,
+            content=content,
+            json=json,
+            status_code=400,
+        )
+        result = Request.get(given_any_url)
+        assert_failure(result, value_is_instance_of=BadRequestError)
+        assert result.value.status_code == 400
+        assert result.value.headers == expected_headers
+        assert result.value.content == expected_content
