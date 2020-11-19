@@ -23,22 +23,34 @@ class WebhookResponseResult:
     def from_dict(kdict: dict):
         return WebhookResponseResult(
             headers=json.loads(kdict.get("headers")) if kdict.get("headers") else None,
-            body=kdict.get("body"),
+            body=json.loads(kdict.get("body")) if kdict.get("body") else None,
             status_code=kdict.get("status_code"),
         )
 
     def to_dict(self):
         return {
             "headers": json.dumps(self.headers) if self.headers else None,
-            "body": self.body,
+            "body": json.dumps(self.body) if self.body else None,
             "status_code": self.status_code,
         }
 
     def __init__(self, headers: dict, body: dict, status_code: int):
-        self.headers = headers
-        self.body = body
+        self._set_headers(headers)
+        self._set_body(body)
         self.status_code = status_code
         super().__init__()
+
+    def _set_headers(self, headers):
+        try:
+            self.headers = dict(headers)
+        except Exception:
+            self.headers = {}
+
+    def _set_body(self, body):
+        try:
+            self.body = dict(body)
+        except Exception:
+            self.body = {}
 
     def __repr__(self):
         return json.dumps(self.to_dict())
