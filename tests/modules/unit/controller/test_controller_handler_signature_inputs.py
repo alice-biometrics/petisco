@@ -2,6 +2,7 @@ import pytest
 from meiga import Success
 
 from petisco import controller_handler, TokenManager, InfoId, Petisco
+from petisco.security.token_manager.accepted_token import AcceptedToken
 
 
 @pytest.mark.unit
@@ -44,7 +45,9 @@ def test_should_execute_a_controller_with_default_token_info_parameter(
     given_any_petisco, given_any_token_type, given_any_headers_provider
 ):
     @controller_handler(
-        token_manager=TokenManager(token_type=given_any_token_type),
+        token_manager=TokenManager(
+            accepted_tokens=[AcceptedToken(token_type=given_any_token_type)]
+        ),
         headers_provider=given_any_headers_provider,
     )
     def my_controller():
@@ -60,7 +63,9 @@ def test_should_execute_a_controller_without_token_info_parameter(
     given_any_petisco, given_any_token_type, given_any_headers_provider
 ):
     @controller_handler(
-        token_manager=TokenManager(token_type=given_any_token_type),
+        token_manager=TokenManager(
+            accepted_tokens=[AcceptedToken(token_type=given_any_token_type)]
+        ),
         headers_provider=given_any_headers_provider,
     )
     def my_controller(info_id):
@@ -77,7 +82,9 @@ def test_should_execute_a_controller_without_receive_any_param(
     given_any_petisco, given_any_token_type, given_any_headers_provider
 ):
     @controller_handler(
-        token_manager=TokenManager(token_type=given_any_token_type),
+        token_manager=TokenManager(
+            accepted_tokens=[AcceptedToken(token_type=given_any_token_type)]
+        ),
         headers_provider=given_any_headers_provider,
     )
     def my_controller(info_id: InfoId):

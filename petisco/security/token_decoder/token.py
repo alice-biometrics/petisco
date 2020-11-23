@@ -12,7 +12,7 @@ class Token:
             self.user_id = None
 
     def __repr__(self):
-        return f"[Token: [client_id: {self.client_id} | user_id: {self.user_id} | token_type: {self.token_type}]]"
+        return f"[Token: [{self.client_id} | user_id: {self.user_id} | token_type: {self.token_type}]]"
 
     @staticmethod
     def from_token_payload(token_payload: dict):

@@ -57,6 +57,7 @@ from petisco.notifier.infrastructure.not_implemented_notifier import (
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
 from petisco.security.token_decoder.interface_token_decoder import ITokenDecoder
 from petisco.security.token_decoder.token_decoder import TokenDecoder
+from petisco.security.token_manager.accepted_token import AcceptedToken
 from petisco.security.token_manager.interface_token_manager import ITokenManager
 from petisco.security.token_manager.not_implemented_token_manager import (
     NotImplementedTokenManager,
@@ -117,6 +118,7 @@ classes = [
     "unique_events",
     "Singleton",
     "TokenManager",
+    "AcceptedToken",
     "NotImplementedTokenManager",
     "ITokenManager",
     "TokenDecoder",

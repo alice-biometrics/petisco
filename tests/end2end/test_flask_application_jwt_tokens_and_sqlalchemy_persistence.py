@@ -67,6 +67,7 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token_
     petisco_client_flask_app, given_auth_token_headers_creator, given_any_name
 ):
     headers = given_auth_token_headers_creator(type_token="ADMIN_TOKEN")
+
     response = petisco_client_flask_app.post(
         "/petisco/user", headers=headers, data=dict(name=given_any_name.value)
     )
@@ -76,11 +77,13 @@ def test_should_return_200_when_call_a_entry_point_with_required_jwt_type_token_
     assert response.status_code == 200
     user_id = response.json["user_id"]
 
-    headers = given_auth_token_headers_creator(
+    headers_with_user = given_auth_token_headers_creator(
         type_token="USER_TOKEN", user_id=UserId(user_id)
     )
 
-    response = petisco_client_flask_app.get("/petisco/user/name", headers=headers)
+    response = petisco_client_flask_app.get(
+        "/petisco/user/name", headers=headers_with_user
+    )
     assert response.json["name"] == given_any_name.value
 
 
