@@ -1,6 +1,13 @@
 from meiga import Result
 
-from petisco import controller_handler, TokenManager, HttpError, InfoId, UserId
+from petisco import (
+    controller_handler,
+    TokenManager,
+    HttpError,
+    InfoId,
+    UserId,
+    AcceptedToken,
+)
 from petisco.domain.value_objects.name import Name
 from petisco.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
@@ -28,7 +35,9 @@ def error_handler(result: Result):
 @controller_handler(
     success_handler=success_handler,
     error_handler=error_handler,
-    token_manager=TokenManager(token_type="ADMIN_TOKEN"),
+    token_manager=TokenManager(
+        accepted_tokens=[AcceptedToken(token_type="ADMIN_TOKEN")]
+    ),
     send_request_responded_event=True,
 )
 def create_user(info_id: InfoId, body: dict):

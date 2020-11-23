@@ -2,6 +2,7 @@ import pytest
 from meiga import Success
 
 from petisco import controller_handler, ERROR, InfoId, DEBUG
+from petisco.security.token_manager.accepted_token import AcceptedToken
 from petisco.security.token_manager.token_manager import TokenManager
 from tests.modules.unit.mocks.fake_logger import FakeLogger
 from tests.modules.unit.mocks.log_message_mother import LogMessageMother
@@ -25,7 +26,9 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
 
     @controller_handler(
         logger=logger,
-        token_manager=TokenManager(token_type=given_any_token_type),
+        token_manager=TokenManager(
+            accepted_tokens=[AcceptedToken(token_type=given_any_token_type)]
+        ),
         headers_provider=given_any_headers_provider_with_correlation_id,
     )
     def my_controller(info_id: InfoId):
@@ -79,7 +82,11 @@ def test_should_execute_successfully_a_empty_controller_with_jwt_requirement_wit
     @controller_handler(
         logger=logger,
         token_manager=TokenManager(
-            token_type=given_any_token_type_with_user, require_user=True
+            accepted_tokens=[
+                AcceptedToken(
+                    token_type=given_any_token_type_with_user, require_user=True
+                )
+            ]
         ),
         headers_provider=given_headers_provider(
             {
@@ -137,7 +144,9 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
 
     @controller_handler(
         logger=logger,
-        token_manager=TokenManager(token_type=given_other_token_type),
+        token_manager=TokenManager(
+            accepted_tokens=[AcceptedToken(token_type=given_other_token_type)]
+        ),
         headers_provider=given_headers_provider(
             {
                 **given_auth_token_headers_creator(
@@ -187,7 +196,11 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
 
     @controller_handler(
         logger=logger,
-        token_manager=TokenManager(token_type=given_any_token_type, require_user=True),
+        token_manager=TokenManager(
+            accepted_tokens=[
+                AcceptedToken(token_type=given_any_token_type, require_user=True)
+            ]
+        ),
         headers_provider=given_headers_provider(
             {
                 **given_auth_token_headers_creator(
