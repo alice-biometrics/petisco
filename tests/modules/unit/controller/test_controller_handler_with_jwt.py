@@ -164,7 +164,7 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
     assert http_response == (
         {
             "error": {
-                "message": "Access token is missing or invalid. This entry point expects a valid REQUIRED_TOKEN Token",
+                "message": "Access token is missing or invalid. This entry point expects a valid REQUIRED_TOKEN Token with require_user=False",
                 "type": "InvalidTokenHttpError",
             }
         },
@@ -177,7 +177,7 @@ def test_should_returns_an_error_when_a_empty_controller_do_not_get_a_required_j
         ERROR,
         LogMessageMother.get_controller(
             operation="my_controller",
-            message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid REQUIRED_TOKEN Token]",
+            message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid REQUIRED_TOKEN Token with require_user=False]",
         ).to_dict(),
     )
 
@@ -218,7 +218,7 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
     assert http_response == (
         {
             "error": {
-                "message": "Access token is missing or invalid. This entry point expects a valid TOKEN Token",
+                "message": "Access token is missing or invalid. This entry point expects a valid TOKEN Token with require_user=True",
                 "type": "InvalidTokenHttpError",
             }
         },
@@ -231,7 +231,7 @@ def test_should_returns_an_error_when_a_empty_controller_get_a_required_jwt_toke
         ERROR,
         LogMessageMother.get_controller(
             operation="my_controller",
-            message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid TOKEN Token]",
+            message="Result[status: failure | value: InvalidTokenError: This entry point expects a valid TOKEN Token with require_user=True]",
         ).to_dict(),
     )
 
