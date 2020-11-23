@@ -11,7 +11,7 @@ def success_handler(result: Result):
 @controller_handler(
     success_handler=success_handler,
     token_manager=TokenManager(
-        accepted_tokens=[AcceptedToken(token_type="ADMIN_TOKEN", require_user=True)]
+        accepted_tokens=[AcceptedToken(token_type="USER_TOKEN", require_user=True)]
     ),
 )
 def get_user_name(info_id: InfoId):
