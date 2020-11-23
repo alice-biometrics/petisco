@@ -1,5 +1,3 @@
-from typing import Dict
-
 from slack import WebClient
 from slack.errors import SlackApiError
 
@@ -24,9 +22,6 @@ class SlackNotifier(INotifier):
         self.token = token
         self.channel = channel
         self.converter = converter
-
-    def info(self) -> Dict:
-        return {"name": self.__class__.__name__}
 
     def publish(self, notifier_message: NotifierMessage):
 

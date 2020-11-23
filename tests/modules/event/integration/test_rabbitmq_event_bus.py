@@ -29,6 +29,16 @@ def test_should_publish_event_without_rabbitmq_configuration():
 
 @pytest.mark.integration
 @testing_with_rabbitmq
+def test_should_publish_event_without_rabbitmq_configuration_and_info_id():
+    event = EventUserCreatedMother.random()
+
+    bus = RabbitMqEventBusMother.with_info_id()
+    bus.publish(event)
+    bus.configurer.clear()
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
 def test_should_publish_event_with_previous_rabbitmq_configuration():
     event = EventUserCreatedMother.random()
 

@@ -11,9 +11,9 @@ class INotifier:
     def __repr__(self):
         return f"INotifier"
 
-    @abstractmethod
-    def info(self) -> Dict:
-        raise NotImplementedError
+    @classmethod
+    def info(cls) -> Dict:
+        return {"name": cls.__name__}
 
     @abstractmethod
     def publish(self, notifier_message: NotifierMessage):

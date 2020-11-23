@@ -1,7 +1,8 @@
+import copy
 from typing import Dict
 from abc import ABCMeta, abstractmethod
 
-
+from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.event.shared.domain.event import Event, Events
 
 
@@ -12,9 +13,17 @@ class IEventBus:
     def __repr__(self):
         return f"IEventBus"
 
-    @abstractmethod
-    def info(self) -> Dict:
-        raise NotImplementedError
+    @classmethod
+    def info(cls) -> Dict:
+        return {"name": cls.__name__}
+
+    def _set_info_id(self, info_id: InfoId):
+        self.info_id = info_id
+
+    def with_info_id(self, info_id: InfoId):
+        event_bus = copy.copy(self)
+        event_bus._set_info_id(info_id)
+        return event_bus
 
     @abstractmethod
     def publish(self, event: Event):
