@@ -4,6 +4,7 @@ from meiga import Result, Error, Success, Failure, isSuccess, BoolResult
 from meiga.decorators import meiga
 
 from petisco.security.token_decoder.invalid_token_error import InvalidTokenError
+from petisco.security.token_decoder.token import Token
 from petisco.security.token_manager.accepted_token import AcceptedToken
 from petisco.security.token_manager.interface_token_manager import ITokenManager
 from petisco.domain.aggregate_roots.info_id import InfoId
@@ -40,11 +41,11 @@ class TokenManager(ITokenManager):
         return Success(info_id)
 
     @meiga
-    def ensure_required_token(self, token) -> BoolResult:
+    def ensure_required_token(self, token: Token) -> BoolResult:
         result = isSuccess
         for accepted_token in self.accepted_tokens:
             result = accepted_token.check(token)
             if result.is_success:
-                continue
+                break
         result.unwrap_or_return()
         return isSuccess

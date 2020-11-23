@@ -29,7 +29,7 @@ class AcceptedToken:
         ):
             return Failure(
                 InvalidTokenError(
-                    message=f"This entry point expects a valid {self.token_type} Token"
+                    message=f"This entry point expects a valid {self.token_type} Token with require_user={self.require_user}"
                 )
             )
         return isSuccess
