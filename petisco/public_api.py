@@ -305,11 +305,23 @@ try:
     from petisco.persistence.pymongo.pymongo_persistence_connector import (
         PyMongoPersistenceConnector,
     )
+    from petisco.persistence.pymongo.pymongo_errors import (
+        PyMongoOperationalDatabaseError,
+        PyMongoInvalidDatabaseNameError,
+        PyMongoInvalidCollectionNameError,
+    )
+    from petisco.persistence.pymongo.pymongo_persistence_context import (
+        get_mongo_collection,
+    )
 
     pymongo = [
         "PyMongoPersistence",
         "PyMongoPersistenceConfig",
         "PyMongoPersistenceConnector",
+        "PyMongoInvalidCollectionNameError",
+        "PyMongoInvalidDatabaseNameError",
+        "PyMongoInvalidCollectionNameError",
+        "get_mongo_collection",
     ]
 except (RuntimeError, ImportError):
     pymongo = []
