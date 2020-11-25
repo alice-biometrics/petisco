@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-from pymongo.database import Database
 
 from petisco.application.singleton import Singleton
 
@@ -9,6 +8,6 @@ class PyMongoPersistence(metaclass=Singleton):
     def get_instance():
         return PyMongoPersistence()
 
-    def __init__(self, client: MongoClient = None, database: Database = None):
+    def __init__(self, client: MongoClient = None, database: str = None):
         self.client = client
         self.database = database

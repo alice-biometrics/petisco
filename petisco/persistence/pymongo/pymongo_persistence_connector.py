@@ -32,5 +32,4 @@ class PyMongoPersistenceConnector(IPersistenceConnector):
                 "Petisco PyMongoPersistenceConnector can't connect to MongoDB. "
                 "Please check PyMongoPersistenceConfig and add required values"
             )
-        mongo_database = mongo_client[self.config.database]
-        PyMongoPersistence(client=mongo_client, database=mongo_database)
+        PyMongoPersistence(client=mongo_client, database=self.config.database)

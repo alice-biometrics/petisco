@@ -397,12 +397,6 @@ class Petisco(metaclass=Singleton):
         return Petisco.get_instance().event_bus
 
     @staticmethod
-    def persistence_mongodb_database():
-        from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
-
-        return PyMongoPersistence().database
-
-    @staticmethod
     def persistence_mongodb_client():
         from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
 
