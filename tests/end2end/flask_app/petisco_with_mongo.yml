@@ -5,12 +5,12 @@ tasks:
   recurring-task:
     run_in: 0.0 # seconds
     interval: 10 # seconds
-    handler: tests.end2end.flask_app.shared.shared.application.tasks.tasks.recurring_task
+    handler: tests.end2end.flask_app.shared.application.tasks.tasks.recurring_task
   scheduled-task:
     run_in: 10 # seconds
-    handler: tests.end2end.flask_app.shared.shared.application.tasks.tasks.scheduled_task
+    handler: tests.end2end.flask_app.shared.application.tasks.tasks.scheduled_task
   instant-task:
-    handler: tests.end2end.flask_app.shared.shared.application.tasks.tasks.instant_task
+    handler: tests.end2end.flask_app.shared.application.tasks.tasks.instant_task
 framework:
     selected_framework: flask
     config_file: swagger.yaml
@@ -28,7 +28,7 @@ persistence:
     config: tests.end2end.flask_app.config.config_mongo_persistence.config_mongo_persistence
 providers:
    services_provider: tests.end2end.flask_app.config.services_provider.services_provider
-   repositories_provider: tests.end2end.flask_app.config.repositories_provider.repositories_provider
+   repositories_provider: tests.end2end.flask_app.config.repositories_provider.repositories_provider_mongo
 events:
   publisher:
     provider: tests.end2end.flask_app.config.events.event_publisher_provider

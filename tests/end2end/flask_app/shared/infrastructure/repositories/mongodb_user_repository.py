@@ -1,3 +1,4 @@
+from functools import partial
 from typing import Dict
 
 from meiga import Result, Error, isSuccess, Success, Failure
@@ -23,8 +24,8 @@ class MongoDBUserRepository(IUserRepository):
     def build():
         return MongoDBUserRepository()
 
-    def __init__(self,):
-        self.collection_name = "user"
+    def __init__(self):
+        self.collection_context = partial(get_mongo_collection, "user")
 
     def info(self) -> Dict:
         return {"name": self.__class__.__name__}
@@ -34,12 +35,12 @@ class MongoDBUserRepository(IUserRepository):
         if result.is_success:
             return Failure(UserAlreadyExistError(user.user_id))
 
-        with get_mongo_collection(self.collection_name) as collection:
+        with self.collection_context() as collection:
             if collection.insert_one(user.to_dict()):
                 return isSuccess
 
     def retrieve(self, client_id: ClientId, user_id: UserId) -> Result[User, Error]:
-        with get_mongo_collection(self.collection_name) as collection:
+        with self.collection_context() as collection:
             user_doc = collection.find_one(
                 {"user_id": user_id.value, "client_id": client_id.value}
             )
@@ -55,7 +56,7 @@ class MongoDBUserRepository(IUserRepository):
                 return Failure(UserNotFoundError(user_id))
 
     def exists(self, user_id: UserId) -> Result[bool, Error]:
-        with get_mongo_collection(self.collection_name) as collection:
+        with self.collection_context() as collection:
             if collection.find_one({"user_id": user_id.value}):
                 return isSuccess
             else:
