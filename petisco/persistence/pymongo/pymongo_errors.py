@@ -6,10 +6,8 @@ class PyMongoOperationalDatabaseError(CriticalError):
 
 
 class PyMongoInvalidDatabaseNameError(CriticalError):
-    def __init__(self, database: str):
-        self.message = f"Invalid database name: {database}"
+    pass
 
 
 class PyMongoInvalidCollectionNameError(CriticalError):
-    def __init__(self, collection: str):
-        self.message = f"Invalid collection name: {collection}"
+    pass

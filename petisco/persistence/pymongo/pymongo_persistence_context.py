@@ -18,12 +18,12 @@ def get_mongo_collection(collection: str):
         db = client.get_database(database)
     except InvalidName as e:
         print(e)
-        raise PyMongoInvalidDatabaseNameError(database)
+        raise PyMongoInvalidDatabaseNameError(e)
     try:
         yield db.get_collection(collection)
     except InvalidName as e:
         print(e)
-        raise PyMongoInvalidCollectionNameError(collection)
+        raise PyMongoInvalidCollectionNameError(e)
     except PyMongoError as e:
         print(e)
-        raise PyMongoOperationalDatabaseError()
+        raise PyMongoOperationalDatabaseError(e)
