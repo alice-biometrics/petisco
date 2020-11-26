@@ -140,7 +140,7 @@ class Request:
                         status_code=response.status_code,
                         content=response.content,
                         headers=response.headers,
-                        completed_in=TimeDeltaParser.ms_from_timedelta(
+                        completed_in_ms=TimeDeltaParser.ms_from_timedelta(
                             response.elapsed
                         ),
                     )
@@ -154,7 +154,7 @@ class Request:
                     status_code=response.status_code,
                     content=json_response,
                     headers=response.headers,
-                    completed_in=TimeDeltaParser.ms_from_timedelta(response.elapsed),
+                    completed_in_ms=TimeDeltaParser.ms_from_timedelta(response.elapsed),
                 )
             )
         else:

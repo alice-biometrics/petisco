@@ -13,7 +13,12 @@ class WebhookResultMother:
                 "webhook_result_id": "a026531a-8512-4599-9491-81909ea8e31b",
                 "webhook_id": "a026531a-8512-4599-9491-81909ea8e31b",
                 "sent_on": "2020-11-18 11:38:37.156162",
-                "response": {"headers": None, "body": "", "status_code": 200},
+                "response": {
+                    "headers": None,
+                    "body": "",
+                    "status_code": 200,
+                    "completed_in_ms": 10,
+                },
                 "request": {
                     "headers": '{"X-Petisco-Event": "user_created", "X-Petisco-Event-Version": "1", "X-Petisco-Delivery": "a026531a-8512-4599-9491-81909ea8e31b", "X-Petisco-WebhookId": "1baa14dc-bda9-400f-b45b-428f26532f1d", "X-Petisco-Request-Timestamp": "2020-11-18 11:38:37.156162", "User-Agent": "Petisco-Hookshoot/", "apikey": "\'b0b905d6-228f-44bf-a130-c85d7aecd765"}',
                     "body": '{"payload": "ok"}',
@@ -101,7 +106,12 @@ class WebhookResultMother:
                 "webhook_result_id": "a026531a-8512-4599-9491-81909ea8e31b",
                 "webhook_id": "a026531a-8512-4599-9491-81909ea8e31b",
                 "sent_on": "2020-11-18 11:38:37.156162",
-                "response": {"headers": None, "body": "", "status_code": 200},
+                "response": {
+                    "headers": None,
+                    "body": "",
+                    "status_code": 200,
+                    "completed_in_ms": 10,
+                },
                 "request": None,
                 "is_success": True,
             }
@@ -114,7 +124,12 @@ class WebhookResultMother:
                 "webhook_result_id": "a026531a-8512-4599-9491-81909ea8e31b",
                 "webhook_id": "a026531a-8512-4599-9491-81909ea8e31b",
                 "sent_on": "2020-11-18 11:38:37.156162",
-                "response": {"headers": None, "body": "", "status_code": 200},
+                "response": {
+                    "headers": None,
+                    "body": "",
+                    "status_code": 200,
+                    "completed_in_ms": 10,
+                },
                 "request": {"headers": None, "body": '{"payload": "ok"}'},
                 "is_success": True,
             }

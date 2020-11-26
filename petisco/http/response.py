@@ -11,4 +11,4 @@ class Response(object):
     status_code: int
     content: Any = field(default=None)
     headers: Any = None
-    completed_in: float = None
+    completed_in_ms: float = None

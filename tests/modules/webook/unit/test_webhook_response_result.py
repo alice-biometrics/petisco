@@ -30,6 +30,7 @@ def test_should_construct_and_convert_to_dict_webhook_response_result_from_case_
         "headers": json.dumps(expected_headers),
         "body": json.dumps(body),
         "status_code": status_code,
+        "completed_in_ms": None,
     }
 
 
@@ -47,12 +48,18 @@ def test_should_construct_and_convert_to_dict_webhook_response_result_from_defau
     }
     body = {"payload": "ok"}
     status_code = 200
+    completed_in_ms = 80
+
     webhook_response_result = WebhookResponseResult(
-        headers=headers, body=body, status_code=status_code
+        headers=headers,
+        body=body,
+        status_code=status_code,
+        completed_in_ms=completed_in_ms,
     )
 
     assert webhook_response_result.to_dict() == {
         "headers": json.dumps(headers),
         "body": json.dumps(body),
         "status_code": status_code,
+        "completed_in_ms": completed_in_ms,
     }

@@ -12,11 +12,15 @@ class WebhookResponseResult:
                 headers=response.headers,
                 body=response.content,
                 status_code=response.status_code,
+                completed_in_ms=response.completed_in_ms,
             )
 
         error = result.value
         return WebhookResponseResult(
-            headers=error.headers, body=error.content, status_code=error.status_code
+            headers=error.headers,
+            body=error.content,
+            status_code=error.status_code,
+            completed_in_ms=error.completed_in_ms,
         )
 
     @staticmethod
@@ -25,6 +29,7 @@ class WebhookResponseResult:
             headers=json.loads(kdict.get("headers")) if kdict.get("headers") else None,
             body=json.loads(kdict.get("body")) if kdict.get("body") else None,
             status_code=kdict.get("status_code"),
+            completed_in_ms=kdict.get("completed_in_ms"),
         )
 
     def to_dict(self):
@@ -32,12 +37,16 @@ class WebhookResponseResult:
             "headers": json.dumps(self.headers) if self.headers else None,
             "body": json.dumps(self.body) if self.body else None,
             "status_code": self.status_code,
+            "completed_in_ms": self.completed_in_ms,
         }
 
-    def __init__(self, headers: dict, body: dict, status_code: int):
+    def __init__(
+        self, headers: dict, body: dict, status_code: int, completed_in_ms: float = None
+    ):
         self._set_headers(headers)
         self._set_body(body)
         self.status_code = status_code
+        self.completed_in_ms = completed_in_ms
         super().__init__()
 
     def _set_headers(self, headers):
