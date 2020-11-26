@@ -12,6 +12,7 @@ from petisco.application.petisco import Petisco
 from petisco.application.singleton import Singleton
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.domain.aggregate_roots.info_id import InfoId
+from petisco.domain.date_parser import DateParser
 from petisco.domain.errors.empty_value_object_error import EmptyValueObjectError
 from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
@@ -176,6 +177,7 @@ classes = [
     "NotHasSpecificLengthValueObjectError",
     "Secret",
     "SignatureAlgorithm",
+    "DateParser",
 ]
 
 

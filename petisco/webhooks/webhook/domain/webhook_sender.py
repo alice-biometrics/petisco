@@ -31,7 +31,6 @@ class WebhookSender:
             headers=headers,
             auth=auth,
         )
-
         return Success(
             WebhookResult.create(
                 webhook, webhook_delivery_id, sent_on, headers, payload, result

@@ -1,8 +1,8 @@
 import json
 from datetime import datetime
-from dateutil import parser
 from meiga import Result
 
+from petisco.domain.date_parser import DateParser
 from petisco.webhooks.webhook.domain.webhook_id import WebhookId
 from petisco.webhooks.webhook.domain.webhook import Webhook
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
@@ -46,13 +46,10 @@ class WebhookResult(AggregateRoot):
 
     @staticmethod
     def from_dict(kdict: dict):
-        sent_on = kdict.get("sent_on")
-        if isinstance(sent_on, str):
-            sent_on = parser.parse(kdict.get("sent_on"))
         return WebhookResult(
             webhook_result_id=WebhookResultId(kdict.get("webhook_result_id")),
             webhook_id=WebhookId(kdict.get("webhook_id")),
-            sent_on=sent_on,
+            sent_on=DateParser.datetime_from_str(kdict.get("sent_on")),
             response=WebhookResponseResult.from_dict(kdict.get("response"))
             if kdict.get("response")
             else None,
@@ -66,7 +63,7 @@ class WebhookResult(AggregateRoot):
         return {
             "webhook_result_id": self.webhook_result_id.value,
             "webhook_id": self.webhook_id.value,
-            "sent_on": str(self.sent_on),
+            "sent_on": DateParser.str_from_datetime(self.sent_on),
             "response": self.response.to_dict() if self.response else None,
             "request": self.request.to_dict() if self.request else None,
             "is_success": self.is_success,

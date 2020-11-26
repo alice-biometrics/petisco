@@ -1,8 +1,10 @@
 import json
+from datetime import datetime
 from typing import Optional
 
 import validators
 
+from petisco.domain.date_parser import DateParser
 from petisco.webhooks.webhook.domain.secret import Secret
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.webhooks.webhook.domain.invalid_url_error import InvalidUrlError
@@ -55,6 +57,8 @@ class Webhook(AggregateRoot):
             event_name=kdict.get("event_name"),
             event_version=kdict.get("event_version"),
             algorithm=SignatureAlgorithm(kdict.get("algorithm")),
+            created_at=DateParser.datetime_from_str(kdict.get("created_at")),
+            updated_at=DateParser.datetime_from_str(kdict.get("updated_at")),
         )
 
     def to_dict(self):
@@ -67,6 +71,8 @@ class Webhook(AggregateRoot):
             "event_name": self.event_name,
             "event_version": self.event_version,
             "algorithm": self.algorithm.value,
+            "created_at": DateParser.str_from_datetime(self.created_at),
+            "updated_at": DateParser.str_from_datetime(self.updated_at),
         }
 
     def __init__(
@@ -79,6 +85,8 @@ class Webhook(AggregateRoot):
         event_name: str,
         event_version: Optional[str] = "1",
         algorithm: Optional[SignatureAlgorithm] = SignatureAlgorithm.sha256(),
+        created_at: Optional[datetime] = datetime.utcnow(),
+        updated_at: Optional[datetime] = None,
     ):
         self.webhook_id = webhook_id
         self.active = active
@@ -88,6 +96,8 @@ class Webhook(AggregateRoot):
         self.event_name = event_name
         self.event_version = event_version
         self.algorithm = algorithm
+        self.created_at = created_at
+        self.updated_at = updated_at
         self.validate()
         super().__init__()
 

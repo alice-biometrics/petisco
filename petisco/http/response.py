@@ -9,5 +9,6 @@ from dataclasses_json import dataclass_json
 @dataclass
 class Response(object):
     status_code: int
-    content: None = field(default=None)
+    content: Any = field(default=None)
     headers: Any = None
+    completed_in: float = None

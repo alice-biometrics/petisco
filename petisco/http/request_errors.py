@@ -3,13 +3,15 @@ from json.decoder import JSONDecodeError
 
 from meiga import Error
 
+from petisco.domain.timedelta_parser import TimeDeltaParser
+
 
 def get_error_message(error_message_title, response):
     error_message = {"error": error_message_title}
 
     try:
         detail = response.json()
-        error_message["detal"] = detail
+        error_message["detail"] = detail
     except JSONDecodeError:
         pass
 
@@ -24,12 +26,14 @@ class RequestError(Error):
         status_code: int,
         headers: dict = None,
         content: dict = None,
+        completed_in: float = None,
     ):
         self.error_name = error_name
         self.error_message = error_message
         self.status_code = status_code
         self.headers = headers if headers else None
         self._set_content(content)
+        self.completed_in = completed_in
 
     def _set_content(self, content):
         self.content = None
@@ -42,7 +46,7 @@ class RequestError(Error):
                 pass
 
     def __repr__(self):
-        return f"{self.error_name} ({self.status_code}) -> {self.error_message}"
+        return f"{self.error_name} ({self.status_code}) -> {self.error_message} (completed_in: {self.completed_in})"
 
 
 class MultipartFormatRequestError(RequestError):
@@ -55,6 +59,7 @@ class MultipartFormatRequestError(RequestError):
             status_code=response.status_code,
             headers=response.headers,
             content=response.content,
+            completed_in=TimeDeltaParser.ms_from_timedelta(response.elapsed),
         )
 
 
@@ -95,6 +100,7 @@ class BadRequestError(RequestError):
             status_code=response.status_code,
             headers=response.headers,
             content=response.content if response.content else response.text,
+            completed_in=TimeDeltaParser.ms_from_timedelta(response.elapsed),
         )
 
 
@@ -108,6 +114,7 @@ class UnauthorizedRequestError(RequestError):
             status_code=response.status_code,
             headers=response.headers,
             content=response.content,
+            completed_in=TimeDeltaParser.ms_from_timedelta(response.elapsed),
         )
 
 
@@ -121,6 +128,7 @@ class UnknownRequestError(RequestError):
             status_code=response.status_code,
             headers=response.headers,
             content=response.content,
+            completed_in=TimeDeltaParser.ms_from_timedelta(response.elapsed),
         )
 
     @staticmethod

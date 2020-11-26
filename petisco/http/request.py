@@ -2,6 +2,7 @@ import requests
 from meiga import Result, Error, Failure, Success
 from requests.exceptions import MissingSchema, ConnectionError, Timeout
 
+from petisco.domain.timedelta_parser import TimeDeltaParser
 from petisco.http.request_errors import (
     MissingSchemaRequestError,
     TimeoutRequestError,
@@ -139,6 +140,9 @@ class Request:
                         status_code=response.status_code,
                         content=response.content,
                         headers=response.headers,
+                        completed_in=TimeDeltaParser.ms_from_timedelta(
+                            response.elapsed
+                        ),
                     )
                 )
             try:
@@ -150,6 +154,7 @@ class Request:
                     status_code=response.status_code,
                     content=json_response,
                     headers=response.headers,
+                    completed_in=TimeDeltaParser.ms_from_timedelta(response.elapsed),
                 )
             )
         else:
