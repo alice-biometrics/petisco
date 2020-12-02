@@ -102,7 +102,7 @@ def test_should_raise_exception_if_service_not_exist(petisco_yml_path_end2end):
 
     petisco = Petisco.from_filename(filename)
     with pytest.raises(ValueError):
-        petisco.get_service("repo")
+        petisco.get_app_service("repo")
 
     Petisco.clear()
 

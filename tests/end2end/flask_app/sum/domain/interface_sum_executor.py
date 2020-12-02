@@ -2,10 +2,10 @@ from abc import ABCMeta, abstractmethod
 
 from meiga import Result, Error, NotImplementedMethodError
 
-from petisco.application.interface_application_service import IApplicationService
+from petisco.application.interface_application_service import IAppService
 
 
-class ISumExecutor(IApplicationService):
+class ISumExecutor(IAppService):
     __metaclass__ = ABCMeta
 
     @abstractmethod

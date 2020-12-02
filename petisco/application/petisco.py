@@ -39,10 +39,7 @@ from petisco.notifier.domain.notifier_message import NotifierMessage
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.application.interface_repository import IRepository
-from petisco.application.interface_application_service import (
-    IService,
-    IApplicationService,
-)
+from petisco.application.interface_application_service import IService, IAppService
 from petisco.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )
@@ -346,7 +343,7 @@ class Petisco(metaclass=Singleton):
         return services
 
     @staticmethod
-    def get_application_service(key: str) -> IApplicationService:
+    def get_app_service(key: str) -> IAppService:
         services = Petisco.get_instance().services
         if not services:
             raise ValueError(
@@ -359,10 +356,10 @@ class Petisco(metaclass=Singleton):
             )
         return service
 
-    @deprecated("This method is deprecated. Please, use get_application_service")
+    @deprecated("This method is deprecated. Please, use get_app_service")
     @staticmethod
     def get_service(key: str) -> IService:
-        return Petisco.get_application_service(key)
+        return Petisco.get_app_service(key)
 
     @staticmethod
     def get_repository(key: str) -> IRepository:

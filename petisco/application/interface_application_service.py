@@ -5,7 +5,7 @@ from meiga import Result, NotImplementedMethodError
 from petisco.application.pattern_base import PatternBase
 
 
-class IApplicationService(PatternBase):
+class IAppService(PatternBase):
 
     __metaclass__ = ABCMeta
 
