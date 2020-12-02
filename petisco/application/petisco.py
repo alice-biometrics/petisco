@@ -5,6 +5,7 @@ from os import environ
 from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
+from deprecation import deprecated
 
 from petisco.event.bus.infrastructure.not_implemented_event_bus import (
     NotImplementedEventBus,
@@ -38,7 +39,10 @@ from petisco.notifier.domain.notifier_message import NotifierMessage
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.application.interface_repository import IRepository
-from petisco.application.interface_service import IService
+from petisco.application.interface_application_service import (
+    IService,
+    IApplicationService,
+)
 from petisco.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )
@@ -342,7 +346,7 @@ class Petisco(metaclass=Singleton):
         return services
 
     @staticmethod
-    def get_service(key: str) -> IService:
+    def get_application_service(key: str) -> IApplicationService:
         services = Petisco.get_instance().services
         if not services:
             raise ValueError(
@@ -354,6 +358,11 @@ class Petisco(metaclass=Singleton):
                 f"Petisco: {key} service is not defined. Please, add it to petisco.yml"
             )
         return service
+
+    @deprecated("This method is deprecated. Please, use get_application_service")
+    @staticmethod
+    def get_service(key: str) -> IService:
+        return Petisco.get_application_service(key)
 
     @staticmethod
     def get_repository(key: str) -> IRepository:

@@ -7,7 +7,10 @@
 
 from petisco.application.config.config import Config
 from petisco.application.interface_repository import IRepository
-from petisco.application.interface_service import IService
+from petisco.application.interface_application_service import (
+    IService,
+    IApplicationService,
+)
 from petisco.application.petisco import Petisco
 from petisco.application.singleton import Singleton
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
@@ -102,7 +105,8 @@ from petisco.webhooks.webhook.domain.webhook_sender import WebhookSender
 
 
 classes = [
-    "IService",
+    "IService",  # deprecated
+    "IApplicationService",
     "IRepository",
     "UseCase",
     "use_case_handler",
