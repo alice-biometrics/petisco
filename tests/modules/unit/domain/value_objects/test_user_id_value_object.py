@@ -3,7 +3,7 @@ from meiga import Success
 from meiga.assertions import assert_failure, assert_success
 from meiga.decorators import meiga
 
-from petisco.domain.value_objects.user_id import UserId, LegacyUserId
+from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
 )
@@ -42,16 +42,16 @@ def test_should_declare_a_user_id_generated_automatically():
 
 @pytest.mark.unit
 def test_should_declare_a_legacy_user_id_generated_automatically():
-    user_id = LegacyUserId.generate()
+    user_id = UserId.generate_legacy()
 
-    assert isinstance(user_id, LegacyUserId)
+    assert isinstance(user_id, UserId)
     assert len(user_id.value) == 16
 
 
 @pytest.mark.unit
 def test_should_fail_when_declare_a_legacy_user_id_that_exceeds_default_length_limits():
     with pytest.raises(ExceedLengthLimitValueObjectError):
-        LegacyUserId("my_user_id_is_too_long_for_default_limit_length")
+        UserId.from_legacy("my_user_id_is_too_long_for_default_limit_length")
 
 
 @pytest.mark.unit
@@ -85,7 +85,7 @@ def test_should_fail_user_id_when_declare_a_non_valid_user_id():
 def test_should_fail_legacy_user_id_when_declare_a_non_valid_user_id():
     @meiga
     def controller():
-        user_id = LegacyUserId("my_user_id_is_too_long_for_default_limit_length")
+        user_id = UserId.from_legacy("my_user_id_is_too_long_for_default_limit_length")
         return Success(user_id)
 
     result = controller()

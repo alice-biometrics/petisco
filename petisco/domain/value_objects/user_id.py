@@ -6,24 +6,20 @@ from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
 )
 
-
-class UserId(Uuid):
-    pass
-
-
 LENGTH = 16
 
 
-class LegacyUserId(Uuid):
-    def guard(self):
-        self._ensure_is_16_char_uuid()
-
-    def _ensure_is_16_char_uuid(self):
-        if len(self.value) > LENGTH:
-            raise ExceedLengthLimitValueObjectError(message=self.value)
+class UserId(Uuid):
+    @classmethod
+    def generate_legacy(cls):
+        r = os.urandom(LENGTH)
+        return cls(
+            base64.b64encode(r, altchars=b"-_").decode("utf-8")[:LENGTH],
+            execute_guard=False,
+        )
 
     @classmethod
-    def generate(cls):
-        # TODO: refactor to cls(str(uuid.uuid4()))
-        r = os.urandom(LENGTH)
-        return cls(base64.b64encode(r, altchars=b"-_").decode("utf-8")[:LENGTH])
+    def from_legacy(cls, legacy_value: str):
+        if len(legacy_value) > LENGTH:
+            raise ExceedLengthLimitValueObjectError(message=legacy_value)
+        return cls(legacy_value, execute_guard=False)

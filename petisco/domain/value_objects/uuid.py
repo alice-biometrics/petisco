@@ -14,9 +14,9 @@ class Uuid(ValueObject):
     def length():
         return 36
 
-    def __init__(self, value: str):
+    def __init__(self, value: str, execute_guard: bool = True):
         self.value = value
-        super(Uuid, self).__init__()
+        super(Uuid, self).__init__(execute_guard)
 
     def __hash__(self):
         return hash(str(self))
