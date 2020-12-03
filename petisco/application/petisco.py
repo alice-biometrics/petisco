@@ -356,8 +356,8 @@ class Petisco(metaclass=Singleton):
             )
         return service
 
-    @deprecated("This method is deprecated. Please, use get_app_service")
     @staticmethod
+    @deprecated("This method is deprecated. Please, use get_app_service")
     def get_service(key: str) -> IService:
         return Petisco.get_app_service(key)
 
