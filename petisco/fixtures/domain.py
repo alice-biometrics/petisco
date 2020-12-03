@@ -14,7 +14,7 @@ def given_any_client_id() -> ClientId:
 
 @pytest.fixture
 def given_any_user_id() -> UserId:
-    return UserId("userpwlxU3yGsird")
+    return UserId("9f74b5c0-2196-4a27-a03f-cb92d66e2bbd")
 
 
 @pytest.fixture

@@ -36,7 +36,7 @@ class Uuid(ValueObject):
         self._ensure_is_valid_uuid(self.value)
 
     def _ensure_is_valid_uuid(self, value):
-        if not validators.uuid(value):
+        if value is None or not validators.uuid(value):
             raise InvalidUuidError(value)
 
     @classmethod

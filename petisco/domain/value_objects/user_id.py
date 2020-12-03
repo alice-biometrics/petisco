@@ -6,10 +6,15 @@ from petisco.domain.errors.length_limit_string_value_object_error import (
     ExceedLengthLimitValueObjectError,
 )
 
+
+class UserId(Uuid):
+    pass
+
+
 LENGTH = 16
 
 
-class UserId(Uuid):
+class LegacyUserId(Uuid):
     def guard(self):
         self._ensure_is_16_char_uuid()
 

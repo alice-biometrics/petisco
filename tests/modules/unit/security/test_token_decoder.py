@@ -10,8 +10,8 @@ from petisco.security.token_decoder.token_decoder import TokenDecoder
     "type_token,client_id,user_id",
     [
         ("ADMIN_TOKEN", ClientId("client-id"), None),
-        ("ADMIN_TOKEN", ClientId("client-id"), UserId("user-id")),
-        ("BACKEND_TOKEN", ClientId("client-id"), UserId("user-id")),
+        ("ADMIN_TOKEN", ClientId("client-id"), UserId.generate()),
+        ("BACKEND_TOKEN", ClientId("client-id"), UserId.generate()),
     ],
 )
 def test_should_decode_a_token_successfully(
