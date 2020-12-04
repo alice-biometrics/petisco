@@ -55,7 +55,7 @@ from petisco.notifier.domain.notifier_message import NotifierMessage
 from petisco.notifier.infrastructure.not_implemented_notifier import (
     NotImplementedNotifier,
 )
-from petisco.persistence.interface_persistence_connector import IPersistenceConnector
+
 from petisco.security.token_decoder.interface_token_decoder import ITokenDecoder
 from petisco.security.token_decoder.token_decoder import TokenDecoder
 from petisco.security.token_manager.accepted_token import AcceptedToken
@@ -125,7 +125,6 @@ classes = [
     "ITokenManager",
     "TokenDecoder",
     "ITokenDecoder",
-    "IPersistenceConnector",
     "ValueObject",
     "Name",
     "ClientId",
@@ -180,6 +179,14 @@ classes = [
     "SignatureAlgorithm",
     "DateParser",
 ]
+
+
+from petisco.persistence.fake_database import FakeDatabase
+from petisco.persistence.interface_database import IDatabase
+from petisco.persistence.interface_persistence_connector import IPersistenceConnector
+from petisco.persistence.persistence import Persistence
+
+persistence = ["Persistence", "IDatabase", "FakeDatabase", "IPersistenceConnector"]
 
 
 # Controllers & Use Cases
@@ -331,6 +338,7 @@ except (RuntimeError, ImportError):
 
 __all__ = (
     classes
+    + persistence
     + controllers_and_use_cases
     + constants
     + flask
