@@ -1,3 +1,4 @@
+import importlib
 import os
 import traceback
 from typing import Dict, Any
@@ -25,3 +26,11 @@ class PersistenceModels:
 
     def get_models_names(self):
         return self.models
+
+    def get_imported_models(self):
+        imported_models = {}
+        for name, model_string in self.models.items():
+            mod_name, model_name = model_string.rsplit(".", 1)
+            mod = importlib.import_module(mod_name)
+            imported_models[name] = getattr(mod, model_name)
+        return imported_models
