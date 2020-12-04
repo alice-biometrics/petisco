@@ -37,12 +37,23 @@ class Persistence(metaclass=Singleton):
             )
 
     def create(self):
-        for database in self._databases:
+        for database in self._databases.values():
             database.create()
 
     def delete(self):
-        for database in self._databases:
+        for database in self._databases.values():
             database.delete()
+
+    @staticmethod
+    def get_base(database_name: str) -> List[str]:
+        database = Persistence.get_instance()._databases.get(database_name)
+        if not database:
+            raise IndexError(f"Database name ({database_name}) not exists.")
+
+        if not hasattr(database, "get_base"):
+            raise IndexError(f"Database ({database_name}) has not get_base method. ")
+
+        return database.get_base()
 
     @staticmethod
     def get_available_databases() -> List[str]:
