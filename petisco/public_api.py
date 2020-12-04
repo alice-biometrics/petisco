@@ -185,8 +185,15 @@ from petisco.persistence.fake_database import FakeDatabase
 from petisco.persistence.interface_database import IDatabase
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
 from petisco.persistence.persistence import Persistence
+from petisco.persistence.persistence_models import PersistenceModels
 
-persistence = ["Persistence", "IDatabase", "FakeDatabase", "IPersistenceConnector"]
+persistence = [
+    "Persistence",
+    "IDatabase",
+    "FakeDatabase",
+    "PersistenceModels",
+    "IPersistenceConnector",
+]
 
 
 # Controllers & Use Cases

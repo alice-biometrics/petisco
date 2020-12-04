@@ -1,10 +1,12 @@
-from typing import List, Dict
+from typing import List
 
 from petisco.persistence.interface_database import IDatabase
+from petisco.persistence.persistence_models import PersistenceModels
 
 
 class FakeDatabase(IDatabase):
-    def __init__(self, name: str, models: Dict = None):
+    def __init__(self, name: str, model_filename: str):
+        models = PersistenceModels.from_filename(model_filename).get_models_names()
         super().__init__(name, models=models)
 
     def create(self):
@@ -17,7 +19,7 @@ class FakeDatabase(IDatabase):
         model = self.models.get(model_name)
         if not model:
             raise IndexError(
-                f'Model "{model_name}" is not available for "{self.name}" databade'
+                f'Model "{model_name}" is not available for "{self.name}" database'
             )
         return model
 

@@ -1,0 +1,3 @@
+models:
+  user: tests.modules.persistence.ymls.object.models.UserModel
+  product: tests.modules.persistence.ymls.object.models.ProductModel
