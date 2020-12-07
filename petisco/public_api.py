@@ -186,7 +186,10 @@ from petisco.persistence.interface_database import IDatabase
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
 from petisco.persistence.persistence import Persistence
 from petisco.persistence.persistence_models import PersistenceModels
-from petisco.persistence.sqlite_database import SqliteConnection, SqliteDatabase
+from petisco.persistence.sql.sqlite.sqlite_connection import SqliteConnection
+from petisco.persistence.sql.sqlite.sqlite_database import SqliteDatabase
+from petisco.persistence.sql.mysql.mysql_connection import MySqlConnection
+from petisco.persistence.sql.mysql.mysql_database import MySqlDatabase
 
 persistence = [
     "Persistence",
@@ -196,6 +199,8 @@ persistence = [
     "IPersistenceConnector",
     "SqliteConnection",
     "SqliteDatabase",
+    "MySqlConnection",
+    "MySqlDatabase",
 ]
 
 

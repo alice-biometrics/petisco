@@ -20,6 +20,10 @@ def test_should_load_from_filename_persistence_models_getting_models_names():
 @pytest.mark.unit
 def test_should_load_from_filename_persistence_models_getting_imported_models():
     filename = ModelFilenameMother.get("object/persistence.object.models.yml")
-    persistence_models = PersistenceModels.from_filename(filename).get_imported_models()
-    assert persistence_models.get("user") == UserModel
-    assert persistence_models.get("product") == ProductModel
+    persistence_models = PersistenceModels.from_filename(filename)
+    persistence_models.import_models()
+    models = persistence_models.get_imported_models()
+    assert models.get("user").__module__ == UserModel.__module__
+    assert models.get("product").__module__ == ProductModel.__module__
+    assert models.get("user").__class__ == UserModel.__class__
+    assert models.get("product").__class__ == ProductModel.__class__

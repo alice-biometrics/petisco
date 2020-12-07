@@ -26,6 +26,8 @@ class Persistence(metaclass=Singleton):
             )
 
     def add(self, database: IDatabase):
+        if database.name in self._databases:
+            raise NameError(f"Database {database.name} is already added to Persistence")
         self._databases[database.name] = database
 
     def remove(self, database_name: str):
@@ -56,6 +58,10 @@ class Persistence(metaclass=Singleton):
         return database.get_base()
 
     @staticmethod
+    def get_databases() -> List[IDatabase]:
+        return list(Persistence.get_instance()._databases.values())
+
+    @staticmethod
     def get_available_databases() -> List[str]:
         return list(Persistence.get_instance()._databases.keys())
 
@@ -73,3 +79,27 @@ class Persistence(metaclass=Singleton):
         if not database:
             raise IndexError(f"Database name ({database_name}) not exists.")
         return database.get_model(model_name)
+
+    @staticmethod
+    def get_session(database_name: str):
+        database = Persistence.get_instance()._databases.get(database_name)
+        if not database:
+            raise IndexError(f"Database name ({database_name}) not exists.")
+
+        if not hasattr(database, "get_session"):
+            raise IndexError(f"Database ({database_name}) has not get_session method. ")
+
+        return database.get_session()
+
+    @staticmethod
+    def get_session_scope(database_name: str):
+        database = Persistence.get_instance()._databases.get(database_name)
+        if not database:
+            raise IndexError(f"Database name ({database_name}) not exists.")
+
+        if not hasattr(database, "get_session_scope"):
+            raise IndexError(
+                f"Database ({database_name}) has not get_session_scope method. "
+            )
+
+        return database.get_session_scope()

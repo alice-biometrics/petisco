@@ -1,26 +1,17 @@
-import os
 from typing import List
 
 from petisco.persistence.interface_database import IDatabase
+from petisco.persistence.sql.mysql.mysql_connection import MySqlConnection
 from petisco.persistence.persistence_models import PersistenceModels
+from petisco.persistence.sql.session_scope_provider import session_scope_provider
 
 
-class SqliteConnection:
-    def __init__(self, server_name: str, database_name: str, url: str):
-        self.server_name = server_name
-        self.database_name = database_name
-        self.url = url
-
-    @staticmethod
-    def create(server_name: str, database_name: str):
-        url = f"{server_name}:///{database_name}"
-        return SqliteConnection(server_name, database_name, url)
-
-
-class SqliteDatabase(IDatabase):
-    def __init__(self, name: str, connection: SqliteConnection, model_filename: str):
-        if not connection:
-            raise ConnectionError("SqliteDatabase needs a valid connection")
+class MySqlDatabase(IDatabase):
+    def __init__(self, name: str, connection: MySqlConnection, model_filename: str):
+        if not connection or not isinstance(connection, MySqlConnection):
+            raise ConnectionError(
+                "MySqlDatabase needs a valid MySqlConnection connection"
+            )
         self.persistence_models = PersistenceModels.from_filename(model_filename)
         self.connection = connection
         super().__init__(name)
@@ -39,6 +30,7 @@ class SqliteDatabase(IDatabase):
 
         engine = create_engine(
             self.connection.url,
+            pool_pre_ping=True,
             json_serializer=lambda obj: obj,
             json_deserializer=lambda obj: obj,
         )
@@ -47,16 +39,17 @@ class SqliteDatabase(IDatabase):
             create_database(engine.url)
             self.base.metadata.create_all(engine)
 
-        self.session = sessionmaker(bind=engine)
+        self.session_maker = sessionmaker(bind=engine)
 
     def delete(self):
-        os.remove(self.connection.database_name)
+        pass
+        # os.remove(self.connection.database_name)
 
     def get_base(self):
         return self.base
 
     def get_model(self, model_name: str):
-        model = self.models.get(model_name)
+        model = self.persistence_models.get_imported_models().get(model_name)
         if not model:
             raise IndexError(
                 f'Model "{model_name}" is not available for "{self.name}" database'
@@ -64,4 +57,10 @@ class SqliteDatabase(IDatabase):
         return model
 
     def get_model_names(self) -> List[str]:
-        return list(self.models.keys())
+        return list(self.persistence_models.get_models_names().keys())
+
+    def get_session(self):
+        return self.session_maker()
+
+    def get_session_scope(self):
+        return session_scope_provider(self.get_session())

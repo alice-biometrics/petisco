@@ -15,7 +15,11 @@ steps:
     - black .
     - flake8 petisco
   test:
+    setup:
+      - docker run -d -v "$PWD/mysqldata":/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root --name petisco-mysql -p 3307:3306 mysql:5.7
     run: pytest
+    teardown:
+      - docker stop petisco-mysql
   test-end2end:
     envs:
       PETISCO_END2END_TESTS: True
