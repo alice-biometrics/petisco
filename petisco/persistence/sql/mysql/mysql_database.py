@@ -7,12 +7,22 @@ from petisco.persistence.sql.session_scope_provider import session_scope_provide
 
 
 class MySqlDatabase(IDatabase):
-    def __init__(self, name: str, connection: MySqlConnection, model_filename: str):
+    @staticmethod
+    def local_connection_checker():
+        return MySqlDatabase(name="test", connection=MySqlConnection.create_local())
+
+    def __init__(
+        self, name: str, connection: MySqlConnection, model_filename: str = None
+    ):
         if not connection or not isinstance(connection, MySqlConnection):
             raise ConnectionError(
                 "MySqlDatabase needs a valid MySqlConnection connection"
             )
-        self.persistence_models = PersistenceModels.from_filename(model_filename)
+
+        if model_filename:
+            self.persistence_models = PersistenceModels.from_filename(model_filename)
+        else:
+            self.persistence_models = PersistenceModels(models={})
         self.connection = connection
         super().__init__(name)
         self._init()

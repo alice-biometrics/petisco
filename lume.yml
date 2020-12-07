@@ -15,14 +15,7 @@ steps:
     - black .
     - flake8 petisco
   test:
-    envs:
-      LUME_WAIT_HTTP_200_NUM_MAX_ATTEMPTS: 30
-    setup:
-      - docker run -d -v "$PWD/mysqldata":/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root --name petisco-mysql -p 3307:3306 mysql:5.7
-    wait_http_200: http://localhost:3307
     run: pytest
-    teardown:
-      - docker stop petisco-mysql
   test-end2end:
     envs:
       PETISCO_END2END_TESTS: True
@@ -33,17 +26,19 @@ steps:
     wait_http_200: http://localhost:15672
     run: pytest -c pytest.end2end.ini
     teardown: docker stop petisco-rabbitmq && docker stop petisco-mongodb
-  test-with-rabbitmq:
+  test-with-rabbitmq-and-mysql:
     envs:
       LUME_WAIT_HTTP_200_NUM_MAX_ATTEMPTS: 30
     setup:
       - docker run -d --rm --name petisco-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
       - docker run -d --rm --name petisco-mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=password123 mongo
+      - docker run -d -v "$PWD/mysqldata":/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root --name petisco-mysql -p 3307:3306 mysql:5.7
     wait_http_200: http://localhost:15672
     run: pytest
     teardown:
       - docker stop petisco-rabbitmq
       - docker stop petisco-mongodb
+      - docker stop petisco-mysql
   test-command-line:
     run: petisco --version
   example-pubsub:
