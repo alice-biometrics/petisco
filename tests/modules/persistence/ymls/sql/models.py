@@ -1,4 +1,5 @@
-from sqlalchemy import String, Integer, Column, Float
+from sqlalchemy import String, Integer, Column, Float, ForeignKey
+
 from petisco import Persistence
 
 try:
@@ -7,11 +8,21 @@ except IndexError:
     Base = Persistence.get_base("sqlite_test")
 
 
+class ClientModel(Base):
+    __tablename__ = "Client"
+
+    id = Column(Integer, primary_key=True)
+    client_id = Column(String(36))
+    name = Column(String(100), nullable=False)
+
+
 class UserModel(Base):
     __tablename__ = "User"
 
     id = Column(Integer, primary_key=True)
+    user_id = Column(String(36))
     name = Column(String(100), nullable=False)
+    client_id = Column(Integer, ForeignKey("Client.id"))
 
 
 class ProductModel(Base):

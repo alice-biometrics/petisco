@@ -7,7 +7,7 @@
 
 from petisco.application.config.config import Config
 from petisco.application.interface_repository import IRepository
-from petisco.application.interface_application_service import IService, IAppService
+from petisco.application.interface_app_service import IService, IAppService
 from petisco.application.petisco import Petisco
 from petisco.application.singleton import Singleton
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
@@ -55,7 +55,6 @@ from petisco.notifier.domain.notifier_message import NotifierMessage
 from petisco.notifier.infrastructure.not_implemented_notifier import (
     NotImplementedNotifier,
 )
-
 from petisco.security.token_decoder.interface_token_decoder import ITokenDecoder
 from petisco.security.token_decoder.token_decoder import TokenDecoder
 from petisco.security.token_manager.accepted_token import AcceptedToken
@@ -190,6 +189,14 @@ from petisco.persistence.sql.sqlite.sqlite_connection import SqliteConnection
 from petisco.persistence.sql.sqlite.sqlite_database import SqliteDatabase
 from petisco.persistence.sql.mysql.mysql_connection import MySqlConnection
 from petisco.persistence.sql.mysql.mysql_database import MySqlDatabase
+from petisco.persistence.sql.sql_repository import SqlRepository
+from petisco.persistence.sql.errors import (
+    ClientNotFoundError,
+    ClientAlreadyExistError,
+    EntityAlreadyExistError,
+    EntityNotExistError,
+    EntitiesNotExistError,
+)
 
 persistence = [
     "Persistence",
@@ -201,6 +208,12 @@ persistence = [
     "SqliteDatabase",
     "MySqlConnection",
     "MySqlDatabase",
+    "SqlRepository",
+    "ClientNotFoundError",
+    "ClientAlreadyExistError",
+    "EntityAlreadyExistError",
+    "EntityNotExistError",
+    "EntitiesNotExistError",
 ]
 
 

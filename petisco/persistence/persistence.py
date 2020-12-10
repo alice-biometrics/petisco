@@ -1,5 +1,5 @@
 import inspect
-from typing import List
+from typing import List, Callable
 from dataclasses import dataclass
 from petisco.application.singleton import Singleton
 from petisco.persistence.interface_database import IDatabase
@@ -92,7 +92,7 @@ class Persistence(metaclass=Singleton):
         return database.get_session()
 
     @staticmethod
-    def get_session_scope(database_name: str):
+    def get_session_scope(database_name: str) -> Callable:
         database = Persistence.get_instance()._databases.get(database_name)
         if not database:
             raise IndexError(f"Database name ({database_name}) not exists.")

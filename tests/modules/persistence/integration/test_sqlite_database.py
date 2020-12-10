@@ -48,7 +48,7 @@ def test_should_add_an_user_with_sqlite_database_with_session():
 
 
 @pytest.mark.integration
-def test_should_add_an_user_with_sqlite_database_with_session_scope():
+def test_should_add_a_product_with_sqlite_database_with_session_scope():
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
     connection = SqliteConnection.create(
         server_name="sqlite", database_name="petisco.db"
@@ -62,9 +62,10 @@ def test_should_add_an_user_with_sqlite_database_with_session_scope():
     persistence.delete()
     persistence.create()
 
-    UserModel = Persistence.get_model("sqlite_test", "user")
-    with Persistence.get_session_scope("sqlite_test") as session:
-        model = UserModel(name="Petisco")
+    ProductModel = Persistence.get_model("sqlite_test", "product")
+    session_scope = Persistence.get_session_scope("sqlite_test")
+    with session_scope() as session:
+        model = ProductModel(name="Petisco", price=2)
         session.add(model)
 
     persistence.delete()

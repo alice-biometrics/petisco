@@ -24,4 +24,4 @@ def session_scope_provider(session) -> Callable:
         finally:
             session.close()
 
-    return session_scope()
+    return session_scope

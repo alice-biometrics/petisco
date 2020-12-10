@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Callable
 
 from petisco.persistence.interface_database import IDatabase
 from petisco.persistence.sql.mysql.mysql_connection import MySqlConnection
@@ -72,5 +72,5 @@ class MySqlDatabase(IDatabase):
     def get_session(self):
         return self.session_maker()
 
-    def get_session_scope(self):
+    def get_session_scope(self) -> Callable:
         return session_scope_provider(self.get_session())
