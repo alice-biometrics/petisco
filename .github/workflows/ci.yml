@@ -45,7 +45,7 @@ jobs:
         lume -lint
     - name: Test
       run: |
-        lume -build -test-with-rabbitmq-and-mysql -test-command-line
+        lume -build -test-with-rabbitmq-mysql-and-elastic -test-command-line
     - name: Test end2end
       run: |
         lume -test-end2end

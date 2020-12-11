@@ -88,5 +88,6 @@ setup(
         "fixtures": ["pytest"],
         "slack": ["slackclient"],
         "pymongo": ["pymongo==3.11.0"],
+        "elastic": ["elasticsearch<8.0.0,>=7.0.0"],
     },
 )

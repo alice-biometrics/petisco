@@ -8,7 +8,7 @@ from petisco.persistence.sqlalchemy.sqlalchemy_operational_database_error import
 )
 
 
-def session_scope_provider(session) -> Callable:
+def sql_session_scope_provider(session) -> Callable:
     @contextmanager
     def session_scope():
         try:

@@ -3,7 +3,9 @@ from typing import List, Callable
 
 from petisco.persistence.interface_database import IDatabase
 from petisco.persistence.persistence_models import PersistenceModels
-from petisco.persistence.sql.session_scope_provider import session_scope_provider
+from petisco.persistence.sql.sql_session_scope_provider import (
+    sql_session_scope_provider,
+)
 from petisco.persistence.sql.sqlite.sqlite_connection import SqliteConnection
 
 
@@ -63,4 +65,4 @@ class SqliteDatabase(IDatabase):
         return self.session_maker()
 
     def get_session_scope(self) -> Callable:
-        return session_scope_provider(self.get_session())
+        return sql_session_scope_provider(self.get_session())
