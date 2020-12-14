@@ -1,7 +1,5 @@
 from typing import List, Callable
 
-from elasticsearch import Elasticsearch
-
 from petisco.persistence.elastic.elastic_connection import ElasticConnection
 from petisco.persistence.elastic.elastic_session_scope_provider import (
     elastic_session_scope_provider,
@@ -23,6 +21,8 @@ class ElasticDatabase(IDatabase):
         super().__init__(name)
 
     def create(self):
+        from elasticsearch import Elasticsearch
+
         self.session = Elasticsearch(
             [{"host": self.connection.host, "port": self.connection.port}],
             http_auth=self.connection.http_auth,
