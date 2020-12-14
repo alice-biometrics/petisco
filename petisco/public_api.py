@@ -185,11 +185,6 @@ from petisco.persistence.interface_database import IDatabase
 from petisco.persistence.interface_persistence_connector import IPersistenceConnector
 from petisco.persistence.persistence import Persistence
 from petisco.persistence.persistence_models import PersistenceModels
-from petisco.persistence.sql.sqlite.sqlite_connection import SqliteConnection
-from petisco.persistence.sql.sqlite.sqlite_database import SqliteDatabase
-from petisco.persistence.sql.mysql.mysql_connection import MySqlConnection
-from petisco.persistence.sql.mysql.mysql_database import MySqlDatabase
-from petisco.persistence.sql.sql_repository import SqlRepository
 from petisco.persistence.sql.errors import (
     ClientNotFoundError,
     ClientAlreadyExistError,
@@ -204,11 +199,6 @@ persistence = [
     "FakeDatabase",
     "PersistenceModels",
     "IPersistenceConnector",
-    "SqliteConnection",
-    "SqliteDatabase",
-    "MySqlConnection",
-    "MySqlDatabase",
-    "SqlRepository",
     "ClientNotFoundError",
     "ClientAlreadyExistError",
     "EntityAlreadyExistError",
@@ -277,6 +267,11 @@ try:
     from petisco.persistence.sqlalchemy.sqlalchemy_operational_database_error import (
         SqlAlchemyOperationalDatabaseError,
     )
+    from petisco.persistence.sql.sqlite.sqlite_connection import SqliteConnection
+    from petisco.persistence.sql.sqlite.sqlite_database import SqliteDatabase
+    from petisco.persistence.sql.mysql.mysql_connection import MySqlConnection
+    from petisco.persistence.sql.mysql.mysql_database import MySqlDatabase
+    from petisco.persistence.sql.sql_repository import SqlRepository
 
     sqlalchemy = [
         "SqlAlchemyPersistence",
@@ -284,6 +279,11 @@ try:
         "SqlAlchemyPersistenceConnector",
         "session_scope",
         "SqlAlchemyOperationalDatabaseError",
+        "SqliteConnection",
+        "SqliteDatabase",
+        "MySqlConnection",
+        "MySqlDatabase",
+        "SqlRepository",
     ]
 except (RuntimeError, ImportError):
     sqlalchemy = []
@@ -364,6 +364,16 @@ try:
 except (RuntimeError, ImportError):
     pymongo = []
 
+
+# Elastic
+try:
+    from petisco.persistence.elastic.elastic_connection import ElasticConnection
+    from petisco.persistence.elastic.elastic_database import ElasticDatabase
+
+    elastic = ["ElasticConnection", "ElasticDatabase"]
+except (RuntimeError, ImportError):
+    elastic = []
+
 __all__ = (
     classes
     + persistence
@@ -374,4 +384,5 @@ __all__ = (
     + rabbitmq
     + slack
     + pymongo
+    + elastic
 )

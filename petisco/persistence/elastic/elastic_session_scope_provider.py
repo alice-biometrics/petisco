@@ -1,14 +1,14 @@
 from contextlib import contextmanager
 from typing import Callable
 
-from elasticsearch import NotFoundError, ConflictError, RequestError
-
 from petisco.persistence.elastic.elastic_operational_database_error import (
     ElasticOperationalDatabaseError,
 )
 
 
 def elastic_session_scope_provider(session) -> Callable:
+    from elasticsearch import NotFoundError, ConflictError, RequestError
+
     @contextmanager
     def session_scope():
         try:
