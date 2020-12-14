@@ -1,3 +1,4 @@
+import inspect
 import threading
 import traceback
 from time import sleep
@@ -8,7 +9,13 @@ from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 
+from petisco.event.bus.infrastructure.rabbitmq_consumer_event_bus import (
+    RabbitMqConsumerEventBus,
+)
 from petisco.event.chaos.domain.event_chaos_error import EventChaosError
+from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_consumer_connector import (
+    RabbitMqConsumerConnector,
+)
 from petisco.logger.interface_logger import ILogger
 from petisco.logger.not_implemented_logger import NotImplementedLogger
 
@@ -53,6 +60,8 @@ class RabbitMqEventConsumer(IEventConsumer):
         logger: Optional[ILogger] = NotImplementedLogger(),
     ):
         self.connector = connector
+        self.organization = organization
+        self.service = service
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"consumer-{self.exchange_name}"
         self._fallback_store_exchange_name = f"retry.{organization}.store"
@@ -142,7 +151,15 @@ class RabbitMqEventConsumer(IEventConsumer):
                 )
                 result = Failure(EventChaosError())
             else:
-                result = handler(event)
+                params = inspect.getfullargspec(handler).args
+                if "event_bus" in params:
+                    connector = RabbitMqConsumerConnector(ch)
+                    event_bus = RabbitMqConsumerEventBus(
+                        connector, self.organization, self.service
+                    )
+                    result = handler(event, event_bus)
+                else:
+                    result = handler(event)
 
             self.printer.print_context(handler, result)
 

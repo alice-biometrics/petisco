@@ -23,6 +23,10 @@ class RabbitMqConnector(metaclass=Singleton):
         )
         self.open_connections = {}
 
+    def close(self, key_connection: str):
+        if self.get_connection(key_connection).is_open:
+            self.get_connection(key_connection).close()
+
     def get_connection(self, key_connection: str):
         connection = self.open_connections.get(key_connection)
 
