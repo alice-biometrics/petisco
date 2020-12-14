@@ -1,5 +1,3 @@
-from typing import Dict
-
 from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
@@ -7,31 +5,24 @@ from petisco.event.bus.domain.interface_event_bus import IEventBus
 from petisco.event.configurer.infrastructure.rabbitmq_event_configurer import (
     RabbitMqEventConfigurer,
 )
+from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_consumer_connector import (
+    RabbitMqConsumerConnector,
+)
 from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_event_queue_name_formatter import (
     RabbitMqEventQueueNameFormatter,
 )
 from petisco.event.shared.domain.event import Event
 
-from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
-    RabbitMqConnector,
-)
 
-
-class RabbitMqEventBus(IEventBus):
-    def __init__(self, connector: RabbitMqConnector, organization: str, service: str):
+class RabbitMqConsumerEventBus(IEventBus):
+    def __init__(
+        self, connector: RabbitMqConsumerConnector, organization: str, service: str
+    ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"publisher-{self.exchange_name}"
         self.configurer = RabbitMqEventConfigurer(connector, organization, service)
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
-
-    def info(self) -> Dict:
-        return {
-            "name": self.__class__.__name__,
-            "connection.is_open": self.connector.get_connection(
-                self.exchange_name
-            ).is_open,
-        }
 
     def publish(self, event: Event):
         if hasattr(self, "info_id"):
@@ -52,8 +43,6 @@ class RabbitMqEventBus(IEventBus):
                 body=event.to_json(),
                 properties=self.properties,
             )
-
-            channel.close()
         except ChannelClosedByBroker:
             # If Event queue is not configured, it will be configured and publication retried.
             self.configurer.configure_event(event)
@@ -69,7 +58,6 @@ class RabbitMqEventBus(IEventBus):
             body=event.to_json(),
             properties=self.properties,
         )
-        channel.close()
 
     def close(self):
         self.connector.close(self.rabbitmq_key)
