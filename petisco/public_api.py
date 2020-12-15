@@ -4,9 +4,10 @@
 """Public API of ALiCE Petisco Framework"""
 
 # Classes
-
+from petisco.application.app_services import AppServices, AppService
 from petisco.application.config.config import Config
 from petisco.application.interface_repository import IRepository
+from petisco.application.repositories import Repositories, Repository
 from petisco.application.interface_app_service import IService, IAppService
 from petisco.application.petisco import Petisco
 from petisco.application.singleton import Singleton
@@ -99,11 +100,14 @@ from petisco.webhooks.webhook.domain.webhook_id import WebhookId
 from petisco.webhooks.webhook.domain.webhook_result import WebhookResult
 from petisco.webhooks.webhook.domain.webhook_sender import WebhookSender
 
-
 classes = [
     "IService",  # deprecated
     "IAppService",
+    "AppService",
+    "AppServices",
     "IRepository",
+    "Repository",
+    "Repositories",
     "UseCase",
     "use_case_handler",
     "controller_handler",
