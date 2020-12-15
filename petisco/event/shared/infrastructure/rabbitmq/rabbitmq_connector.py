@@ -23,6 +23,10 @@ class RabbitMqConnector(metaclass=Singleton):
         )
         self.open_connections = {}
 
+    def close(self, key_connection: str):
+        if self.get_connection(key_connection).is_open:
+            self.get_connection(key_connection).close()
+
     def get_connection(self, key_connection: str):
         connection = self.open_connections.get(key_connection)
 
@@ -42,7 +46,7 @@ class RabbitMqConnector(metaclass=Singleton):
 
     def _create_connection(self, key_connection: str):
 
-        connection = self._create_blocking_connection()
+        connection = self._create_blocking_connection(key_connection)
 
         self._wait_for_open_connection(connection, key_connection)
 
@@ -57,7 +61,7 @@ class RabbitMqConnector(metaclass=Singleton):
 
         return connection
 
-    def _create_blocking_connection(self):
+    def _create_blocking_connection(self, connection_name: str):
         try:
             connection = BlockingConnection(
                 ConnectionParameters(
@@ -67,6 +71,7 @@ class RabbitMqConnector(metaclass=Singleton):
                     credentials=PlainCredentials(
                         username=self.user, password=self.password
                     ),
+                    client_properties={"connection_name": connection_name},
                 )
             )
         except:  # noqa E722

@@ -45,7 +45,7 @@ class InfoId(AggregateRoot):
     @staticmethod
     def from_dict(kdict: dict):
         client_id = ClientId(kdict.get("client_id")) if kdict.get("client_id") else None
-        user_id = ClientId(kdict.get("user_id")) if kdict.get("user_id") else None
+        user_id = UserId(kdict.get("user_id")) if kdict.get("user_id") else None
         correlation_id = (
             ClientId(kdict.get("correlation_id"))
             if kdict.get("correlation_id")

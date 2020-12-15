@@ -10,8 +10,9 @@ class IEventBus:
 
     __metaclass__ = ABCMeta
 
-    def __repr__(self):
-        return f"IEventBus"
+    @classmethod
+    def __repr__(cls):
+        return f"{cls.__name__}"
 
     @classmethod
     def info(cls) -> Dict:

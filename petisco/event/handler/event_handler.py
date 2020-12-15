@@ -49,10 +49,8 @@ class _EventHandler:
         @wraps(func)
         def wrapper(*args, **kwargs):
             @meiga
-            def run_event_handler(**kwargs) -> Result:
-                params = inspect.getfullargspec(func).args
-                kwargs = {k: v for k, v in kwargs.items() if k in params}
-                return func(**kwargs)
+            def run_event_handler(*args, **kwargs) -> Result:
+                return func(*args, **kwargs)
 
             self._check_logger()
             self._check_notifier()
@@ -70,10 +68,8 @@ class _EventHandler:
                 ),
             )
 
-            kwargs = dict(event=event)
-
             try:
-                result = run_event_handler(**kwargs)
+                result = run_event_handler(*args, **kwargs)
             except Exception as exception:
                 result = Failure(
                     CriticalError(
@@ -90,6 +86,7 @@ class _EventHandler:
 
             return result
 
+        wrapper.__signature__ = inspect.signature(func)
         return wrapper
 
     @meiga
