@@ -10,5 +10,5 @@ def elastic_is_running_locally() -> bool:
         is_running_locally = Persistence.get_session(database.name).ping()
     except:  # noqa: E722
         is_running_locally = False
-    Persistence.clear()
+    Persistence().remove("test")
     return is_running_locally
