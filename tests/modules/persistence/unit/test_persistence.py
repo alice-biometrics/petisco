@@ -17,11 +17,29 @@ def test_should_execute_lifecycle_of_persistence_with_fake_database():
         "tests.modules.persistence.ymls.object.models.UserModel"
         == persistence.get_model("fake", "user")
     )
+
+    info = persistence.get_info()
+    assert info == {
+        "fake": {
+            "name": "fake",
+            "models": {
+                "user": "tests.modules.persistence.ymls.object.models.UserModel",
+                "product": "tests.modules.persistence.ymls.object.models.ProductModel",
+            },
+        }
+    }
+    assert (
+        str(persistence)
+        == "Persistence: {'fake': {'name': 'fake', 'models': {'user': 'tests.modules.persistence.ymls.object.models.UserModel', 'product': 'tests.modules.persistence.ymls.object.models.ProductModel'}}}"
+    )
+
     persistence.remove("fake")
     assert [] == persistence.get_available_databases()
     with pytest.raises(IndexError):
         persistence.get_model("fake", "user")
 
+    info = persistence.get_info()
+    assert info == {}
     persistence.create()
     persistence.delete()
     Persistence.clear()

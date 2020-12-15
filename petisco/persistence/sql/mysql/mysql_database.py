@@ -26,7 +26,8 @@ class MySqlDatabase(IDatabase):
         else:
             self.persistence_models = PersistenceModels(models={})
         self.connection = connection
-        super().__init__(name)
+
+        super().__init__(name, self.persistence_models.models)
         self._init()
 
     def _init(self):

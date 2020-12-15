@@ -17,6 +17,16 @@ def test_should_create_persistence_with_sqlite_database():
     persistence = Persistence()
     persistence.add(database)
     persistence.create()
+
+    assert database.info() == {
+        "name": "sqlite_test",
+        "models": {
+            "client": "tests.modules.persistence.ymls.sql.models.ClientModel",
+            "product": "tests.modules.persistence.ymls.sql.models.ProductModel",
+            "user": "tests.modules.persistence.ymls.sql.models.UserModel",
+        },
+    }
+
     persistence.delete()
     Persistence.clear()
 

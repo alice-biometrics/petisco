@@ -16,6 +16,17 @@ def test_should_create_persistence_with_mysql_database():
 
     persistence = Persistence()
     persistence.add(database)
+
     persistence.create()
+
+    assert database.info() == {
+        "name": "mysql_test",
+        "models": {
+            "client": "tests.modules.persistence.ymls.sql.models.ClientModel",
+            "product": "tests.modules.persistence.ymls.sql.models.ProductModel",
+            "user": "tests.modules.persistence.ymls.sql.models.UserModel",
+        },
+    }
+
     persistence.delete()
     Persistence.clear()

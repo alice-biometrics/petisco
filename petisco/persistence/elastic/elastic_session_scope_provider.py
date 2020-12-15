@@ -7,16 +7,12 @@ from petisco.persistence.elastic.elastic_operational_database_error import (
 
 
 def elastic_session_scope_provider(session) -> Callable:
-    from elasticsearch import NotFoundError, ConflictError, RequestError
+    from elasticsearch import RequestError
 
     @contextmanager
     def session_scope():
         try:
             yield session
-        except NotFoundError:
-            raise ElasticOperationalDatabaseError
-        except ConflictError:
-            raise ElasticOperationalDatabaseError
         except ConnectionRefusedError:
             raise ElasticOperationalDatabaseError
         except RequestError as e:  # noqa E722
