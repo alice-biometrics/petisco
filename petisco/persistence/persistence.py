@@ -10,6 +10,16 @@ class Persistence(metaclass=Singleton):
     def __init__(self):
         self._databases = {}
 
+    def __repr__(self):
+        return f"Persistence: {str(self.get_info())}"
+
+    def get_info(self):
+        return {name: database.info() for name, database in self._databases.items()}
+
+    @staticmethod
+    def info():
+        return Persistence.get_instance().get_info()
+
     @staticmethod
     def get_instance():
         try:

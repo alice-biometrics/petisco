@@ -10,6 +10,12 @@ class IDatabase:
         self.name = name
         self.models = models if models else {}
 
+    def info(self) -> Dict:
+        _info = {"name": self.name}
+        if self.models:
+            _info["models"] = self.models
+        return _info
+
     @abstractmethod
     def create(self):
         raise NotImplementedError

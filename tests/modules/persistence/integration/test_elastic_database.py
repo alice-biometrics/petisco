@@ -14,6 +14,9 @@ def test_should_create_persistence_with_elastic_database():
 
     persistence = Persistence()
     persistence.add(database)
+
+    assert database.info() == {"name": "elastic_test"}
+
     persistence.create()
     persistence.delete()
     Persistence.clear()

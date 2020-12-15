@@ -10,14 +10,19 @@ from petisco.persistence.sql.sqlite.sqlite_connection import SqliteConnection
 
 
 class SqliteDatabase(IDatabase):
-    def __init__(self, name: str, connection: SqliteConnection, model_filename: str):
+    def __init__(
+        self, name: str, connection: SqliteConnection, model_filename: str = None
+    ):
         if not connection or not isinstance(connection, SqliteConnection):
             raise ConnectionError(
                 "SqliteDatabase needs a valid SqliteConnection connection"
             )
-        self.persistence_models = PersistenceModels.from_filename(model_filename)
+        if model_filename:
+            self.persistence_models = PersistenceModels.from_filename(model_filename)
+        else:
+            self.persistence_models = PersistenceModels(models={})
         self.connection = connection
-        super().__init__(name)
+        super().__init__(name, self.persistence_models.models)
         self._init()
 
     def _init(self):
