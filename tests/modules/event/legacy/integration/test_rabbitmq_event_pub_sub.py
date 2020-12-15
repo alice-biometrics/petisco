@@ -11,10 +11,7 @@ from petisco import (
     ConfigEventSubscriber,
     RabbitMqConnector,
 )
-
-from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_is_running_locally import (
-    rabbitmq_is_running_locally,
-)
+from petisco.fixtures import testing_with_rabbitmq
 from tests.fixtures import TrackedEventsSpy
 
 
@@ -23,9 +20,7 @@ def await_for_events():
 
 
 @pytest.mark.integration
-@pytest.mark.skipif(
-    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
-)
+@testing_with_rabbitmq
 def test_should_work_successfully_a_happy_path_pub_sub(
     given_any_petisco,
     make_user_created_event,
@@ -73,9 +68,7 @@ def test_should_work_successfully_a_happy_path_pub_sub(
 
 
 @pytest.mark.integration
-@pytest.mark.skipif(
-    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
-)
+@testing_with_rabbitmq
 def test_should_publish_reject_and_requeue_from_dead_letter_exchange(
     given_any_petisco,
     make_user_created_event,
@@ -137,9 +130,7 @@ def test_should_publish_reject_and_requeue_from_dead_letter_exchange(
 
 
 @pytest.mark.integration
-@pytest.mark.skipif(
-    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
-)
+@testing_with_rabbitmq
 def test_should_work_successfully_a_happy_path_pub_sub_with_subscribers_simulations_nack_everything(
     given_any_petisco,
     make_user_created_event,

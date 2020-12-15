@@ -273,7 +273,7 @@ try:
     from petisco.persistence.sql.mysql.mysql_database import MySqlDatabase
     from petisco.persistence.sql.sql_repository import SqlRepository
 
-    sqlalchemy = [
+    sql = [
         "SqlAlchemyPersistence",
         "SqlAlchemyPersistenceConfig",
         "SqlAlchemyPersistenceConnector",
@@ -286,7 +286,47 @@ try:
         "SqlRepository",
     ]
 except (RuntimeError, ImportError):
-    sqlalchemy = []
+    sql = []
+
+# PyMongo
+try:
+    from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
+    from petisco.persistence.pymongo.pymongo_persistence_config import (
+        PyMongoPersistenceConfig,
+    )
+    from petisco.persistence.pymongo.pymongo_persistence_connector import (
+        PyMongoPersistenceConnector,
+    )
+    from petisco.persistence.pymongo.pymongo_errors import (
+        PyMongoOperationalDatabaseError,
+        PyMongoInvalidDatabaseNameError,
+        PyMongoInvalidCollectionNameError,
+    )
+    from petisco.persistence.pymongo.pymongo_persistence_context import (
+        get_mongo_collection,
+    )
+
+    pymongo = [
+        "PyMongoPersistence",
+        "PyMongoPersistenceConfig",
+        "PyMongoPersistenceConnector",
+        "PyMongoInvalidCollectionNameError",
+        "PyMongoInvalidDatabaseNameError",
+        "PyMongoInvalidCollectionNameError",
+        "get_mongo_collection",
+    ]
+except (RuntimeError, ImportError):
+    pymongo = []
+
+
+# Elastic
+try:
+    from petisco.persistence.elastic.elastic_connection import ElasticConnection
+    from petisco.persistence.elastic.elastic_database import ElasticDatabase
+
+    elastic = ["ElasticConnection", "ElasticDatabase"]
+except (RuntimeError, ImportError):
+    elastic = []
 
 # RabbitMQ
 try:
@@ -334,55 +374,15 @@ try:
 except (RuntimeError, ImportError):
     slack = []
 
-# PyMongo
-try:
-    from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
-    from petisco.persistence.pymongo.pymongo_persistence_config import (
-        PyMongoPersistenceConfig,
-    )
-    from petisco.persistence.pymongo.pymongo_persistence_connector import (
-        PyMongoPersistenceConnector,
-    )
-    from petisco.persistence.pymongo.pymongo_errors import (
-        PyMongoOperationalDatabaseError,
-        PyMongoInvalidDatabaseNameError,
-        PyMongoInvalidCollectionNameError,
-    )
-    from petisco.persistence.pymongo.pymongo_persistence_context import (
-        get_mongo_collection,
-    )
-
-    pymongo = [
-        "PyMongoPersistence",
-        "PyMongoPersistenceConfig",
-        "PyMongoPersistenceConnector",
-        "PyMongoInvalidCollectionNameError",
-        "PyMongoInvalidDatabaseNameError",
-        "PyMongoInvalidCollectionNameError",
-        "get_mongo_collection",
-    ]
-except (RuntimeError, ImportError):
-    pymongo = []
-
-
-# Elastic
-try:
-    from petisco.persistence.elastic.elastic_connection import ElasticConnection
-    from petisco.persistence.elastic.elastic_database import ElasticDatabase
-
-    elastic = ["ElasticConnection", "ElasticDatabase"]
-except (RuntimeError, ImportError):
-    elastic = []
-
 __all__ = (
     classes
     + persistence
     + controllers_and_use_cases
     + constants
     + flask
-    + sqlalchemy
-    + rabbitmq
-    + slack
+    + sql
     + pymongo
     + elastic
+    + rabbitmq
+    + slack
 )

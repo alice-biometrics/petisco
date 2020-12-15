@@ -6,15 +6,11 @@ from pika import BlockingConnection
 
 from petisco import RabbitMqConnector
 
-from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_is_running_locally import (
-    rabbitmq_is_running_locally,
-)
+from petisco.fixtures import testing_with_rabbitmq
 
 
 @pytest.mark.integration
-@pytest.mark.skipif(
-    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
-)
+@testing_with_rabbitmq
 def test_should_get_an_open_connection():
 
     connector = RabbitMqConnector()
@@ -27,9 +23,7 @@ def test_should_get_an_open_connection():
 
 
 @pytest.mark.integration
-@pytest.mark.skipif(
-    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
-)
+@testing_with_rabbitmq
 def test_should_throw_a_connection_error_exception_when_input_envvars_are_not_valid():
 
     connector = RabbitMqConnector()
@@ -45,9 +39,7 @@ def test_should_throw_a_connection_error_exception_when_input_envvars_are_not_va
 
 
 @pytest.mark.integration
-@pytest.mark.skipif(
-    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
-)
+@testing_with_rabbitmq
 def test_should_throw_a_connection_error_exception_when_retries_and_is_not_possible_to_obtain_an_open_connection():
 
     connector = RabbitMqConnector()
@@ -71,9 +63,7 @@ def test_should_throw_a_connection_error_exception_when_retries_and_is_not_possi
 
 
 @pytest.mark.integration
-@pytest.mark.skipif(
-    not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
-)
+@testing_with_rabbitmq
 def test_should_recover_from_connection_closed():
 
     connector = RabbitMqConnector()
