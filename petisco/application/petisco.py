@@ -39,7 +39,7 @@ from petisco.notifier.domain.notifier_message import NotifierMessage
 from petisco.application.config.config import Config
 from petisco.application.singleton import Singleton
 from petisco.application.interface_repository import IRepository
-from petisco.application.interface_application_service import IService, IAppService
+from petisco.application.interface_app_service import IService, IAppService
 from petisco.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )

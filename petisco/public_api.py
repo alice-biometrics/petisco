@@ -7,7 +7,7 @@
 
 from petisco.application.config.config import Config
 from petisco.application.interface_repository import IRepository
-from petisco.application.interface_application_service import IService, IAppService
+from petisco.application.interface_app_service import IService, IAppService
 from petisco.application.petisco import Petisco
 from petisco.application.singleton import Singleton
 from petisco.domain.aggregate_roots.aggregate_root import AggregateRoot
@@ -55,7 +55,6 @@ from petisco.notifier.domain.notifier_message import NotifierMessage
 from petisco.notifier.infrastructure.not_implemented_notifier import (
     NotImplementedNotifier,
 )
-from petisco.persistence.interface_persistence_connector import IPersistenceConnector
 from petisco.security.token_decoder.interface_token_decoder import ITokenDecoder
 from petisco.security.token_decoder.token_decoder import TokenDecoder
 from petisco.security.token_manager.accepted_token import AcceptedToken
@@ -125,7 +124,6 @@ classes = [
     "ITokenManager",
     "TokenDecoder",
     "ITokenDecoder",
-    "IPersistenceConnector",
     "ValueObject",
     "Name",
     "ClientId",
@@ -179,6 +177,33 @@ classes = [
     "Secret",
     "SignatureAlgorithm",
     "DateParser",
+]
+
+
+from petisco.persistence.fake_database import FakeDatabase
+from petisco.persistence.interface_database import IDatabase
+from petisco.persistence.interface_persistence_connector import IPersistenceConnector
+from petisco.persistence.persistence import Persistence
+from petisco.persistence.persistence_models import PersistenceModels
+from petisco.persistence.sql.errors import (
+    ClientNotFoundError,
+    ClientAlreadyExistError,
+    EntityAlreadyExistError,
+    EntityNotExistError,
+    EntitiesNotExistError,
+)
+
+persistence = [
+    "Persistence",
+    "IDatabase",
+    "FakeDatabase",
+    "PersistenceModels",
+    "IPersistenceConnector",
+    "ClientNotFoundError",
+    "ClientAlreadyExistError",
+    "EntityAlreadyExistError",
+    "EntityNotExistError",
+    "EntitiesNotExistError",
 ]
 
 
@@ -242,16 +267,66 @@ try:
     from petisco.persistence.sqlalchemy.sqlalchemy_operational_database_error import (
         SqlAlchemyOperationalDatabaseError,
     )
+    from petisco.persistence.sql.sqlite.sqlite_connection import SqliteConnection
+    from petisco.persistence.sql.sqlite.sqlite_database import SqliteDatabase
+    from petisco.persistence.sql.mysql.mysql_connection import MySqlConnection
+    from petisco.persistence.sql.mysql.mysql_database import MySqlDatabase
+    from petisco.persistence.sql.sql_repository import SqlRepository
 
-    sqlalchemy = [
+    sql = [
         "SqlAlchemyPersistence",
         "SqlAlchemyPersistenceConfig",
         "SqlAlchemyPersistenceConnector",
         "session_scope",
         "SqlAlchemyOperationalDatabaseError",
+        "SqliteConnection",
+        "SqliteDatabase",
+        "MySqlConnection",
+        "MySqlDatabase",
+        "SqlRepository",
     ]
 except (RuntimeError, ImportError):
-    sqlalchemy = []
+    sql = []
+
+# PyMongo
+try:
+    from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
+    from petisco.persistence.pymongo.pymongo_persistence_config import (
+        PyMongoPersistenceConfig,
+    )
+    from petisco.persistence.pymongo.pymongo_persistence_connector import (
+        PyMongoPersistenceConnector,
+    )
+    from petisco.persistence.pymongo.pymongo_errors import (
+        PyMongoOperationalDatabaseError,
+        PyMongoInvalidDatabaseNameError,
+        PyMongoInvalidCollectionNameError,
+    )
+    from petisco.persistence.pymongo.pymongo_persistence_context import (
+        get_mongo_collection,
+    )
+
+    pymongo = [
+        "PyMongoPersistence",
+        "PyMongoPersistenceConfig",
+        "PyMongoPersistenceConnector",
+        "PyMongoInvalidCollectionNameError",
+        "PyMongoInvalidDatabaseNameError",
+        "PyMongoInvalidCollectionNameError",
+        "get_mongo_collection",
+    ]
+except (RuntimeError, ImportError):
+    pymongo = []
+
+
+# Elastic
+try:
+    from petisco.persistence.elastic.elastic_connection import ElasticConnection
+    from petisco.persistence.elastic.elastic_database import ElasticDatabase
+
+    elastic = ["ElasticConnection", "ElasticDatabase"]
+except (RuntimeError, ImportError):
+    elastic = []
 
 # RabbitMQ
 try:
@@ -299,43 +374,15 @@ try:
 except (RuntimeError, ImportError):
     slack = []
 
-# PyMongo
-try:
-    from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
-    from petisco.persistence.pymongo.pymongo_persistence_config import (
-        PyMongoPersistenceConfig,
-    )
-    from petisco.persistence.pymongo.pymongo_persistence_connector import (
-        PyMongoPersistenceConnector,
-    )
-    from petisco.persistence.pymongo.pymongo_errors import (
-        PyMongoOperationalDatabaseError,
-        PyMongoInvalidDatabaseNameError,
-        PyMongoInvalidCollectionNameError,
-    )
-    from petisco.persistence.pymongo.pymongo_persistence_context import (
-        get_mongo_collection,
-    )
-
-    pymongo = [
-        "PyMongoPersistence",
-        "PyMongoPersistenceConfig",
-        "PyMongoPersistenceConnector",
-        "PyMongoInvalidCollectionNameError",
-        "PyMongoInvalidDatabaseNameError",
-        "PyMongoInvalidCollectionNameError",
-        "get_mongo_collection",
-    ]
-except (RuntimeError, ImportError):
-    pymongo = []
-
 __all__ = (
     classes
+    + persistence
     + controllers_and_use_cases
     + constants
     + flask
-    + sqlalchemy
+    + sql
+    + pymongo
+    + elastic
     + rabbitmq
     + slack
-    + pymongo
 )

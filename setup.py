@@ -60,6 +60,10 @@ setup(
         "petisco/persistence",
         "petisco/persistence/sqlalchemy",
         "petisco/persistence/pymongo",
+        "petisco/persistence/sql",
+        "petisco/persistence/sql/mysql",
+        "petisco/persistence/sql/sqlite",
+        "petisco/persistence/elastic",
         "petisco/security/token_decoder",
         "petisco/security/token_manager",
         "petisco/tools",
@@ -88,5 +92,6 @@ setup(
         "fixtures": ["pytest"],
         "slack": ["slackclient"],
         "pymongo": ["pymongo==3.11.0"],
+        "elastic": ["elasticsearch<8.0.0,>=7.0.0"],
     },
 )

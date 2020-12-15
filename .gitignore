@@ -82,3 +82,4 @@ target/
 
 *.idea
 .pytest_cache
+mysqldata
