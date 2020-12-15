@@ -32,6 +32,7 @@ class Persistence(metaclass=Singleton):
 
     def remove(self, database_name: str):
         if database_name in self._databases:
+            self._databases[database_name].delete()
             del self._databases[database_name]
         else:
             raise IndexError(
