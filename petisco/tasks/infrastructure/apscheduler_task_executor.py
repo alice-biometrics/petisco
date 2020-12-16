@@ -8,6 +8,7 @@ from apscheduler.schedulers import (
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 from petisco.tasks.config.config_tasks import ConfigTasks
 from petisco.tasks.domain.interface_task_executor import TaskExecutor
@@ -31,6 +32,8 @@ class APSchedulerTaskExecutor(TaskExecutor):
             self._config_recurring_task(task)
         elif task.type == "scheduled":
             self._config_scheduled_task(task)
+        elif task.type == "cron":
+            self._config_cron_task(task)
         else:
             self._config_instant_task(task)
 
@@ -49,6 +52,11 @@ class APSchedulerTaskExecutor(TaskExecutor):
         start_date = now + timedelta(0, task.run_in)
         self.scheduler.add_job(
             func=task.get_handler(), trigger="date", run_date=start_date
+        )
+
+    def _config_cron_task(self, task):
+        self.scheduler.add_job(
+            func=task.get_handler(), trigger=CronTrigger.from_crontab(task.every)
         )
 
     def _config_instant_task(self, task):
