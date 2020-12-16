@@ -15,8 +15,8 @@ from petisco.domain.value_objects.uuid import Uuid
 from petisco.persistence.sql.errors import (
     ClientNotFoundError,
     EntityAlreadyExistError,
-    EntityNotExistError,
-    EntitiesNotExistError,
+    EntityNotFoundError,
+    EntitiesNotFoundError,
 )
 
 
@@ -35,23 +35,42 @@ class SqlRepository(IRepository, metaclass=ABCMeta):
         return Success(self.internal_client_id)
 
     @classmethod
-    def fail_if_entity_already_exist(cls, model, entity_id: Uuid) -> BoolResult:
+    def fail_if_entity_already_exist(
+        cls, model, entity_id: Uuid, result_error: Error = None
+    ) -> BoolResult:
         if model:
-            return Failure(
+            error = (
                 EntityAlreadyExistError(cls.__name__, model.__tablename__, entity_id)
+                if not result_error
+                else result_error
             )
+            return Failure(error)
         return isSuccess
 
     @classmethod
-    def fail_if_entity_not_exist(cls, model, entity_id: Uuid) -> BoolResult:
+    def fail_if_entity_not_exist(
+        cls, model, entity_id: Uuid, result_error: Error = None
+    ) -> BoolResult:
         if not model:
-            return Failure(EntityNotExistError(cls.__name__, entity_id))
+            error = (
+                EntityNotFoundError(cls.__name__, entity_id)
+                if not result_error
+                else result_error
+            )
+            return Failure(error)
         return isSuccess
 
     @classmethod
-    def fail_if_entities_not_exist(cls, model) -> BoolResult:
+    def fail_if_entities_not_exist(
+        cls, model, result_error: Error = None
+    ) -> BoolResult:
         if not model:
-            return Failure(EntitiesNotExistError(cls.__name__))
+            error = (
+                EntitiesNotFoundError(cls.__name__)
+                if not result_error
+                else result_error
+            )
+            return Failure(error)
         return isSuccess
 
     @abstractmethod

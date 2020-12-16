@@ -19,11 +19,11 @@ class EntityAlreadyExistError(Error):
         self.message = f"[Repository: {repository_name} | Table: {table_name} | entity_id: {entity_id.value}]"
 
 
-class EntityNotExistError(Error):
+class EntityNotFoundError(Error):
     def __init__(self, repository_name: str, entity_id: Uuid):
         self.message = f"[Repository: {repository_name} | entity_id: {entity_id.value}]"
 
 
-class EntitiesNotExistError(Error):
+class EntitiesNotFoundError(Error):
     def __init__(self, repository_name: str):
         self.message = f"[Repository: {repository_name}]"

@@ -193,8 +193,8 @@ from petisco.persistence.sql.errors import (
     ClientNotFoundError,
     ClientAlreadyExistError,
     EntityAlreadyExistError,
-    EntityNotExistError,
-    EntitiesNotExistError,
+    EntityNotFoundError,
+    EntitiesNotFoundError,
 )
 
 persistence = [
@@ -206,8 +206,8 @@ persistence = [
     "ClientNotFoundError",
     "ClientAlreadyExistError",
     "EntityAlreadyExistError",
-    "EntityNotExistError",
-    "EntitiesNotExistError",
+    "EntityNotFoundError",
+    "EntitiesNotFoundError",
 ]
 
 
