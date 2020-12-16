@@ -17,14 +17,18 @@ def get_float_if_exist(kdict: Dict, value: str, default_value=None) -> float:
     return value
 
 
-def get_type(run_in, interval) -> str:
+def get_type(run_in, interval, every) -> str:
     if interval:
         type_task = "recurring"
     else:
+
         if run_in:
             type_task = "scheduled"
         else:
-            type_task = "instant"
+            if every:
+                type_task = "cron"
+            else:
+                type_task = "instant"
     return type_task
 
 
@@ -34,6 +38,7 @@ class ConfigTask:
     run_in: float = 0.0
     interval: float = None
     type: str = "instant"
+    every: str = None
     kdict: Dict = None
 
     def to_dict(self):
@@ -42,6 +47,8 @@ class ConfigTask:
             kdict["run_in"] = self.run_in
         if self.interval is not None:
             kdict["interval"] = self.interval
+        if self.every is not None:
+            kdict["every"] = self.every
         return kdict
 
     @staticmethod
@@ -49,15 +56,17 @@ class ConfigTask:
         run_in = get_float_if_exist(kdict, "run_in", default_value=0.0)
         interval = get_float_if_exist(kdict, "interval")
         handler_key = kdict.get("handler")
-        type = get_type(run_in, interval)
+        every = kdict.get("every", None)
+        type = get_type(run_in, interval, every)
 
         if not handler_key:
-            raise TypeError(f"ConfigTask: handler is a required parameter")
+            raise TypeError("ConfigTask: handler is a required parameter")
 
         return ConfigTask(
             run_in=run_in,
             handler_key=handler_key,
             interval=interval,
+            every=every,
             type=type,
             kdict=kdict,
         )
