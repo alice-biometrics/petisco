@@ -94,7 +94,10 @@ class Config:
 
         config_persistence = ConfigPersistence.from_dict(yaml_dict.get("persistence"))
 
-        config_providers = ConfigProviders.from_dict(yaml_dict.get("providers"))
+        providers = yaml_dict.get("providers")
+        config_providers = (
+            ConfigProviders.from_dict(providers) if providers else ConfigProviders()
+        )
 
         config_events = ConfigEvents.from_dict(yaml_dict.get("events"))
 
