@@ -343,6 +343,7 @@ class Petisco(metaclass=Singleton):
         return services
 
     @staticmethod
+    @deprecated("This method is deprecated. Please, use AppServices.get()")
     def get_app_service(key: str) -> IAppService:
         services = Petisco.get_instance().services
         if not services:
@@ -357,11 +358,12 @@ class Petisco(metaclass=Singleton):
         return service
 
     @staticmethod
-    @deprecated("This method is deprecated. Please, use get_app_service")
+    @deprecated("This method is deprecated. Please, use AppServices.get()")
     def get_service(key: str) -> IService:
         return Petisco.get_app_service(key)
 
     @staticmethod
+    @deprecated("This method is deprecated. Please, use Repositories.get()")
     def get_repository(key: str) -> IRepository:
         repositories = Petisco.get_instance().repositories
         if repositories is None:
