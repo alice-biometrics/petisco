@@ -26,9 +26,16 @@ def test_should_create_persistence_with_sqlite_database():
             "user": "tests.modules.persistence.ymls.sql.models.UserModel",
         },
     }
+    assert Persistence.is_available()
 
     persistence.delete()
     Persistence.clear()
+
+
+@pytest.mark.integration
+def test_should_persistence_not_available():
+    Persistence.clear()
+    assert not Persistence.is_available()
 
 
 @pytest.mark.integration
@@ -78,5 +85,6 @@ def test_should_add_a_product_with_sqlite_database_with_session_scope():
         model = ProductModel(name="Petisco", price=2)
         session.add(model)
 
+    persistence.clear_data()
     persistence.delete()
     Persistence.clear()

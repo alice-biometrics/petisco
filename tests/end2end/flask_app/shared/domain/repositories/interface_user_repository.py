@@ -1,5 +1,3 @@
-from typing import Dict
-
 from meiga import Result, Error, NotImplementedMethodError
 
 from petisco.application.interface_repository import IRepository
@@ -9,9 +7,6 @@ from tests.end2end.flask_app.user.domain.aggregate_roots.user import User
 
 
 class IUserRepository(IRepository):
-    def info(self) -> Dict:
-        return {"name": self.__class__.__name__}
-
     def save(self, user: User) -> Result[bool, Error]:
         return NotImplementedMethodError
 

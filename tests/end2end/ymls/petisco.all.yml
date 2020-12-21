@@ -16,26 +16,5 @@ framework:
   port: 8080
 logger:
   selected_logger: not_implemented_logger
-persistence:
-  - name: petisco
-    type: sql
-    config: tests.end2end.flask_app.config.config_persistence.config_persistence
-    models:
-      user: tests.end2end.flask_app.shared.infrastructure.repositories.user_model.UserModel
-providers:
-   services_provider: tests.end2end.flask_app.config.services_provider.services_provider
-   repositories_provider: tests.end2end.flask_app.config.repositories_provider.repositories_provider
-events:
-  publisher:
-    provider: tests.end2end.flask_app.config.events.event_publisher_provider
-  subscriber:
-    provider: tests.end2end.flask_app.config.events.event_subscriber_provider
-    subscribers:
-      sub:
-        organization: "acme"
-        service: "toy-app"
-        topic: "toy-app-event"
-        dead_letter: True
-        handler: tests.end2end.flask_app.shared.application.handlers.store_event.store_event
 notifier:
   provider: tests.end2end.flask_app.config.notifier.notifier_provider

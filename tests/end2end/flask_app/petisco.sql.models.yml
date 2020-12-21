@@ -1,0 +1,3 @@
+ models:
+    user: tests.end2end.flask_app.shared.infrastructure.repositories.user_model.UserModel
+    users_count: tests.end2end.flask_app.users_count.infrastructure.users_count_model.UsersCountModel

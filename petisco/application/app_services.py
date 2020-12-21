@@ -1,6 +1,8 @@
 import inspect
 from typing import Dict, TypeVar, Callable
 
+from deprecation import deprecated
+
 from petisco.application.interface_app_service import IAppService
 from petisco.application.singleton import Singleton
 
@@ -21,7 +23,7 @@ class AppServices(metaclass=Singleton):
         return AppServices.get_instance().get_info()
 
     @staticmethod
-    def from_provider(provider: Callable):
+    def load(provider: Callable):
         repositories = provider()
         return AppServices(repositories)
 
@@ -64,3 +66,8 @@ class AppServices(metaclass=Singleton):
                 f"AppServices: {name} app service is not defined.  Please, add it (i.e AppServices.from_provider(provider_func))"
             )
         return app_service
+
+    @staticmethod
+    @deprecated("This method is deprecated. Please, use AppServices.load")
+    def from_provider(provider: Callable):
+        return AppServices.load(provider)

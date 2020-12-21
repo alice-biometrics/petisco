@@ -1,8 +1,8 @@
-from typing import Dict, Any, Callable
+from typing import Any, Callable
 
 from meiga import Result, Error, isSuccess, Success, Failure
 
-from petisco import Petisco
+from petisco import Persistence
 from petisco.domain.value_objects.client_id import ClientId
 from petisco.domain.value_objects.name import Name
 from petisco.domain.value_objects.user_id import UserId
@@ -22,16 +22,13 @@ class SqlUserRepository(IUserRepository):
     @staticmethod
     def build():
         return SqlUserRepository(
-            session_scope=Petisco.persistence_session_scope(),
-            user_model=Petisco.get_persistence_model("petisco", "user"),
+            session_scope=Persistence.get_session_scope("petisco-sql"),
+            user_model=Persistence.get_model("petisco-sql", "user"),
         )
 
     def __init__(self, session_scope: Callable, user_model: Any):
         self.session_scope = session_scope
         self.UserModel = user_model
-
-    def info(self) -> Dict:
-        return {"name": self.__class__.__name__}
 
     def save(self, user: User) -> Result[bool, Error]:
 
@@ -39,7 +36,7 @@ class SqlUserRepository(IUserRepository):
         if result.is_success:
             return Failure(UserAlreadyExistError(user.user_id))
 
-        with self.session_scope("petisco") as session:
+        with self.session_scope() as session:
 
             user = self.UserModel(
                 client_id=user.client_id.value,
@@ -51,7 +48,7 @@ class SqlUserRepository(IUserRepository):
 
     def retrieve(self, client_id: ClientId, user_id: UserId) -> Result[User, Error]:
 
-        with self.session_scope("petisco") as session:
+        with self.session_scope() as session:
             user_model = (
                 session.query(self.UserModel)
                 .filter(self.UserModel.client_id == client_id.value)
@@ -70,7 +67,7 @@ class SqlUserRepository(IUserRepository):
             )
 
     def exists(self, user_id: UserId) -> Result[bool, Error]:
-        with self.session_scope("petisco") as session:
+        with self.session_scope() as session:
             user = (
                 session.query(self.UserModel)
                 .filter(self.UserModel.user_id == user_id.value)

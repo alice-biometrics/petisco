@@ -42,3 +42,14 @@ def testing_with_elastic(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+def testing_without_elastic(func):
+    @pytest.mark.skipif(
+        elastic_is_running_locally(), reason="Elastic is running locally"
+    )
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+
+    return wrapper

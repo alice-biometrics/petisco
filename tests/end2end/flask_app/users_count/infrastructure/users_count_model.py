@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer
-from petisco.persistence.sqlalchemy.sqlalchemy_persistence import SqlAlchemyPersistence
 
+from petisco.persistence.persistence import Persistence
 
-Base = SqlAlchemyPersistence.get_instance().sources["petisco"]["base"]
+Base = Persistence.get_base("petisco-sql")
 
 
 class UsersCountModel(Base):

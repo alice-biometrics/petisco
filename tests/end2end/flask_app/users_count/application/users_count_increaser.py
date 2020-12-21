@@ -1,6 +1,6 @@
 from meiga import Result, Error
 
-from petisco import UseCase, use_case_handler, Petisco
+from petisco import UseCase, use_case_handler, Repositories
 from tests.end2end.flask_app.users_count.domain.interface_users_count_repository import (
     IUsersCountRepository,
 )
@@ -10,7 +10,7 @@ from tests.end2end.flask_app.users_count.domain.interface_users_count_repository
 class UserCountIncreaser(UseCase):
     @staticmethod
     def build():
-        return UserCountIncreaser(repository=Petisco.get_repository("users_count"))
+        return UserCountIncreaser(repository=Repositories.get("users_count"))
 
     def __init__(self, repository: IUsersCountRepository):
         self.repository = repository
