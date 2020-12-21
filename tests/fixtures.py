@@ -1,6 +1,8 @@
+import os
+
 import pytest
 
-from petisco import Event, EventId, NotifierMessage, InfoId
+from petisco import Event, EventId, NotifierMessage, InfoId, Petisco
 from petisco.domain.value_objects.user_id import UserId
 from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 
@@ -177,3 +179,16 @@ def given_long_traceback_complete_notifier_exception_message(
         info_id=InfoId(client_id=given_any_client_id, user_id=given_any_user_id),
         info_petisco=given_any_info_petisco,
     )
+
+
+@pytest.fixture
+def initialized_petisco():
+    filename = (
+        f"{os.path.dirname(os.path.abspath(__file__))}/end2end/flask_app/petisco.yml"
+    )
+    Petisco.clear()
+    Petisco.from_filename(filename)
+
+    yield
+
+    Petisco.clear()

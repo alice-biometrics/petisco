@@ -7,7 +7,7 @@ def elastic_is_running_locally() -> bool:
         database = ElasticDatabase.local_connection_checker()
         Persistence().add(database)
         Persistence().create()
-        is_running_locally = Persistence.get_session(database.name).ping()
+        is_running_locally = Persistence.is_available(database.name).ping()
     except:  # noqa: E722
         is_running_locally = False
     Persistence().remove("test", skip_if_not_exist=True)

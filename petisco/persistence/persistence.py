@@ -1,6 +1,7 @@
 import inspect
 from typing import List, Callable
 from dataclasses import dataclass
+
 from petisco.application.singleton import Singleton
 from petisco.persistence.interface_database import IDatabase
 
@@ -74,12 +75,27 @@ class Persistence(metaclass=Singleton):
             database.clear_data()
 
     @staticmethod
-    def is_available():
+    def is_available(database_name: str = None):
+        def log_warning(message: str):
+            from petisco import Petisco, DEBUG, LogMessage
+
+            logger = Petisco.get_logger()
+            log_message = LogMessage(operation="persistence", layer="infrastructure")
+            logger.log(DEBUG, log_message.set_message(message))
+
         databases = Persistence.get_instance()._databases
+        if database_name is not None:
+            if database_name not in databases:
+                raise IndexError(
+                    f"Database cannot return is_available. {database_name} not exists"
+                )
+            databases = [databases.get(database_name)]
         if len(databases) < 1:
+            log_warning("Persistence databases are empty")
             return False
-        for database in databases.values():
+        for database_name, database in databases.items():
             if not database.is_available():
+                log_warning(f"Database {database_name} is not available")
                 return False
         return True
 

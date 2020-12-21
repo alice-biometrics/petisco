@@ -33,12 +33,6 @@ def test_should_create_persistence_with_sqlite_database():
 
 
 @pytest.mark.integration
-def test_should_persistence_not_available():
-    Persistence.clear()
-    assert not Persistence.is_available()
-
-
-@pytest.mark.integration
 def test_should_add_an_user_with_sqlite_database_with_session():
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
     connection = SqliteConnection.create(

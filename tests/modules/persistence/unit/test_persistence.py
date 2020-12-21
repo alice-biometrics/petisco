@@ -43,3 +43,10 @@ def test_should_execute_lifecycle_of_persistence_with_fake_database():
     persistence.create()
     persistence.delete()
     Persistence.clear()
+
+
+@pytest.mark.integration
+@pytest.mark.usefixtures("initialized_petisco")
+def test_should_persistence_not_available_when_no_database_is_added():
+    Persistence.clear()
+    assert not Persistence.is_available()

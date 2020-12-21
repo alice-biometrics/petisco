@@ -36,9 +36,7 @@ class ElasticDatabase(IDatabase):
 
     def is_available(self):
         try:
-            session_scope = self.get_session_scope()
-            with session_scope() as es:
-                return es.ping()
+            return self.get_session().ping()
         except Exception:  # noqa E722
             return False
 
