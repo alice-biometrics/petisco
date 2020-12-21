@@ -44,12 +44,15 @@ class Persistence(metaclass=Singleton):
         else:
             self._databases[database.name] = database
 
-    def remove(self, database_name: str):
+    def remove(self, database_name: str, skip_if_not_exist: bool = False):
         if database_name in self._databases:
             self._databases[database_name].delete()
             del self._databases[database_name]
         else:
-            raise IndexError(f"Database cannot be removed. {database_name} not exists")
+            if skip_if_not_exist is False:
+                raise IndexError(
+                    f"Database cannot be removed. {database_name} not exists"
+                )
 
     def create(self):
         for database in self._databases.values():
