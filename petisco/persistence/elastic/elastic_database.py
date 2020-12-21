@@ -31,6 +31,17 @@ class ElasticDatabase(IDatabase):
     def delete(self):
         pass
 
+    def clear_data(self):
+        pass
+
+    def is_available(self):
+        try:
+            session_scope = self.get_session_scope()
+            with session_scope() as es:
+                return es.ping()
+        except Exception:  # noqa E722
+            return False
+
     def get_base(self):
         return None
 

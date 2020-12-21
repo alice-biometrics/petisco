@@ -58,6 +58,22 @@ class MySqlDatabase(IDatabase):
         pass
         # os.remove(self.connection.database_name)
 
+    def clear_data(self):
+        # Not available yet to avoid production problems.
+        # This, needs to be well documented.
+        # self.base.metadata.drop_all(self.engine)
+        pass
+
+    def is_available(self):
+        try:
+            session_scope = self.get_session_scope()
+            with session_scope() as session:
+                session.execute("SELECT 1")
+                _is_available = True
+        except Exception:  # noqa E722
+            _is_available = False
+        return _is_available
+
     def get_base(self):
         return self.base
 

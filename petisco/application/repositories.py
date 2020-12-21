@@ -1,6 +1,8 @@
 import inspect
 from typing import Dict, TypeVar, Callable
 
+from deprecation import deprecated
+
 from petisco.application.singleton import Singleton
 from petisco.application.interface_repository import IRepository
 
@@ -21,7 +23,7 @@ class Repositories(metaclass=Singleton):
         return Repositories.get_instance().get_info()
 
     @staticmethod
-    def from_provider(provider: Callable):
+    def load(provider: Callable):
         repositories = provider()
         return Repositories(repositories)
 
@@ -64,3 +66,8 @@ class Repositories(metaclass=Singleton):
                 f"Repositories: {name} repository is not defined.  Please, add it (i.e Repositories.from_provider(provider_func))"
             )
         return repository
+
+    @staticmethod
+    @deprecated("This method is deprecated. Please, use Repositories.load")
+    def from_provider(provider: Callable):
+        return Repositories.load(provider)

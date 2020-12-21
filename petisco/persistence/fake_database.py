@@ -15,6 +15,9 @@ class FakeDatabase(IDatabase):
     def delete(self):
         pass
 
+    def clear_data(self):
+        pass
+
     def get_model(self, model_name: str):
         model = self.models.get(model_name)
         if not model:

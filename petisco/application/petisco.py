@@ -332,7 +332,7 @@ class Petisco(metaclass=Singleton):
         elapsed_time = time.time() - start_time
         self.info["elapsed_time"][
             "load_repositories"
-        ] = f"{int(elapsed_time*1000.0)} ms"
+        ] = f"{int(elapsed_time * 1000.0)} ms"
         return repositories
 
     def _load_services(self, services_provider: Callable):
@@ -341,6 +341,36 @@ class Petisco(metaclass=Singleton):
         elapsed_time = time.time() - start_time
         self.info["elapsed_time"]["load_services"] = f"{int(elapsed_time * 1000.0)} ms"
         return services
+
+    @staticmethod
+    def get_event_bus():
+        return Petisco.get_instance().event_bus
+
+    @staticmethod
+    def get_logger():
+        return Petisco.get_instance()._logger
+
+    @staticmethod
+    def get_notifier():
+        return Petisco.get_instance()._notifier
+
+    @staticmethod
+    def get_app_name():
+        return Petisco.get_instance()._app_name
+
+    @staticmethod
+    def get_app_version():
+        return Petisco.get_instance()._app_version
+
+    @staticmethod
+    def get_environment():
+        return Petisco.get_instance()._environment
+
+    @staticmethod
+    def get_info():
+        return Petisco.get_instance().info
+
+    # TODO Remove deprecated options
 
     @staticmethod
     @deprecated("This method is deprecated. Please, use AppServices.get()")
@@ -401,10 +431,6 @@ class Petisco(metaclass=Singleton):
         return session_scope
 
     @staticmethod
-    def get_event_bus():
-        return Petisco.get_instance().event_bus
-
-    @staticmethod
     def persistence_mongodb_client():
         from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
 
@@ -417,27 +443,3 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def get_event_subscriber():
         return Petisco.get_instance().event_subscriber
-
-    @staticmethod
-    def get_logger():
-        return Petisco.get_instance()._logger
-
-    @staticmethod
-    def get_notifier():
-        return Petisco.get_instance()._notifier
-
-    @staticmethod
-    def get_app_name():
-        return Petisco.get_instance()._app_name
-
-    @staticmethod
-    def get_app_version():
-        return Petisco.get_instance()._app_version
-
-    @staticmethod
-    def get_environment():
-        return Petisco.get_instance()._environment
-
-    @staticmethod
-    def get_info():
-        return Petisco.get_instance().info

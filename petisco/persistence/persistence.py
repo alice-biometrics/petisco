@@ -35,19 +35,24 @@ class Persistence(metaclass=Singleton):
                 f"\tcode_context: {frame_info.code_context}\n\n"
             )
 
-    def add(self, database: IDatabase):
+    def add(self, database: IDatabase, skip_if_exist: bool = False):
         if database.name in self._databases:
-            raise NameError(f"Database {database.name} is already added to Persistence")
-        self._databases[database.name] = database
+            if skip_if_exist is False:
+                raise NameError(
+                    f"Database {database.name} is already added to Persistence"
+                )
+        else:
+            self._databases[database.name] = database
 
-    def remove(self, database_name: str):
+    def remove(self, database_name: str, skip_if_not_exist: bool = False):
         if database_name in self._databases:
             self._databases[database_name].delete()
             del self._databases[database_name]
         else:
-            raise IndexError(
-                f"Database name cannot be removed. {database_name} not exists"
-            )
+            if skip_if_not_exist is False:
+                raise IndexError(
+                    f"Database cannot be removed. {database_name} not exists"
+                )
 
     def create(self):
         for database in self._databases.values():
@@ -56,6 +61,27 @@ class Persistence(metaclass=Singleton):
     def delete(self):
         for database in self._databases.values():
             database.delete()
+
+    def clear_data(self, database_name: str = None):
+        databases = self._databases
+        if database_name is not None:
+            if database_name not in self._databases:
+                raise IndexError(
+                    f"Database cannot clear the data. {database_name} not exists"
+                )
+            databases = [self._databases.get(database_name)]
+        for database in databases.values():
+            database.clear_data()
+
+    @staticmethod
+    def is_available():
+        databases = Persistence.get_instance()._databases
+        if len(databases) < 1:
+            return False
+        for database in databases.values():
+            if not database.is_available():
+                return False
+        return True
 
     @staticmethod
     def get_base(database_name: str) -> List[str]:

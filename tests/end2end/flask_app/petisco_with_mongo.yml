@@ -27,8 +27,8 @@ persistence:
     type: mongo
     config: tests.end2end.flask_app.config.config_mongo_persistence.config_mongo_persistence
 providers:
-   services_provider: tests.end2end.flask_app.config.services_provider.services_provider
-   repositories_provider: tests.end2end.flask_app.config.repositories_provider.repositories_provider_mongo
+   services_provider: tests.end2end.flask_app.config.app_services.app_services_provider
+   repositories_provider: tests.end2end.flask_app.config.repositories.repositories_provider_mongo
 events:
   publisher:
     provider: tests.end2end.flask_app.config.events.event_publisher_provider

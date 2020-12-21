@@ -16,11 +16,6 @@ def test_should_load_petisco_from_yml(petisco_yml_path_end2end, given_petisco_ve
         "app_version": "1.0.0",
         "petisco_version": given_petisco_version,
         "environment": None,
-        "services": {"sum": {"name": "SumExecutor"}},
-        "repositories": {
-            "user": {"name": "SqlUserRepository"},
-            "users_count": {"name": "SqlUsersCountRepository"},
-        },
         "event_publisher": {"name": "NotImplementedEventPublisher"},
         "event_subscriber": {"name": "NotImplementedEventSubscriber"},
         "tasks": {
@@ -34,8 +29,8 @@ def test_should_load_petisco_from_yml(petisco_yml_path_end2end, given_petisco_ve
     petisco.load_services_and_repositories()
 
     assert "elapsed_time" in petisco.info
-    assert "load_repositories" in petisco.info["elapsed_time"]
-    assert "load_services" in petisco.info["elapsed_time"]
+    # assert "repositories" in petisco.info["elapsed_time"]
+    # assert "services" in petisco.info["elapsed_time"]
     petisco.info.pop("elapsed_time")
     assert petisco.info == expected_petisco_info
     Petisco.clear()
@@ -80,30 +75,6 @@ def test_should_load_petisco_from_yml_and_check_logger_level(
     assert petisco.get_logger().logger.level == logging_level_num
 
     del os.environ["PETISCO_LOGGING_LEVEL"]
-    Petisco.clear()
-
-
-@pytest.mark.end2end
-def test_should_raise_exception_if_repository_not_exist(petisco_yml_path_end2end):
-
-    filename = f"{petisco_yml_path_end2end}/petisco.all.yml"
-
-    petisco = Petisco.from_filename(filename)
-    with pytest.raises(ValueError):
-        petisco.get_repository("repo")
-
-    Petisco.clear()
-
-
-@pytest.mark.end2end
-def test_should_raise_exception_if_service_not_exist(petisco_yml_path_end2end):
-
-    filename = f"{petisco_yml_path_end2end}/petisco.all.yml"
-
-    petisco = Petisco.from_filename(filename)
-    with pytest.raises(ValueError):
-        petisco.get_app_service("repo")
-
     Petisco.clear()
 
 

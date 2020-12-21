@@ -42,6 +42,5 @@ def error_handler(result: Result):
 )
 def create_user(info_id: InfoId, body: dict):
     info_id.user_id = UserId.generate()
-
     name = Name(body.get("name"))
     return UserCreator.build().execute(info_id=info_id, name=name)

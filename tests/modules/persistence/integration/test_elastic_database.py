@@ -11,6 +11,7 @@ from petisco.persistence.elastic.elastic_database import ElasticDatabase
 def test_should_create_persistence_with_elastic_database():
     connection = ElasticConnection.create_local()
     database = ElasticDatabase(name="elastic_test", connection=connection)
+    Persistence.clear()
 
     persistence = Persistence()
     persistence.add(database)
@@ -18,5 +19,8 @@ def test_should_create_persistence_with_elastic_database():
     assert database.info() == {"name": "elastic_test"}
 
     persistence.create()
+
+    assert Persistence.is_available()
+
     persistence.delete()
     Persistence.clear()

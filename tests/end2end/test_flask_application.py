@@ -11,11 +11,9 @@ from petisco.frameworks.flask.flask_extension_is_installed import (
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
-def test_should_return_200_when_call_healthcheck_with_happy_path(
-    petisco_client_flask_app
-):
+def test_should_return_200_when_call_healthcheck_with_happy_path(client_app):
     headers = {"Accept": "application/json"}
-    response = petisco_client_flask_app.get("/petisco/healthcheck", headers=headers)
+    response = client_app.get("/petisco/healthcheck", headers=headers)
 
     assert response.status_code == 200
     assert "app_name" in response.json
@@ -31,10 +29,10 @@ def test_should_return_200_when_call_healthcheck_with_happy_path(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
 def test_should_return_200_when_call_environment_with_happy_path_with_apikey(
-    petisco_client_flask_app, given_any_apikey
+    client_app, given_any_apikey
 ):
     headers = {"Accept": "application/json", "apikey": given_any_apikey}
-    response = petisco_client_flask_app.get("/petisco/environment", headers=headers)
+    response = client_app.get("/petisco/environment", headers=headers)
     assert response.status_code == 200
 
 
@@ -43,10 +41,10 @@ def test_should_return_200_when_call_environment_with_happy_path_with_apikey(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
 def test_should_return_401_when_call_environment_with_happy_path_without_apikey(
-    petisco_client_flask_app
+    client_app
 ):
     headers = {"Accept": "application/json"}
-    response = petisco_client_flask_app.get("/petisco/environment", headers=headers)
+    response = client_app.get("/petisco/environment", headers=headers)
     assert response.status_code == 401
 
 
@@ -54,14 +52,14 @@ def test_should_return_401_when_call_environment_with_happy_path_without_apikey(
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
-def test_should_return_200_when_call_sum_with_valid_values(petisco_client_flask_app):
+def test_should_return_200_when_call_sum_with_valid_values(client_app):
     headers = {
         "Content-Type": "multipart/form-data",
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
     }
 
     multipart_data = dict(value_1=2, value_2=3)
-    response = petisco_client_flask_app.post(
+    response = client_app.post(
         "/petisco/sum",
         headers=headers,
         data=multipart_data,
@@ -76,7 +74,7 @@ def test_should_return_200_when_call_sum_with_valid_values(petisco_client_flask_
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
 def test_should_return_200_when_call_sum_with_valid_values_with_external_headers(
-    petisco_client_flask_app
+    client_app
 ):
     headers = {
         "Content-Type": "multipart/form-data",
@@ -87,7 +85,7 @@ def test_should_return_200_when_call_sum_with_valid_values_with_external_headers
     }
 
     multipart_data = dict(value_1=2, value_2=3)
-    response = petisco_client_flask_app.post(
+    response = client_app.post(
         "/petisco/sum",
         headers=headers,
         data=multipart_data,
@@ -101,12 +99,10 @@ def test_should_return_200_when_call_sum_with_valid_values_with_external_headers
 @pytest.mark.skipif(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
-def test_should_return_400_when_call_sum_without_required_value(
-    petisco_client_flask_app
-):
+def test_should_return_400_when_call_sum_without_required_value(client_app):
     headers = {"Content-Type": "multipart/form-data"}
     multipart_data = dict(value_1=2)
-    response = petisco_client_flask_app.post(
+    response = client_app.post(
         "/petisco/sum",
         headers=headers,
         data=multipart_data,

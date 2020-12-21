@@ -1,9 +1,11 @@
-from petisco import Petisco
+from petisco import Petisco, Persistence, SqliteDatabase, SqliteConnection
 import os
 import pytest
 
 # from tests.end2end.flask_app import petisco_config
 # petisco_config()
+from tests.end2end.flask_app.config.app_services import load_app_services
+from tests.end2end.flask_app.config.repositories import load_repositories
 
 username = os.getenv("MONGODB_USERNAME")
 password = os.getenv("MONGODB_PASSWORD")
@@ -42,23 +44,28 @@ def given_petisco_flask_app(petisco_yml_path_flask_app):
     Petisco.clear()
     petisco = Petisco.from_filename(f"{petisco_yml_path_flask_app}/petisco.yml")
     petisco.configure_events(petisco_yml_path_flask_app + "/petisco.events.yml")
+
+    load_app_services()
+    sql_database = SqliteDatabase(
+        name="petisco-sql",
+        connection=SqliteConnection.create("sqlite", "petisco-test.db"),
+        model_filename=f"{petisco_yml_path_flask_app}/petisco.sql.models.yml",
+    )
+    persistence = Persistence()
+    persistence.add(sql_database, skip_if_exist=True)
+    persistence.create()
+    load_repositories()
+
     yield petisco
+
+    persistence.clear_data()
+
     Petisco.clear()
     petisco.stop()
 
 
 @pytest.fixture
-def given_clear_database():
-    sql_database = os.environ.get("SQL_DATABASE")
-    if os.path.exists(sql_database):
-        os.remove(sql_database)
-    yield
-    if os.path.exists(sql_database):
-        os.remove(sql_database)
-
-
-@pytest.fixture
-def petisco_client_flask_app(given_clear_database, given_petisco_flask_app):
+def client_app(given_petisco_flask_app):
     app = given_petisco_flask_app.get_app()
     with app.app.test_client() as c:
         yield c
@@ -77,7 +84,7 @@ def given_petisco_flask_app_with_mongodb(petisco_yml_path_flask_app):
 
 
 @pytest.fixture
-def petisco_client_flask_app_with_mongodb(given_petisco_flask_app_with_mongodb):
+def client_app_with_mongodb(given_petisco_flask_app_with_mongodb):
     app = given_petisco_flask_app_with_mongodb.get_app()
     with app.app.test_client() as c:
         yield c

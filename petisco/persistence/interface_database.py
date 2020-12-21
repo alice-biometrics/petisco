@@ -1,11 +1,8 @@
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod, ABC
 from typing import List, Dict
 
 
-class IDatabase:
-
-    __metaclass__ = ABCMeta
-
+class IDatabase(ABC):
     def __init__(self, name: str, models: Dict = None):
         self.name = name
         self.models = models if models else {}
@@ -22,6 +19,10 @@ class IDatabase:
 
     @abstractmethod
     def delete(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def clear_data(self):
         raise NotImplementedError
 
     @abstractmethod

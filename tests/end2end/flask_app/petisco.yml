@@ -17,16 +17,6 @@ framework:
     port: 8080
 logger:
     selected_logger: not_implemented_logger
-persistence:
-  - name: petisco
-    type: sql
-    config: tests.end2end.flask_app.config.config_persistence.config_persistence
-    models:
-      user: tests.end2end.flask_app.shared.infrastructure.repositories.user_model.UserModel
-      users_count: tests.end2end.flask_app.users_count.infrastructure.users_count_model.UsersCountModel
-providers:
-   services_provider: tests.end2end.flask_app.config.services_provider.services_provider
-   repositories_provider: tests.end2end.flask_app.config.repositories_provider.repositories_provider
 events:
   publisher:
     provider: tests.end2end.flask_app.config.events.event_publisher_provider
