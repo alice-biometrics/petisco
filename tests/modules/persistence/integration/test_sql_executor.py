@@ -49,9 +49,7 @@ def test_should_sql_executor_from_filename_with_statement():
 
     session_scope = Persistence.get_session_scope("sqlite_test")
     sql_executor = SqlExecutor(session_scope)
-    import pdb
 
-    pdb.set_trace()
     sql_executor.execute_from_filename(
         "tests/modules/persistence/sql/client_create.sql"
     )
