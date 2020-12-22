@@ -32,8 +32,8 @@ class ElasticConnection:
     @staticmethod
     def from_environ():
         return ElasticConnection.create(
-            os.getenv("ELASTIC_USERNAME", "document-writer"),
-            os.getenv("ELASTIC_PASSWORD", "document-writer"),
+            os.getenv("ELASTIC_USERNAME", ""),
+            os.getenv("ELASTIC_PASSWORD", ""),
             os.getenv("ELASTIC_HOST", "localhost"),
-            os.getenv("ELASTIC_PORT", "443"),
+            os.getenv("ELASTIC_PORT", "9200"),
         )

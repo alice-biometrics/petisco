@@ -276,6 +276,7 @@ try:
     from petisco.persistence.sql.mysql.mysql_connection import MySqlConnection
     from petisco.persistence.sql.mysql.mysql_database import MySqlDatabase
     from petisco.persistence.sql.sql_repository import SqlRepository
+    from petisco.persistence.sql.sql_executor import SqlExecutor
 
     sql = [
         "SqlAlchemyPersistence",
@@ -288,6 +289,7 @@ try:
         "MySqlConnection",
         "MySqlDatabase",
         "SqlRepository",
+        "SqlExecutor",
     ]
 except (RuntimeError, ImportError):
     sql = []
