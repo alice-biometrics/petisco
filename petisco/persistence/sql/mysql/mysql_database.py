@@ -1,5 +1,7 @@
 from typing import List, Callable
 
+from sqlalchemy.orm import scoped_session
+
 from petisco.persistence.interface_database import IDatabase
 from petisco.persistence.sql.mysql.mysql_connection import MySqlConnection
 from petisco.persistence.persistence_models import PersistenceModels
@@ -89,7 +91,7 @@ class MySqlDatabase(IDatabase):
         return list(self.persistence_models.get_models_names().keys())
 
     def get_session(self):
-        return self.session_maker()
+        return scoped_session(self.session_maker)()
 
     def get_session_scope(self) -> Callable:
         return sql_session_scope_provider(self.get_session())
