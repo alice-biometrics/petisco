@@ -13,7 +13,11 @@ from petisco.persistence.sql.sqlite.sqlite_connection import SqliteConnection
 
 class SqliteDatabase(IDatabase):
     def __init__(
-        self, name: str, connection: SqliteConnection, model_filename: str = None
+        self,
+        name: str,
+        connection: SqliteConnection,
+        model_filename: str = None,
+        print_sql_statements: bool = False,
     ):
         if not connection or not isinstance(connection, SqliteConnection):
             raise ConnectionError(
@@ -24,6 +28,7 @@ class SqliteDatabase(IDatabase):
         else:
             self.persistence_models = PersistenceModels(models={})
         self.connection = connection
+        self.print_sql_statements = print_sql_statements
         super().__init__(name, self.persistence_models.models)
         self._init()
 
@@ -42,6 +47,7 @@ class SqliteDatabase(IDatabase):
             self.connection.url,
             json_serializer=lambda obj: obj,
             json_deserializer=lambda obj: obj,
+            echo=self.print_sql_statements,
         )
 
         if not database_exists(engine.url):

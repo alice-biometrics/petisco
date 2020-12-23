@@ -16,7 +16,11 @@ class MySqlDatabase(IDatabase):
         return MySqlDatabase(name="test", connection=MySqlConnection.create_local())
 
     def __init__(
-        self, name: str, connection: MySqlConnection, model_filename: str = None
+        self,
+        name: str,
+        connection: MySqlConnection,
+        model_filename: str = None,
+        print_sql_statements: bool = False,
     ):
         if not connection or not isinstance(connection, MySqlConnection):
             raise ConnectionError(
@@ -28,6 +32,7 @@ class MySqlDatabase(IDatabase):
         else:
             self.persistence_models = PersistenceModels(models={})
         self.connection = connection
+        self.print_sql_statements = print_sql_statements
 
         super().__init__(name, self.persistence_models.models)
         self._init()
@@ -48,6 +53,7 @@ class MySqlDatabase(IDatabase):
             pool_pre_ping=True,
             json_serializer=lambda obj: obj,
             json_deserializer=lambda obj: obj,
+            echo=self.print_sql_statements,
         )
 
         if not database_exists(engine.url):
