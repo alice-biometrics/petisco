@@ -21,5 +21,5 @@ class JwtTokenBuilder:
             "cli": client_id.value,
             "sub": user_id.value if user_id else None,
         }
-        token = jwt.encode(payload, key, algorithm="RS256").decode("utf-8")
+        token = jwt.encode(payload, key, algorithm="RS256")
         return token
