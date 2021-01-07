@@ -423,14 +423,6 @@ class Petisco(metaclass=Singleton):
         return Petisco.persistence_models(persistence_entry).get(key)
 
     @staticmethod
-    def persistence_session_scope():
-        from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import (
-            session_scope,
-        )
-
-        return session_scope
-
-    @staticmethod
     def persistence_mongodb_client():
         from petisco.persistence.pymongo.pymongo_persistence import PyMongoPersistence
 

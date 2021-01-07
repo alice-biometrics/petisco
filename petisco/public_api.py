@@ -258,16 +258,6 @@ except (RuntimeError, ImportError):
 
 # SqlAlchemy
 try:
-    from petisco.persistence.sqlalchemy.sqlalchemy_persistence import (
-        SqlAlchemyPersistence,
-    )
-    from petisco.persistence.sqlalchemy.sqlalchemy_persistence_config import (
-        SqlAlchemyPersistenceConfig,
-    )
-    from petisco.persistence.sqlalchemy.sqlalchemy_persistence_connector import (
-        SqlAlchemyPersistenceConnector,
-    )
-    from petisco.persistence.sqlalchemy.sqlalchemy_session_scope import session_scope
     from petisco.persistence.sqlalchemy.sqlalchemy_operational_database_error import (
         SqlAlchemyOperationalDatabaseError,
     )
@@ -279,10 +269,6 @@ try:
     from petisco.persistence.sql.sql_executor import SqlExecutor
 
     sql = [
-        "SqlAlchemyPersistence",
-        "SqlAlchemyPersistenceConfig",
-        "SqlAlchemyPersistenceConnector",
-        "session_scope",
         "SqlAlchemyOperationalDatabaseError",
         "SqliteConnection",
         "SqliteDatabase",
