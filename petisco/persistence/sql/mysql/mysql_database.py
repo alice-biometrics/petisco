@@ -98,8 +98,8 @@ class MySqlDatabase(IDatabase):
         return list(self.persistence_models.get_models_names().keys())
 
     def get_session(self):
-        Session = scoped_session(self.session_maker)
-        return Session()
+        Session = scoped_session(self.session_maker)  # noqa
+        return Session
 
     def get_session_scope(self) -> Callable:
         return sql_session_scope_provider(self.get_session())

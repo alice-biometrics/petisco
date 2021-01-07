@@ -32,7 +32,6 @@ def test_should_sql_executor_with_sqlite_multithreading():
     persistence.create()
 
     def execute_sql_statement(name_thread):
-        print(f"thread: {name_thread}")
         try:
             session_scope = Persistence.get_session_scope("sqlite_test")
             sql_executor = SqlExecutor(session_scope)
@@ -78,12 +77,13 @@ def test_should_sql_executor_with_mysql_multithreading():
     persistence.add(database)
     persistence.create()
 
+    session_scope = Persistence.get_session_scope("mysql_test")
+
     def execute_sql_statement(name_thread):
         print(f"thread: {name_thread}")
         print(threading.current_thread())
 
         try:
-            session_scope = Persistence.get_session_scope("mysql_test")
             sql_executor = SqlExecutor(session_scope)
 
             uuid = Uuid.generate().value
@@ -93,17 +93,15 @@ def test_should_sql_executor_with_mysql_multithreading():
             )
             sql_executor.execute_statement(f"SELECT * FROM Client")
             sleep(1.0)
-            # sql_executor.execute_statement(
-            #     f'DELETE FROM Client WHERE client_id=\"{uuid}\";'
-            # )
+            sql_executor.execute_statement(
+                f'DELETE FROM Client WHERE client_id="{uuid}";'
+            )
             return True
         except Exception as exp:
             print(exp)
             return False
 
     number_of_threads = 20
-
-    # assert execute_sql_statement(1)
 
     with concurrent.futures.ThreadPoolExecutor(
         max_workers=number_of_threads, thread_name_prefix="sql_threads"
@@ -115,16 +113,6 @@ def test_should_sql_executor_with_mysql_multithreading():
         for future in concurrent.futures.as_completed(future_to_sql):
             num_thread = future_to_sql[future]
             assert future.result(), f"thread {num_thread} failed"
-
-    # threads = {}
-    # for num_thread in range(number_of_threads):
-    #    threads[num_thread] = Thread(target=execute_sql_statement, args=(num_thread,))
-    #    threads[num_thread].start()
-    #
-    # for num_thread in range(number_of_threads):
-    #     assert threads[num_thread].join(), f"thread {num_thread} failed"
-
-    # threads[0].join()
 
     persistence.clear_data()
     persistence.delete()
