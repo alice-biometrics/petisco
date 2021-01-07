@@ -1,5 +1,7 @@
 import os
 
+MYSQL_DATABASE_DEFAULT = "mysql_test"
+
 
 class MySqlConnection:
     def __init__(
@@ -30,7 +32,7 @@ class MySqlConnection:
         password: str = "root",
         host: str = "mysql",
         port: str = "3306",
-        database_name: str = "petisco-default-db",
+        database_name: str = MYSQL_DATABASE_DEFAULT,
     ):
         url = (
             f"{server_name}+{driver}://{user}:{password}@{host}:{port}/{database_name}"
@@ -40,8 +42,10 @@ class MySqlConnection:
         )
 
     @staticmethod
-    def create_local():
-        return MySqlConnection.create(host="localhost", port="3307")
+    def create_local(database_name: str = MYSQL_DATABASE_DEFAULT):
+        return MySqlConnection.create(
+            host="localhost", port="3307", database_name=database_name
+        )
 
     @staticmethod
     def from_environ():
@@ -52,5 +56,5 @@ class MySqlConnection:
             os.getenv("MYSQL_PASSWORD", "root"),
             os.getenv("MYSQL_HOST", "mysql"),
             os.getenv("MYSQL_PORT", "3306"),
-            os.getenv("MYSQL_DATABASE", "petisco-default-db"),
+            os.getenv("MYSQL_DATABASE", MYSQL_DATABASE_DEFAULT),
         )

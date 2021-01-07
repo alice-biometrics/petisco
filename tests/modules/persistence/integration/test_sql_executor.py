@@ -25,7 +25,7 @@ def test_should_sql_executor_insert_statement():
         'INSERT INTO Client (client_id,name) VALUES ("65dd83ef-d315-417d-bfa8-1ab398e16f02","myclient")'
     )
     sql_executor.execute_statement(
-        'DELETE FROM Client WHERE client_id=="65dd83ef-d315-417d-bfa8-1ab398e16f02";'
+        'DELETE FROM Client WHERE client_id="65dd83ef-d315-417d-bfa8-1ab398e16f02";'
     )
 
     persistence.clear_data()
