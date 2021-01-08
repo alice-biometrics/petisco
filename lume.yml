@@ -1,4 +1,4 @@
-git sname: petisco
+name: petisco
 
 install:
   run: pip install -U -r requirements/dev.txt
