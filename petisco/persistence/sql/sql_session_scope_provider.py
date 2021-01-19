@@ -24,5 +24,6 @@ def sql_session_scope_provider(Session) -> Callable:
             raise e
         finally:
             session.close()
+        Session.remove()
 
     return session_scope

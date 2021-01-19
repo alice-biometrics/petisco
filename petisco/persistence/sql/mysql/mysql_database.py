@@ -23,6 +23,7 @@ class MySqlDatabase(IDatabase):
         connection: MySqlConnection,
         model_filename: str = None,
         print_sql_statements: bool = False,
+        use_scoped_session: bool = True,
     ):
         if not connection or not isinstance(connection, MySqlConnection):
             raise ConnectionError(
@@ -34,6 +35,7 @@ class MySqlDatabase(IDatabase):
             self.persistence_models = PersistenceModels(models={})
         self.connection = connection
         self.print_sql_statements = print_sql_statements
+        self.use_scoped_session = use_scoped_session
 
         super().__init__(name, self.persistence_models.models)
         self._init()
@@ -98,7 +100,10 @@ class MySqlDatabase(IDatabase):
         return list(self.persistence_models.get_models_names().keys())
 
     def get_session(self):
-        Session = scoped_session(self.session_maker)  # noqa
+        if self.use_scoped_session:
+            Session = scoped_session(self.session_maker)  # noqa
+        else:
+            Session = self.session_maker
         return Session
 
     def get_session_scope(self) -> Callable:
