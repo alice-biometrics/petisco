@@ -4,13 +4,13 @@ on:
   pull_request:
     paths-ignore:
       - '*.md'
-      - 'VERSION'
+      - 'petisco/VERSION'
     branches: 
       - master
   push:
     paths-ignore:
       - '*.md'
-      - 'VERSION'
+      - 'petisco/VERSION'
     branches:
       - master
 
