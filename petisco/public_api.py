@@ -32,7 +32,7 @@ from petisco.domain.value_objects.string_value_object import (
 from petisco.domain.value_objects.user_id import UserId
 from petisco.domain.value_objects.correlation_id import CorrelationId
 from petisco.domain.value_objects.uuid import Uuid, InvalidUuidError
-from petisco.domain.value_objects.value_object import ValueObject
+from petisco.domain.value_objects.value_object import ValueObject, value_object_field
 from petisco.event.bus.domain.interface_event_bus import IEventBus
 from petisco.event.chaos.domain.interface_event_chaos import IEventChaos
 from petisco.event.handler.event_handler import event_handler
@@ -181,6 +181,7 @@ classes = [
     "Secret",
     "SignatureAlgorithm",
     "DateParser",
+    "value_object_field",
 ]
 
 
@@ -192,6 +193,8 @@ from petisco.persistence.persistence_models import PersistenceModels
 from petisco.persistence.sql.errors import (
     ClientNotFoundError,
     ClientAlreadyExistError,
+    UserNotFoundError,
+    UserAlreadyExistError,
     EntityAlreadyExistError,
     EntityNotFoundError,
     EntitiesNotFoundError,
@@ -205,6 +208,8 @@ persistence = [
     "IPersistenceConnector",
     "ClientNotFoundError",
     "ClientAlreadyExistError",
+    "UserNotFoundError",
+    "UserAlreadyExistError",
     "EntityAlreadyExistError",
     "EntityNotFoundError",
     "EntitiesNotFoundError",
