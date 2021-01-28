@@ -36,32 +36,18 @@ class SqlRepository(IRepository, metaclass=ABCMeta):
 
         return Success(self.internal_client_id)
 
-    class SqlRepository(IRepository, metaclass=ABCMeta):
-        def get_sql_internal_client_id(self, session, model) -> Result[int, Error]:
-            if not hasattr(self, "internal_client_id"):
-                internal_client_id = (
-                    session.query(model.id)
-                    .filter(model.client_id == self.get_client_id_value())
-                    .first()
-                )
-                if not internal_client_id:
-                    return Failure(ClientNotFoundError(self.get_client_id()))
-                self.internal_client_id = internal_client_id.id
+    def get_sql_internal_user_id(self, session, model) -> Result[int, Error]:
+        if not hasattr(self, "internal_user_id"):
+            internal_user_id = (
+                session.query(model.id)
+                .filter(model.user_id == self.get_user_id_value())
+                .first()
+            )
+            if not internal_user_id:
+                return Failure(UserNotFoundError(self.get_user_id()))
+            self.internal_user_id = internal_user_id.id
 
-            return Success(self.internal_client_id)
-
-        def get_sql_internal_user_id(self, session, model) -> Result[int, Error]:
-            if not hasattr(self, "internal_user_id"):
-                internal_user_id = (
-                    session.query(model.id)
-                    .filter(model.user_id == self.get_user_id_value())
-                    .first()
-                )
-                if not internal_user_id:
-                    return Failure(UserNotFoundError(self.get_user_id()))
-                self.internal_user_id = internal_user_id.id
-
-            return Success(self.internal_user_id)
+        return Success(self.internal_user_id)
 
     @classmethod
     def fail_if_entity_already_exist(
