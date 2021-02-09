@@ -75,6 +75,14 @@ class Persistence(metaclass=Singleton):
             database.clear_data()
 
     @staticmethod
+    def exist():
+        databases = Persistence.get_instance()._databases
+        if len(databases) < 1:
+            return False
+        else:
+            return True
+
+    @staticmethod
     def is_available(database_name: str = None):
         def log_warning(message: str):
             from petisco import Petisco, DEBUG, LogMessage

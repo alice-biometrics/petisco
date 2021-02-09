@@ -17,7 +17,7 @@ class HealthcheckProvider(UseCase):
             "persistence_available": Persistence.is_available(),
         }
 
-        if Persistence.is_available() is False:
+        if Persistence.exist() and not Persistence.is_available():
             return Failure(PersistenceError("Persistence is not available"))
 
         return Success(healthcheck)
