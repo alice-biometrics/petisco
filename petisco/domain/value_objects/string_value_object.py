@@ -25,15 +25,25 @@ class StringValueObject(ValueObject):
         return hash(str(self))
 
     def __repr__(self):
-        return f"[{self.__class__.__name__}: {self.value}]"
+        return str(self.value)
+
+    # def __eq__(self, other):
+    #     if issubclass(other.__class__, self.__class__) or issubclass(
+    #         self.__class__, other.__class__
+    #     ):
+    #         return self.value == other.value
+    #     else:
+    #         return False
 
     def __eq__(self, other):
-        if issubclass(other.__class__, self.__class__) or issubclass(
-            self.__class__, other.__class__
-        ):
-            return self.value == other.value
-        else:
-            return False
+        if not isinstance(other, str):
+            other = repr(other)
+        return repr(self) == other
+
+    def __ne__(self, other):
+        if not isinstance(other, str):
+            other = repr(other)
+        return repr(self) != other
 
     def _raise_error(self, raise_cls):
         if "message" in inspect.getfullargspec(raise_cls).args:
