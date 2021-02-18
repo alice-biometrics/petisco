@@ -345,27 +345,25 @@ class RabbitMqEventConsumer(IEventConsumer):
         _await_for_stop_consuming_consumer_channel()
 
     def unsubscribe_handler_on_queue(self, queue_name: str):
+        handler_item: HandlerItem = self.handlers.get(queue_name)
+        if handler_item is None:
+            raise IndexError(
+                f"Cannot unsubscribe an nonexistent queue ({queue_name}). Please, check configured consumers ({list(self.handlers.keys())})"
+            )
+
         def _unsubscribe_handler_on_queue():
-
-            handler_item: HandlerItem = self.handlers.get(queue_name)
-            if handler_item is None:
-                raise IndexError(
-                    f"Cannot unsubscribe an nonexistent queue ({queue_name}). Please, check configured consumers ({self.handlers.keys()})"
-                )
-
             self._channel.basic_cancel(consumer_tag=handler_item.consumer_tag)
 
         self._do_it_in_consumer_thread(_unsubscribe_handler_on_queue)
 
     def resume_handler_on_queue(self, queue_name: str):
+        handler_item: HandlerItem = self.handlers.get(queue_name)
+        if handler_item is None:
+            raise IndexError(
+                f"Cannot resume an nonexistent queue ({queue_name}). Please, check configured consumers ({list(self.handlers.keys())})"
+            )
+
         def _resume_handler_on_queue():
-
-            handler_item: HandlerItem = self.handlers.get(queue_name)
-
-            if handler_item is None:
-                raise IndexError(
-                    f"Cannot resume an nonexistent queue ({queue_name}). Please, check configured consumers ({self.handlers.keys()})"
-                )
 
             self._channel.basic_consume(
                 queue=handler_item.queue_name,

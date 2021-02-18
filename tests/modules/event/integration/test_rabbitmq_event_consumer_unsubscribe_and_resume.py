@@ -154,3 +154,54 @@ def test_should_unsubscribe_and_resume_handler_on_dead_letter_store_queue():
     configurer.clear()
 
     spy_dead_letter.assert_number_unique_events(30)
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
+def test_should_raise_an_error_when_unsubscribe_an_nonexistent_queue():
+    def assert_consumer_event_store(event: Event) -> BoolResult:
+        return isSuccess
+
+    event = EventUserCreatedMother.random()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
+    configurer.configure_event(event)
+
+    # Consumer configuration
+    consumer = RabbitMqEventConsumerMother.default()
+    consumer.add_handler_on_store(assert_consumer_event_store)
+    consumer.start()
+
+    with pytest.raises(IndexError) as excinfo:
+        consumer.unsubscribe_handler_on_queue("nonexistent_queue")
+        assert (
+            "Cannot unsubscribe an nonexistent queue (nonexistent_queue). Please, check configured consumers"
+            in str(excinfo.value)
+        )
+
+    consumer.stop()
+    configurer.clear()
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
+def test_should_raise_an_error_when_resume_an_nonexistent_queue():
+    def assert_consumer_event_store(event: Event) -> BoolResult:
+        return isSuccess
+
+    event = EventUserCreatedMother.random()
+    configurer = RabbitMqEventConfigurerMother.with_retry_ttl_10ms()
+    configurer.configure_event(event)
+
+    # Consumer configuration
+    consumer = RabbitMqEventConsumerMother.default()
+    consumer.add_handler_on_store(assert_consumer_event_store)
+    consumer.start()
+
+    with pytest.raises(IndexError) as excinfo:
+        consumer.resume_handler_on_queue("nonexistent_queue")
+        assert (
+            "Cannot resume an nonexistent queue (nonexistent_queue). Please, check configured consumers"
+            in str(excinfo.value)
+        )
+    consumer.stop()
+    configurer.clear()
