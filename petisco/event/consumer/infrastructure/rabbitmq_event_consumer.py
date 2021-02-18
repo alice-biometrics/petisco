@@ -89,9 +89,11 @@ class RabbitMqEventConsumer(IEventConsumer):
                 subscriber, exchange_name=self.exchange_name
             )
             for handler in subscriber.handlers:
+                queue = f"{queue_name}.{handler.__name__}"
                 self._channel.basic_consume(
-                    queue=f"{queue_name}.{handler.__name__}",
+                    queue=queue,
                     on_message_callback=self.consumer(handler),
+                    consumer_tag=f"ctag.{queue}",
                 )
 
     def add_subscriber_on_dead_letter(
@@ -101,20 +103,27 @@ class RabbitMqEventConsumer(IEventConsumer):
             subscriber, exchange_name=self.exchange_name
         )
         for handler_name in subscriber.get_handlers_names():
+            queue = f"{queue_name}.{handler_name}"
             self._channel.basic_consume(
-                queue=f"{queue_name}.{handler_name}",
+                queue=queue,
                 on_message_callback=self.consumer(handler),
+                consumer_tag=f"ctag.{queue}",
             )
 
     def add_handler_on_store(self, handler: Callable):
         is_store = True
+        queue = "store"
         self._channel.basic_consume(
-            queue="store", on_message_callback=self.consumer(handler, is_store)
+            queue=queue,
+            on_message_callback=self.consumer(handler, is_store),
+            consumer_tag=f"ctag.{queue}",
         )
 
     def add_handler_on_queue(self, queue_name: str, handler: Callable):
         self._channel.basic_consume(
-            queue=queue_name, on_message_callback=self.consumer(handler)
+            queue=queue_name,
+            on_message_callback=self.consumer(handler),
+            consumer_tag=f"ctag.{queue_name}",
         )
 
     def consumer(self, handler: Callable, is_store: bool = False) -> Callable:
@@ -304,7 +313,7 @@ class RabbitMqEventConsumer(IEventConsumer):
 
             logger = Petisco.get_logger()
             log_message = LogMessage(
-                layer="petisco", operation=f"RabbitMQEventSubscriber"
+                layer="petisco", operation="RabbitMQEventSubscriber"
             )
             message = f"Error stopping RabbitMQEventSubscriber: {repr(e.__class__)} {e} | {traceback.format_exc()}"
             logger.log(ERROR, log_message.set_message(message))
@@ -333,3 +342,33 @@ class RabbitMqEventConsumer(IEventConsumer):
         )
 
         _await_for_stop_consuming_consumer_channel()
+
+    def unsubscribe_handler_on_queue(self, queue_name: str):
+        def _unsubscribe_handler_on_queue():
+            self._channel.basic_cancel(consumer_tag=f"ctag.{queue_name}")
+
+        self._do_it_in_consumer_thread(_unsubscribe_handler_on_queue)
+
+    def resume_handler_on_queue(self, queue_name: str, handler: Callable):
+        def _resume_handler_on_queue():
+            self._channel.basic_consume(
+                queue=queue_name,
+                on_message_callback=self.consumer(handler),
+                consumer_tag=f"ctag.{queue_name}",
+            )
+
+        self._do_it_in_consumer_thread(_resume_handler_on_queue)
+
+    def _do_it_in_consumer_thread(self, action: Callable):
+        def _execute_action():
+            try:
+                action()
+            except ValueError:
+                pass
+
+        def _await_for_thread():
+            sleep(2.0)
+
+        self.connector.get_connection(self.rabbitmq_key).call_later(0, _execute_action)
+
+        _await_for_thread()
