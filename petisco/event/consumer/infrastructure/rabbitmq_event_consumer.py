@@ -364,13 +364,11 @@ class RabbitMqEventConsumer(IEventConsumer):
             )
 
         def _resume_handler_on_queue():
-
-            self._channel.basic_consume(
+            handler_item.consumer_tag = self._channel.basic_consume(
                 queue=handler_item.queue_name,
                 on_message_callback=self.consumer(
                     handler_item.handler, handler_item.is_store
                 ),
-                consumer_tag=handler_item.consumer_tag,
             )
 
         self._do_it_in_consumer_thread(_resume_handler_on_queue)

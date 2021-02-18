@@ -22,5 +22,11 @@ class NotImplementedEventConsumer(IEventConsumer):
     def add_handler_on_queue(self, queue_name: str, handler: Callable):
         pass
 
+    def unsubscribe_handler_on_queue(self, queue_name: str):
+        pass
+
+    def resume_handler_on_queue(self, queue_name: str):
+        pass
+
     def stop(self):
         pass
