@@ -93,7 +93,7 @@ def test_should_unsubscribe_and_resume_handler_on_store_queue():
         bus.publish(EventUserCreatedMother.random())
     sleep(5.0)
 
-    consumer.resume_handler_on_queue("store", assert_consumer_event_store)
+    consumer.resume_handler_on_queue("store")
     second_event = EventUserCreatedMother.random()
     bus.publish(second_event)
     sleep(3.0)
@@ -144,9 +144,7 @@ def test_should_unsubscribe_and_resume_handler_on_dead_letter_store_queue():
         bus.publish(EventUserCreatedMother.random())
     sleep(5.0)
 
-    consumer.resume_handler_on_queue(
-        "dead_letter.store", assert_consumer_event_dead_letter
-    )
+    consumer.resume_handler_on_queue("dead_letter.store")
 
     for i in range(10):
         bus.publish(EventUserCreatedMother.random())

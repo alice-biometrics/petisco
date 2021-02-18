@@ -4,6 +4,7 @@ import traceback
 from time import sleep
 from typing import Callable, List, Optional
 
+from dataclasses import dataclass
 from meiga import Failure
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
@@ -48,6 +49,14 @@ from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
 )
 
 
+@dataclass
+class HandlerItem:
+    queue_name: str
+    handler: Callable
+    consumer_tag: str
+    is_store: bool = False
+
+
 class RabbitMqEventConsumer(IEventConsumer):
     def __init__(
         self,
@@ -70,6 +79,7 @@ class RabbitMqEventConsumer(IEventConsumer):
         self.printer = RabbitMqEventConsumerPrinter(verbose)
         self.consumer_logger = RabbitMqEventConsumerLogger(logger)
         self.chaos = chaos
+        self.handlers = {}
 
     def start(self):
         if not self._channel:
@@ -89,11 +99,8 @@ class RabbitMqEventConsumer(IEventConsumer):
                 subscriber, exchange_name=self.exchange_name
             )
             for handler in subscriber.handlers:
-                queue = f"{queue_name}.{handler.__name__}"
-                self._channel.basic_consume(
-                    queue=queue,
-                    on_message_callback=self.consumer(handler),
-                    consumer_tag=f"ctag.{queue}",
+                self.add_handler_on_queue(
+                    queue_name=f"{queue_name}.{handler.__name__}", handler=handler
                 )
 
     def add_subscriber_on_dead_letter(
@@ -103,27 +110,21 @@ class RabbitMqEventConsumer(IEventConsumer):
             subscriber, exchange_name=self.exchange_name
         )
         for handler_name in subscriber.get_handlers_names():
-            queue = f"{queue_name}.{handler_name}"
-            self._channel.basic_consume(
-                queue=queue,
-                on_message_callback=self.consumer(handler),
-                consumer_tag=f"ctag.{queue}",
+            self.add_handler_on_queue(
+                queue_name=f"{queue_name}.{handler_name}", handler=handler
             )
 
     def add_handler_on_store(self, handler: Callable):
-        is_store = True
-        queue = "store"
-        self._channel.basic_consume(
-            queue=queue,
-            on_message_callback=self.consumer(handler, is_store),
-            consumer_tag=f"ctag.{queue}",
-        )
+        self.add_handler_on_queue("store", handler, is_store=True)
 
-    def add_handler_on_queue(self, queue_name: str, handler: Callable):
-        self._channel.basic_consume(
-            queue=queue_name,
-            on_message_callback=self.consumer(handler),
-            consumer_tag=f"ctag.{queue_name}",
+    def add_handler_on_queue(
+        self, queue_name: str, handler: Callable, is_store: bool = False
+    ):
+        consumer_tag = self._channel.basic_consume(
+            queue=queue_name, on_message_callback=self.consumer(handler, is_store)
+        )
+        self.handlers[queue_name] = HandlerItem(
+            queue_name, handler, consumer_tag, is_store
         )
 
     def consumer(self, handler: Callable, is_store: bool = False) -> Callable:
@@ -345,16 +346,33 @@ class RabbitMqEventConsumer(IEventConsumer):
 
     def unsubscribe_handler_on_queue(self, queue_name: str):
         def _unsubscribe_handler_on_queue():
-            self._channel.basic_cancel(consumer_tag=f"ctag.{queue_name}")
+
+            handler_item: HandlerItem = self.handlers.get(queue_name)
+            if handler_item is None:
+                raise IndexError(
+                    f"Cannot unsubscribe an nonexistent queue ({queue_name}). Please, check configured consumers ({self.handlers.keys()})"
+                )
+
+            self._channel.basic_cancel(consumer_tag=handler_item.consumer_tag)
 
         self._do_it_in_consumer_thread(_unsubscribe_handler_on_queue)
 
-    def resume_handler_on_queue(self, queue_name: str, handler: Callable):
+    def resume_handler_on_queue(self, queue_name: str):
         def _resume_handler_on_queue():
+
+            handler_item: HandlerItem = self.handlers.get(queue_name)
+
+            if handler_item is None:
+                raise IndexError(
+                    f"Cannot resume an nonexistent queue ({queue_name}). Please, check configured consumers ({self.handlers.keys()})"
+                )
+
             self._channel.basic_consume(
-                queue=queue_name,
-                on_message_callback=self.consumer(handler),
-                consumer_tag=f"ctag.{queue_name}",
+                queue=handler_item.queue_name,
+                on_message_callback=self.consumer(
+                    handler_item.handler, handler_item.is_store
+                ),
+                consumer_tag=handler_item.consumer_tag,
             )
 
         self._do_it_in_consumer_thread(_resume_handler_on_queue)
