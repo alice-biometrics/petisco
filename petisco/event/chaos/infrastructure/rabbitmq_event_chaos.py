@@ -23,7 +23,7 @@ class RabbitMqEventChaos(IEventChaos):
     def __init__(
         self,
         percentage_simulate_nack: Optional[float] = None,
-        delay_before_even_handler_second: Optional[float] = None,
+        delay_before_event_handler_second: Optional[float] = None,
         percentage_simulate_failures: Optional[float] = None,
         protected_routing_keys: Optional[List[str]] = None,
     ):
@@ -32,7 +32,7 @@ class RabbitMqEventChaos(IEventChaos):
         ----------
         percentage_simulate_nack
             Percentage of simulate nack [0.0 -> 1.0]. Where 1.0 rejects all the event.
-        delay_before_even_handler_second
+        delay_before_event_handler_second
             Delay event handler execution for a given number of seconds.
         percentage_simulate_failures
             Percentage of simulate failures [0.0 -> 1.0]. Where 1.0 simulate always a failure on handlers.
@@ -40,7 +40,7 @@ class RabbitMqEventChaos(IEventChaos):
             Routing keys where chaos will not be applied
         """
         self._set_percentage_simulate_nack(percentage_simulate_nack)
-        self._set_delay_before_even_handler_second(delay_before_even_handler_second)
+        self._set_delay_before_even_handler_second(delay_before_event_handler_second)
         self._set_percentage_simulate_failures(percentage_simulate_failures)
         self._set_protected_routing_keys(protected_routing_keys)
 

@@ -128,7 +128,7 @@ def test_should_consumer_react_to_chaos_with_zero_probability():
     [
         (5, 0, RabbitMqEventChaos(percentage_simulate_nack=1.0)),
         (1, 0, RabbitMqEventChaos(percentage_simulate_failures=1.0)),
-        (1, 1, RabbitMqEventChaos(delay_before_even_handler_second=2.0)),
+        (1, 1, RabbitMqEventChaos(delay_before_event_handler_second=2.0)),
     ],
 )
 def test_should_consumer_react_to_chaos_inputs(

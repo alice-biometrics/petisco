@@ -9,7 +9,7 @@ class IEventConsumer:
     __metaclass__ = ABCMeta
 
     def __repr__(self):
-        return f"IEventConsumer"
+        return "IEventConsumer"
 
     @classmethod
     def info(cls) -> Dict:
@@ -31,6 +31,14 @@ class IEventConsumer:
 
     @abstractmethod
     def add_handler_on_queue(self, queue_name: str, handler: Callable):
+        raise NotImplementedError
+
+    @abstractmethod
+    def unsubscribe_handler_on_queue(self, queue_name: str):
+        raise NotImplementedError
+
+    @abstractmethod
+    def resume_handler_on_queue(self, queue_name: str):
         raise NotImplementedError
 
     @abstractmethod

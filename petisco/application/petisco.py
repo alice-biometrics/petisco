@@ -256,13 +256,14 @@ class Petisco(metaclass=Singleton):
             self.info["repositories"] = info_repositories
 
     def _set_events_configuration(self):
-        # New Approach
         self.event_bus = NotImplementedEventBus()
         self.event_configurer = NotImplementedEventConfigurer()
         self.event_consumer = NotImplementedEventConsumer()
         self.config_events = None
 
-        # Legacy Approach
+        self._legacy_set_events_configuration()
+
+    def _legacy_set_events_configuration(self):
         config_events = self.config.config_events
         if not config_events:
             return
@@ -347,6 +348,10 @@ class Petisco(metaclass=Singleton):
         return Petisco.get_instance().event_bus
 
     @staticmethod
+    def get_event_consumer():
+        return Petisco.get_instance().event_consumer
+
+    @staticmethod
     def get_logger():
         return Petisco.get_instance()._logger
 
@@ -371,7 +376,6 @@ class Petisco(metaclass=Singleton):
         return Petisco.get_instance().info
 
     # TODO Remove deprecated options
-
     @staticmethod
     @deprecated("This method is deprecated. Please, use AppServices.get()")
     def get_app_service(key: str) -> IAppService:
@@ -429,9 +433,11 @@ class Petisco(metaclass=Singleton):
         return PyMongoPersistence().client
 
     @staticmethod
+    @deprecated("This method is deprecated.")
     def get_event_publisher():
         return Petisco.get_instance().event_publisher
 
     @staticmethod
+    @deprecated("This method is deprecated.")
     def get_event_subscriber():
         return Petisco.get_instance().event_subscriber
