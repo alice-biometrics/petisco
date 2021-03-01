@@ -97,7 +97,7 @@ class Persistence(metaclass=Singleton):
                 raise IndexError(
                     f"Database cannot return is_available. {database_name} not exists"
                 )
-            databases = [databases.get(database_name)]
+            databases = {database_name: databases.get(database_name)}
         if len(databases) < 1:
             log_warning("Persistence databases are empty")
             return False
