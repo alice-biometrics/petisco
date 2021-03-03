@@ -33,7 +33,7 @@ What is happening here?
       * We select a number of maximun retries, as well as the time between retries (`x-message-ttl` on `retry.alice.petisco.1.event.user.created.send_mail_handler`queue)
 6. When the *TTL* expires on the retry queue, the message will be requeues automatically with the following parameters:
   * x-dead-letter-exchange: `alice.petisco`
-  * x-dead-letter-routing-key`: `alice.petisco.1.event.user.created.send_mail_handler`
+  * x-dead-letter-routing-key: `alice.petisco.1.event.user.created.send_mail_handler`
 7. Then, the process will return to 2, however in this case, only will be requed to `alice.petisco.1.event.user.created.send_mail_handler` thanks to the additional binding key `retry.alice.petisco.1.event.user.created.send_mail_handler`.
 
 ## Queue Naming
