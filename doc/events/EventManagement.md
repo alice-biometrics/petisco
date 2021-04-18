@@ -62,7 +62,7 @@ If you haven't already done so, install petisco in your development environment:
 pip install petisco
 ```
 
-Run a RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16" instance using default configuration:
+Run a RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> instance using default configuration:
 
 ```console
 docker run -d --rm --name petisco-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
@@ -120,6 +120,7 @@ event = UserCreated(UserId.generate())
 ```
 
 ##### Configure RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
+
 Now we need to configure subscribers on RabbitMQ. For example, we can use the `send_mail_handler` subscriber from the example below.
 
 ```python
