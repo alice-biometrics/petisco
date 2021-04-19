@@ -84,7 +84,6 @@ def given_valid_event_config_with_queue_subscribers():
 @pytest.mark.unit
 def test_should_load_config_event_from_valid_dictionary(given_valid_event_config):
     config_events = ConfigEvents.from_dict(given_valid_event_config)
-
     assert isinstance(config_events, ConfigEvents)
 
 

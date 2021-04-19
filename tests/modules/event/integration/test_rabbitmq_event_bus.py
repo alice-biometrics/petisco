@@ -55,7 +55,6 @@ def test_should_publish_event_with_previous_rabbitmq_configuration():
 @testing_with_rabbitmq
 def test_should_publish_event_only_on_store_queue_with_previous_rabbitmq_configuration():
     event = EventUserCreatedMother.random()
-
     configurer = RabbitMqEventConfigurerMother.default()
     configurer.configure_event(event)
 

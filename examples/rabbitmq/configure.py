@@ -1,13 +1,11 @@
-from examples.rabbitmq.common import ORGANIZATION, SERVICE, subscribers, RETRY_TTL
+from examples.rabbitmq.common import ORGANIZATION, SERVICE, subscribers
 from petisco import RabbitMqConnector, RabbitMqEventConfigurer
 
 
 def configure():
     connector = RabbitMqConnector()
 
-    configurer = RabbitMqEventConfigurer(
-        connector, ORGANIZATION, SERVICE, retry_ttl=RETRY_TTL
-    )
+    configurer = RabbitMqEventConfigurer(connector, ORGANIZATION, SERVICE)
     configurer.configure_subscribers(subscribers)
 
 

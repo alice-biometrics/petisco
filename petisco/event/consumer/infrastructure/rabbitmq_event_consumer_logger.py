@@ -87,8 +87,8 @@ class RabbitMqEventConsumerLogger:
         properties: BasicProperties,
         body: bytes,
         handler: Callable,
-        result: Result,
-        derived_action: ConsumerDerivedAction(),
+        result: Result = None,
+        derived_action: ConsumerDerivedAction() = None,
     ):
         log_message = self._get_base_message(handler)
         event_handler_name = self._get_event_handler_name(handler)
@@ -98,7 +98,10 @@ class RabbitMqEventConsumerLogger:
             "properties": properties,
             "method": method,
             "event_handler": event_handler_name,
-            "result": result,
-            "derived_action": derived_action.to_dict(),
         }
+        if result:
+            message["result"] = result
+        if derived_action:
+            message["derived_action"] = derived_action.to_dict()
+
         self.logger.log(DEBUG, log_message.set_message(message))

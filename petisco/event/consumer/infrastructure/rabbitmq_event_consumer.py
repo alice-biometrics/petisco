@@ -135,6 +135,7 @@ class RabbitMqEventConsumer(IEventConsumer):
             body: bytes,
         ):
             self.printer.print_received_message(method, properties, body)
+            self.consumer_logger.log(method, properties, body, handler)
 
             if self.chaos.nack_simulation(ch, method):
                 self.consumer_logger.log_nack_simulation(
