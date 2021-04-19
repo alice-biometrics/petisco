@@ -64,8 +64,8 @@ def test_should_consumer_react_to_default_no_chaos():
     spy.assert_first_event(event)
     spy.assert_count_by_event_id(event.event_id, 1)
 
-    assert len(logger.get_logging_messages()) == 1
-    logging_message = logger.get_logging_messages()[0]
+    assert len(logger.get_logging_messages()) == 2
+    logging_message = logger.get_logging_messages()[1]
     assert logging_message[0] == DEBUG
     assert logging_message[1]["data"]["message"]["derived_action"] == {}
 
