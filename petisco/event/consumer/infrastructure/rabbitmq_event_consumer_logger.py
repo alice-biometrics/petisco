@@ -87,6 +87,7 @@ class RabbitMqEventConsumerLogger:
         properties: BasicProperties,
         body: bytes,
         handler: Callable,
+        log_activity: str = None,
         result: Result = None,
         derived_action: ConsumerDerivedAction() = None,
     ):
@@ -99,6 +100,8 @@ class RabbitMqEventConsumerLogger:
             "method": method,
             "event_handler": event_handler_name,
         }
+        if log_activity:
+            message["log_activity"] = log_activity
         if result:
             message["result"] = result
         if derived_action:

@@ -24,7 +24,6 @@ from tests.modules.unit.mocks.fake_logger import FakeLogger
 @pytest.mark.integration
 @testing_with_rabbitmq
 def test_should_consumer_react_to_default_no_chaos():
-
     spy = SpyEvents()
     logger = FakeLogger()
 
@@ -73,7 +72,6 @@ def test_should_consumer_react_to_default_no_chaos():
 @pytest.mark.integration
 @testing_with_rabbitmq
 def test_should_consumer_react_to_chaos_with_zero_probability():
-
     spy = SpyEvents()
     logger = FakeLogger()
 
@@ -115,8 +113,8 @@ def test_should_consumer_react_to_chaos_with_zero_probability():
     spy.assert_first_event(event)
     spy.assert_count_by_event_id(event.event_id, 1)
 
-    assert len(logger.get_logging_messages()) == 1
-    logging_message = logger.get_logging_messages()[0]
+    assert len(logger.get_logging_messages()) == 2
+    logging_message = logger.get_logging_messages()[1]
     assert logging_message[0] == DEBUG
     assert logging_message[1]["data"]["message"]["derived_action"] == {}
 
@@ -169,7 +167,6 @@ def test_should_consumer_react_to_chaos_inputs(
 @pytest.mark.integration
 @testing_with_rabbitmq
 def test_should_consumer_react_to_chaos_with_nck_simulation_and_check_logger():
-
     spy = SpyEvents()
     logger = FakeLogger()
 
@@ -221,7 +218,6 @@ def test_should_consumer_react_to_chaos_with_nck_simulation_and_check_logger():
 @pytest.mark.integration
 @testing_with_rabbitmq
 def test_should_consumer_react_to_chaos_with_failure_simulation_and_check_logger_without_subscribers():
-
     spy = SpyEvents()
     spy_dead_letter = SpyEvents()
 
@@ -268,7 +264,6 @@ def test_should_consumer_react_to_chaos_with_failure_simulation_and_check_logger
 @pytest.mark.integration
 @testing_with_rabbitmq
 def test_should_consumer_react_to_chaos_with_failure_simulation_and_check_logger_with_subscribers():
-
     spy = SpyEvents()
     spy_dead_letter = SpyEvents()
 
@@ -329,7 +324,6 @@ def test_should_consumer_react_to_chaos_with_failure_simulation_and_check_logger
 @pytest.mark.integration
 @testing_with_rabbitmq
 def test_should_consumer_react_to_chaos_with_failure_simulation_on_store_and_subscriber_queue():
-
     spy_subscriber = SpyEvents()
     spy_store = SpyEvents()
     spy_dead_letter_subscriber = SpyEvents()
@@ -406,7 +400,6 @@ def test_should_consumer_react_to_chaos_with_failure_simulation_on_store_and_sub
 @pytest.mark.integration
 @testing_with_rabbitmq
 def test_should_consumer_react_to_chaos_with_failure_simulation_only_on_subscriber_queue():
-
     spy_subscriber = SpyEvents()
     spy_store = SpyEvents()
     spy_dead_letter_subscriber = SpyEvents()
@@ -531,19 +524,29 @@ def assert_logger_represents_simulated_failure_scenario(logger, max_retries_allo
         )
 
     def assert_failure_simulator(logging_message):
-        logging_message[1]["data"]["message"]["chaos_action"] == "failure simulated"
+        assert (
+            logging_message[1]["data"]["message"]["chaos_action"] == "failure simulated"
+        )
 
-    assert_send_to_retry(logger.get_logging_messages()[1], 1, False)
+    # filter received_message logs
+    logging_messages = [
+        log_message
+        for log_message in logger.get_logging_messages()
+        if "log_activity" not in log_message[1]["data"]["message"]
+        or log_message[1]["data"]["message"]["log_activity"] != "received_message"
+    ]
+
+    assert_send_to_retry(logging_messages[1], 1, False)
 
     redelivered_count = 2
     for i in range(3, 10, 2):
-        assert_send_to_retry(logger.get_logging_messages()[i], redelivered_count, True)
+        assert_send_to_retry(logging_messages[i], redelivered_count, True)
         redelivered_count += 1
 
     for i in range(2, 10, 2):
-        assert_failure_simulator(logger.get_logging_messages()[i])
+        assert_failure_simulator(logging_messages[i])
 
-    assert_send_to_dead_leter(logger.get_logging_messages()[-2], 6, True)
+    assert_send_to_dead_leter(logging_messages[-2], 6, True)
 
 
 @pytest.mark.integration

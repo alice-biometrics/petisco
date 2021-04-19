@@ -135,13 +135,16 @@ class RabbitMqEventConsumer(IEventConsumer):
             body: bytes,
         ):
             self.printer.print_received_message(method, properties, body)
-            self.consumer_logger.log(method, properties, body, handler)
 
             if self.chaos.nack_simulation(ch, method):
                 self.consumer_logger.log_nack_simulation(
                     method, properties, body, handler
                 )
                 return
+            else:
+                self.consumer_logger.log(
+                    method, properties, body, handler, log_activity="received_message"
+                )
 
             try:
                 event = Event.from_json(body)
@@ -190,7 +193,13 @@ class RabbitMqEventConsumer(IEventConsumer):
                 ch.basic_ack(delivery_tag=method.delivery_tag)
 
             self.consumer_logger.log(
-                method, properties, body, handler, result, derived_action
+                method,
+                properties,
+                body,
+                handler,
+                "computed_message",
+                result,
+                derived_action,
             )
             self.printer.print_separator()
 
