@@ -24,7 +24,7 @@ class ElasticDatabase(IDatabase):
         from elasticsearch import Elasticsearch
 
         self.session = Elasticsearch(
-            [{"host": self.connection.host, "port": self.connection.port}],
+            [f"{self.connection.host}:{self.connection.port}"],
             http_auth=self.connection.http_auth,
         )
 
