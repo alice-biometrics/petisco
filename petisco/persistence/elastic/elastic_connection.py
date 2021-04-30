@@ -6,7 +6,7 @@ class ElasticConnection:
         self,
         username: str = None,
         password: str = None,
-        host: str = "localhost",
+        host: str = "http://localhost",
         port: str = "9200",
     ):
         self.username = username
@@ -27,13 +27,13 @@ class ElasticConnection:
 
     @staticmethod
     def create_local():
-        return ElasticConnection(host="localhost")
+        return ElasticConnection(host="http://localhost")
 
     @staticmethod
     def from_environ():
         return ElasticConnection.create(
             os.getenv("ELASTIC_USERNAME", ""),
             os.getenv("ELASTIC_PASSWORD", ""),
-            os.getenv("ELASTIC_HOST", "localhost"),
+            os.getenv("ELASTIC_HOST", "http://localhost"),
             os.getenv("ELASTIC_PORT", "9200"),
         )
