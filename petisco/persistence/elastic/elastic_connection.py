@@ -37,3 +37,9 @@ class ElasticConnection:
             os.getenv("ELASTIC_HOST", "http://localhost"),
             os.getenv("ELASTIC_PORT", "9200"),
         )
+
+    def to_elastic_format(self):
+        if self.host.startswith("http"):
+            return [f"{self.host}:{self.port}"]
+        else:
+            return [{'host': self.host, 'port': self.port}]
