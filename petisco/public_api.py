@@ -64,6 +64,7 @@ from petisco.security.token_manager.not_implemented_token_manager import (
     NotImplementedTokenManager,
 )
 from petisco.security.token_manager.token_manager import TokenManager
+from petisco.tools.pool_executor import PoolExecutor, Executable
 from petisco.use_case import UseCase
 from petisco.use_case import use_case_handler
 from petisco.controller.controller_handler import controller_handler
@@ -182,8 +183,9 @@ classes = [
     "SignatureAlgorithm",
     "DateParser",
     "value_object_field",
+    "PoolExecutor",
+    "Executable",
 ]
-
 
 from petisco.persistence.fake_database import FakeDatabase
 from petisco.persistence.interface_database import IDatabase
