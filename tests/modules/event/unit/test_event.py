@@ -173,3 +173,36 @@ def test_should_load_json_when_there_is_not_attribute(
     event = Event.from_json(given_json_event_data_without_attributes)
 
     assert not event.to_dict()["data"]["attributes"]
+
+
+@pytest.mark.unit
+def test_should_raise_an_error_when_add_info_id_with_unexpected_type(given_any_name):
+
+    event = UserCreated(name=given_any_name)
+    with pytest.raises(TypeError):
+        event.add_info_id("unexpected_type")
+
+
+@pytest.mark.unit
+def test_should_update_meta_on_an_event_with_info_id(given_any_info_id, given_any_name):
+
+    event = UserCreated(name=given_any_name)
+    event.add_info_id(given_any_info_id)
+    event.update_meta({"device": {"platform": "ios", "model": "x", "version": "14.3"}})
+
+    event_json = event.to_json()
+    agnostic_event = Event.from_json(event_json)
+
+    assert event == agnostic_event
+
+
+@pytest.mark.unit
+def test_should_raise_an_error_when_update_meta_with_unexpected_type(
+    given_any_info_id, given_any_name
+):
+
+    event = UserCreated(name=given_any_name)
+    event.add_info_id(given_any_info_id)
+
+    with pytest.raises(TypeError):
+        event.update_meta("unexpected_type")

@@ -37,6 +37,9 @@ class RabbitMqEventBus(IEventBus):
         if hasattr(self, "info_id"):
             event = event.add_info_id(self.info_id)
 
+        if hasattr(self, "additional_meta"):
+            event = event.update_meta(self.additional_meta)
+
         if not event or not issubclass(event.__class__, Event):
             raise TypeError("Bus only publishes petisco.Event objects")
 

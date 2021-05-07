@@ -188,6 +188,18 @@ class Event:
         self.event_info_id = info_id.to_dict()
         return self
 
+    def update_meta(self, meta: Dict):
+        if not meta:
+            return self
+
+        if not isinstance(meta, Dict):
+            raise TypeError("Event.update_meta() expect a dict")
+        if self.event_meta:
+            self.event_meta = {**self.event_meta, **meta}
+        else:
+            self.event_meta = meta
+        return self
+
 
 Events = List[Event]
 

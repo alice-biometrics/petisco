@@ -21,9 +21,19 @@ class IEventBus:
     def _set_info_id(self, info_id: InfoId):
         self.info_id = info_id
 
+    def _set_additional_meta(self, meta: Dict):
+        self.additional_meta = meta
+
     def with_info_id(self, info_id: InfoId):
         event_bus = copy.copy(self)
         event_bus._set_info_id(info_id)
+        return event_bus
+
+    def with_meta(self, meta: Dict, info_id: InfoId = None):
+        event_bus = copy.copy(self)
+        event_bus._set_additional_meta(meta)
+        if info_id:
+            event_bus._set_info_id(info_id)
         return event_bus
 
     @abstractmethod
