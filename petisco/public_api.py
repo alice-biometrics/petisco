@@ -3,6 +3,10 @@
 
 """Public API of ALiCE Petisco Framework"""
 
+from . import v1
+
+modules = ["v1"]
+
 # Classes
 from petisco.application.app_services import AppServices, AppService
 from petisco.application.config.config import Config
@@ -374,7 +378,8 @@ except (RuntimeError, ImportError):
     slack = []
 
 __all__ = (
-    classes
+    modules
+    + classes
     + persistence
     + controllers_and_use_cases
     + constants
