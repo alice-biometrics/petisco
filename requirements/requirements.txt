@@ -3,7 +3,7 @@ requests==2.24.0
 dataclasses==0.7;python_version<"3.7"
 dataclasses-json==0.5.2
 backports-datetime-fromisoformat>=1.0.0;python_version<"3.7"
-pyjwt==2.0.0
+pyjwt==2.1.0
 cryptography>=2.1.4
 py-healthcheck==1.7.2
 APScheduler==3.6.3
