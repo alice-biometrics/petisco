@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from meiga import isSuccess
 
-from petisco import (
+from petisco.legacy import (
     subscriber_handler,
     RabbitMQEventSubscriber,
     ConfigEventSubscriber,

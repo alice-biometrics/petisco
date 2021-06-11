@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 from time import sleep
 
-from petisco import Event, RabbitMqConnector
-from petisco.domain.value_objects.user_id import UserId
-from petisco.events.publisher.infrastructure.rabbitmq_event_publisher import (
-    RabbitMQEventPublisher,
-)
+from petisco.legacy import Event, RabbitMqConnector, RabbitMQEventPublisher
+from petisco.legacy.domain.value_objects.user_id import UserId
 
 
 class UserCreated(Event):

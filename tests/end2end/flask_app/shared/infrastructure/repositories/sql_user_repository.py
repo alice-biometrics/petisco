@@ -3,9 +3,9 @@ from typing import Any, Callable
 from meiga import Result, Error, isSuccess, Success, Failure
 
 from petisco import Persistence
-from petisco.domain.value_objects.client_id import ClientId
-from petisco.domain.value_objects.name import Name
-from petisco.domain.value_objects.user_id import UserId
+from petisco.legacy.domain.value_objects.client_id import ClientId
+from petisco.legacy.domain.value_objects.name import Name
+from petisco.legacy.domain.value_objects.user_id import UserId
 from tests.end2end.flask_app.shared.domain.repositories.interface_user_repository import (
     IUserRepository,
 )

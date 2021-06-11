@@ -8,11 +8,13 @@ from petisco import (
     UserId,
     AcceptedToken,
 )
-from petisco.domain.value_objects.name import Name
-from petisco.domain.errors.given_input_is_not_valid_error import (
+from petisco.legacy.domain.value_objects.name import Name
+from petisco.legacy.domain.errors.given_input_is_not_valid_error import (
     GivenInputIsNotValidError,
 )
-from petisco.domain.errors.given_name_is_not_valid_error import GivenNameIsNotValidError
+from petisco.legacy.domain.errors.given_name_is_not_valid_error import (
+    GivenNameIsNotValidError,
+)
 from tests.end2end.flask_app.user.application.user_creator import UserCreator
 
 

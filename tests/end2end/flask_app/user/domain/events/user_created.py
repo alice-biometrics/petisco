@@ -1,4 +1,4 @@
-from petisco import Event
+from petisco.legacy import Event
 
 
 class UserCreated(Event):

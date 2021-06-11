@@ -2,11 +2,11 @@ import pytest
 import os
 
 from petisco import Petisco
-from petisco.event.bus.infrastructure.not_implemented_event_bus import (
+from petisco.legacy.event.bus.infrastructure.not_implemented_event_bus import (
     NotImplementedEventBus,
 )
-from petisco.event.bus.infrastructure.rabbitmq_event_bus import RabbitMqEventBus
-from petisco.fixtures.testing_decorators import testing_with_rabbitmq
+from petisco.legacy.event.bus.infrastructure.rabbitmq_event_bus import RabbitMqEventBus
+from petisco.legacy.fixtures.testing_decorators import testing_with_rabbitmq
 
 
 @pytest.mark.end2end

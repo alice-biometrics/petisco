@@ -1,5 +1,5 @@
 from examples.rabbitmq.common import ORGANIZATION, SERVICE, subscribers
-from petisco import RabbitMqConnector, RabbitMqEventConfigurer
+from petisco.legacy import RabbitMqConnector, RabbitMqEventConfigurer
 
 
 def configure():

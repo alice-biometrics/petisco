@@ -25,12 +25,12 @@ jobs:
     runs-on: ${{matrix.os}}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@base
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@base
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: actions/cache@v1
+    - uses: actions/cache@base
       if: startsWith(runner.os, 'macOS')
       with:
         path: ~/Library/Caches/pip

@@ -1,10 +1,10 @@
-from petisco.frameworks.flask.flask_extension_is_installed import (
+from petisco.legacy.frameworks.flask.flask_extension_is_installed import (
     flask_extension_is_installed,
 )
-from petisco.fixtures import *
+from petisco.legacy.fixtures import *
 from .fixtures import *
-from tests.modules.event.fixtures import *
-from tests.modules.unit.controller.fixtures import *
+from tests.modules.legacy.event.fixtures import *
+from tests.modules.legacy.unit.controller.fixtures import *
 
 if "PETISCO_END2END_TESTS" in os.environ:
     from tests.end2end.fixtures import *

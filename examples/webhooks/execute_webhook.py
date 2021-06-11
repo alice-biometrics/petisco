@@ -1,4 +1,4 @@
-from petisco import Webhook, WebhookSender, Secret, SignatureAlgorithm
+from petisco.legacy import Webhook, WebhookSender, Secret, SignatureAlgorithm
 
 webhook = Webhook.create(
     active=True,

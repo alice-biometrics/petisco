@@ -1,6 +1,6 @@
 from meiga import isSuccess, BoolResult
 
-from petisco import Event, UserId, EventSubscriber
+from petisco.legacy import Event, UserId, EventSubscriber
 
 # Configuration
 ORGANIZATION = "alice"

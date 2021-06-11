@@ -1,5 +1,5 @@
 from petisco import INFO, event_from_redis_message
-from petisco.application.petisco import Petisco
+from petisco.legacy.application.petisco import Petisco
 
 
 def redis_event_handler(message):

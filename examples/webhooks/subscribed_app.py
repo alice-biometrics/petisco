@@ -3,7 +3,7 @@ from functools import wraps
 
 from flask import Flask, request, Response
 
-from petisco import Secret, SignatureAlgorithm
+from petisco.legacy import Secret, SignatureAlgorithm
 
 app = Flask(__name__)
 

@@ -1,6 +1,6 @@
 from meiga import Result, Error
 
-from petisco import Event
+from petisco.legacy import Event
 from tests.end2end.flask_app.users_count.application.users_count_increaser import (
     UserCountIncreaser,
 )
