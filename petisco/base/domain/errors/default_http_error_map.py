@@ -1,4 +1,4 @@
-from petisco.legacy.controller.errors.http_error import HttpError
+from petisco.base.application.controller.http_error import HttpError
 from petisco.base.domain.errors.defaults.already_exists import (
     AlreadyExists,
     ClientAlreadyExists,
@@ -12,11 +12,11 @@ from petisco.base.domain.errors.defaults.not_found import (
 )
 
 DEFAULT_HTTP_ERROR_MAP = {
-    NotFound: HttpError(code=404),
-    AlreadyExists: HttpError(code=409),
-    ClientNotFound: HttpError(code=404),
-    ClientAlreadyExists: HttpError(code=409),
-    UserNotFound: HttpError(code=404),
-    UserAlreadyExists: HttpError(code=409),
-    InvalidUuid: HttpError(code=422),
+    NotFound: HttpError(status_code=404),
+    AlreadyExists: HttpError(status_code=409),
+    ClientNotFound: HttpError(status_code=404),
+    ClientAlreadyExists: HttpError(status_code=409),
+    UserNotFound: HttpError(status_code=404),
+    UserAlreadyExists: HttpError(status_code=409),
+    InvalidUuid: HttpError(status_code=422),
 }

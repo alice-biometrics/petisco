@@ -31,7 +31,7 @@ def test_fastapi_controller_should_raise_http_exception_when_failure_result():
         MyController().execute()
 
     assert excinfo.value.status_code == 500
-    assert excinfo.value.detail == "Internal Error"
+    assert excinfo.value.detail == "Unknown Error"
 
 
 @pytest.mark.unit
@@ -54,7 +54,7 @@ def test_fastapi_controller_should_return_mapped_success_handler():
 def test_fastapi_controller_should_raise_fastapi_http_exception_mapped_by_error_map():
     class MyController(FastAPIController):
         class Config:
-            error_map = {NotFound: HttpError(code=404, message="Task not Found")}
+            error_map = {NotFound: HttpError(status_code=404, detail="Task not Found")}
 
         def execute(self) -> BoolResult:
             return Failure(NotFound())
@@ -91,7 +91,7 @@ def test_fastapi_controller_should_success_with_all_configurations_when_success_
         class Config:
             middlewares = [PrintMiddleware]
             success_handler = lambda result: FASTAPI_DEFAULT_RESPONSE  # noqa E731
-            error_map = {NotFound: HttpError(code=404, message="Task not Found")}
+            error_map = {NotFound: HttpError(status_code=404, detail="Task not Found")}
 
         def execute(self) -> BoolResult:
             return isSuccess
@@ -104,7 +104,7 @@ def test_fastapi_controller_should_success_with_all_configurations_when_success_
 @pytest.mark.parametrize(
     "result,expected_http_exception",
     [
-        (isFailure, HTTPException(500, detail="Internal Error")),
+        (isFailure, HTTPException(500, detail="Unknown Error")),
         (Failure(NotFound()), HTTPException(404, detail="Task not Found")),
         (Failure(AlreadyExists()), HTTPException(409, detail="Already Exists")),
         (
@@ -145,7 +145,7 @@ def test_fastapi_controller_should_raise_fastapi_http_exception_with_all_configu
         class Config:
             middlewares = [PrintMiddleware]
             success_handler = lambda result: DEFAULT_RESPONSE_FASTAPI_OK  # noqa E731
-            error_map = {NotFound: HttpError(code=404, message="Task not Found")}
+            error_map = {NotFound: HttpError(status_code=404, detail="Task not Found")}
 
         def execute(self) -> BoolResult:
             return result

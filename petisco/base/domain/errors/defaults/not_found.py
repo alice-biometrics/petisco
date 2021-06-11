@@ -2,15 +2,15 @@ from petisco.base.domain.errors.domain_error import DomainError
 
 
 class NotFound(DomainError):
-    def detail(self) -> str:
-        return f"Not Found{self.get_message()}"
+    def get_specify_detail(self) -> str:
+        return "Not Found"
 
 
 class ClientNotFound(DomainError):
-    def detail(self) -> str:
-        return f"Client Not Found{self.get_message()}"
+    def get_specify_detail(self) -> str:
+        return "Client Not Found"
 
 
 class UserNotFound(DomainError):
-    def detail(self) -> str:
-        return f"User Not Found{self.get_message()}"
+    def get_specify_detail(self) -> str:
+        return "User Not Found"

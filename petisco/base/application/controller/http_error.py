@@ -1,31 +1,17 @@
-from typing import Tuple
+from typing import Optional
 
-from abc import ABCMeta, abstractmethod
+from pydantic import BaseModel, validator
+
+DEFAULT_HTTP_ERROR_DETAIL = "Unknown Error"
 
 
-DEFAULT_HTTP_ERROR_MESSAGE = "Unknown Error"
+class HttpError(BaseModel):
+    status_code: Optional[int] = 500
+    detail: Optional[str] = DEFAULT_HTTP_ERROR_DETAIL
+    type_error: Optional[str] = None
 
-
-class HttpError:
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def __init__(
-        self,
-        message: str = DEFAULT_HTTP_ERROR_MESSAGE,
-        code: int = 500,
-        type_error: str = None,
-    ):
-        self.message = message
-        self.code = code
-        self.type_error = type_error if type_error else self.__class__.__name__
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}: {self.code} | {self.message}"
-
-    def handle(self) -> Tuple[dict, int]:
-        return (
-            {"error": {"type": self.type_error, "message": self.message}},
-            self.code,
-        )
+    @validator("type_error", always=True)
+    def prevent_type_error_none(cls, value):
+        if value is None:
+            value = cls.__name__
+        return value
