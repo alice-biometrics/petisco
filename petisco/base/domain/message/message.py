@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 from typing import Dict
 
+from petisco.base.domain.model.value_object import ValueObject
 from petisco.base.domain.model.uuid import Uuid
 
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
@@ -79,6 +80,17 @@ class Message(metaclass=MetaMessage):
         event_dict = json.loads(message_json)
         return Message.from_dict(event_dict)
 
+    def _get_serialized_attributes(self) -> Dict:
+        attributes = {}
+        for key, attribute in self.attributes.items():
+            serialized_value = attribute
+            if isinstance(attribute, ValueObject):
+                serialized_value = attribute.value
+            if isinstance(attribute, datetime):
+                serialized_value = attribute.strftime(TIME_FORMAT)
+            attributes[key] = serialized_value
+        return attributes
+
     def dict(self) -> Dict:
         data = {
             "data": {
@@ -87,7 +99,7 @@ class Message(metaclass=MetaMessage):
                 "type_message": self.type,
                 "version": self.version,
                 "occurred_on": self.occurred_on.strftime(TIME_FORMAT),
-                "attributes": self.attributes,
+                "attributes": self._get_serialized_attributes(),
                 "meta": self.meta,
             }
         }

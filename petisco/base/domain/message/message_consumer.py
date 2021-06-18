@@ -1,17 +1,14 @@
-from typing import Dict, List, Callable
-from abc import abstractmethod, ABC
+from typing import List, Callable
+from abc import abstractmethod
 
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
+from petisco.base.util.interface import Interface
 
 
-class MessageConsumer(ABC):
+class MessageConsumer(Interface):
     @classmethod
     def __repr__(cls):
         return cls.__name__
-
-    @classmethod
-    def info(cls) -> Dict:
-        return {"name": cls.__name__}
 
     @abstractmethod
     def add_subscribers(self, subscribers: List[MessageSubscriber]):

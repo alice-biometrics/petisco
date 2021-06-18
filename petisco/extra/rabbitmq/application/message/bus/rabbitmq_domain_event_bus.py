@@ -3,12 +3,13 @@ from pika.exceptions import ChannelClosedByBroker
 
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
-from petisco.extra.rabbitmq.application.message.rabbitmq_domain_event_configurer import (
-    RabbitMqDomainEventConfigurer,
+from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
+    RabbitMqMessageConfigurer,
 )
-from petisco.extra.rabbitmq.application.message.rabbitmq_domain_event_queue_name_formatter import (
-    RabbitMqDomainEventQueueNameFormatter,
+from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_queue_name_formatter import (
+    RabbitMqMessageQueueNameFormatter,
 )
+
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 
@@ -17,9 +18,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"publisher-{self.exchange_name}"
-        self.configurer = RabbitMqDomainEventConfigurer(
-            connector, organization, service
-        )
+        self.configurer = RabbitMqMessageConfigurer(connector, organization, service)
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
 
     def publish(self, domain_event: DomainEvent):
@@ -29,7 +28,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
 
         try:
             channel = self.connector.get_channel(self.rabbitmq_key)
-            routing_key = RabbitMqDomainEventQueueNameFormatter.format(
+            routing_key = RabbitMqMessageQueueNameFormatter.format(
                 domain_event, exchange_name=self.exchange_name
             )
 

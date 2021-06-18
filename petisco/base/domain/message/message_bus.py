@@ -2,7 +2,6 @@ import copy
 from typing import Dict, List
 from abc import abstractmethod, ABC
 
-from petisco.legacy.domain.aggregate_roots.info_id import InfoId
 from petisco.base.domain.message.message import Message
 
 
@@ -15,30 +14,18 @@ class MessageBus(ABC):
     def info(cls) -> Dict:
         return {"name": cls.__name__}
 
-    def _set_info_id(self, info_id: InfoId):
-        self.info_id = info_id
-
     def _set_additional_meta(self, meta: Dict):
         self.additional_meta = meta
 
-    def with_info_id(self, info_id: InfoId):
-        event_bus = copy.copy(self)
-        event_bus._set_info_id(info_id)
-        return event_bus
-
-    def with_meta(self, meta: Dict, info_id: InfoId = None):
+    def with_meta(self, meta: Dict):
         if not isinstance(meta, Dict):
             raise TypeError("MessageBus.update_meta() expect a dict")
         event_bus = copy.copy(self)
         event_bus._set_additional_meta(meta)
-        if info_id:
-            event_bus._set_info_id(info_id)
         return event_bus
 
     def get_configured_meta(self) -> Dict:
         configured_meta = {}
-        if hasattr(self, "info_id"):
-            configured_meta = {**configured_meta, **self.info_id.to_dict()}
         if hasattr(self, "additional_meta"):
             configured_meta = {**configured_meta, **self.additional_meta}
         return configured_meta
@@ -52,7 +39,7 @@ class MessageBus(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def stop(self):
+    def close(self):
         raise NotImplementedError
 
     def _check_is_message(self, message: Message):

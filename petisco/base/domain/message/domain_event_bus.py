@@ -18,5 +18,5 @@ class DomainEventBus(MessageBus):
             raise TypeError("DomainEventBus only publishes DomainEvent objects")
 
     @abstractmethod
-    def stop(self):
+    def close(self):
         raise NotImplementedError
