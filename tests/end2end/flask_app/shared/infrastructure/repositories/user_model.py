@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from petisco.persistence.persistence import Persistence
+from petisco.legacy.persistence.persistence import Persistence
 
 Base = Persistence.get_base("petisco-sql")
 

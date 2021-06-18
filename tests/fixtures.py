@@ -2,9 +2,11 @@ import os
 
 import pytest
 
-from petisco import Event, EventId, NotifierMessage, InfoId, Petisco
-from petisco.domain.value_objects.user_id import UserId
-from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
+from petisco.legacy import Event, EventId, NotifierMessage, InfoId, Petisco
+from petisco.legacy.domain.value_objects.user_id import UserId
+from petisco.legacy.notifier.domain.notifier_exception_message import (
+    NotifierExceptionMessage,
+)
 
 
 class TrackedEventsSpy:

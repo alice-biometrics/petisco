@@ -1,7 +1,7 @@
 import os
 
-from petisco.notifier.domain.notifier_message import NotifierMessage
-from petisco.notifier.infrastructure.slack.slack_notifier import SlackNotifier
+from petisco.legacy.notifier.domain.notifier_message import NotifierMessage
+from petisco.legacy.notifier.infrastructure.slack.slack_notifier import SlackNotifier
 
 token = os.environ["SLACK_API_TOKEN"]
 

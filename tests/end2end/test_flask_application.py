@@ -1,8 +1,8 @@
 import pytest
 
-from petisco.domain.value_objects.correlation_id import CorrelationId
-from petisco.domain.value_objects.user_id import UserId
-from petisco.frameworks.flask.flask_extension_is_installed import (
+from petisco.legacy.domain.value_objects.correlation_id import CorrelationId
+from petisco.legacy.domain.value_objects.user_id import UserId
+from petisco.legacy.frameworks.flask.flask_extension_is_installed import (
     flask_extension_is_installed,
 )
 

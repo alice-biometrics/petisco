@@ -2,7 +2,7 @@ from time import sleep
 
 import pytest
 
-from petisco.frameworks.flask.flask_extension_is_installed import (
+from petisco.legacy.frameworks.flask.flask_extension_is_installed import (
     flask_extension_is_installed,
 )
 

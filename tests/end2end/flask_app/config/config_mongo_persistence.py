@@ -1,9 +1,9 @@
 import os
 
-from petisco.persistence.pymongo.pymongo_persistence_config import (
+from petisco.legacy.persistence.pymongo.pymongo_persistence_config import (
     PyMongoPersistenceConfig,
 )
-from petisco.persistence.pymongo.pymongo_persistence_connector import (
+from petisco.legacy.persistence.pymongo.pymongo_persistence_connector import (
     PyMongoPersistenceConnector,
 )
 

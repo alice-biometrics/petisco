@@ -2,7 +2,7 @@ from typing import Dict
 
 from meiga import Result, Error, NotImplementedMethodError
 
-from petisco.application.interface_repository import IRepository
+from petisco.legacy.application.interface_repository import IRepository
 
 
 class IUsersCountRepository(IRepository):

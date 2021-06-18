@@ -1,0 +1,4 @@
+models:
+  client: tests.modules.legacy.persistence.ymls.sql.models.ClientModel
+  user: tests.modules.legacy.persistence.ymls.sql.models.UserModel
+  product: tests.modules.legacy.persistence.ymls.sql.models.ProductModel

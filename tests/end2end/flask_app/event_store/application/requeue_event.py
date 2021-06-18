@@ -1,4 +1,4 @@
-from petisco import Event
+from petisco.legacy import Event
 from meiga import BoolResult, isSuccess
 
 

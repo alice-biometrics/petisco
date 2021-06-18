@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from petisco import StringValueObject
+from petisco.legacy import StringValueObject
 from meiga import Error
 
 

@@ -1,6 +1,6 @@
 from meiga import BoolResult
 
-from petisco import Event
+from petisco.legacy import Event
 
 
 def send_mail_on_user_created(event: Event) -> BoolResult:

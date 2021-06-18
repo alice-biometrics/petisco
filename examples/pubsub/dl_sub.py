@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from meiga import isSuccess
 
-from petisco import (
+from petisco.legacy import (
     Event,
     RabbitMQEventSubscriber,
     RabbitMQEventPublisher,
@@ -11,11 +11,11 @@ from petisco import (
 )
 
 a_publisher = RabbitMQEventPublisher(
-    connector=RabbitMqConnector(), organization="acme", service="a", topic=f"a-events"
+    connector=RabbitMqConnector(), organization="acme", service="a", topic="a-events"
 )
 
 b_publisher = RabbitMQEventPublisher(
-    connector=RabbitMqConnector(), organization="acme", service="b", topic=f"b-events"
+    connector=RabbitMqConnector(), organization="acme", service="b", topic="b-events"
 )
 
 

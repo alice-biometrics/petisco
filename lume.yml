@@ -9,11 +9,13 @@ steps:
     - rm -rf output
     - find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
   build:
-    run: pip install -e .[flask,sqlalchemy,redis,rabbitmq,pymongo,elastic]
+    run: pip install -e .[flask,sqlalchemy,redis,rabbitmq,pymongo,elastic,fixtures,fastapi]
   lint:
     run:
     - black .
     - flake8 petisco
+  coverage:
+    run: pytest -c pytest.coverage.ini
   test:
     run: pytest
   test-end2end:

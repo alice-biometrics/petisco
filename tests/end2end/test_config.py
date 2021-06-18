@@ -1,6 +1,6 @@
 import pytest
 
-from petisco.application.config.config import Config
+from petisco.legacy.application.config.config import Config
 
 
 @pytest.mark.end2end

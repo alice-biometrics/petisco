@@ -7,7 +7,7 @@ from examples.rabbitmq.common import (
     subscribers,
     event_store,
 )
-from petisco import RabbitMqConnector, RabbitMqEventConsumer, LoggingBasedLogger
+from petisco.legacy import RabbitMqConnector, RabbitMqEventConsumer, LoggingBasedLogger
 
 
 def get_logger():

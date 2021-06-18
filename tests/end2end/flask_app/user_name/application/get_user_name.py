@@ -1,7 +1,7 @@
 from meiga import Result, Error, Success
 
 from petisco import UseCase, use_case_handler, InfoId, Repositories
-from petisco.domain.value_objects.name import Name
+from petisco.legacy.domain.value_objects.name import Name
 from tests.end2end.flask_app.shared.domain.repositories.interface_user_repository import (
     IUserRepository,
 )
