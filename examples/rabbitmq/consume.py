@@ -5,9 +5,10 @@ from examples.rabbitmq.common import (
     SERVICE,
     MAX_RETRIES,
     subscribers,
-    event_store,
+    message_store,
 )
-from petisco.legacy import RabbitMqConnector, RabbitMqEventConsumer, LoggingBasedLogger
+from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqMessageConsumer
+from petisco.legacy import LoggingBasedLogger
 
 
 def get_logger():
@@ -19,11 +20,11 @@ def get_logger():
 
 
 connector = RabbitMqConnector()
-consumer = RabbitMqEventConsumer(
+consumer = RabbitMqMessageConsumer(
     connector, ORGANIZATION, SERVICE, MAX_RETRIES, logger=get_logger()
 )
 consumer.add_subscribers(subscribers)
-consumer.add_handler_on_store(event_store)
+consumer.add_handler_on_store(message_store)
 
 for subscriber in subscribers:
     print(subscriber)

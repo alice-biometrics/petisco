@@ -4,15 +4,19 @@
 
 ## Getting Started
 
-Let's image we are working for an organization (e.g `alice`) and developing a new service (e.g `petisco`). 
+Let's imagine that we are developing a system for an organization (e.g `acme`) and we need a new service (e.g `registration`)
+that by using an event and subscriber architecture will perform a simple user registration process.
 
-We want to publish an event when the user is created (`UserCreated`). 
+We want to publish a domain event when the user create an account (`UserCreated`). 
+The `registration` service will react to this event storing the date (metrics are important) and performing some 
+derived action (e.g `send_mail_handler`).
+
 This event will be consumed by:
  * **subscribers**: derived actions that are executed from associated events. 
  
 In our example, we are going to use two subscribers:
 
-* `event_store`: general subscriber. It can be useful for saving all events on Elastic, Prometheus, etc...
+* `event_store`: general subscriber. It can be useful for saving all domain events.
 * `send_mail_handler`: It will send a mail on `UserCreated` event.
 
 The following figure represents this use case:
@@ -21,20 +25,20 @@ The following figure represents this use case:
 
 What is happening here?
 
-1. The `EventBus` publishes the `UserCreated` domain event. 
-  * The routing key of this event is `alice.petisco.1.event.user.created` 
-2. The exchange `alice.petisco` (*<organization>.<service>*) redirect the message using the binding keys (*green*)
+1. The `DomainEventBus` publishes the `UserCreated` domain event. 
+   * The routing key of this event is `acme.registration.1.event.user.created` 
+2. The exchange `acme.registration` (*<organization>.<service>*) redirect the message using the binding keys (*green*)
 3. The `store` queue receives the event perfectly :metal:
-4. The `alice.petisco.1.event.user.created.send_mail_handler` queue gets the `UserCreated` event.
+4. The `acme.registration.1.event.user.created.send_mail_handler` queue gets the `UserCreated` event.
 5. The `send_mail_handler` consumer obtains the event perform the action:
    * If it is success: perfect, everything works nice and the queue will get an `ack` :thumbsup:
    * Otherwise, if it is a failure: something is not working as expected or maybe we are suffering from overload. :fire:
-      * We need to recover from error, let's `ack` to `alice.petisco.1.event.user.created.send_mail_handler` and requeue the info to the retry exchange (`retry.alice.petisco`).
-      * We select a number of maximun retries, as well as the time between retries (`x-message-ttl` on `retry.alice.petisco.1.event.user.created.send_mail_handler`queue)
+      * We need to recover from error, let's `ack` to `acme.registration.1.event.user.created.send_mail_handler` and requeue the info to the retry exchange (`retry.acme.registration`).
+      * We select a number of maximun retries, as well as the time between retries (`x-message-ttl` on `retry.acme.registration.1.event.user.created.send_mail_handler`queue)
 6. When the *TTL* expires on the retry queue, the message will be requeues automatically with the following parameters:
-  * x-dead-letter-exchange: `alice.petisco`
-  * x-dead-letter-routing-key: `alice.petisco.1.event.user.created.send_mail_handler`
-7. Then, the process will return to 2, however in this case, only will be requed to `alice.petisco.1.event.user.created.send_mail_handler` thanks to the additional binding key `retry.alice.petisco.1.event.user.created.send_mail_handler`.
+   * x-dead-letter-exchange: `acme.registration`
+   * x-dead-letter-routing-key: `acme.registration.1.event.user.created.send_mail_handler`
+7. Then, the process will return to 2, however in this case, only will be requed to `acme.registration.1.event.user.created.send_mail_handler` thanks to the additional binding key `retry.acme.registration.1.event.user.created.send_mail_handler`.
 
 ## Queue Naming
 
@@ -56,7 +60,7 @@ where:
 
 Ok, let's execute the following scripts :point_down:
 
-If you haven't already done so, install petisco in your development environment:
+If you haven't already done so, install `petisco` in your development environment:
 
 ```console
 pip install petisco
@@ -76,12 +80,6 @@ python examples/rabbitmq/configure.py
 ```
 
 You can check your RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> on `http://localhost:15672/` (guest:guest)
-
-**Exchanges:**
-![Exchanges](rabbitmq_queues.jpeg)
-
-**Queues:**
-![Queues](rabbitmq_exchanges.jpeg)
 
 Then, you can start consuming events from queues with:
 
@@ -103,86 +101,87 @@ python examples/rabbitmq/publish.py
 Ok, there is the code :point_down:
 
 ##### Create a domain event
-Create an `event` in petisco is as easy as:
+Define a `DomainEvent` in petisco is as easy as:
 
 ```python
-from petisco import Event, UserId
+from petisco import DomainEvent, Uuid
 
-class UserCreated(Event):
-    user_id: UserId
+class UserCreated(DomainEvent):
+    user_id: Uuid
 
-    def __init__(self, user_id: UserId):
-        self.user_id = user_id
-        super().__init__()
-
-
-event = UserCreated(UserId.generate())
+domain_event = UserCreated(user_id=Uuid.v4())
 ```
 
 ##### Configure RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
 
-Now we need to configure subscribers on RabbitMQ. For example, we can use the `send_mail_handler` subscriber from the example below.
+Now, you need to configure subscribers on RabbitMQ. For example, we can use the `send_mail_handler` subscriber from the example below.
 
 ```python
-from petisco import RabbitMqConnector, RabbitMqEventConfigurer, Event
+from petisco import DomainEvent, MessageSubscriber
+from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqMessageConfigurer
 from meiga import Result, Error, isSuccess, isFailure
 
-connector = RabbitMqConnector()
-organization = "alice"
-service = "petisco"
-retry_ttl = 5000 # default
+def send_mail_handler(domain_event: DomainEvent) -> Result[bool, Error]:
+  # Do your stuff here
+  return isSuccess # if fails, returns isFailure
 
-configurer = RabbitMqEventConfigurer(connector, organization, service, retry_ttl=retry_ttl)
+# Define Subscribers
+domain_event = UserCreated(user_id=Uuid.v4())
+subscribers = [MessageSubscriber.from_message(domain_event, [send_mail_handler])]  
+
+# Configure RabbitMQ Infrastructure with defined subscribers
+connector = RabbitMqConnector()
+organization = "acme"
+service = "registration"
+configurer = RabbitMqMessageConfigurer(connector, organization, service)
+configurer.configure_subscribers(subscribers)
+```
+
+##### Start Consuming DomainEvents from RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
+
+```python
+from petisco import MessageSubscriber
+from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqMessageConsumer
+from meiga import Result, Error, isSuccess, isFailure
+
 
 def send_mail_handler(event: Event) -> Result[bool, Error]:
   # Do your stuff here
   return isSuccess # if fails, returns isFailure
 
-event = UserCreated(UserId.generate())
 
-subscribers = [EventSubscriber(event, [send_mail_handler])]  
-configurer.configure_subscribers(subscribers)
-```
+# Define Subscribers
+domain_event = UserCreated(user_id=Uuid.v4())
+subscribers = [MessageSubscriber.from_message(domain_event, [send_mail_handler])]  
 
-##### Start Consuming Events from RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
-
-```python
+# Define RabbitMQ Consumer and start
 
 organization = "alice"
 service = "petisco"
 max_retries = 5
-
 connector = RabbitMqConnector()
-
-consumer = RabbitMqEventConsumer(connector, organization, service, max_retries)
-
-def send_mail_handler(event: Event) -> Result[bool, Error]:
-  # Do your stuff here
-  return isSuccess # if fails, returns isFailure
-
-event = UserCreated(UserId.generate())
-subscribers = [EventSubscriber(event, [send_mail_handler])]  
-
+consumer = RabbitMqMessageConsumer(connector, organization, service, max_retries)
 consumer.add_subscribers(subscribers)
 consumer.start()
 ```
 
-##### Publish Events with the EventBus
+##### Publish DomainEvents with the DomainEventBus
 
 
 ```python
+from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqDomainEventBus
+
 connector = RabbitMqConnector()
 organization = "alice"
 service = "petisco"
+bus = RabbitMqDomainEventBus(connector, organization, service)
 
-bus = RabbitMqEventBus(connector, organization, service)
+domain_event = UserCreated(user_id=Uuid.v4())
 
-event = UserCreated()
-
-bus.publish(event)
+bus.publish(domain_event)
 ```
 
-## Event Chaos
+## Event Chaos (It is not migrated yet)
 
 You can add a `IEventChaos` object as collaborator on a `RabbitMqConsumer`.
 As example, petisco provides the `RabbitMqEventChaos` implementation, where configurable parameters are the following:
@@ -197,7 +196,7 @@ As example, petisco provides the `RabbitMqEventChaos` implementation, where conf
     - Configurable with `EVENT_CHAOS_PROTECTED_ROUTING_KEYS` envvar (e.g `"dead_letter.store,dl-legacy"`).  
     
 
-## Tricks
+## Tricks (It is not migrated yet)
 
 If you don't want to enable RabbitMq connection in some use case, you can use the following environment variable:
 

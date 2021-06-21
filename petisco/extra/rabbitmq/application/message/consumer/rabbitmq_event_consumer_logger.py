@@ -4,22 +4,19 @@ from meiga import Result
 from pika import BasicProperties
 from pika.spec import Basic
 
+from petisco.base.domain.message.consumer_derived_action import ConsumerDerivedAction
 from petisco.legacy.logger.interface_logger import ILogger, DEBUG
 from petisco.legacy.logger.log_message import LogMessage
 from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
 
-from petisco.legacy.event.consumer.domain.consumer_derived_action import (
-    ConsumerDerivedAction,
-)
 
-
-class RabbitMqEventConsumerLogger:
+class RabbitMqMessageConsumerLogger:
     def __init__(self, logger: Optional[ILogger] = NotImplementedLogger()):
         self.logger = logger
 
     def _get_base_message(self, handler: Callable):
         return LogMessage(
-            layer="rabbitmq_event_consumer", operation=f"{handler.__name__}"
+            layer="rabbitmq_message_consumer", operation=f"{handler.__name__}"
         )
 
     def _get_event_handler_name(self, handler: Callable):
@@ -107,6 +104,6 @@ class RabbitMqEventConsumerLogger:
         if result:
             message["result"] = result
         if derived_action:
-            message["derived_action"] = derived_action.to_dict()
+            message["derived_action"] = derived_action.dict()
 
         self.logger.log(DEBUG, log_message.set_message(message))

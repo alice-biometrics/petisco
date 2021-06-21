@@ -20,7 +20,8 @@ if is_pika_available():
 
     rabbitmq = [
         "get_available_bus_dependencies",
-        "RabbitMqConnector" "RabbitMqDeclarer",
+        "RabbitMqConnector",
+        "RabbitMqDeclarer",
         "RabbitMqDomainEventBus",
         "RabbitMqMessageConfigurer",
         "QueueConfig",

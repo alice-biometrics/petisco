@@ -1,53 +1,57 @@
 from meiga import isSuccess, BoolResult
 
-from petisco.legacy import Event, UserId, EventSubscriber
+from petisco import DomainEvent, MessageSubscriber, Uuid, Message
 
-# Configuration
-ORGANIZATION = "alice"
-SERVICE = "petisco"
+# Configuration #################################################
+
+ORGANIZATION = "acme"
+SERVICE = "registration"
 RETRY_TTL = 5000  # default
 MAX_RETRIES = 5  # default
 
+# DomainEvent to inform when a user creates an account ##########
 
-class UserCreated(Event):
-    user_id: UserId
 
-    def __init__(self, user_id: UserId):
-        self.user_id = user_id
-        super().__init__()
+class UserCreated(DomainEvent):
+    user_id: Uuid
 
     @staticmethod
     def random():
-        return UserCreated(UserId.generate())
+        return UserCreated(user_id=Uuid.v4())
 
 
-def send_mail_handler(event: Event) -> BoolResult:
-    print(f"> Send email on {event}")
+# Definition of DomainEvent handlers ############################
+
+
+def send_mail_handler(domain_event: DomainEvent) -> BoolResult:
+    print(f"> Send email on {domain_event}")
     return isSuccess  # if fails, returns isFailure
 
 
-def send_sms_handler(event: Event) -> BoolResult:
-    print(f"> Send sms on {event}")
+def send_sms_handler(domain_event: DomainEvent) -> BoolResult:
+    print(f"> Send sms on {domain_event}")
     return isSuccess  # if fails, returns isFailure
 
 
-def offer_promotion_handler(event: Event) -> BoolResult:
-    print(f"> Offer promotion on {event}")
+def offer_promotion_handler(domain_event: DomainEvent) -> BoolResult:
+    print(f"> Offer promotion on {domain_event}")
     return isSuccess  # if fails, returns isFailure
 
 
-def event_store(event: Event) -> BoolResult:
-    print(f"> Store {event}")
+def message_store(message: Message) -> BoolResult:
+    print(f"> Store {message}")
     return isSuccess
 
 
+# Define subscribers ############################################
+
+sample_user_created_message = UserCreated.random()
 subscribers = [
-    EventSubscriber(
-        event_name="UserCreated",
-        event_version=1,
+    MessageSubscriber.from_message(
+        message=sample_user_created_message,
         handlers=[send_mail_handler, send_sms_handler],
     ),
-    EventSubscriber(
-        event_name="UserCreated", event_version=1, handlers=[offer_promotion_handler]
+    MessageSubscriber.from_message(
+        message=sample_user_created_message, handlers=[offer_promotion_handler]
     ),
 ]

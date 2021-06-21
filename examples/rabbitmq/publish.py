@@ -1,10 +1,9 @@
 from examples.rabbitmq.common import ORGANIZATION, SERVICE, UserCreated
-from petisco.legacy import RabbitMqConnector
-from petisco.legacy.event.bus.infrastructure.rabbitmq_event_bus import RabbitMqEventBus
+from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqDomainEventBus
 
 connector = RabbitMqConnector()
 
-bus = RabbitMqEventBus(connector, ORGANIZATION, SERVICE)
+bus = RabbitMqDomainEventBus(connector, ORGANIZATION, SERVICE)
 
 event = UserCreated.random()
 
