@@ -13,5 +13,5 @@ class NotImplementedMessageBus(MessageBus):
         meta = self.get_configured_meta()
         _ = message.update_meta(meta)
 
-    def stop(self):
+    def close(self):
         pass

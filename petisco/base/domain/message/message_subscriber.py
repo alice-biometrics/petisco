@@ -1,31 +1,47 @@
-from typing import List, Callable
+import re
+from abc import abstractmethod
+from typing import List, Type
 
-from dataclasses import dataclass
+from meiga import BoolResult
 
+from petisco.base.domain.message.message_bus import MessageBus
+from petisco.base.domain.message.not_implemented_message_bus import (
+    NotImplementedMessageBus,
+)
 from petisco.base.domain.message.message import Message
+from petisco.base.domain.message.message_subscriber_info import MessageSubscriberInfo
+from petisco.base.util.interface import Interface
 
 
-@dataclass
-class MessageSubscriber:
-    message_name: str
-    message_version: int
-    message_type: str
-    handlers: List[Callable]
+class MessageSubscriber(Interface):
+    def __init__(
+        self,
+        domain_event_bus: MessageBus = NotImplementedMessageBus(),
+        command_bus: MessageBus = NotImplementedMessageBus(),
+    ):
+        self.domain_event_bus = domain_event_bus
+        self.command_bus = command_bus
 
-    def get_handlers_names(self) -> List[str]:
-        return [handler.__name__ for handler in self.handlers]
+    @abstractmethod
+    def subscribed_to(self) -> List[Type[Message]]:
+        raise NotImplementedError()
 
-    def get_full_handlers_path(self) -> List[str]:
-        return [f"{handler.__module__}.{handler.__name__}" for handler in self.handlers]
+    @abstractmethod
+    def handle(self, message: Message) -> BoolResult:
+        raise NotImplementedError()
 
-    def __repr__(self):
-        return f"MessageSubscriber ({self.message_name}.{self.message_version} ({self.message_type}) -> {self.get_full_handlers_path()})"
+    def get_subscriber_name(self) -> str:
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__).lower()
 
-    @staticmethod
-    def from_message(message: Message, handlers: List[Callable]):
-        return MessageSubscriber(
-            message_name=message.name,
-            message_version=message.version,
-            message_type=message.type,
-            handlers=handlers,
-        )
+    def get_message_subscribers_info(self) -> List[MessageSubscriberInfo]:
+        subscribers_info = []
+        for class_type in self.subscribed_to():
+            subscribers_info.append(MessageSubscriberInfo.from_class_type(class_type))
+        return subscribers_info
+
+    @classmethod
+    def __repr__(cls):
+        subscriptions = cls.subscribed_to(cls)
+        if not isinstance(subscriptions, list):
+            subscriptions = [subscriptions]
+        return f"{cls.__name__}: subscribed_to {[class_type.__name__ for class_type in subscriptions]}"

@@ -1,6 +1,5 @@
 from typing import List
 
-from petisco.base.domain.message.message import Message
 from petisco.base.domain.message.message_configurer import MessageConfigurer
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_store_configurer import (
@@ -32,18 +31,6 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
 
     def configure(self):
         self.configure_subscribers([])
-
-    def configure_message(self, message: Message):
-        self.configure_subscribers(
-            [
-                MessageSubscriber(
-                    message_name=message.name,
-                    message_version=message.version,
-                    message_type=message.type,
-                    handlers=[],
-                )
-            ]
-        )
 
     def configure_subscribers(self, subscribers: List[MessageSubscriber]):
         if subscribers is None:

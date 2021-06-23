@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Type
 
 from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_subscriber_queue_name_formatter import (
     RabbitMqMessageSubscriberQueueNameFormatter,
@@ -83,22 +83,29 @@ class RabbitMqMessageSubcribersConfigurer:
         exchange_name: str,
         retry_exchange_name: str,
         dead_letter_exchange_name: str,
-        subscribers: List[MessageSubscriber],
+        subscribers: List[Type[MessageSubscriber]],
     ):
 
-        for subscriber in subscribers:
-            base_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format(
-                subscriber, exchange_name=exchange_name
-            )
-            base_retry_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_retry(
-                subscriber, exchange_name=exchange_name
-            )
-            base_dead_letter_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
-                subscriber, exchange_name=exchange_name
-            )
-            routing_key = base_queue_name
+        for SubscriberClass in subscribers:
+            subscriber = SubscriberClass()
+            for subscriber_info in subscriber.get_message_subscribers_info():
 
-            for suffix in subscriber.get_handlers_names():
+                if subscriber_info.message_type == "message":
+                    # if subscriber_info is subscribed to message it will be consuming from store queue
+                    break
+
+                base_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format(
+                    subscriber_info, exchange_name=exchange_name
+                )
+                base_retry_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_retry(
+                    subscriber_info, exchange_name=exchange_name
+                )
+                base_dead_letter_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
+                    subscriber_info, exchange_name=exchange_name
+                )
+                routing_key = base_queue_name
+                suffix = subscriber.get_subscriber_name()
+
                 queue_name = f"{base_queue_name}.{suffix}"
                 retry_queue_name = f"{base_retry_queue_name}.{suffix}"
                 dead_letter_queue_name = f"{base_dead_letter_queue_name}.{suffix}"

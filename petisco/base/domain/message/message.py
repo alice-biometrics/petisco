@@ -105,6 +105,10 @@ class Message(metaclass=MetaMessage):
         }
         return data
 
+    @classmethod
+    def to_str(cls, type: str = "message"):
+        return f"{cls.__name__} [{cls.message_id.value} ({type}), {cls.name} (v{cls.version}), {cls.occurred_on}, attributes={cls.attributes}]"
+
     def json(self):
         return json.dumps(self.dict())
 
@@ -117,4 +121,4 @@ class Message(metaclass=MetaMessage):
 
     @classmethod
     def __repr__(cls):
-        return f"{cls.__name__} [{cls.message_id.value} ({cls.type}), {cls.name} (v{cls.version}), {cls.occurred_on}, attributes={cls.attributes}]"
+        return cls.to_str()

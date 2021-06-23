@@ -17,6 +17,9 @@ if is_pika_available():
     from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_message_consumer import (
         RabbitMqMessageConsumer,
     )
+    from petisco.extra.rabbitmq.application.message.bus.rabbitmq_command_bus import (
+        RabbitMqCommandBus,
+    )
 
     rabbitmq = [
         "get_available_bus_dependencies",
@@ -26,6 +29,7 @@ if is_pika_available():
         "RabbitMqMessageConfigurer",
         "QueueConfig",
         "RabbitMqMessageConsumer",
+        "RabbitMqCommandBus",
     ]
 else:
     from petisco.extra.rabbitmq.dependencies import (

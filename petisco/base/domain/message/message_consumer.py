@@ -20,9 +20,9 @@ class MessageConsumer(Interface):
     ):
         raise NotImplementedError
 
-    @abstractmethod
-    def add_handler_on_store(self, handler: Callable):
-        raise NotImplementedError
+    # @abstractmethod
+    # def add_handler_on_store(self, handler: Callable):
+    #     raise NotImplementedError
 
     @abstractmethod
     def add_handler_on_queue(self, queue_name: str, handler: Callable):

@@ -1,12 +1,6 @@
 import logging
 
-from examples.rabbitmq.common import (
-    ORGANIZATION,
-    SERVICE,
-    MAX_RETRIES,
-    subscribers,
-    message_store,
-)
+from examples.rabbitmq.common import ORGANIZATION, SERVICE, MAX_RETRIES, subscribers
 from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqMessageConsumer
 from petisco.legacy import LoggingBasedLogger
 
@@ -24,9 +18,9 @@ consumer = RabbitMqMessageConsumer(
     connector, ORGANIZATION, SERVICE, MAX_RETRIES, logger=get_logger()
 )
 consumer.add_subscribers(subscribers)
-consumer.add_handler_on_store(message_store)
 
 for subscriber in subscribers:
-    print(subscriber)
+    print(subscriber.__repr__())
+print("")
 
 consumer.start()

@@ -1,6 +1,16 @@
+from typing import List, Type
+
 from meiga import isSuccess, BoolResult
 
-from petisco import DomainEvent, MessageSubscriber, Uuid, Message
+from petisco import (
+    DomainEvent,
+    Uuid,
+    Message,
+    DomainEventSubscriber,
+    AllMessageSubscriber,
+    CommandSubscriber,
+    Command,
+)
 
 # Configuration #################################################
 
@@ -9,49 +19,68 @@ SERVICE = "registration"
 RETRY_TTL = 5000  # default
 MAX_RETRIES = 5  # default
 
-# DomainEvent to inform when a user creates an account ##########
+# DomainEvents and Commands
 
 
 class UserCreated(DomainEvent):
     user_id: Uuid
 
-    @staticmethod
-    def random():
-        return UserCreated(user_id=Uuid.v4())
+
+class UserConfirmed(DomainEvent):
+    user_id: Uuid
 
 
-# Definition of DomainEvent handlers ############################
+class UserPersisted(DomainEvent):
+    user_id: Uuid
 
 
-def send_mail_handler(domain_event: DomainEvent) -> BoolResult:
-    print(f"> Send email on {domain_event}")
-    return isSuccess  # if fails, returns isFailure
+class PersistUser(Command):
+    user_id: Uuid
 
 
-def send_sms_handler(domain_event: DomainEvent) -> BoolResult:
-    print(f"> Send sms on {domain_event}")
-    return isSuccess  # if fails, returns isFailure
+# Domain Events Subscribers
 
 
-def offer_promotion_handler(domain_event: DomainEvent) -> BoolResult:
-    print(f"> Offer promotion on {domain_event}")
-    return isSuccess  # if fails, returns isFailure
+class SendMailOnUserCreated(DomainEventSubscriber):
+    def subscribed_to(self) -> List[Type[DomainEvent]]:
+        return [UserCreated]
+
+    def handle(self, domain_event: DomainEvent) -> BoolResult:
+        print(f"> Send email on {domain_event.dict()}\n")
+        return isSuccess  # if fails, returns isFailure
 
 
-def message_store(message: Message) -> BoolResult:
-    print(f"> Store {message}")
-    return isSuccess
+class SendSmsOnUserConfirmed(DomainEventSubscriber):
+    def subscribed_to(self) -> List[Type[DomainEvent]]:
+        return [UserConfirmed]
+
+    def handle(self, domain_event: DomainEvent) -> BoolResult:
+        print(f"> Send sms on {domain_event.dict()}\n")
+        return isSuccess  # if fails, returns isFailure
 
 
-# Define subscribers ############################################
+class StoreOnMessage(AllMessageSubscriber):
+    def handle(self, message: Message) -> BoolResult:
+        print(f"> Store {message.dict()}\n")
+        return isSuccess  # if fails, returns isFailure
 
-sample_user_created_message = UserCreated.random()
+
+# Command Subscribers (or Command Handlers)
+
+
+class PersistUserHandler(CommandSubscriber):
+    def subscribed_to(self) -> Type[Command]:
+        return PersistUser
+
+    def handle(self, command: PersistUser) -> BoolResult:
+        print(f"> PersistUser on {command.dict()}\n")
+        # self.domain_event_bus.publish(UserPersisted(user_id=command.user_id))
+        return isSuccess  # if fails, returns isFailure
+
+
 subscribers = [
-    MessageSubscriber.from_message(
-        message=sample_user_created_message,
-        handlers=[send_mail_handler, send_sms_handler],
-    ),
-    MessageSubscriber.from_message(
-        message=sample_user_created_message, handlers=[offer_promotion_handler]
-    ),
+    SendMailOnUserCreated,
+    StoreOnMessage,
+    SendSmsOnUserConfirmed,
+    PersistUserHandler,
 ]

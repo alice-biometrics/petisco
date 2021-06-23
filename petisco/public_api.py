@@ -8,6 +8,10 @@ from petisco.base.application.controller.http_error import HttpError
 from petisco.base.application.controller.result_mapper import ResultMapper
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.application.dependency_injection.injector import Injector
+from petisco.base.domain.message.all_message_subscriber import AllMessageSubscriber
+from petisco.base.domain.message.command_bus import CommandBus
+from petisco.base.domain.message.command_subscriber import CommandSubscriber
+from petisco.base.domain.message.domain_event_subscriber import DomainEventSubscriber
 from petisco.base.domain.model.aggregate_root import AggregateRoot
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
@@ -49,6 +53,7 @@ from petisco.base.application.use_case.use_case_uncontrolled_error import (
 
 # TODO permit use from petisco.fastapi import *
 # from petisco.extra import fastapi
+from petisco.base.util.interface import Interface
 
 base = [
     "Controller",
@@ -77,6 +82,7 @@ base = [
     "MessageBus",
     "NotImplementedMessageBus",
     "DomainEventBus",
+    "CommandBus",
     "NotImplementedDomainEventBus",
     "MessageSubscriber",
     "MessageConsumer",
@@ -84,8 +90,11 @@ base = [
     "ValueObject",
     "Uuid",
     "HttpError",
+    "Interface",
+    "DomainEventSubscriber",
+    "CommandSubscriber",
+    "AllMessageSubscriber",
 ]
-
 modules = []  # ["extra.fastapi"]
 
 __all__ = base + modules

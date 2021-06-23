@@ -81,25 +81,30 @@ class RabbitMqMessageStoreConfigurer:
         )
         self.rabbitmq.declare_queue(queue_name="dead_letter.store")
 
-        # TODO Add also a
-        #  routing_key_any_command = "*.*.*.command.*"
-        routing_key_any_event = "*.*.*.event.*"
-        self.rabbitmq.bind_queue(
-            exchange_name=exchange_name,
-            queue_name="store",
-            routing_key=routing_key_any_event,
-        )
+        for routing_key_any_message in ["*.*.*.event.*", "*.*.*.command.*"]:
+            self.rabbitmq.bind_queue(
+                exchange_name=exchange_name,
+                queue_name="store",
+                routing_key=routing_key_any_message,
+            )
+            self.rabbitmq.bind_queue(
+                exchange_name=self._common_retry_exchange_name,
+                queue_name="store",
+                routing_key=routing_key_any_message,
+            )
+            self.rabbitmq.bind_queue(
+                exchange_name=dead_letter_exchange_name,
+                queue_name="dead_letter.store",
+                routing_key=f"dead_letter.{routing_key_any_message}",
+            )
+
         self.rabbitmq.bind_queue(
             exchange_name=exchange_name, queue_name="store", routing_key="retry.store"
         )
         self.rabbitmq.bind_queue(
             exchange_name=exchange_name, queue_name="store", routing_key="store"
         )
-        self.rabbitmq.bind_queue(
-            exchange_name=self._common_retry_exchange_name,
-            queue_name="store",
-            routing_key=routing_key_any_event,
-        )
+
         self.rabbitmq.bind_queue(
             exchange_name=self._common_retry_exchange_name,
             queue_name="store",
@@ -109,11 +114,6 @@ class RabbitMqMessageStoreConfigurer:
             exchange_name=self._common_retry_exchange_name,
             queue_name="retry.store",
             routing_key="retry.store",
-        )
-        self.rabbitmq.bind_queue(
-            exchange_name=dead_letter_exchange_name,
-            queue_name="dead_letter.store",
-            routing_key=f"dead_letter.{routing_key_any_event}",
         )
         self.rabbitmq.bind_queue(
             exchange_name=self._common_dead_letter_exchange_name,

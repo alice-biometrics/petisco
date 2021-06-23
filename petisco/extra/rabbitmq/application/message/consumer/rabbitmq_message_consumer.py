@@ -2,7 +2,7 @@ import inspect
 import threading
 import traceback
 from time import sleep
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Type
 
 from dataclasses import dataclass
 from meiga import Failure
@@ -10,11 +10,19 @@ from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 
+from petisco.base.domain.message.chaos.message_chaos import MessageChaos
+from petisco.base.domain.message.chaos.message_chaos_error import MessageChaosError
+from petisco.base.domain.message.chaos.not_implemented_message_chaos import (
+    NotImplementedMessageChaos,
+)
 from petisco.base.domain.message.consumer_derived_action import ConsumerDerivedAction
 from petisco.base.domain.message.message_consumer import MessageConsumer
 from petisco.base.domain.message.message import Message
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.command import Command
+from petisco.base.domain.message.message_handler_returns_none_error import (
+    MessageHandlerReturnsNoneError,
+)
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
 from petisco.extra.rabbitmq import RabbitMqDomainEventBus
 
@@ -29,22 +37,13 @@ from petisco.extra.rabbitmq.shared.rabbitmq_exchange_name_formatter import (
     RabbitMqExchangeNameFormatter,
 )
 
-from petisco.legacy.event.chaos.domain.event_chaos_error import EventChaosError
 from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_consumer_connector import (
     RabbitMqConsumerConnector,
 )
 from petisco.legacy.logger.interface_logger import ILogger
 from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
-
-from petisco.legacy.event.chaos.domain.interface_event_chaos import IEventChaos
-from petisco.legacy.event.chaos.infrastructure.not_implemented_event_chaos import (
-    NotImplementedEventChaos,
-)
 from petisco.legacy.event.consumer.infrastructure.rabbitmq_event_consumer_printer import (
     RabbitMqEventConsumerPrinter,
-)
-from petisco.legacy.event.consumer.infrastructure.rabbitmq_event_consumer_return_error import (
-    RabbitMqEventConsumerReturnError,
 )
 
 
@@ -64,7 +63,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
         service: str,
         max_retries: int,
         verbose: bool = False,
-        chaos: IEventChaos = NotImplementedEventChaos(),
+        chaos: MessageChaos = NotImplementedMessageChaos(),
         logger: Optional[ILogger] = NotImplementedLogger(),
     ):
         self.connector = connector
@@ -91,33 +90,41 @@ class RabbitMqMessageConsumer(MessageConsumer):
     def _start(self):
         self._channel.start_consuming()
 
-    def add_subscribers(self, subscribers: List[MessageSubscriber]):
-        for subscriber in subscribers:
-            queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format(
-                subscriber, exchange_name=self.exchange_name
-            )
-            for handler in subscriber.handlers:
-                self.add_handler_on_queue(
-                    queue_name=f"{queue_name}.{handler.__name__}",
-                    handler=handler,
-                    message_type_expected=subscriber.message_type,
-                )
+    def add_subscribers(self, subscribers: List[Type[MessageSubscriber]]):
+        for SubscriberClass in subscribers:
+
+            subscriber: MessageSubscriber = SubscriberClass()
+
+            for subscriber_info in subscriber.get_message_subscribers_info():
+
+                if subscriber_info.message_type == "message":
+                    self.add_handler_on_queue("store", subscriber.handle, is_store=True)
+                else:
+                    queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format(
+                        subscriber_info, exchange_name=self.exchange_name
+                    )
+                    self.add_handler_on_queue(
+                        queue_name=f"{queue_name}.{subscriber.get_subscriber_name()}",
+                        handler=subscriber.handle,
+                        message_type_expected=subscriber_info.message_type,
+                    )
 
     def add_subscriber_on_dead_letter(
-        self, subscriber: MessageSubscriber, handler: Callable
+        self, subscriber: Type[MessageSubscriber], handler: Callable
     ):
-        queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
-            subscriber, exchange_name=self.exchange_name
-        )
-        for handler_name in subscriber.get_handlers_names():
-            self.add_handler_on_queue(
-                queue_name=f"{queue_name}.{handler_name}",
-                handler=handler,
-                message_type_expected=subscriber.message_type,
-            )
+        pass
+        # queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
+        #     subscriber, exchange_name=self.exchange_name
+        # )
+        # for handler_name in subscriber.get_handlers_names():
+        #     self.add_handler_on_queue(
+        #         queue_name=f"{queue_name}.{handler_name}",
+        #         handler=handler,
+        #         message_type_expected=subscriber.message_type,
+        #     )
 
-    def add_handler_on_store(self, handler: Callable):
-        self.add_handler_on_queue("store", handler, is_store=True)
+    # def add_handler_on_store(self, handler: Callable):
+    #     self.add_handler_on_queue("store", handler, is_store=True)
 
     def add_handler_on_queue(
         self,
@@ -178,7 +185,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 self.consumer_logger.log_failure_simulation(
                     method, properties, body, handler
                 )
-                result = Failure(EventChaosError())
+                result = Failure(MessageChaosError())
             else:
                 params = inspect.getfullargspec(handler).args
                 if "domain_event_bus" in params:
@@ -200,7 +207,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
             self.printer.print_context(handler, result)
 
             if result is None:
-                raise RabbitMqEventConsumerReturnError(handler)
+                raise MessageHandlerReturnsNoneError(handler)
 
             derived_action = ConsumerDerivedAction()
             if result.is_failure:
