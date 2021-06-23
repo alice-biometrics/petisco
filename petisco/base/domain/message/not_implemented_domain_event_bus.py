@@ -13,5 +13,5 @@ class NotImplementedDomainEventBus(DomainEventBus):
         meta = self.get_configured_meta()
         _ = domain_event.update_meta(meta)
 
-    def stop(self):
+    def close(self):
         pass
