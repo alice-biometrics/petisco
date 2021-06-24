@@ -6,6 +6,9 @@ from pydantic.main import BaseModel
 class ValueObject(BaseModel):
     value: Any
 
+    def __init__(self, value: Any, **data) -> None:
+        super().__init__(value=value, **data)
+
     def dict(self, **kwargs):
         return self.value
 
