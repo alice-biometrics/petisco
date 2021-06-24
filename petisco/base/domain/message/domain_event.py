@@ -1,5 +1,5 @@
 import json
-from typing import Dict
+from typing import Dict, Optional, Type
 
 from petisco.base.domain.message.message import Message
 
@@ -11,14 +11,17 @@ class DomainEvent(Message):
             self.attributes[k] = kwargs[k]
 
     @staticmethod
-    def from_dict(message_data: Dict):
+    def from_dict(message_data: Dict, target_type: Optional[Type] = None):
+        target_type = DomainEvent if target_type is None else target_type
         data = message_data.get("data")
-        return DomainEvent(**data)
+        domain_event = target_type()
+        domain_event._set_data(**data)
+        return domain_event
 
     @staticmethod
-    def from_json(message_json: str):
+    def from_json(message_json: str, target_type: Optional[Type] = None):
         event_dict = json.loads(message_json)
-        return DomainEvent.from_dict(event_dict)
+        return DomainEvent.from_dict(event_dict, target_type)
 
     @classmethod
     def __repr__(cls):

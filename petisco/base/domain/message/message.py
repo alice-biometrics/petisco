@@ -46,6 +46,9 @@ class Message(metaclass=MetaMessage):
     type: str = "message"
 
     def __init__(self, **kwargs):
+        self._set_data(**kwargs)
+
+    def _set_data(self, **kwargs):
         if kwargs:
             self.message_id = Uuid.from_value(kwargs.get("id"))
             self.name = kwargs.get("type")

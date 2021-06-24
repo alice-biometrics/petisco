@@ -23,6 +23,21 @@ def test_domain_event_should_create_domain_event_input_and_output():
 
 
 @pytest.mark.unit
+def test_domain_event_should_create_domain_event_input_and_output_with_specigic_target_type():
+    domain_event = MyDomainEvent(name="whatever")
+
+    domain_event_json = domain_event.json()
+
+    retrieved_domain_event = MyDomainEvent.from_json(
+        domain_event_json, target_type=MyDomainEvent
+    )
+
+    assert type(domain_event) == type(domain_event)
+    assert domain_event == retrieved_domain_event
+    assert id(domain_event) != id(retrieved_domain_event)
+
+
+@pytest.mark.unit
 def test_domain_event_should_create_domain_event_with_required_values():
 
     domain_event = MyDomainEvent(name="whatever")

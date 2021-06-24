@@ -8,7 +8,7 @@ class MyCommand(Command):
 
 
 @pytest.mark.unit
-def test_command_should_create_domain_event_input_and_output():
+def test_command_should_create_command_input_and_output():
     command = MyCommand(name="whatever")
 
     command_json = command.json()
@@ -20,7 +20,20 @@ def test_command_should_create_domain_event_input_and_output():
 
 
 @pytest.mark.unit
-def test_command_should_create_domain_event_with_required_values():
+def test_command_should_create_command_input_and_output_with_specific_target_type():
+    command = MyCommand(name="whatever")
+
+    command_json = command.json()
+
+    retrieved_command = MyCommand.from_json(command_json, target_type=MyCommand)
+
+    assert type(command) == type(retrieved_command)
+    assert command.dict() == retrieved_command.dict()
+    assert id(command) != id(retrieved_command)
+
+
+@pytest.mark.unit
+def test_command_should_create_command_with_required_values():
 
     command = MyCommand(name="whatever")
 
