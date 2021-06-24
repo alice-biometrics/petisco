@@ -3,10 +3,13 @@ from time import sleep
 import pytest
 from meiga import BoolResult, isSuccess
 
-from petisco import DomainEvent, MessageSubscriber
+from petisco import DomainEvent
 from petisco.legacy.fixtures.testing_decorators import testing_with_rabbitmq
 from tests.modules.extra.rabbitmq.mother.domain_event_user_created_mother import (
     DomainEventUserCreatedMother,
+)
+from tests.modules.extra.rabbitmq.mother.message_subscriber_mother import (
+    MessageSubscriberMother,
 )
 from tests.modules.extra.rabbitmq.mother.rabbitmq_domain_event_bus_mother import (
     RabbitMqDomainEventBusMother,
@@ -47,7 +50,7 @@ def test_domain_event_bus_should_publish_event_with_previous_rabbitmq_configurat
     domain_event = DomainEventUserCreatedMother.random()
 
     configurer = RabbitMqMessageConfigurerMother.default()
-    configurer.configure_message(domain_event)
+    configurer.configure()
 
     bus = RabbitMqDomainEventBusMother.with_info_id()
     bus.publish(domain_event)
@@ -61,7 +64,7 @@ def test_domain_event_bus_should_publish_event_only_on_store_queue_with_previous
     domain_event = DomainEventUserCreatedMother.random()
 
     configurer = RabbitMqMessageConfigurerMother.default()
-    configurer.configure_message(domain_event)
+    configurer.configure()
 
     bus = RabbitMqDomainEventBusMother.with_info_id()
     bus.retry_publish_only_on_store_queue(domain_event)
@@ -85,10 +88,12 @@ def test_domain_event_bus_should_retry_publish_only_on_store_queue_not_affecting
         return isSuccess
 
     domain_event = DomainEventUserCreatedMother.random()
+
     subscribers = [
-        MessageSubscriber.from_message(
-            message=domain_event, handlers=[assert_consumer_default_queue]
-        )
+        MessageSubscriberMother.domain_event_subscriber(
+            domain_event_type=type(domain_event), handler=assert_consumer_default_queue
+        ),
+        MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_store),
     ]
 
     configurer = RabbitMqMessageConfigurerMother.default()
@@ -99,7 +104,6 @@ def test_domain_event_bus_should_retry_publish_only_on_store_queue_not_affecting
 
     consumer = RabbitMqMessageConsumerMother.default()
     consumer.add_subscribers(subscribers)
-    consumer.add_handler_on_store(assert_consumer_store)
 
     consumer.start()
 
@@ -133,10 +137,12 @@ def test_domain_event_bus_should_publish_and_then_consumer_retry_publish_only_on
         return isSuccess
 
     domain_event = DomainEventUserCreatedMother.random()
+
     subscribers = [
-        MessageSubscriber.from_message(
-            message=domain_event, handlers=[assert_consumer_default_queue]
-        )
+        MessageSubscriberMother.domain_event_subscriber(
+            domain_event_type=type(domain_event), handler=assert_consumer_default_queue
+        ),
+        MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_store),
     ]
 
     configurer = RabbitMqMessageConfigurerMother.default()
@@ -147,7 +153,6 @@ def test_domain_event_bus_should_publish_and_then_consumer_retry_publish_only_on
 
     consumer = RabbitMqMessageConsumerMother.default()
     consumer.add_subscribers(subscribers)
-    consumer.add_handler_on_store(assert_consumer_store)
 
     consumer.start()
 

@@ -42,7 +42,7 @@ class RabbitMqMessageSubcribersConfigurer:
             self._dead_letter_exchange_name,
             subscribers,
         )
-        self._configured_subscribers.append(subscribers)
+        self._configured_subscribers += subscribers
 
     def clear(self):
         self._delete_exchange()
@@ -59,24 +59,32 @@ class RabbitMqMessageSubcribersConfigurer:
         self.rabbitmq.delete_exchange(self._dead_letter_exchange_name)
 
     def _delete_queues(self):
-        for subscribers in self._configured_subscribers:
-            for subscriber in subscribers:
+        for SubscriberClass in self._configured_subscribers:
+
+            subscriber = SubscriberClass()
+            for subscriber_info in subscriber.get_message_subscribers_info():
+
+                if subscriber_info.message_type == "message":
+                    # if subscriber_info is subscribed to message it will be consuming from store queue
+                    break
+
                 queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format(
-                    subscriber, exchange_name=self._exchange_name
+                    subscriber_info, exchange_name=self._exchange_name
                 )
                 retry_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_retry(
-                    subscriber, exchange_name=self._exchange_name
+                    subscriber_info, exchange_name=self._exchange_name
                 )
                 dead_letter_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
-                    subscriber, exchange_name=self._exchange_name
+                    subscriber_info, exchange_name=self._exchange_name
                 )
-                for suffix in subscriber.get_handlers_names():
-                    name = f"{queue_name}.{suffix}"
-                    retry_name = f"{retry_queue_name}.{suffix}"
-                    dead_letter_name = f"{dead_letter_queue_name}.{suffix}"
-                    self.rabbitmq.delete_queue(name)
-                    self.rabbitmq.delete_queue(retry_name)
-                    self.rabbitmq.delete_queue(dead_letter_name)
+
+                suffix = subscriber.get_subscriber_name()
+                name = f"{queue_name}.{suffix}"
+                retry_name = f"{retry_queue_name}.{suffix}"
+                dead_letter_name = f"{dead_letter_queue_name}.{suffix}"
+                self.rabbitmq.delete_queue(name)
+                self.rabbitmq.delete_queue(retry_name)
+                self.rabbitmq.delete_queue(dead_letter_name)
 
     def _declare_queues(
         self,

@@ -63,7 +63,7 @@ Ok, let's execute the following scripts :point_down:
 If you haven't already done so, install `petisco` in your development environment:
 
 ```console
-pip install petisco
+pip install petisco[rabbitmq]
 ```
 
 Run a RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16"> instance using default configuration:
@@ -90,9 +90,14 @@ python examples/rabbitmq/consume.py
 Then, in another terminal, you can start publishing events:
 
 ```console
-python examples/rabbitmq/publish.py
+python examples/rabbitmq/publish_domain_events.py
 ```
 
+or dispatch commands
+
+```console
+python examples/rabbitmq/dispatch_commands.py
+```
 
 ## Let's code
 

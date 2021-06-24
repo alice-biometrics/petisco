@@ -98,7 +98,7 @@ def test_rabbitmq_connector_should_recover_from_connection_error_when_publish_an
 
     domain_event = DomainEventUserCreatedMother.random()
 
-    configurer.configure_message(domain_event)
+    configurer.configure()
 
     bus = RabbitMqDomainEventBusMother.default(connector)
 
