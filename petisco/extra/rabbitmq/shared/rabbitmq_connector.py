@@ -5,7 +5,7 @@ from pika import BlockingConnection, ConnectionParameters, PlainCredentials
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.exceptions import StreamLostError
 
-from petisco.base.util.singleton import Singleton
+from petisco.base.misc.singleton import Singleton
 
 
 class RabbitMqConnector(metaclass=Singleton):

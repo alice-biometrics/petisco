@@ -5,8 +5,8 @@ from typing import List, Any
 
 from meiga import Error, NotImplementedMethodError, Result
 
-from petisco.base.util.result_mapper import ResultMapper, default_failure_handler
-from petisco.base.util.wrapper import wrapper
+from petisco.base.misc.result_mapper import ResultMapper, default_failure_handler
+from petisco.base.misc.wrapper import wrapper
 
 
 def get_mapper(bases, config):

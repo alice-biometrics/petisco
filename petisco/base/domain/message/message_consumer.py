@@ -2,7 +2,7 @@ from typing import List, Callable
 from abc import abstractmethod
 
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
-from petisco.base.util.interface import Interface
+from petisco.base.misc.interface import Interface
 
 
 class MessageConsumer(Interface):

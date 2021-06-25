@@ -1,6 +1,6 @@
 from typing import List
 
-from petisco.base.util.singleton import Singleton
+from petisco.base.misc.singleton import Singleton
 from petisco.base.application.dependency_injection.dependency import Dependency
 
 

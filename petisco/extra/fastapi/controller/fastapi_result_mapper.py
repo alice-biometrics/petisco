@@ -1,5 +1,5 @@
+from petisco.base.misc.result_mapper import ResultMapper
 from petisco.base.domain.errors.default_http_error_map import DEFAULT_HTTP_ERROR_MAP
-from petisco.base.application.controller.result_mapper import ResultMapper
 from petisco.extra.fastapi.controller.fastapi_failure_handler import (
     fastapi_failure_handler,
 )

@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from petisco.base.util.interface import Interface
+from petisco.base.misc.interface import Interface
 
 
 class MessageChaos(Interface):

@@ -50,11 +50,11 @@ from petisco.base.application.use_case.use_case import UseCase
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
     UseCaseUncontrolledError,
 )
-from petisco.base.util.result_mapper import ResultMapper
+from petisco.base.misc.result_mapper import ResultMapper
 
 # TODO permit use from petisco.fastapi import *
 # from petisco.extra import fastapi
-from petisco.base.util.interface import Interface
+from petisco.base.misc.interface import Interface
 
 base = [
     "Controller",

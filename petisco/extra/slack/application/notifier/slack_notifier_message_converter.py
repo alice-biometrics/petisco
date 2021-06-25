@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import List, Dict
 
-from petisco.base.util.interface import Interface
+from petisco.base.misc.interface import Interface
 from petisco.legacy.notifier.domain.notifier_message import NotifierMessage
 
 
