@@ -20,7 +20,7 @@ def get_basic_notifier_dependencies(
     ]
 
 
-def get_extra_notifier_dependencies(token: str, channel: str) -> List[Dependency]:
+def get_slack_notifier_dependencies(token: str, channel: str) -> List[Dependency]:
 
     return [
         Dependency(

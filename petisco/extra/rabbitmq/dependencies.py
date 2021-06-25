@@ -37,7 +37,7 @@ def get_basic_bus_dependencies(
     ]
 
 
-def get_extra_bus_dependencies(
+def get_rabbitmq_bus_dependencies(
     organization: str, service: str, max_retries: int = 5
 ) -> List[Dependency]:
     from petisco.extra.rabbitmq.application.message.bus.rabbitmq_domain_event_bus import (

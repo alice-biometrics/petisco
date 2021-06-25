@@ -3,9 +3,9 @@
 
 """Public API of ALiCE Petisco Framework"""
 
+
 from petisco.base.application.controller.controller import Controller
 from petisco.base.application.controller.http_error import HttpError
-from petisco.base.application.controller.result_mapper import ResultMapper
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.application.dependency_injection.injector import Injector
 from petisco.base.domain.message.all_message_subscriber import AllMessageSubscriber
@@ -50,6 +50,7 @@ from petisco.base.application.use_case.use_case import UseCase
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
     UseCaseUncontrolledError,
 )
+from petisco.base.util.result_mapper import ResultMapper
 
 # TODO permit use from petisco.fastapi import *
 # from petisco.extra import fastapi

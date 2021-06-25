@@ -1,46 +1,12 @@
 from abc import ABC, abstractmethod
-from functools import wraps
-from inspect import signature
+
 from types import FunctionType
 from typing import List, Any
 
-from meiga import Error, Failure, NotImplementedMethodError, Result
-from meiga.on_failure_exception import OnFailureException
+from meiga import Error, NotImplementedMethodError, Result
 
-from petisco.base.application.controller.result_mapper import (
-    ResultMapper,
-    default_failure_handler,
-)
-
-
-def wrapper(execute_func, wrapped_class_name, config, mapper):
-    @wraps(execute_func)
-    def wrapped(*args, **kwargs):
-        middlewares_classes = getattr(config, "middlewares", [])
-
-        arguments = signature(execute_func).bind(*args, **kwargs).arguments
-        arguments.pop("self")
-        middlewares = [
-            klass(wrapped_class_name, arguments) for klass in middlewares_classes
-        ]
-
-        for middleware in middlewares:
-            middleware.before()
-
-        try:
-            result = execute_func(*args, **kwargs)
-        except OnFailureException as exc:
-            result = exc.result
-        except Error as error:
-            result = Failure(error)
-
-        mapped_result = mapper.map(result)
-        for middleware in middlewares:
-            if result:
-                middleware.after(result)
-        return mapped_result
-
-    return wrapped
+from petisco.base.util.result_mapper import ResultMapper, default_failure_handler
+from petisco.base.util.wrapper import wrapper
 
 
 def get_mapper(bases, config):
