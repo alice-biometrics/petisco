@@ -1,0 +1,3 @@
+models:
+  user: tests.modules.extra.sqlalchemy.ymls.object.models.UserModel
+  product: tests.modules.extra.sqlalchemy.ymls.object.models.ProductModel

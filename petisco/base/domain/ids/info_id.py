@@ -13,6 +13,22 @@ class InfoId(BaseModel):
     correlation_id: Optional[CorrelationId] = None
     ip: Optional[str] = None  # TODO Review IPv4Address
 
+    def __init__(
+        self,
+        client_id: Optional[ClientId] = None,
+        user_id: Optional[UserId] = None,
+        correlation_id: Optional[CorrelationId] = None,
+        ip: Optional[str] = None,
+        **data
+    ) -> None:
+        super().__init__(
+            client_id=client_id,
+            user_id=user_id,
+            correlation_id=correlation_id,
+            ip=ip,
+            **data
+        )
+
     @staticmethod
     def from_headers(headers: dict):
         if headers:
