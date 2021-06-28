@@ -12,7 +12,7 @@ class InvalidClientId(DomainEvent):
 
 
 class ClientId(ValueObject):
-    allow_utf8mb4: bool = True
+    _allow_utf8mb4: bool = True
 
     @validator("value")
     def validate_value(cls, value):
@@ -23,7 +23,7 @@ class ClientId(ValueObject):
             r"^[\w]*(([',. -][\s]?[\w]?)?[\w]*)*$", value
         ):
             raise InvalidClientId(uuid_value=value)
-        if not cls.allow_utf8mb4 and re.match("[^\u0000-\uffff]", value):
+        if not cls._allow_utf8mb4 and re.match("[^\u0000-\uffff]", value):
             raise InvalidClientId(uuid_value=value)
 
         return value.title()
