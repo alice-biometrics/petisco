@@ -48,21 +48,6 @@ class MetaMessageSubscriber(type, Interface):
     def handle(self, message: Message) -> BoolResult:
         raise NotImplementedError()
 
-    def set_domain_event_bus(self, domain_event_bus: DomainEventBus):
-        self.domain_event_bus = domain_event_bus
-
-    def set_command_bus(self, command_bus: CommandBus):
-        self.command_bus = command_bus
-
-    def get_subscriber_name(self) -> str:
-        return re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__).lower()
-
-    def get_message_subscribers_info(self) -> List[MessageSubscriberInfo]:
-        subscribers_info = []
-        for class_type in self.subscribed_to():
-            subscribers_info.append(MessageSubscriberInfo.from_class_type(class_type))
-        return subscribers_info
-
 
 class MessageSubscriber(metaclass=MetaMessageSubscriber):
     @abstractmethod
@@ -79,3 +64,18 @@ class MessageSubscriber(metaclass=MetaMessageSubscriber):
         if not isinstance(subscriptions, list):
             subscriptions = [subscriptions]
         return f"{cls.__name__}: subscribed_to {[class_type.__name__ for class_type in subscriptions]}"
+
+    def set_domain_event_bus(self, domain_event_bus: DomainEventBus):
+        self.domain_event_bus = domain_event_bus
+
+    def set_command_bus(self, command_bus: CommandBus):
+        self.command_bus = command_bus
+
+    def get_subscriber_name(self) -> str:
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__).lower()
+
+    def get_message_subscribers_info(self) -> List[MessageSubscriberInfo]:
+        subscribers_info = []
+        for class_type in self.subscribed_to():
+            subscribers_info.append(MessageSubscriberInfo.from_class_type(class_type))
+        return subscribers_info

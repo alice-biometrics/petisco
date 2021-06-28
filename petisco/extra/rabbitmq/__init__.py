@@ -19,6 +19,9 @@ if is_pika_available():
         RabbitMqCommandBus,
     )
     from petisco.extra.rabbitmq.dependencies import get_rabbitmq_bus_dependencies
+    from petisco.extra.rabbitmq.application.chaos.rabbitmq_message_chaos import (
+        RabbitMqMessageChaos,
+    )
 
     rabbitmq = [
         "RabbitMqConnector",
@@ -29,6 +32,7 @@ if is_pika_available():
         "RabbitMqMessageConsumer",
         "RabbitMqCommandBus",
         "get_rabbitmq_bus_dependencies",
+        "RabbitMqMessageChaos",
     ]
 else:
     from petisco.extra.rabbitmq.dependencies import get_basic_bus_dependencies

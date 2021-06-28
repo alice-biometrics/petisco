@@ -1,8 +1,7 @@
 import pytest
 
-from petisco.base.domain.persistence.persistence import Persistence
-from petisco.extra.elastic.elastic_connection import ElasticConnection
-from petisco.extra.elastic.elastic_database import ElasticDatabase
+from petisco import Persistence
+from petisco.extra.elastic import ElasticConnection, ElasticDatabase
 from tests.modules.extra.decorators import testing_with_elastic
 
 

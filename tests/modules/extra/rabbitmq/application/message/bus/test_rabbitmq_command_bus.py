@@ -25,7 +25,7 @@ from tests.modules.extra.rabbitmq.utils.spy_messages import SpyMessages
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_command_bus_should_dispatch_command_without_rabbitmq_configuration():
+def test_rabbitmq_command_bus_should_dispatch_command_without_rabbitmq_configuration():
     command = CommandPersistUserMother.random()
 
     bus = RabbitMqCommandBusMother.default()
@@ -36,7 +36,7 @@ def test_command_bus_should_dispatch_command_without_rabbitmq_configuration():
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_command_bus_should_dispatch_command_without_rabbitmq_configuration_and_info_id():
+def test_rabbitmq_command_bus_should_dispatch_command_without_rabbitmq_configuration_and_info_id():
     command = CommandPersistUserMother.random()
 
     bus = RabbitMqCommandBusMother.with_info_id()
@@ -46,7 +46,7 @@ def test_command_bus_should_dispatch_command_without_rabbitmq_configuration_and_
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_command_bus_should_dispatch_command_with_previous_rabbitmq_configuration():
+def test_rabbitmq_command_bus_should_dispatch_command_with_previous_rabbitmq_configuration():
     command = CommandPersistUserMother.random()
 
     configurer = RabbitMqMessageConfigurerMother.default()
@@ -60,7 +60,7 @@ def test_command_bus_should_dispatch_command_with_previous_rabbitmq_configuratio
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_command_bus_dispatch_command_with_a_command_subscriber():
+def test_rabbitmq_command_bus_dispatch_command_with_a_command_subscriber():
 
     spy_consumer_default_queue = SpyMessages()
     spy_consumer_store = SpyMessages()

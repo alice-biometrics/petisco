@@ -25,15 +25,15 @@ class MessageConsumer(Interface):
     #     raise NotImplementedError
 
     @abstractmethod
-    def add_handler_on_queue(self, queue_name: str, handler: Callable):
+    def add_subscriber_on_queue(self, queue_name: str, handler: Callable):
         raise NotImplementedError
 
     @abstractmethod
-    def unsubscribe_handler_on_queue(self, queue_name: str):
+    def unsubscribe_subscriber_on_queue(self, queue_name: str):
         raise NotImplementedError
 
     @abstractmethod
-    def resume_handler_on_queue(self, queue_name: str):
+    def resume_subscriber_on_queue(self, queue_name: str):
         raise NotImplementedError
 
     @abstractmethod
