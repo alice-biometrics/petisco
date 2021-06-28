@@ -91,13 +91,13 @@ def test_should_unsubscribe_and_resume_handler_on_store_queue():
     consumer.start()
     bus.publish(first_event)
     sleep(1.0)
-    consumer.unsubscribe_handler_on_queue("store")
+    consumer.unsubscribe_subscriber_on_queue("store")
 
     for i in range(10):
         bus.publish(EventUserCreatedMother.random())
     sleep(5.0)
 
-    consumer.resume_handler_on_queue("store")
+    consumer.resume_subscriber_on_queue("store")
     second_event = EventUserCreatedMother.random()
     bus.publish(second_event)
     sleep(3.0)
@@ -142,13 +142,13 @@ def test_should_unsubscribe_and_resume_handler_on_dead_letter_store_queue():
         bus.publish(EventUserCreatedMother.random())
     sleep(5.0)
 
-    consumer.unsubscribe_handler_on_queue("dead_letter.store")
+    consumer.unsubscribe_subscriber_on_queue("dead_letter.store")
 
     for i in range(10):
         bus.publish(EventUserCreatedMother.random())
     sleep(5.0)
 
-    consumer.resume_handler_on_queue("dead_letter.store")
+    consumer.resume_subscriber_on_queue("dead_letter.store")
 
     for i in range(10):
         bus.publish(EventUserCreatedMother.random())
@@ -176,7 +176,7 @@ def test_should_raise_an_error_when_unsubscribe_an_nonexistent_queue():
     consumer.start()
 
     with pytest.raises(IndexError) as excinfo:
-        consumer.unsubscribe_handler_on_queue("nonexistent_queue")
+        consumer.unsubscribe_subscriber_on_queue("nonexistent_queue")
         assert (
             "Cannot unsubscribe an nonexistent queue (nonexistent_queue). Please, check configured consumers"
             in str(excinfo.value)
@@ -202,7 +202,7 @@ def test_should_raise_an_error_when_resume_an_nonexistent_queue():
     consumer.start()
 
     with pytest.raises(IndexError) as excinfo:
-        consumer.resume_handler_on_queue("nonexistent_queue")
+        consumer.resume_subscriber_on_queue("nonexistent_queue")
         assert (
             "Cannot resume an nonexistent queue (nonexistent_queue). Please, check configured consumers"
             in str(excinfo.value)

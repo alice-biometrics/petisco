@@ -25,7 +25,7 @@ from tests.modules.extra.rabbitmq.utils.spy_messages import SpyMessages
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_domain_event_bus_should_publish_event_without_rabbitmq_configuration():
+def test_rabbitmq_domain_event_bus_should_publish_event_without_rabbitmq_configuration():
     domain_event = DomainEventUserCreatedMother.random()
 
     bus = RabbitMqDomainEventBusMother.default()
@@ -36,7 +36,7 @@ def test_domain_event_bus_should_publish_event_without_rabbitmq_configuration():
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_domain_event_bus_should_publish_event_without_rabbitmq_configuration_and_info_id():
+def test_rabbitmq_domain_event_bus_should_publish_event_without_rabbitmq_configuration_and_info_id():
     domain_event = DomainEventUserCreatedMother.random()
 
     bus = RabbitMqDomainEventBusMother.with_info_id()
@@ -46,7 +46,7 @@ def test_domain_event_bus_should_publish_event_without_rabbitmq_configuration_an
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_domain_event_bus_should_publish_event_with_previous_rabbitmq_configuration():
+def test_rabbitmq_domain_event_bus_should_publish_event_with_previous_rabbitmq_configuration():
     domain_event = DomainEventUserCreatedMother.random()
 
     configurer = RabbitMqMessageConfigurerMother.default()
@@ -60,7 +60,7 @@ def test_domain_event_bus_should_publish_event_with_previous_rabbitmq_configurat
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_domain_event_bus_should_publish_event_only_on_store_queue_with_previous_rabbitmq_configuration():
+def test_rabbitmq_domain_event_bus_should_publish_event_only_on_store_queue_with_previous_rabbitmq_configuration():
     domain_event = DomainEventUserCreatedMother.random()
 
     configurer = RabbitMqMessageConfigurerMother.default()
@@ -74,7 +74,7 @@ def test_domain_event_bus_should_publish_event_only_on_store_queue_with_previous
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_domain_event_bus_should_retry_publish_only_on_store_queue_not_affecting_default_event_queue():
+def test_rabbitmq_domain_event_bus_should_retry_publish_only_on_store_queue_not_affecting_default_event_queue():
 
     spy_consumer_default_queue = SpyMessages()
     spy_consumer_store = SpyMessages()
@@ -121,7 +121,7 @@ def test_domain_event_bus_should_retry_publish_only_on_store_queue_not_affecting
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_domain_event_bus_should_publish_and_then_consumer_retry_publish_only_on_store_queue_not_affecting_default_event_queue():
+def test_rabbitmq_domain_event_bus_should_publish_and_then_consumer_retry_publish_only_on_store_queue_not_affecting_default_event_queue():
 
     spy_consumer_default_queue = SpyMessages()
     spy_consumer_store = SpyMessages()

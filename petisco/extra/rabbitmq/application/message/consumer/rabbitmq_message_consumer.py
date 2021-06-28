@@ -1,4 +1,3 @@
-import inspect
 import threading
 import traceback
 from time import sleep
@@ -24,7 +23,12 @@ from petisco.base.domain.message.message_handler_returns_none_error import (
     MessageHandlerReturnsNoneError,
 )
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
-from petisco.extra.rabbitmq import RabbitMqDomainEventBus
+from petisco.extra.rabbitmq.application.message.bus.rabbitmq_domain_event_bus import (
+    RabbitMqDomainEventBus,
+)
+from petisco.extra.rabbitmq.application.message.bus.rabbitmq_command_bus import (
+    RabbitMqCommandBus,
+)
 
 from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_event_consumer_logger import (
     RabbitMqMessageConsumerLogger,
@@ -98,14 +102,16 @@ class RabbitMqMessageConsumer(MessageConsumer):
             for subscriber_info in subscriber.get_message_subscribers_info():
 
                 if subscriber_info.message_type == "message":
-                    self.add_handler_on_queue("store", subscriber.handle, is_store=True)
+                    self.add_subscriber_on_queue(
+                        queue_name="store", subscriber=subscriber, is_store=True
+                    )
                 else:
                     queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format(
                         subscriber_info, exchange_name=self.exchange_name
                     )
-                    self.add_handler_on_queue(
+                    self.add_subscriber_on_queue(
                         queue_name=f"{queue_name}.{subscriber.get_subscriber_name()}",
-                        handler=subscriber.handle,
+                        subscriber=subscriber,
                         message_type_expected=subscriber_info.message_type,
                     )
 
@@ -126,24 +132,26 @@ class RabbitMqMessageConsumer(MessageConsumer):
     # def add_handler_on_store(self, handler: Callable):
     #     self.add_handler_on_queue("store", handler, is_store=True)
 
-    def add_handler_on_queue(
+    def add_subscriber_on_queue(
         self,
         queue_name: str,
-        handler: Callable,
+        subscriber: MessageSubscriber,
         is_store: bool = False,
         message_type_expected: str = "message",
     ):
         consumer_tag = self._channel.basic_consume(
             queue=queue_name,
-            on_message_callback=self.consumer(handler, is_store, message_type_expected),
+            on_message_callback=self.consumer(
+                subscriber, is_store, message_type_expected
+            ),
         )
         self.handlers[queue_name] = HandlerItem(
-            queue_name, handler, consumer_tag, is_store
+            queue_name, subscriber.handle, consumer_tag, is_store
         )
 
     def consumer(
         self,
-        handler: Callable,
+        subscriber: MessageSubscriber,
         is_store: bool = False,
         message_type_expected: str = "message",
     ) -> Callable:
@@ -157,12 +165,16 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
             if self.chaos.nack_simulation(ch, method):
                 self.consumer_logger.log_nack_simulation(
-                    method, properties, body, handler
+                    method, properties, body, subscriber.handle
                 )
                 return
             else:
                 self.consumer_logger.log(
-                    method, properties, body, handler, log_activity="received_message"
+                    method,
+                    properties,
+                    body,
+                    subscriber.handle,
+                    log_activity="received_message",
                 )
 
             try:
@@ -174,7 +186,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
                     message = Message.from_json(body)
             except Exception as e:
                 self.consumer_logger.log_parser_error(
-                    method, properties, body, handler, e
+                    method, properties, body, subscriber.handle, e
                 )
                 ch.basic_nack(delivery_tag=method.delivery_tag)
                 return
@@ -183,37 +195,32 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
             if self.chaos.failure_simulation(method):
                 self.consumer_logger.log_failure_simulation(
-                    method, properties, body, handler
+                    method, properties, body, subscriber.handle
                 )
                 result = Failure(MessageChaosError())
             else:
-                params = inspect.getfullargspec(handler).args
-                if "domain_event_bus" in params:
-                    # TODO Review Maybe we can simplify this with a RabbitMQConnector interface
-                    connector = RabbitMqConsumerConnector(ch)
-                    domain_event_bus = RabbitMqDomainEventBus(
-                        connector, self.organization, self.service
-                    )
-                    result = handler(message, domain_event_bus)
-                # elif "command_bus" in params:
-                #     connector = RabbitMqConsumerConnector(ch)
-                #     command_bus = RabbitMqCommandBus(
-                #         connector, self.organization, self.service
-                #     )
-                #     result = handler(message, command_bus)
-                else:
-                    result = handler(message)
+                connector = RabbitMqConsumerConnector(ch)
+                domain_event_bus = RabbitMqDomainEventBus(
+                    connector, self.organization, self.service
+                )
+                command_bus = RabbitMqCommandBus(
+                    connector, self.organization, self.service
+                )
+                subscriber.set_domain_event_bus(domain_event_bus)
+                subscriber.set_command_bus(command_bus)
 
-            self.printer.print_context(handler, result)
+                result = subscriber.handle(message)
+
+            self.printer.print_context(subscriber.handle, result)
 
             if result is None:
-                raise MessageHandlerReturnsNoneError(handler)
+                raise MessageHandlerReturnsNoneError(subscriber.handle)
 
             derived_action = ConsumerDerivedAction()
             if result.is_failure:
                 if not properties.headers:
                     properties.headers = {
-                        "queue": f"{method.routing_key}.{handler.__name__}"
+                        "queue": f"{method.routing_key}.{subscriber.get_subscriber_name()}"
                     }
                 derived_action = self.handle_consumption_error(
                     ch, method, properties, body, is_store
@@ -225,7 +232,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 method,
                 properties,
                 body,
-                handler,
+                subscriber.handle,
                 "computed_message",
                 result,
                 derived_action,
@@ -383,7 +390,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
         _await_for_stop_consuming_consumer_channel()
 
-    def unsubscribe_handler_on_queue(self, queue_name: str):
+    def unsubscribe_subscriber_on_queue(self, queue_name: str):
         handler_item: HandlerItem = self.handlers.get(queue_name)
         if handler_item is None:
             raise IndexError(
@@ -395,7 +402,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
         self._do_it_in_consumer_thread(_unsubscribe_handler_on_queue)
 
-    def resume_handler_on_queue(self, queue_name: str):
+    def resume_subscriber_on_queue(self, queue_name: str):
         handler_item: HandlerItem = self.handlers.get(queue_name)
         if handler_item is None:
             raise IndexError(
