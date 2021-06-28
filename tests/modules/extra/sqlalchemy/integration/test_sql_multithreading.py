@@ -4,13 +4,14 @@ from time import sleep
 
 import pytest
 
-from petisco import Uuid
-from petisco.base.domain.persistence.persistence import Persistence
-from petisco.extra.sqlalchemy.sql.mysql.mysql_connection import MySqlConnection
-from petisco.extra.sqlalchemy.sql.mysql.mysql_database import MySqlDatabase
-from petisco.extra.sqlalchemy.sql.sql_executor import SqlExecutor
-from petisco.extra.sqlalchemy.sql.sqlite.sqlite_connection import SqliteConnection
-from petisco.extra.sqlalchemy.sql.sqlite.sqlite_database import SqliteDatabase
+from petisco import Uuid, Persistence
+from petisco.extra.sqlalchemy import (
+    MySqlConnection,
+    MySqlDatabase,
+    SqlExecutor,
+    SqliteConnection,
+    SqliteDatabase,
+)
 from tests.modules.extra.decorators import testing_with_mysql
 from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
     ModelFilenameMother,

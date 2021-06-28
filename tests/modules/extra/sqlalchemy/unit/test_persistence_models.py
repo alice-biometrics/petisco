@@ -1,6 +1,6 @@
 import pytest
 
-from petisco.base.domain.persistence.persistence_models import PersistenceModels
+from petisco import PersistenceModels
 from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
     ModelFilenameMother,
 )

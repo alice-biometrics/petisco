@@ -45,6 +45,8 @@ from petisco.base.domain.message.not_implemented_message_bus import (
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
+from petisco.base.domain.persistence.persistence import Persistence
+from petisco.base.domain.persistence.persistence_models import PersistenceModels
 from petisco.base.testing.assert_http import assert_http
 from petisco.base.application.use_case.use_case import UseCase
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
@@ -95,6 +97,8 @@ base = [
     "DomainEventSubscriber",
     "CommandSubscriber",
     "AllMessageSubscriber",
+    "Persistence",
+    "PersistenceModels",
 ]
 modules = []  # ["extra.fastapi"]
 

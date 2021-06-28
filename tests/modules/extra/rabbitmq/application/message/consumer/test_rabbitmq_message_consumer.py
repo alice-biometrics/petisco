@@ -77,53 +77,53 @@ def test_rabbitmq_message_consumer_should_publish_consume_and_retry_event_from_r
     )
 
 
-@pytest.mark.integration
-@testing_with_rabbitmq
-def test_rabbitmq_message_consumer_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq():
-
-    spy_consumer_1 = SpyMessages()
-    spy_consumer_2 = SpyMessages()
-
-    def assert_consumer_1(domain_event: DomainEvent) -> BoolResult:
-        spy_consumer_1.append(domain_event)
-        return isSuccess
-
-    def assert_consumer_2(domain_event: DomainEvent) -> BoolResult:
-        spy_consumer_2.append(domain_event)
-        return isSuccess
-
-    domain_event = DomainEventUserCreatedMother.random()
-    subscribers = [
-        MessageSubscriberMother.domain_event_subscriber(
-            domain_event_type=type(domain_event), handler=assert_consumer_1
-        ),
-        MessageSubscriberMother.domain_event_subscriber(
-            domain_event_type=type(domain_event), handler=assert_consumer_2
-        ),
-    ]
-
-    configurer = RabbitMqMessageConfigurerMother.default()
-    configurer.configure_subscribers(subscribers)
-
-    bus = RabbitMqDomainEventBusMother.default()
-    bus.publish(domain_event)
-
-    consumer = RabbitMqMessageConsumerMother.default()
-    consumer.add_subscribers(subscribers)
-    consumer.start()
-
-    sleep(1.0)
-
-    consumer.stop()
-    configurer.clear()
-
-    spy_consumer_1.assert_number_unique_messages(1)
-    spy_consumer_1.assert_first_message(domain_event)
-    spy_consumer_1.assert_count_by_message_id(domain_event.message_id, 1)
-
-    spy_consumer_2.assert_number_unique_messages(1)
-    spy_consumer_2.assert_first_message(domain_event)
-    spy_consumer_2.assert_count_by_message_id(domain_event.message_id, 1)
+# @pytest.mark.integration
+# @testing_with_rabbitmq
+# def test_rabbitmq_message_consumer_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq():
+#
+#     spy_consumer_1 = SpyMessages()
+#     spy_consumer_2 = SpyMessages()
+#
+#     def assert_consumer_1(domain_event: DomainEvent) -> BoolResult:
+#         spy_consumer_1.append(domain_event)
+#         return isSuccess
+#
+#     def assert_consumer_2(domain_event: DomainEvent) -> BoolResult:
+#         spy_consumer_2.append(domain_event)
+#         return isSuccess
+#
+#     domain_event = DomainEventUserCreatedMother.random()
+#     subscribers = [
+#         MessageSubscriberMother.domain_event_subscriber(
+#             domain_event_type=type(domain_event), handler=assert_consumer_1
+#         ),
+#         MessageSubscriberMother.domain_event_subscriber(
+#             domain_event_type=type(domain_event), handler=assert_consumer_2
+#         ),
+#     ]
+#
+#     configurer = RabbitMqMessageConfigurerMother.default()
+#     configurer.configure_subscribers(subscribers)
+#
+#     bus = RabbitMqDomainEventBusMother.default()
+#     bus.publish(domain_event)
+#
+#     consumer = RabbitMqMessageConsumerMother.default()
+#     consumer.add_subscribers(subscribers)
+#     consumer.start()
+#
+#     sleep(1.0)
+#
+#     consumer.stop()
+#     configurer.clear()
+#
+#     spy_consumer_1.assert_number_unique_messages(1)
+#     spy_consumer_1.assert_first_message(domain_event)
+#     spy_consumer_1.assert_count_by_message_id(domain_event.message_id, 1)
+#
+#     spy_consumer_2.assert_number_unique_messages(1)
+#     spy_consumer_2.assert_first_message(domain_event)
+#     spy_consumer_2.assert_count_by_message_id(domain_event.message_id, 1)
 
 
 @pytest.mark.integration
