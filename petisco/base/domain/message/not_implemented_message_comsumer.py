@@ -18,13 +18,13 @@ class NotImplementedMessageConsumer(MessageConsumer):
     def add_handler_on_store(self, handler: Callable):
         pass
 
-    def add_handler_on_queue(self, queue_name: str, handler: Callable):
+    def add_subscriber_on_queue(self, queue_name: str, handler: Callable):
         pass
 
-    def unsubscribe_handler_on_queue(self, queue_name: str):
+    def unsubscribe_subscriber_on_queue(self, queue_name: str):
         pass
 
-    def resume_handler_on_queue(self, queue_name: str):
+    def resume_subscriber_on_queue(self, queue_name: str):
         pass
 
     def stop(self):
