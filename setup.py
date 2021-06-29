@@ -87,9 +87,9 @@ setup(
             "Flask-Bcrypt==0.7.1",
         ],
         "sqlalchemy": [
-            "sqlalchemy<1.4.0,>=1.3.11",
-            "sqlalchemy_utils",
-            "PyMySQL==0.9.2",
+            "sqlalchemy==1.4.20",
+            "sqlalchemy_utils==0.37.8",
+            "PyMySQL==1.0.2",
         ],
         "redis": ["redis >= 3.3.11", "fakeredis>=1.0.5"],
         "rabbitmq": ["pika==1.2.0"],
