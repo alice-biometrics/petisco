@@ -15,14 +15,8 @@ class MessageConsumer(Interface):
         raise NotImplementedError
 
     @abstractmethod
-    def add_subscriber_on_dead_letter(
-        self, subscriber: MessageSubscriber, handler: Callable
-    ):
+    def add_subscriber_on_dead_letter(self, subscriber: MessageSubscriber):
         raise NotImplementedError
-
-    # @abstractmethod
-    # def add_handler_on_store(self, handler: Callable):
-    #     raise NotImplementedError
 
     @abstractmethod
     def add_subscriber_on_queue(self, queue_name: str, handler: Callable):
