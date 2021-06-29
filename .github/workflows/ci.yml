@@ -20,7 +20,7 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.6, 3.7] # 3.8 is not enable (waiting for new version of pika (https://github.com/pika/pika/pull/1254)
+        python-version: [3.6, 3.7, 3.8]
     runs-on: ${{matrix.os}}
 
     steps:
