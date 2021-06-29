@@ -1,6 +1,6 @@
 from petisco.extra.sqlalchemy.is_sqlalchemy_available import is_sqlalchemy_available
 
-rabbitmq = []
+sqlalchemy = []
 if is_sqlalchemy_available():
     from petisco.extra.sqlalchemy.sql.mysql.mysql_connection import MySqlConnection
     from petisco.extra.sqlalchemy.sql.mysql.mysql_database import MySqlDatabase
@@ -18,4 +18,4 @@ if is_sqlalchemy_available():
 else:
     sqlalchemy = []
 
-__all__ = rabbitmq
+__all__ = sqlalchemy
