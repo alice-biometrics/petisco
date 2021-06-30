@@ -1,7 +1,7 @@
 import pytest
 import os
 
-from petisco import Petisco
+from petisco.legacy import Petisco
 from petisco.legacy.event.bus.infrastructure.not_implemented_event_bus import (
     NotImplementedEventBus,
 )
@@ -11,7 +11,7 @@ from petisco.legacy.fixtures.testing_decorators import testing_with_rabbitmq
 
 @pytest.mark.end2end
 def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_not_implemented_message_broker(
-    petisco_yml_path_end2end
+    petisco_yml_path_end2end,
 ):
     Petisco.clear()
 
@@ -32,7 +32,7 @@ def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_not_imp
 @pytest.mark.end2end
 @testing_with_rabbitmq
 def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_rabbitmq_message_broker(
-    petisco_yml_path_end2end
+    petisco_yml_path_end2end,
 ):
     Petisco.clear()
 
@@ -53,7 +53,7 @@ def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_rabbitm
 @pytest.mark.end2end
 @testing_with_rabbitmq
 def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_not_implemented_message_broker_but_configured_with_environ(
-    petisco_yml_path_end2end
+    petisco_yml_path_end2end,
 ):
     Petisco.clear()
 
@@ -78,7 +78,7 @@ def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_not_imp
 @pytest.mark.end2end
 @testing_with_rabbitmq
 def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_environ_rabbitmq_message_broker_not_implemented(
-    petisco_yml_path_end2end
+    petisco_yml_path_end2end,
 ):
     Petisco.clear()
     os.environ["PETISCO_EVENT_MESSAGE_BROKER"] = "notimplemented"
@@ -99,7 +99,7 @@ def test_should_load_petisco_from_yml_and_configure_events_from_yml_with_environ
 
 @pytest.mark.end2end
 def test_should_load_petisco_from_yml_with_specific_queue_config(
-    petisco_yml_path_end2end
+    petisco_yml_path_end2end,
 ):
     Petisco.clear()
 

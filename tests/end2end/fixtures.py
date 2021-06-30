@@ -1,4 +1,6 @@
-from petisco import Petisco, Persistence, SqliteDatabase, SqliteConnection
+from petisco import Persistence
+from petisco.extra.sqlalchemy import SqliteDatabase, SqliteConnection
+from petisco.legacy import Petisco
 import os
 import pytest
 
