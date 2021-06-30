@@ -8,6 +8,8 @@ from petisco.base.application.controller.controller import Controller
 from petisco.base.application.controller.http_error import HttpError
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.application.dependency_injection.injector import Injector
+from petisco.base.application.repository.repositories import Repositories, Repository
+from petisco.base.domain.errors.defaults.invalid_value_object import InvalidValueObject
 from petisco.base.domain.message.all_message_subscriber import AllMessageSubscriber
 from petisco.base.domain.message.command_bus import CommandBus
 from petisco.base.domain.message.command_subscriber import CommandSubscriber
@@ -99,6 +101,9 @@ base = [
     "AllMessageSubscriber",
     "Persistence",
     "PersistenceModels",
+    "InvalidValueObject",
+    "Repositories",
+    "Repository",
 ]
 modules = []  # ["extra.fastapi"]
 

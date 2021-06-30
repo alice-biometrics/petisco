@@ -2,7 +2,7 @@ from typing import Any, Callable
 
 from meiga import Result, Error, isSuccess, Success, Failure
 
-from petisco import Persistence
+from petisco.legacy import Persistence
 from petisco.legacy.domain.value_objects.client_id import ClientId
 from petisco.legacy.domain.value_objects.name import Name
 from petisco.legacy.domain.value_objects.user_id import UserId

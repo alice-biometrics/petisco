@@ -1,4 +1,4 @@
-from petisco import InfoId, ClientId, UserId
+from petisco.legacy import InfoId, ClientId, UserId
 from petisco.legacy.domain.aggregate_roots.aggregate_root import AggregateRoot
 from petisco.legacy.domain.value_objects.name import Name
 from tests.end2end.flask_app.user.domain.events.user_created import UserCreated

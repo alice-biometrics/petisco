@@ -1,6 +1,6 @@
 from meiga import Result, Success, Error
 
-from petisco import UseCase, use_case_handler, InfoId, Petisco, Repositories
+from petisco.legacy import UseCase, use_case_handler, InfoId, Petisco, Repositories
 from petisco.legacy.domain.value_objects.name import Name
 from petisco.legacy.domain.value_objects.user_id import UserId
 from petisco.legacy.event.bus.domain.interface_event_bus import IEventBus
