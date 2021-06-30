@@ -1,6 +1,6 @@
 import pytest
 
-from petisco import ValueObject
+from petisco import ValueObject, InvalidValueObject
 
 
 @pytest.mark.unit
@@ -32,3 +32,10 @@ def test_value_object_should_equal_when_values_are_equals(expected_value):
 
     assert value_object == other
     assert id(value_object) != id(other)
+
+
+@pytest.mark.unit
+def test_value_object_with_value_none_should_raise_invalid_value_object_error():
+    with pytest.raises(InvalidValueObject) as excinfo:
+        ValueObject(value=None)
+    assert "Invalid ValueObject" in str(excinfo.value)
