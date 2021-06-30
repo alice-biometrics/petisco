@@ -24,6 +24,7 @@ class MySqlDatabase(Database):
         model_filename: str = None,
         print_sql_statements: bool = False,
         use_scoped_session: bool = True,
+        use_future: bool = True,
     ):
         if not connection or not isinstance(connection, MySqlConnection):
             raise ConnectionError(
@@ -36,6 +37,7 @@ class MySqlDatabase(Database):
         self.connection = connection
         self.print_sql_statements = print_sql_statements
         self.use_scoped_session = use_scoped_session
+        self.use_future = use_future
 
         super().__init__(name, self.persistence_models.models)
         self._init()
@@ -57,13 +59,14 @@ class MySqlDatabase(Database):
             json_serializer=lambda obj: obj,
             json_deserializer=lambda obj: obj,
             echo=self.print_sql_statements,
+            future=self.use_future,
         )
 
         if not database_exists(engine.url):
             create_database(engine.url)
             self.base.metadata.create_all(engine)
 
-        self.session_maker = sessionmaker(bind=engine)
+        self.session_maker = sessionmaker(bind=engine, future=self.use_future)
 
     def delete(self):
         pass
