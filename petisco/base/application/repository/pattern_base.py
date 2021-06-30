@@ -1,6 +1,6 @@
 import copy
 
-from petisco import Interface
+from petisco.base.misc.interface import Interface
 from petisco.base.domain.ids.client_id import ClientId
 from petisco.base.domain.ids.info_id import InfoId
 from petisco.base.domain.ids.user_id import UserId
