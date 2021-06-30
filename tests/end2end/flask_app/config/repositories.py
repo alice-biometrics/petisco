@@ -1,6 +1,6 @@
 from typing import Dict
 
-from petisco import IRepository, Repositories
+from petisco.legacy import IRepository, Repositories
 from tests.end2end.flask_app.shared.infrastructure.repositories.mongodb_user_repository import (
     MongoDBUserRepository,
 )

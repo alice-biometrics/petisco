@@ -2,7 +2,7 @@ from typing import Any, Callable
 
 from meiga import Result, Error, isSuccess, Success
 
-from petisco import Persistence
+from petisco.legacy import Persistence
 
 from tests.end2end.flask_app.users_count.domain.interface_users_count_repository import (
     IUsersCountRepository,

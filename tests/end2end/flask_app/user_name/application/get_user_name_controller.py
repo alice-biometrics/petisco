@@ -1,6 +1,6 @@
 from meiga import Result
 
-from petisco import controller_handler, TokenManager, InfoId, AcceptedToken
+from petisco.legacy import controller_handler, TokenManager, InfoId, AcceptedToken
 from tests.end2end.flask_app.user_name.application.get_user_name import GetUserName
 
 

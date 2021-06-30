@@ -1,6 +1,6 @@
 from typing import Dict
 
-from petisco import IAppService, AppServices
+from petisco.legacy import IAppService, AppServices
 from tests.end2end.flask_app.sum.infrastructure.sum_executor import SumExecutor
 
 

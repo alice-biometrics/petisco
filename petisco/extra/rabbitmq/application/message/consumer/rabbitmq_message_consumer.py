@@ -115,19 +115,18 @@ class RabbitMqMessageConsumer(MessageConsumer):
                         message_type_expected=subscriber_info.message_type,
                     )
 
-    def add_subscriber_on_dead_letter(
-        self, subscriber: Type[MessageSubscriber], handler: Callable
-    ):
-        pass
-        # queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
-        #     subscriber, exchange_name=self.exchange_name
-        # )
-        # for handler_name in subscriber.get_handlers_names():
-        #     self.add_handler_on_queue(
-        #         queue_name=f"{queue_name}.{handler_name}",
-        #         handler=handler,
-        #         message_type_expected=subscriber.message_type,
-        #     )
+    def add_subscriber_on_dead_letter(self, subscriber: Type[MessageSubscriber]):
+        subscriber: MessageSubscriber = subscriber()
+        for subscriber_info in subscriber.get_message_subscribers_info():
+
+            queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
+                subscriber_info, exchange_name=self.exchange_name
+            )
+            self.add_subscriber_on_queue(
+                queue_name=f"{queue_name}.{subscriber.get_subscriber_name()}",
+                subscriber=subscriber,
+                message_type_expected=subscriber_info.message_type,
+            )
 
     # def add_handler_on_store(self, handler: Callable):
     #     self.add_handler_on_queue("store", handler, is_store=True)

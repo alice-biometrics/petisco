@@ -1,6 +1,6 @@
 from meiga import Result
 
-from petisco import (
+from petisco.legacy import (
     controller_handler,
     TokenManager,
     HttpError,
