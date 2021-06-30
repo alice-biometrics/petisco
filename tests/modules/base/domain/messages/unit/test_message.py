@@ -31,3 +31,14 @@ def test_message_should_create_message_with_required_values():
     assert hasattr(message, "type")
     assert hasattr(message, "attributes")
     assert hasattr(message, "meta")
+
+
+@pytest.mark.unit
+def test_message_should_create_random_message_ids():
+
+    message_1 = MyMessage()
+
+    message_2 = MyMessage()
+
+    assert message_1.message_id != message_2.message_id
+    assert message_1.occurred_on != message_2.occurred_on

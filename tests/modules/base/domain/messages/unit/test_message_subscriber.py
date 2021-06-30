@@ -43,7 +43,8 @@ def test_message_subscriber_should_construct_and_return_failure_on_handle_method
 @pytest.mark.unit
 @pytest.mark.parametrize(
     "configured_middlewares",
-    [[], [PrintMiddleware], [PrintMiddleware, PrintMiddleware]],
+    # [[], [PrintMiddleware], [PrintMiddleware, PrintMiddleware]],
+    [[PrintMiddleware]],
 )
 def test_message_subscriber_should_create_command_input_and_output(
     configured_middlewares

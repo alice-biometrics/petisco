@@ -26,6 +26,19 @@ class MessageSubscriberMother:
         return MyDomainEventSubscriber
 
     @staticmethod
+    def domain_event_subscriber_with_self_handler(
+        domain_event_type: Type[DomainEvent], self_handler: Callable
+    ):
+        class MyDomainEventSubscriber(DomainEventSubscriber):
+            def subscribed_to(self) -> List[Type[DomainEvent]]:
+                return [domain_event_type]
+
+            def handle(self, domain_event: DomainEvent) -> BoolResult:
+                return self_handler(self, domain_event)
+
+        return MyDomainEventSubscriber
+
+    @staticmethod
     def other_domain_event_subscriber(
         domain_event_type: Type[DomainEvent], handler: Callable
     ):
