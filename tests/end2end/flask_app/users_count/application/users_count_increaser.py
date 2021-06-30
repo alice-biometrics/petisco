@@ -1,6 +1,6 @@
 from meiga import Result, Error
 
-from petisco import UseCase, use_case_handler, Repositories
+from petisco.legacy import UseCase, use_case_handler, Repositories
 from tests.end2end.flask_app.users_count.domain.interface_users_count_repository import (
     IUsersCountRepository,
 )
