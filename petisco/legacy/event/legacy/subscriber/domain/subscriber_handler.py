@@ -66,8 +66,6 @@ class _SubscriberHandler:
 
     def _check_logger(self):
         if self.logger == DEFAULT_LOGGER:
-            from petisco import Petisco
-
             self.logger = Petisco.get_logger()
 
     def _check_notifier(self):
