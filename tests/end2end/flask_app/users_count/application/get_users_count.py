@@ -1,6 +1,6 @@
 from meiga import Result
 
-from petisco import controller_handler
+from petisco.legacy import controller_handler
 from tests.end2end.flask_app.users_count.application.users_count_retriever import (
     UsersCountRetriever,
 )
