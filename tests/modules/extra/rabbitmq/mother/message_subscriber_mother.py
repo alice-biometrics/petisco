@@ -26,6 +26,19 @@ class MessageSubscriberMother:
         return MyDomainEventSubscriber
 
     @staticmethod
+    def domain_event_subscriber_with_self_handler(
+        domain_event_type: Type[DomainEvent], self_handler: Callable
+    ):
+        class MyDomainEventSubscriber(DomainEventSubscriber):
+            def subscribed_to(self) -> List[Type[DomainEvent]]:
+                return [domain_event_type]
+
+            def handle(self, domain_event: DomainEvent) -> BoolResult:
+                return self_handler(self, domain_event)
+
+        return MyDomainEventSubscriber
+
+    @staticmethod
     def other_domain_event_subscriber(
         domain_event_type: Type[DomainEvent], handler: Callable
     ):
@@ -40,11 +53,19 @@ class MessageSubscriberMother:
 
     @staticmethod
     def all_messages_subscriber(handler: Callable):
-        class MyDomainEventSubscriber(AllMessageSubscriber):
+        class MyAllMessageSubscriber(AllMessageSubscriber):
             def handle(self, domain_event: DomainEvent) -> BoolResult:
                 return handler(domain_event)
 
-        return MyDomainEventSubscriber
+        return MyAllMessageSubscriber
+
+    @staticmethod
+    def other_all_messages_subscriber(handler: Callable):
+        class MyOtherAllMessageSubscriber(AllMessageSubscriber):
+            def handle(self, domain_event: DomainEvent) -> BoolResult:
+                return handler(domain_event)
+
+        return MyOtherAllMessageSubscriber
 
     @staticmethod
     def command_subscriber(command_type: Type[Command], handler: Callable):

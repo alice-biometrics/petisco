@@ -6,9 +6,9 @@ from petisco.base.domain.message.message import Message
 
 class Command(Message):
     def __init__(self, **kwargs):
+        self._set_data()
+        self._set_attributes(**kwargs)
         self.type = "command"
-        for k in kwargs:
-            self.attributes[k] = kwargs[k]
 
     @staticmethod
     def from_dict(message_data: Dict, target_type: Optional[Type] = None):
@@ -23,6 +23,5 @@ class Command(Message):
         event_dict = json.loads(message_json)
         return Command.from_dict(event_dict, target_type)
 
-    @classmethod
-    def __repr__(cls):
-        return cls.to_str(type="command")
+    def __repr__(self):
+        return self.to_str(class_name="Command", type="domain_event")

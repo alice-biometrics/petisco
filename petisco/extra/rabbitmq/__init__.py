@@ -22,6 +22,7 @@ if is_pika_available():
     from petisco.extra.rabbitmq.application.chaos.rabbitmq_message_chaos import (
         RabbitMqMessageChaos,
     )
+    from petisco.extra.rabbitmq.shared.specific_queue_config import SpecificQueueConfig
 
     rabbitmq = [
         "RabbitMqConnector",
@@ -29,6 +30,7 @@ if is_pika_available():
         "RabbitMqDomainEventBus",
         "RabbitMqMessageConfigurer",
         "QueueConfig",
+        "SpecificQueueConfig",
         "RabbitMqMessageConsumer",
         "RabbitMqCommandBus",
         "get_rabbitmq_bus_dependencies",

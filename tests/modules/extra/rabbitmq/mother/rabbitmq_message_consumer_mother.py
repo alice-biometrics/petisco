@@ -1,8 +1,8 @@
+from petisco.base.domain.message.chaos.message_chaos import MessageChaos
 from petisco.extra.rabbitmq import RabbitMqMessageConsumer
 from petisco.legacy import RabbitMqConnector
 
 from petisco.legacy.logger.interface_logger import ILogger
-from petisco.legacy.event.chaos.domain.interface_event_chaos import IEventChaos
 from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
 from tests.modules.extra.rabbitmq.mother.defaults import (
     DEFAULT_ORGANIZATION,
@@ -55,7 +55,7 @@ class RabbitMqMessageConsumerMother:
 
     @staticmethod
     def with_chaos(
-        chaos: IEventChaos,
+        chaos: MessageChaos,
         max_retries: int,
         logger: ILogger = NotImplementedLogger(),
         connector: RabbitMqConnector = None,

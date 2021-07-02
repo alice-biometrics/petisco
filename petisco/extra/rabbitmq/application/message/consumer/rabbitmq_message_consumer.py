@@ -52,9 +52,9 @@ from petisco.legacy.event.consumer.infrastructure.rabbitmq_event_consumer_printe
 
 
 @dataclass
-class HandlerItem:
+class SubscriberItem:
     queue_name: str
-    handler: Callable
+    subscriber: MessageSubscriber
     consumer_tag: str
     is_store: bool = False
 
@@ -81,7 +81,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self.printer = RabbitMqEventConsumerPrinter(verbose)
         self.consumer_logger = RabbitMqMessageConsumerLogger(logger)
         self.chaos = chaos
-        self.handlers = {}
+        self.subscribers = {}
 
     def start(self):
         if not self._channel:
@@ -102,14 +102,14 @@ class RabbitMqMessageConsumer(MessageConsumer):
             for subscriber_info in subscriber.get_message_subscribers_info():
 
                 if subscriber_info.message_type == "message":
-                    self.add_subscriber_on_queue(
+                    self._add_subscriber_instance_on_queue(
                         queue_name="store", subscriber=subscriber, is_store=True
                     )
                 else:
                     queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format(
                         subscriber_info, exchange_name=self.exchange_name
                     )
-                    self.add_subscriber_on_queue(
+                    self._add_subscriber_instance_on_queue(
                         queue_name=f"{queue_name}.{subscriber.get_subscriber_name()}",
                         subscriber=subscriber,
                         message_type_expected=subscriber_info.message_type,
@@ -122,7 +122,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
             queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
                 subscriber_info, exchange_name=self.exchange_name
             )
-            self.add_subscriber_on_queue(
+            self._add_subscriber_instance_on_queue(
                 queue_name=f"{queue_name}.{subscriber.get_subscriber_name()}",
                 subscriber=subscriber,
                 message_type_expected=subscriber_info.message_type,
@@ -131,7 +131,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
     # def add_handler_on_store(self, handler: Callable):
     #     self.add_handler_on_queue("store", handler, is_store=True)
 
-    def add_subscriber_on_queue(
+    def _add_subscriber_instance_on_queue(
         self,
         queue_name: str,
         subscriber: MessageSubscriber,
@@ -144,8 +144,23 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 subscriber, is_store, message_type_expected
             ),
         )
-        self.handlers[queue_name] = HandlerItem(
-            queue_name, subscriber.handle, consumer_tag, is_store
+        self.subscribers[queue_name] = SubscriberItem(
+            queue_name, subscriber, consumer_tag, is_store
+        )
+
+    def add_subscriber_on_queue(
+        self,
+        queue_name: str,
+        subscriber: Type[MessageSubscriber],
+        is_store: bool = False,
+        message_type_expected: str = "message",
+    ):
+        subscriber: MessageSubscriber = subscriber()
+        return self._add_subscriber_instance_on_queue(
+            queue_name=queue_name,
+            subscriber=subscriber,
+            is_store=is_store,
+            message_type_expected=message_type_expected,
         )
 
     def consumer(
@@ -390,29 +405,29 @@ class RabbitMqMessageConsumer(MessageConsumer):
         _await_for_stop_consuming_consumer_channel()
 
     def unsubscribe_subscriber_on_queue(self, queue_name: str):
-        handler_item: HandlerItem = self.handlers.get(queue_name)
-        if handler_item is None:
+        subscriber_item: SubscriberItem = self.subscribers.get(queue_name)
+        if subscriber_item is None:
             raise IndexError(
-                f"Cannot unsubscribe an nonexistent queue ({queue_name}). Please, check configured consumers ({list(self.handlers.keys())})"
+                f"Cannot unsubscribe an nonexistent queue ({queue_name}). Please, check configured consumers ({list(self.subscribers.keys())})"
             )
 
         def _unsubscribe_handler_on_queue():
-            self._channel.basic_cancel(consumer_tag=handler_item.consumer_tag)
+            self._channel.basic_cancel(consumer_tag=subscriber_item.consumer_tag)
 
         self._do_it_in_consumer_thread(_unsubscribe_handler_on_queue)
 
     def resume_subscriber_on_queue(self, queue_name: str):
-        handler_item: HandlerItem = self.handlers.get(queue_name)
-        if handler_item is None:
+        subscriber_item: SubscriberItem = self.subscribers.get(queue_name)
+        if subscriber_item is None:
             raise IndexError(
-                f"Cannot resume an nonexistent queue ({queue_name}). Please, check configured consumers ({list(self.handlers.keys())})"
+                f"Cannot resume an nonexistent queue ({queue_name}). Please, check configured consumers ({list(self.subscribers.keys())})"
             )
 
         def _resume_handler_on_queue():
-            handler_item.consumer_tag = self._channel.basic_consume(
-                queue=handler_item.queue_name,
+            subscriber_item.consumer_tag = self._channel.basic_consume(
+                queue=subscriber_item.queue_name,
                 on_message_callback=self.consumer(
-                    handler_item.handler, handler_item.is_store
+                    subscriber_item.subscriber, subscriber_item.is_store
                 ),
             )
 

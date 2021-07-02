@@ -26,9 +26,7 @@ class MetaMessage(type):
     def __new__(mcs, name, bases, namespace):
         config = namespace.get("Config")
 
-        namespace["message_id"] = Uuid.v4()
         namespace["version"] = get_version(config)
-        namespace["occurred_on"] = datetime.now()
         namespace["name"] = get_message_name(namespace)
         namespace["attributes"] = {}
         namespace["meta"] = {}
@@ -50,13 +48,28 @@ class Message(metaclass=MetaMessage):
 
     def _set_data(self, **kwargs):
         if kwargs:
-            self.message_id = Uuid.from_value(kwargs.get("id"))
+            self.message_id = (
+                Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
+            )
             self.name = kwargs.get("type")
             self.version = kwargs.get("version")
-            self.occurred_on = datetime.strptime(kwargs.get("occurred_on"), TIME_FORMAT)
+            self.occurred_on = (
+                datetime.strptime(kwargs.get("occurred_on"), TIME_FORMAT)
+                if kwargs.get("occurred_on")
+                else datetime.now()
+            )
             self.attributes = kwargs.get("attributes")
             self.meta = kwargs.get("meta")
             self.type = kwargs.get("type_message", "message")
+        else:
+            self.message_id = Uuid.v4()
+            self.occurred_on = datetime.utcnow()
+
+    def _set_attributes(self, **kwargs):
+        if self.attributes is None:
+            self.attributes = {}
+        for k in kwargs:
+            self.attributes[k] = kwargs[k]
 
     def add_meta(self, meta: Dict):
         self.meta = meta
@@ -108,9 +121,8 @@ class Message(metaclass=MetaMessage):
         }
         return data
 
-    @classmethod
-    def to_str(cls, type: str = "message"):
-        return f"{cls.__name__} [{cls.message_id.value} ({type}), {cls.name} (v{cls.version}), {cls.occurred_on}, attributes={cls.attributes}]"
+    def to_str(self, class_name="Message", type: str = "message"):
+        return f"{class_name} [{self.message_id.value} ({type}), {self.name} (v{self.version}), {self.occurred_on}, attributes={self.attributes}]"
 
     def json(self):
         return json.dumps(self.dict())
@@ -118,10 +130,8 @@ class Message(metaclass=MetaMessage):
     def __eq__(self, other):
         return self.dict() == other.dict()
 
-    @classmethod
-    def __str__(cls):
-        return cls.__repr__()
+    def __str__(self):
+        return self.__repr__()
 
-    @classmethod
-    def __repr__(cls):
-        return cls.to_str()
+    def __repr__(self):
+        return self.to_str()
