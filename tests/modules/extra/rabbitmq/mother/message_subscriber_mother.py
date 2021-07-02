@@ -53,11 +53,19 @@ class MessageSubscriberMother:
 
     @staticmethod
     def all_messages_subscriber(handler: Callable):
-        class MyDomainEventSubscriber(AllMessageSubscriber):
+        class MyAllMessageSubscriber(AllMessageSubscriber):
             def handle(self, domain_event: DomainEvent) -> BoolResult:
                 return handler(domain_event)
 
-        return MyDomainEventSubscriber
+        return MyAllMessageSubscriber
+
+    @staticmethod
+    def other_all_messages_subscriber(handler: Callable):
+        class MyOtherAllMessageSubscriber(AllMessageSubscriber):
+            def handle(self, domain_event: DomainEvent) -> BoolResult:
+                return handler(domain_event)
+
+        return MyOtherAllMessageSubscriber
 
     @staticmethod
     def command_subscriber(command_type: Type[Command], handler: Callable):
