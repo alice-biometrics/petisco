@@ -1,4 +1,4 @@
-from petisco import DomainEvent
+from petisco.base.domain.message.domain_event import DomainEvent
 
 
 class ServiceDeployed(DomainEvent):

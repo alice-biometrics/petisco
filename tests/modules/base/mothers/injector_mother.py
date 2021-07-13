@@ -1,13 +1,9 @@
-from petisco import Injector, Dependency
-
-
-class MyRepo:
-    def execute(self):
-        print("MyRepo")
+from petisco import Injector
+from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 
 class InjectorMother:
     @staticmethod
     def any() -> Injector:
-        dependencies = [Dependency(name="repo", default_instance=MyRepo())]
+        dependencies = [DependencyMother.any()]
         return Injector(dependencies)
