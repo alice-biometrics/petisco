@@ -1,7 +1,7 @@
 from typing import List
 
-from petisco.base.misc.singleton import Singleton
 from petisco.base.application.dependency_injection.dependency import Dependency
+from petisco.base.misc.singleton import Singleton
 
 
 class Injector(metaclass=Singleton):
@@ -30,4 +30,5 @@ class Injector(metaclass=Singleton):
     def _set_dependencies(self, dependencies: List[Dependency] = []) -> List[str]:
         for dependency in dependencies:
             setattr(self, dependency.name, dependency.get_instance())
-            self.available_dependencies.append(dependency.name)
+            if dependency.name not in self.available_dependencies:
+                self.available_dependencies.append(dependency.name)

@@ -1,3 +1,4 @@
+import copy
 from typing import Any, Callable, List, Optional
 
 from pydantic import BaseSettings, Field
@@ -20,12 +21,19 @@ class Application(BaseSettings):
     organization: str
     environment: str = Field("local", env="ENVIRONMENT")
     testing: bool = Field(False, env="PETISCO_TEST")
-    dependencies: Optional[List[Dependency]] = []
+    dependencies_provider: Optional[Callable[..., List[Dependency]]] = lambda: []
     configurers: Optional[List[Callable[[bool], Any]]] = []
 
-    def configure(self):
-        Injector.set_dependencies(self.get_dependencies())
+    def __init__(self, **data: Any):
+        super().__init__(**data)
+        self._configure()
 
+    def with_testing(self):
+        application = copy.copy(self)
+        application.testing = True
+        return application
+
+    def _configure(self):
         for configurer in self.configurers:
             if configurer:
                 try:
@@ -35,6 +43,7 @@ class Application(BaseSettings):
                     raise TypeError(
                         f'Given configure function ("{callable_name}") must be defined as Callable[[bool], Any] receiving a boolean as an input.'
                     )
+        Injector.set_dependencies(self.get_dependencies())
 
     def get_dependencies(self) -> List[Dependency]:
         default_dependencies = (
@@ -43,8 +52,9 @@ class Application(BaseSettings):
         default_dependencies_dict = {
             dependency.name: dependency for dependency in default_dependencies
         }
+        provided_dependencies = self.dependencies_provider()
         given_dependencies_dict = {
-            dependency.name: dependency for dependency in self.dependencies
+            dependency.name: dependency for dependency in provided_dependencies
         }
 
         merged_dependecies = {**default_dependencies_dict, **given_dependencies_dict}
@@ -59,6 +69,7 @@ class Application(BaseSettings):
             dependency.name: dependency.get_instance().info()
             for dependency in self.get_dependencies()
         }
+        del info["dependencies_provider"]
         del info["configurers"]
         return info
 
