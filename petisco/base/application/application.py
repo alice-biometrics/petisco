@@ -24,16 +24,12 @@ class Application(BaseSettings):
     dependencies_provider: Optional[Callable[..., List[Dependency]]] = lambda: []
     configurers: Optional[List[Callable[[bool], Any]]] = []
 
-    def __init__(self, **data: Any):
-        super().__init__(**data)
-        self._configure()
-
     def with_testing(self):
         application = copy.copy(self)
         application.testing = True
         return application
 
-    def _configure(self):
+    def configure(self):
         for configurer in self.configurers:
             if configurer:
                 try:

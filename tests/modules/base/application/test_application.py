@@ -32,6 +32,7 @@ DEFAULT_AVAILABLE_DEPENDENCIES = [
 def test_application_should_construct_from_required_variables():
 
     application = Application(name="service", version="1.0.0", organization="acme")
+    application.configure()
 
     assert DEFAULT_AVAILABLE_DEPENDENCIES == Injector.get_available_dependencies()
     assert {
@@ -54,7 +55,10 @@ def test_application_should_construct_from_required_variables():
 @testing_with_empty_injector
 def test_application_should_construct_with_testing_variable():
 
-    _ = Application(name="service", version="1.0.0", organization="acme", testing=True)
+    Application(
+        name="service", version="1.0.0", organization="acme", testing=True
+    ).configure()
+
     assert DEFAULT_AVAILABLE_DEPENDENCIES == Injector.get_available_dependencies()
 
 
@@ -64,12 +68,12 @@ def test_application_should_construct_with_dependencies_provider():
     def dependencies_provider() -> List[Dependency]:
         return [DependencyMother.any()]
 
-    _ = Application(
+    Application(
         name="service",
         version="1.0.0",
         organization="acme",
         dependencies_provider=dependencies_provider,
-    )
+    ).configure()
 
     assert (
         DEFAULT_AVAILABLE_DEPENDENCIES + ["repo"]
@@ -83,12 +87,12 @@ def test_application_should_construct_with_a_dependency_overwrite():
     def dependencies_provider() -> List[Dependency]:
         return [DependencyMother.domain_event_bus()]
 
-    _ = Application(
+    Application(
         name="service",
         version="1.0.0",
         organization="acme",
         dependencies_provider=dependencies_provider,
-    )
+    ).configure()
 
     assert DEFAULT_AVAILABLE_DEPENDENCIES == Injector.get_available_dependencies()
 
@@ -99,12 +103,12 @@ def test_application_should_construct_with_configurers():
     def configurer(testing: bool):
         pass
 
-    _ = Application(
+    Application(
         name="service",
         version="1.0.0",
         organization="acme",
         configurers=[configurer, configurer],
-    )
+    ).configure()
 
 
 @pytest.mark.unit
@@ -114,12 +118,12 @@ def test_application_should_raise_an_exception_when_configurer_do_not_receive_a_
         pass
 
     with pytest.raises(TypeError) as excinfo:
-        _ = Application(
+        Application(
             name="service",
             version="1.0.0",
             organization="acme",
             configurers=[configurer],
-        )
+        ).configure()
     assert (
         'Given configure function ("configurer") must be defined as Callable[[bool], Any] receiving a boolean as an input.'
         in str(excinfo.value)
@@ -133,12 +137,12 @@ def test_application_should_raise_an_exception_when_configurer_with_an_exeption(
         raise RuntimeError("Our Error")
 
     with pytest.raises(RuntimeError) as excinfo:
-        _ = Application(
+        Application(
             name="service",
             version="1.0.0",
             organization="acme",
             configurers=[configurer],
-        )
+        ).configure()
     assert "Our Error" in str(excinfo.value)
 
 
@@ -154,6 +158,7 @@ def test_application_should_publish_service_deployed_domain_event():
         organization="acme",
         dependencies_provider=dependencies_provider,
     )
+    application.configure()
     application.publish_deploy_event()
 
 
@@ -166,4 +171,5 @@ def test_application_should_notify_deploy():
         version="1.0.0",
         organization="acme",
     )
+    application.configure()
     application.notify_deploy()
