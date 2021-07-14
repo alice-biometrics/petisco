@@ -128,6 +128,22 @@ def test_application_should_raise_an_exception_when_configurer_do_not_receive_a_
 
 @pytest.mark.unit
 @testing_with_empty_injector
+def test_application_should_raise_an_exception_when_configurer_with_an_exeption():
+    def configurer(testing: bool):
+        raise RuntimeError("Our Error")
+
+    with pytest.raises(RuntimeError) as excinfo:
+        _ = Application(
+            name="service",
+            version="1.0.0",
+            organization="acme",
+            configurers=[configurer],
+        )
+    assert "Our Error" in str(excinfo.value)
+
+
+@pytest.mark.unit
+@testing_with_empty_injector
 def test_application_should_publish_service_deployed_domain_event():
     def dependencies_provider() -> List[Dependency]:
         return [DependencyMother.domain_event_bus()]

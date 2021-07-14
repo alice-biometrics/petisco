@@ -38,7 +38,7 @@ class Application(BaseSettings):
             if configurer:
                 try:
                     configurer(self.testing)
-                except:  # noqa
+                except TypeError:  # noqa
                     callable_name = getattr(configurer, "__name__", repr(configurer))
                     raise TypeError(
                         f'Given configure function ("{callable_name}") must be defined as Callable[[bool], Any] receiving a boolean as an input.'
