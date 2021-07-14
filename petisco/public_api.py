@@ -1,7 +1,7 @@
 # coding=utf-8
-# Copyright (C) 2019+ Alice, Vigo, Spain
+# Copyright (C) 2021+ Alice, Vigo, Spain
 
-"""Public API of ALiCE Petisco Framework"""
+"""Public API of Alice Petisco Framework"""
 from petisco.base.application.application import Application
 from petisco.base.application.controller.controller import Controller
 from petisco.base.application.controller.http_error import HttpError
@@ -10,8 +10,8 @@ from petisco.base.application.dependency_injection.injector import Injector
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
-from petisco.base.application.repository.interface_repository import Repository
-from petisco.base.application.repository.repositories import Repositories
+from petisco.base.application.patterns.app_service import AppService
+from petisco.base.application.patterns.repository import Repository
 from petisco.base.application.use_case.use_case import UseCase
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
     UseCaseUncontrolledError,
@@ -53,9 +53,6 @@ from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
 from petisco.base.domain.persistence.persistence import Persistence
 from petisco.base.domain.persistence.persistence_models import PersistenceModels
-
-# TODO permit use from petisco.fastapi import *
-# from petisco.extra import fastapi
 from petisco.base.misc.interface import Interface
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.base.testing.assert_http import assert_http
@@ -102,11 +99,10 @@ base = [
     "Persistence",
     "PersistenceModels",
     "InvalidValueObject",
-    "Repositories",
     "Repository",
+    "AppService",
     "Application",
 ]
-modules = []  # ["extra.fastapi"]
-
+modules = []
 
 __all__ = base + modules

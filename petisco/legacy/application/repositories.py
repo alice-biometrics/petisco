@@ -1,10 +1,10 @@
 import inspect
-from typing import Dict, TypeVar, Callable
+from typing import Callable, Dict, TypeVar
 
 from deprecation import deprecated
 
-from petisco.legacy.application.singleton import Singleton
 from petisco.legacy.application.interface_repository import IRepository
+from petisco.legacy.application.singleton import Singleton
 
 Repository = TypeVar("Repository", bound=IRepository)
 
@@ -58,12 +58,12 @@ class Repositories(metaclass=Singleton):
         repositories = Repositories.get_instance()._repositories
         if repositories is None:
             raise ValueError(
-                "Repositories: no repository has been declared. Please, initialize it (i.e Repositories.from_provider(provider_func))"
+                "Repositories: no patterns has been declared. Please, initialize it (i.e Repositories.from_provider(provider_func))"
             )
         repository = repositories.get(name)
         if not repository:
             raise ValueError(
-                f"Repositories: {name} repository is not defined.  Please, add it (i.e Repositories.from_provider(provider_func))"
+                f"Repositories: {name} patterns is not defined.  Please, add it (i.e Repositories.from_provider(provider_func))"
             )
         return repository
 

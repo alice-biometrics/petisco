@@ -9,9 +9,7 @@ from petisco.base.domain.message.not_implemented_message_comsumer import (
 )
 
 
-def get_default_message_dependencies(
-    organization: str = None, service: str = None
-) -> List[Dependency]:
+def get_default_message_dependencies() -> List[Dependency]:
 
     return [
         Dependency(

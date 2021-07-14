@@ -2,49 +2,49 @@ from abc import ABCMeta, abstractmethod
 
 from deprecation import deprecated
 from meiga import (
-    Result,
+    BoolResult,
     Error,
     Failure,
-    Success,
     NotImplementedMethodError,
-    BoolResult,
+    Result,
+    Success,
     isSuccess,
 )
 
 from petisco import Uuid
-from petisco.base.application.repository.interface_repository import Repository
+from petisco.base.application.patterns.repository import Repository
 from petisco.extra.sqlalchemy.sql.errors import (
     ClientNotFoundError,
-    UserNotFoundError,
+    EntitiesNotFoundError,
     EntityAlreadyExistError,
     EntityNotFoundError,
-    EntitiesNotFoundError,
+    UserNotFoundError,
 )
 
 
 class SqlRepository(Repository, metaclass=ABCMeta):
     def get_sql_internal_client_id(self, session, model) -> Result[int, Error]:
         if not hasattr(self, "internal_client_id"):
+            client_id = self.get_info_id().client_id
             internal_client_id = (
                 session.query(model.id)
-                .filter(model.client_id == self.get_client_id_value())
+                .filter(model.client_id == client_id.value)
                 .first()
             )
             if not internal_client_id:
-                return Failure(ClientNotFoundError(self.get_client_id()))
+                return Failure(ClientNotFoundError(client_id))
             self.internal_client_id = internal_client_id.id
 
         return Success(self.internal_client_id)
 
     def get_sql_internal_user_id(self, session, model) -> Result[int, Error]:
         if not hasattr(self, "internal_user_id"):
+            user_id = self.get_info_id().user_id
             internal_user_id = (
-                session.query(model.id)
-                .filter(model.user_id == self.get_user_id_value())
-                .first()
+                session.query(model.id).filter(model.user_id == user_id.value).first()
             )
             if not internal_user_id:
-                return Failure(UserNotFoundError(self.get_user_id()))
+                return Failure(UserNotFoundError(user_id))
             self.internal_user_id = internal_user_id.id
 
         return Success(self.internal_user_id)

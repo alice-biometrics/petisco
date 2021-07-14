@@ -1,13 +1,11 @@
-from typing import Optional, List, Dict
+from typing import Dict, List, Optional
 
 from pydantic.main import BaseModel
-
-from petisco.legacy.domain.aggregate_roots.info_id import InfoId
 
 
 class NotifierMessage(BaseModel):
     title: Optional[str] = None
     message: Optional[str] = None
-    info_petisco: Optional[Dict] = None
-    info_id: Optional[InfoId] = None
+    meta: Optional[Dict] = None
     files: Optional[List[Dict]] = None
+    # info_id: Optional[InfoId] = None

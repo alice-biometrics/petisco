@@ -1,11 +1,11 @@
 from abc import abstractmethod
 
-from meiga import Result, NotImplementedMethodError
+from meiga import NotImplementedMethodError, Result
 
-from petisco.base.application.repository.pattern_base import PatternBase
+from petisco.base.application.patterns.base_pattern import BasePattern
 
 
-class Repository(PatternBase):
+class Repository(BasePattern):
     @abstractmethod
     def save(self, *args, **kwargs) -> Result:
         return NotImplementedMethodError

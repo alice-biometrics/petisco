@@ -2,12 +2,13 @@ import os
 from typing import List
 
 from attr import dataclass
-from meiga import BoolResult, Result, Error, isSuccess, Success
+from meiga import BoolResult, Error, Result, Success, isSuccess
 
 from petisco.base.domain.ids.client_id import ClientId
 from petisco.base.domain.ids.user_id import UserId
 from petisco.base.domain.persistence.persistence import Persistence
 from petisco.extra.sqlalchemy.sql.sql_repository import SqlRepository
+from tests.modules.base.mothers.info_id_mother import InfoIdMother
 
 BASE_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../ymls/"
 
@@ -161,4 +162,4 @@ class SqlRepositoryMother:
     @staticmethod
     def user(database_name: str):
         MyClientSqlRepository(database_name).save(Client.random())
-        return MyUserSqlRepository(database_name).with_client_id(ClientId("ACME"))
+        return MyUserSqlRepository(database_name).with_info_id(InfoIdMother.any())

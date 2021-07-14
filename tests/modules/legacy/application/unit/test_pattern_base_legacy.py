@@ -1,6 +1,6 @@
 import pytest
 
-from petisco.legacy import ClientId, UserId, InfoId
+from petisco.legacy import ClientId, InfoId, UserId
 from petisco.legacy.application.pattern_base import PatternBase
 
 

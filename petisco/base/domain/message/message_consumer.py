@@ -1,5 +1,5 @@
-from typing import List, Callable
 from abc import abstractmethod
+from typing import Callable, List, Type
 
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
 from petisco.base.misc.interface import Interface
@@ -15,7 +15,7 @@ class MessageConsumer(Interface):
         raise NotImplementedError
 
     @abstractmethod
-    def add_subscriber_on_dead_letter(self, subscriber: MessageSubscriber):
+    def add_subscriber_on_dead_letter(self, subscriber: Type[MessageSubscriber]):
         raise NotImplementedError
 
     @abstractmethod

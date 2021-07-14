@@ -12,7 +12,7 @@ class Uuid(ValueObject):
     def validate_value(cls, value):
         if value is None or not validators.uuid(value):
             raise InvalidUuid(uuid_value=value)
-        return value.title()
+        return value
 
     @staticmethod
     def v4():
