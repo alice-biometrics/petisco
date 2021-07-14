@@ -1,9 +1,8 @@
 import pytest
 from fastapi import HTTPException
 from meiga import BoolResult, Failure, Result, Success, isFailure, isSuccess
-from petisco import HttpError
-from petisco import AlreadyExists, NotFound, PrintMiddleware
 
+from petisco import AlreadyExists, HttpError, NotFound, PrintMiddleware
 from petisco.extra.fastapi import (
     FASTAPI_DEFAULT_RESPONSE,
     FastAPIController,
@@ -72,7 +71,7 @@ def test_fastapi_controller_should_raise_fastapi_http_exception_mapped_by_error_
     [[], [PrintMiddleware], [PrintMiddleware, PrintMiddleware]],
 )
 def test_fastapi_controller_should_return_success_result_with_middlewares(
-    configured_middlewares
+    configured_middlewares,
 ):
     class MyController(FastAPIController):
         class Config:
@@ -117,23 +116,23 @@ def test_fastapi_controller_should_success_with_all_configurations_when_success_
             Failure(
                 AlreadyExists(
                     uuid_value="76f5994d-b16f-45b0-b3e4-e531f784f801",
-                    additional_info={"repository": "Products", "table": "UserProduct"},
+                    additional_info={"patterns": "Products", "table": "UserProduct"},
                 )
             ),
             HTTPException(
                 409,
-                detail="Already Exists (76f5994d-b16f-45b0-b3e4-e531f784f801) [{'repository': 'Products', 'table': 'UserProduct'}]",
+                detail="Already Exists (76f5994d-b16f-45b0-b3e4-e531f784f801) [{'patterns': 'Products', 'table': 'UserProduct'}]",
             ),
         ),
         (
             Failure(
                 AlreadyExists(
-                    additional_info={"repository": "Products", "table": "UserProduct"}
+                    additional_info={"patterns": "Products", "table": "UserProduct"}
                 )
             ),
             HTTPException(
                 409,
-                detail="Already Exists [{'repository': 'Products', 'table': 'UserProduct'}]",
+                detail="Already Exists [{'patterns': 'Products', 'table': 'UserProduct'}]",
             ),
         ),
     ],

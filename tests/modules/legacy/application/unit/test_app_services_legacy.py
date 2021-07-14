@@ -2,7 +2,7 @@ from typing import Dict
 
 import pytest
 
-from petisco.legacy.application.app_services import AppServices, AppService
+from petisco.legacy.application.app_services import AppService, AppServices
 from tests.modules.legacy.application.mother.app_service_mother import AppServiceMother
 
 

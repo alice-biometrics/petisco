@@ -1,12 +1,17 @@
 import inspect
 import os
 import time
-from os import environ
-from typing import Callable, Dict, Any
-
 from dataclasses import dataclass
+from os import environ
+from typing import Any, Callable, Dict
+
 from deprecation import deprecated
 
+from petisco import __version__
+from petisco.legacy.application.config.config import Config
+from petisco.legacy.application.interface_app_service import IAppService, IService
+from petisco.legacy.application.interface_repository import IRepository
+from petisco.legacy.application.singleton import Singleton
 from petisco.legacy.event.bus.infrastructure.not_implemented_event_bus import (
     NotImplementedEventBus,
 )
@@ -19,27 +24,22 @@ from petisco.legacy.event.consumer.infrastructure.not_implemented_event_comsumer
 from petisco.legacy.event.legacy.publisher.domain.interface_event_publisher import (
     IEventPublisher,
 )
-from petisco.legacy.event.shared.domain.service_deployed import ServiceDeployed
 from petisco.legacy.event.legacy.subscriber.domain.interface_event_subscriber import (
     IEventSubscriber,
 )
+from petisco.legacy.event.shared.domain.service_deployed import ServiceDeployed
 from petisco.legacy.frameworks.interface_application import IApplication
 from petisco.legacy.logger.interface_logger import INFO, ILogger
 from petisco.legacy.logger.log_message import LogMessage
 from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
+from petisco.legacy.notifier.domain.interface_notifier import INotifier
+from petisco.legacy.notifier.domain.notifier_message import NotifierMessage
 from petisco.legacy.notifier.infrastructure.not_implemented_notifier import (
     NotImplementedNotifier,
 )
-from petisco.legacy.notifier.domain.interface_notifier import INotifier
-from petisco.legacy.notifier.domain.notifier_message import NotifierMessage
-from petisco.legacy.application.config.config import Config
-from petisco.legacy.application.singleton import Singleton
-from petisco.legacy.application.interface_repository import IRepository
-from petisco.legacy.application.interface_app_service import IService, IAppService
 from petisco.legacy.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )
-from petisco import __version__
 from petisco.legacy.tasks.infrastructure.not_implemented_task_executor import (
     NotImplementedTaskExecutor,
 )
@@ -107,10 +107,10 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def from_filename(filename: str):
         """
-       Parameters
-       ----------
-       filename
-           YAML-based configuration file (default petisco.yml)
+        Parameters
+        ----------
+        filename
+            YAML-based configuration file (default petisco.yml)
         """
         print(f"Loading petisco from: {filename}")
 
@@ -136,9 +136,11 @@ class Petisco(metaclass=Singleton):
         )
 
         config_events = ConfigEvents.from_filename(filename).unwrap_or_throw()
-        self.event_bus, self.event_configurer, self.event_consumer = configure_events_infrastructure(
-            config_events, self._logger
-        )
+        (
+            self.event_bus,
+            self.event_configurer,
+            self.event_consumer,
+        ) = configure_events_infrastructure(config_events, self._logger)
 
         if config_events.event_subscribers:
             self.event_configurer.configure_subscribers(config_events.event_subscribers)
@@ -206,8 +208,8 @@ class Petisco(metaclass=Singleton):
         if config_persistence and config_persistence.configs:
             for config_key, config_value in config_persistence.configs.items():
                 if config_value.type == "sql":
-                    import_database_models_func = config_persistence.get_import_database_models_func(
-                        config_key
+                    import_database_models_func = (
+                        config_persistence.get_import_database_models_func(config_key)
                     )
 
                     config_value.config(import_database_models_func)
@@ -403,12 +405,12 @@ class Petisco(metaclass=Singleton):
         repositories = Petisco.get_instance().repositories
         if repositories is None:
             raise ValueError(
-                "Petisco: no repository has been declared. Please, add it to petisco.yml"
+                "Petisco: no patterns has been declared. Please, add it to petisco.yml"
             )
         repository = repositories.get(key)
         if not repository:
             raise ValueError(
-                f"Petisco: {key} repository is not defined. Please, add it to petisco.yml"
+                f"Petisco: {key} patterns is not defined. Please, add it to petisco.yml"
             )
         return repository
 

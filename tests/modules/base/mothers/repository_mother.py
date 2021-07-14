@@ -1,6 +1,6 @@
 from meiga import Result
 
-from petisco.base.application.repository.interface_repository import Repository
+from petisco.base.application.patterns.repository import Repository
 
 
 class MyRepository(Repository):

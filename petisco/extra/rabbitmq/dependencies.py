@@ -9,9 +9,7 @@ from petisco.base.domain.message.not_implemented_message_comsumer import (
 )
 
 
-def get_basic_bus_dependencies(
-    organization: str = None, service: str = None
-) -> List[Dependency]:
+def get_default_message_dependencies() -> List[Dependency]:
 
     return [
         Dependency(
@@ -37,7 +35,7 @@ def get_basic_bus_dependencies(
     ]
 
 
-def get_rabbitmq_bus_dependencies(
+def get_rabbitmq_message_dependencies(
     organization: str, service: str, max_retries: int = 5
 ) -> List[Dependency]:
     from petisco.extra.rabbitmq.application.message.bus.rabbitmq_domain_event_bus import (
@@ -46,7 +44,6 @@ def get_rabbitmq_bus_dependencies(
     from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_message_consumer import (
         RabbitMqMessageConsumer,
     )
-
     from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
     return [

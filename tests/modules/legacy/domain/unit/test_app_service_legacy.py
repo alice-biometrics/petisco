@@ -4,7 +4,7 @@ from petisco.legacy import IAppService
 
 
 @pytest.mark.unit
-def test_should_inherit_from_application_service():
+def test_legacy_should_inherit_from_application_service():
     class AppService(IAppService):
         pass
 
@@ -14,7 +14,7 @@ def test_should_inherit_from_application_service():
 
 
 @pytest.mark.unit
-def test_should_inherit_from_application_service_and_overwrite_info_method():
+def test_legacy_should_inherit_from_application_service_and_overwrite_info_method():
     class AppService(IAppService):
         def info(self):
             return None

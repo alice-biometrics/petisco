@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 from petisco.base.application.notifier.notifier_exception_message import (
     NotifierExceptionMessage,
@@ -105,6 +105,16 @@ class BlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter):
             blocks = self.__get_blocks_exception_message(notifier_message)
         else:
             blocks = []
+            blocks += self.__get_common_blocks(notifier_message)
+            if notifier_message.title:
+                title_block = {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f":label: *{notifier_message.title}*",
+                    },
+                }
+                blocks.append(title_block)
             message_block = {
                 "type": "section",
                 "text": {
@@ -112,15 +122,5 @@ class BlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter):
                     "text": f":envelope: *Message*\n{notifier_message.message}",
                 },
             }
-            blocks += self.__get_common_blocks(notifier_message)
-            if notifier_message.title:
-                title_block = {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f":label: *Title*\n{notifier_message.title}",
-                    },
-                }
-                blocks.append(title_block)
             blocks.append(message_block)
         return blocks
