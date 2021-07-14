@@ -20,7 +20,7 @@ class Application(BaseSettings):
     version: str
     organization: str
     environment: str = Field("local", env="ENVIRONMENT")
-    testing: bool = Field(False, env="PETISCO_TEST")
+    testing: bool = False
     dependencies_provider: Optional[Callable[..., List[Dependency]]] = lambda: []
     configurers: Optional[List[Callable[[bool], Any]]] = []
 
@@ -56,7 +56,6 @@ class Application(BaseSettings):
         given_dependencies_dict = {
             dependency.name: dependency for dependency in provided_dependencies
         }
-
         merged_dependecies = {**default_dependencies_dict, **given_dependencies_dict}
         return list(merged_dependecies.values())
 
