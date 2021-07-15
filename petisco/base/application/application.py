@@ -1,4 +1,3 @@
-import copy
 from typing import Any, Callable, List, Optional
 
 from pydantic import BaseSettings, Field
@@ -20,24 +19,14 @@ class Application(BaseSettings):
     version: str
     organization: str
     environment: str = Field("local", env="ENVIRONMENT")
-    testing: bool = False
     dependencies_provider: Optional[Callable[..., List[Dependency]]] = lambda: []
     configurers: Optional[List[Callable[[bool], Any]]] = []
 
-    def __init__(self, **data: Any):
-        super().__init__(**data)
-        self._configure()
-
-    def with_testing(self):
-        application = copy.copy(self)
-        application.testing = True
-        return application
-
-    def _configure(self):
+    def configure(self, testing: bool = False):
         for configurer in self.configurers:
             if configurer:
                 try:
-                    configurer(self.testing)
+                    configurer(testing)
                 except TypeError:  # noqa
                     callable_name = getattr(configurer, "__name__", repr(configurer))
                     raise TypeError(
