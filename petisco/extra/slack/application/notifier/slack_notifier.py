@@ -6,9 +6,10 @@ from slack.errors import SlackApiError
 from petisco.base.application.notifier.notifier import Notifier
 from petisco.base.application.notifier.notifier_message import NotifierMessage
 from petisco.base.domain.errors.domain_error import DomainError
+from petisco.base.misc.builder import Builder
 from petisco.extra.slack.application.notifier.blocks_slack_notifier_message_converter import (
-    SlackNotifierMessageConverter,
     BlocksSlackNotifierMessageConverter,
+    SlackNotifierMessageConverter,
 )
 
 
@@ -40,3 +41,12 @@ class SlackNotifier(Notifier):
             )
         except SlackApiError as e:
             raise SlackError(e.response["error"])
+
+
+class SlackNotifierBuilder(Builder):
+    def __init__(self, token: str, channel: str):
+        self.token = token
+        self.channel = channel
+
+    def build(self) -> SlackNotifier:
+        return SlackNotifier(self.token, self.channel)

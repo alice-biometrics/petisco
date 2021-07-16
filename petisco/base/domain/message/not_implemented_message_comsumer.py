@@ -2,6 +2,7 @@ from typing import Callable, List, Type
 
 from petisco.base.domain.message.message_consumer import MessageConsumer
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
+from petisco.base.misc.builder import Builder
 
 
 class NotImplementedMessageConsumer(MessageConsumer):
@@ -28,3 +29,8 @@ class NotImplementedMessageConsumer(MessageConsumer):
 
     def stop(self):
         pass
+
+
+class NotImplementedMessageConsumerBuilder(Builder):
+    def build(self):
+        return NotImplementedMessageConsumer()

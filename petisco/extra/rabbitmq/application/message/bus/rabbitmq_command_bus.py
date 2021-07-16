@@ -3,13 +3,13 @@ from pika.exceptions import ChannelClosedByBroker
 
 from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.command_bus import CommandBus
+from petisco.base.misc.builder import Builder
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
     RabbitMqMessageConfigurer,
 )
 from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_queue_name_formatter import (
     RabbitMqMessageQueueNameFormatter,
 )
-
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 
@@ -44,3 +44,16 @@ class RabbitMqCommandBus(CommandBus):
 
     def close(self):
         self.connector.close(self.rabbitmq_key)
+
+
+class RabbitMqCommandBusBuilder(Builder):
+    def __init__(self, organization: str, service: str):
+        self.organization = organization
+        self.service = service
+
+    def build(self) -> RabbitMqCommandBus:
+        return RabbitMqCommandBus(
+            connector=RabbitMqConnector(),
+            organization=self.organization,
+            service=self.service,
+        )
