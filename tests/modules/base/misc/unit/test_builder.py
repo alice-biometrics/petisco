@@ -29,21 +29,6 @@ def test_builder_success_with_args_and_kwargs_default():
 
 
 @pytest.mark.unit
-def test_builder_success_with_both_args_and_kwargs():
-    class MyClass:
-        def __init__(self, arg1, arg2: str):
-            self.arg1 = arg1
-            self.arg2 = arg2
-
-    builder = Builder(MyClass, "arg1", arg2="arg2")
-    my_class = builder.build()
-
-    assert isinstance(my_class, MyClass)
-    assert my_class.arg1 == "arg1"
-    assert my_class.arg2 == "arg2"
-
-
-@pytest.mark.unit
 def test_builder_success_with_kwargs():
     class MyClass:
         def __init__(self, arg1: str, arg2: str):
@@ -51,21 +36,6 @@ def test_builder_success_with_kwargs():
             self.arg2 = arg2
 
     builder = Builder(MyClass, arg1="arg1", arg2="arg2")
-    my_class = builder.build()
-
-    assert isinstance(my_class, MyClass)
-    assert my_class.arg1 == "arg1"
-    assert my_class.arg2 == "arg2"
-
-
-@pytest.mark.unit
-def test_builder_success_with_args():
-    class MyClass:
-        def __init__(self, arg1: str, arg2: str):
-            self.arg1 = arg1
-            self.arg2 = arg2
-
-    builder = Builder(MyClass, "arg1", "arg2")
     my_class = builder.build()
 
     assert isinstance(my_class, MyClass)
@@ -82,3 +52,35 @@ def test_builder_fail_and_raise_an_error_when_rquired_positional_argument_is_not
 
     with pytest.raises(TypeError):
         Builder(MyClass).build()
+
+
+@pytest.mark.unit
+def test_builder_success_with_builder_class():
+    class MyClass:
+        @staticmethod
+        def build():
+            return MyClass()
+
+    builder = Builder(MyClass, is_builder=True)
+    my_class = builder.build()
+
+    assert isinstance(my_class, MyClass)
+
+
+@pytest.mark.unit
+def test_builder_success_with_builder_class_with_arguments():
+    class MyClass:
+        def __init__(self, arg1: str, arg2: str):
+            self.arg1 = arg1
+            self.arg2 = arg2
+
+        @staticmethod
+        def build(*args, **kwargs):
+            return MyClass(*args, **kwargs)
+
+    builder = Builder(MyClass, is_builder=True, arg1="arg1", arg2="arg2")
+    my_class = builder.build()
+
+    assert isinstance(my_class, MyClass)
+    assert my_class.arg1 == "arg1"
+    assert my_class.arg2 == "arg2"
