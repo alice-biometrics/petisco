@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 
-from petisco import Builder
-
 
 class Repo(ABC):
     @abstractmethod
@@ -17,13 +15,3 @@ class MyRepo(Repo):
 class InMemoryRepo(Repo):
     def execute(self):
         print("InMemoryRepo")
-
-
-class MyRepoBuilder(Builder):
-    def build(self) -> MyRepo:
-        return MyRepo()
-
-
-class InMemoryRepoBuilder(Builder):
-    def build(self) -> InMemoryRepo:
-        return InMemoryRepo()

@@ -2,14 +2,12 @@ from typing import List
 
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.domain.message.not_implemented_domain_event_bus import (
-    NotImplementedDomainEventBusBuilder,
+    NotImplementedDomainEventBus,
 )
 from petisco.base.domain.message.not_implemented_message_comsumer import (
-    NotImplementedMessageConsumerBuilder,
+    NotImplementedMessageConsumer,
 )
-from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_message_consumer import (
-    RabbitMqMessageConsumerBuilder,
-)
+from petisco.base.misc.builder import Builder
 
 
 def get_default_message_dependencies() -> List[Dependency]:
@@ -17,22 +15,22 @@ def get_default_message_dependencies() -> List[Dependency]:
     return [
         Dependency(
             name="domain_event_bus",
-            default_builder=NotImplementedDomainEventBusBuilder(),
+            default_builder=Builder(NotImplementedDomainEventBus),
             envar_modifier="PETISCO_DOMAIN_EVENT_BUS_TYPE",
         ),
         Dependency(
             name="command_bus",
-            default_builder=NotImplementedDomainEventBusBuilder(),
+            default_builder=Builder(NotImplementedDomainEventBus),
             envar_modifier="PETISCO_COMMAND_BUS_TYPE",
         ),
         Dependency(
             name="domain_event_consumer",
-            default_builder=NotImplementedMessageConsumerBuilder(),
+            default_builder=Builder(NotImplementedMessageConsumer),
             envar_modifier="PETISCO_DOMAIN_EVENT_CONSUMER_TYPE",
         ),
         Dependency(
             name="command_consumer",
-            default_builder=NotImplementedMessageConsumerBuilder(),
+            default_builder=Builder(NotImplementedMessageConsumer),
             envar_modifier="PETISCO_COMMAND_CONSUMER_TYPE",
         ),
     ]
@@ -42,32 +40,37 @@ def get_rabbitmq_message_dependencies(
     organization: str, service: str, max_retries: int = 5
 ) -> List[Dependency]:
     from petisco.extra.rabbitmq.application.message.bus.rabbitmq_command_bus import (
-        RabbitMqCommandBusBuilder,
+        RabbitMqCommandBus,
     )
     from petisco.extra.rabbitmq.application.message.bus.rabbitmq_domain_event_bus import (
-        RabbitMqDomainEventBusBuilder,
+        RabbitMqDomainEventBus,
+    )
+    from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_message_consumer import (
+        RabbitMqMessageConsumer,
     )
 
     return [
         Dependency(
             name="domain_event_bus",
-            default_builder=NotImplementedDomainEventBusBuilder(),
+            default_builder=Builder(NotImplementedDomainEventBus),
             envar_modifier="PETISCO_DOMAIN_EVENT_BUS_TYPE",
-            builders={"rabbitmq": RabbitMqDomainEventBusBuilder(organization, service)},
+            builders={
+                "rabbitmq": Builder(RabbitMqDomainEventBus, organization, service)
+            },
         ),
         Dependency(
             name="command_bus",
-            default_builder=NotImplementedDomainEventBusBuilder(),
+            default_builder=Builder(NotImplementedDomainEventBus),
             envar_modifier="PETISCO_COMMAND_BUS_TYPE",
-            builders={"rabbitmq": RabbitMqCommandBusBuilder(organization, service)},
+            builders={"rabbitmq": Builder(RabbitMqCommandBus, organization, service)},
         ),
         Dependency(
             name="domain_event_consumer",
-            default_builder=NotImplementedMessageConsumerBuilder(),
+            default_builder=Builder(NotImplementedMessageConsumer),
             envar_modifier="PETISCO_DOMAIN_EVENT_CONSUMER_TYPE",
             builders={
-                "rabbitmq": RabbitMqMessageConsumerBuilder(
-                    organization, service, max_retries
+                "rabbitmq": Builder(
+                    RabbitMqMessageConsumer, organization, service, max_retries
                 )
             },
         ),

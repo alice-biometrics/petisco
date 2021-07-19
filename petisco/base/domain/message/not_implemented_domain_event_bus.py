@@ -1,6 +1,5 @@
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
-from petisco.base.misc.builder import Builder
 
 
 class NotImplementedDomainEventBus(DomainEventBus):
@@ -16,8 +15,3 @@ class NotImplementedDomainEventBus(DomainEventBus):
 
     def close(self):
         pass
-
-
-class NotImplementedDomainEventBusBuilder(Builder):
-    def build(self):
-        return NotImplementedDomainEventBus()

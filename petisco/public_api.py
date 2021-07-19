@@ -44,15 +44,12 @@ from petisco.base.domain.message.message_consumer import MessageConsumer
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
 from petisco.base.domain.message.not_implemented_domain_event_bus import (
     NotImplementedDomainEventBus,
-    NotImplementedDomainEventBusBuilder,
 )
 from petisco.base.domain.message.not_implemented_message_bus import (
     NotImplementedMessageBus,
-    NotImplementedMessageBusBuilder,
 )
 from petisco.base.domain.message.not_implemented_message_comsumer import (
     NotImplementedMessageConsumer,
-    NotImplementedMessageConsumerBuilder,
 )
 from petisco.base.domain.model.aggregate_root import AggregateRoot
 from petisco.base.domain.model.uuid import Uuid
@@ -90,13 +87,10 @@ base = [
     "Command",
     "MessageBus",
     "NotImplementedMessageBus",
-    "NotImplementedMessageBusBuilder",
     "NotImplementedMessageConsumer",
-    "NotImplementedMessageConsumerBuilder",
     "DomainEventBus",
     "CommandBus",
     "NotImplementedDomainEventBus",
-    "NotImplementedDomainEventBusBuilder",
     "MessageSubscriber",
     "MessageConsumer",
     "AggregateRoot",

@@ -1,9 +1,11 @@
-from abc import abstractmethod
-
-from petisco.base.misc.interface import Interface
+from typing import Any
 
 
-class Builder(Interface):
-    @abstractmethod
+class Builder:
+    def __init__(self, klass: Any, *args, **kwargs):
+        self.klass = klass
+        self.args = args
+        self.kwargs = kwargs
+
     def build(self):
-        raise NotImplementedError()
+        return self.klass(*self.args, **self.kwargs)

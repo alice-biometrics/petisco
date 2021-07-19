@@ -1,6 +1,5 @@
 from petisco.base.domain.message.message import Message
 from petisco.base.domain.message.message_bus import MessageBus
-from petisco.base.misc.builder import Builder
 
 
 class NotImplementedMessageBus(MessageBus):
@@ -16,8 +15,3 @@ class NotImplementedMessageBus(MessageBus):
 
     def close(self):
         pass
-
-
-class NotImplementedMessageBusBuilder(Builder):
-    def build(self):
-        return NotImplementedMessageBus()

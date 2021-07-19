@@ -1,11 +1,9 @@
 import pytest
 
-from petisco import Dependency
+from petisco import Builder, Dependency
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
     InMemoryRepo,
-    InMemoryRepoBuilder,
     MyRepo,
-    MyRepoBuilder,
 )
 
 
@@ -14,9 +12,9 @@ def test_dependency_should_return_default_instance():
 
     dependency = Dependency(
         name="repo",
-        default_builder=MyRepoBuilder(),
+        default_builder=Builder(MyRepo),
         envar_modifier="REPOSITORY",
-        builders={"inmemory": InMemoryRepoBuilder()},
+        builders={"inmemory": Builder(InMemoryRepo)},
     )
 
     assert isinstance(dependency.get_instance(), MyRepo)
@@ -30,9 +28,9 @@ def test_dependency_should_return_one_instance_from_valid_envar_modifier_value(
     monkeypatch.setenv("REPOSITORY", "inmemory")
     dependency = Dependency(
         name="repo",
-        default_builder=MyRepoBuilder(),
+        default_builder=Builder(MyRepo),
         envar_modifier="REPOSITORY",
-        builders={"inmemory": InMemoryRepoBuilder()},
+        builders={"inmemory": Builder(InMemoryRepo)},
     )
 
     assert isinstance(dependency.get_instance(), InMemoryRepo)
@@ -48,9 +46,9 @@ def test_dependency_should_return_default_if_selected_instanced_by_envar_modifie
     monkeypatch.setenv("REPOSITORY", "other")
     dependency = Dependency(
         name="repo",
-        default_builder=MyRepoBuilder(),
+        default_builder=Builder(MyRepo),
         envar_modifier="REPOSITORY",
-        builders={"inmemory": InMemoryRepoBuilder()},
+        builders={"inmemory": Builder(InMemoryRepo)},
     )
 
     assert isinstance(dependency.get_instance(), MyRepo)
@@ -59,10 +57,8 @@ def test_dependency_should_return_default_if_selected_instanced_by_envar_modifie
 
 
 @pytest.mark.unit
-def test_dependency_should_return_default_when_optional_parameters_are_not_used(
-    monkeypatch,
-):
+def test_dependency_should_return_default_when_optional_parameters_are_not_used():
 
-    dependency = Dependency(name="repo", default_builder=MyRepoBuilder())
+    dependency = Dependency(name="repo", default_builder=Builder(MyRepo))
 
     assert isinstance(dependency.get_instance(), MyRepo)

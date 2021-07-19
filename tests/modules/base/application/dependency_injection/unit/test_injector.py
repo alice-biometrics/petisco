@@ -1,16 +1,15 @@
 import pytest
 
-from petisco import Dependency, Injector
+from petisco import Builder, Dependency, Injector
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
-    InMemoryRepoBuilder,
+    InMemoryRepo,
     MyRepo,
-    MyRepoBuilder,
 )
 
 
 @pytest.mark.unit
 def test_injector_should_success_when_access_one_dynamic_attr_representing_a_dependency():
-    dependencies = [Dependency(name="repo", default_builder=MyRepoBuilder())]
+    dependencies = [Dependency(name="repo", default_builder=Builder(MyRepo))]
 
     Injector.set_dependencies(dependencies)
 
@@ -27,11 +26,11 @@ def test_injector_should_success_when_access_one_dynamic_attr_representing_a_dep
     "dependencies,expected_available_dependencies",
     [
         ([], []),
-        ([Dependency(name="repo", default_builder=MyRepoBuilder())], ["repo"]),
+        ([Dependency(name="repo", default_builder=Builder(MyRepo))], ["repo"]),
         (
             [
-                Dependency(name="repo", default_builder=MyRepoBuilder()),
-                Dependency(name="inmemory_repo", default_builder=InMemoryRepoBuilder()),
+                Dependency(name="repo", default_builder=Builder(MyRepo)),
+                Dependency(name="inmemory_repo", default_builder=Builder(InMemoryRepo)),
             ],
             ["repo", "inmemory_repo"],
         ),
