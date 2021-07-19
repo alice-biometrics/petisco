@@ -4,6 +4,7 @@ from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.application.notifier.not_implemented_notifier import (
     NotImplementedNotifier,
 )
+from petisco.base.misc.builder import Builder
 
 
 def get_default_notifier_dependencies() -> List[Dependency]:
@@ -11,7 +12,7 @@ def get_default_notifier_dependencies() -> List[Dependency]:
     return [
         Dependency(
             name="notifier",
-            default_instance=NotImplementedNotifier(),
+            default_builder=Builder(NotImplementedNotifier),
             envar_modifier="PETISCO_NOTIFIER_TYPE",
         )
     ]
@@ -23,8 +24,8 @@ def get_slack_notifier_dependencies(token: str, channel: str) -> List[Dependency
     return [
         Dependency(
             name="notifier",
-            default_instance=NotImplementedNotifier(),
+            default_builder=Builder(NotImplementedNotifier),
             envar_modifier="PETISCO_NOTIFIER_TYPE",
-            instances={"slack": SlackNotifier(token=token, channel=channel)},
+            builders={"slack": Builder(SlackNotifier, token=token, channel=channel)},
         )
     ]

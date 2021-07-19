@@ -7,8 +7,8 @@ from petisco.base.application.notifier.notifier import Notifier
 from petisco.base.application.notifier.notifier_message import NotifierMessage
 from petisco.base.domain.errors.domain_error import DomainError
 from petisco.extra.slack.application.notifier.blocks_slack_notifier_message_converter import (
-    SlackNotifierMessageConverter,
     BlocksSlackNotifierMessageConverter,
+    SlackNotifierMessageConverter,
 )
 
 

@@ -9,7 +9,6 @@ from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_conf
 from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_queue_name_formatter import (
     RabbitMqMessageQueueNameFormatter,
 )
-
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 

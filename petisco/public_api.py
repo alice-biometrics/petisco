@@ -48,11 +48,15 @@ from petisco.base.domain.message.not_implemented_domain_event_bus import (
 from petisco.base.domain.message.not_implemented_message_bus import (
     NotImplementedMessageBus,
 )
+from petisco.base.domain.message.not_implemented_message_comsumer import (
+    NotImplementedMessageConsumer,
+)
 from petisco.base.domain.model.aggregate_root import AggregateRoot
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
 from petisco.base.domain.persistence.persistence import Persistence
 from petisco.base.domain.persistence.persistence_models import PersistenceModels
+from petisco.base.misc.builder import Builder
 from petisco.base.misc.interface import Interface
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.base.testing.assert_http import assert_http
@@ -83,6 +87,7 @@ base = [
     "Command",
     "MessageBus",
     "NotImplementedMessageBus",
+    "NotImplementedMessageConsumer",
     "DomainEventBus",
     "CommandBus",
     "NotImplementedDomainEventBus",
@@ -102,6 +107,7 @@ base = [
     "Repository",
     "AppService",
     "Application",
+    "Builder",
 ]
 modules = []
 

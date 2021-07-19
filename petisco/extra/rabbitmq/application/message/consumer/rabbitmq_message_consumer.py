@@ -1,9 +1,9 @@
 import threading
 import traceback
+from dataclasses import dataclass
 from time import sleep
 from typing import Callable, List, Optional, Type
 
-from dataclasses import dataclass
 from meiga import Failure
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
@@ -14,41 +14,40 @@ from petisco.base.domain.message.chaos.message_chaos_error import MessageChaosEr
 from petisco.base.domain.message.chaos.not_implemented_message_chaos import (
     NotImplementedMessageChaos,
 )
-from petisco.base.domain.message.consumer_derived_action import ConsumerDerivedAction
-from petisco.base.domain.message.message_consumer import MessageConsumer
-from petisco.base.domain.message.message import Message
-from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.command import Command
+from petisco.base.domain.message.consumer_derived_action import ConsumerDerivedAction
+from petisco.base.domain.message.domain_event import DomainEvent
+from petisco.base.domain.message.message import Message
+from petisco.base.domain.message.message_consumer import MessageConsumer
 from petisco.base.domain.message.message_handler_returns_none_error import (
     MessageHandlerReturnsNoneError,
 )
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
-from petisco.extra.rabbitmq.application.message.bus.rabbitmq_domain_event_bus import (
-    RabbitMqDomainEventBus,
-)
+from petisco.base.misc.builder import Builder
 from petisco.extra.rabbitmq.application.message.bus.rabbitmq_command_bus import (
     RabbitMqCommandBus,
 )
-
+from petisco.extra.rabbitmq.application.message.bus.rabbitmq_domain_event_bus import (
+    RabbitMqDomainEventBus,
+)
 from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_event_consumer_logger import (
     RabbitMqMessageConsumerLogger,
 )
-from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_subscriber_queue_name_formatter import (
     RabbitMqMessageSubscriberQueueNameFormatter,
 )
+from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 from petisco.extra.rabbitmq.shared.rabbitmq_exchange_name_formatter import (
     RabbitMqExchangeNameFormatter,
 )
-
+from petisco.legacy.event.consumer.infrastructure.rabbitmq_event_consumer_printer import (
+    RabbitMqEventConsumerPrinter,
+)
 from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_consumer_connector import (
     RabbitMqConsumerConnector,
 )
 from petisco.legacy.logger.interface_logger import ILogger
 from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
-from petisco.legacy.event.consumer.infrastructure.rabbitmq_event_consumer_printer import (
-    RabbitMqEventConsumerPrinter,
-)
 
 
 @dataclass
@@ -370,7 +369,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
     def stop(self):
         def _log_stop_exception(e: Exception):
-            from petisco.legacy import LogMessage, ERROR, Petisco
+            from petisco.legacy import ERROR, LogMessage, Petisco
 
             logger = Petisco.get_logger()
             log_message = LogMessage(
@@ -446,3 +445,18 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self.connector.get_connection(self.rabbitmq_key).call_later(0, _execute_action)
 
         _await_for_thread()
+
+
+class RabbitMqMessageConsumerBuilder(Builder):
+    def __init__(self, organization: str, service: str, max_retries: int):
+        self.organization = organization
+        self.service = service
+        self.max_retries = max_retries
+
+    def build(self) -> RabbitMqMessageConsumer:
+        return RabbitMqMessageConsumer(
+            connector=RabbitMqConnector(),
+            organization=self.organization,
+            service=self.service,
+            max_retries=self.max_retries,
+        )

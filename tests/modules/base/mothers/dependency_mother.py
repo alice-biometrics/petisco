@@ -2,7 +2,7 @@ from typing import List
 
 from meiga import Result
 
-from petisco import Dependency, NotImplementedMessageBus, Repository
+from petisco import Builder, Dependency, NotImplementedMessageBus, Repository
 
 
 class MyRepo(Repository):
@@ -19,23 +19,20 @@ class MyRepo(Repository):
         pass
 
 
-# class MyAppService(AppService):
-
-
 class DependencyMother:
     @staticmethod
     def any() -> Dependency:
-        return Dependency(name="repo", default_instance=MyRepo())
+        return Dependency(name="repo", default_builder=Builder(MyRepo))
 
     @staticmethod
     def several() -> List[Dependency]:
         return [
-            Dependency(name="repo", default_instance=MyRepo()),
+            Dependency(name="repo", default_builder=Builder(MyRepo)),
             # Dependency(name="app_service", default_instance=MyRepo())
         ]
 
     @staticmethod
     def domain_event_bus() -> Dependency:
         return Dependency(
-            name="domain_event_bus", default_instance=NotImplementedMessageBus()
+            name="domain_event_bus", default_builder=Builder(NotImplementedMessageBus)
         )

@@ -1,29 +1,15 @@
-from abc import ABC, abstractmethod
-
 import pytest
 
-from petisco import Dependency, Injector
-
-
-class Repo(ABC):
-    @abstractmethod
-    def execute(self):
-        raise NotImplementedError
-
-
-class MyRepo(Repo):
-    def execute(self):
-        print("MyRepo")
-
-
-class InMemoryRepo(Repo):
-    def execute(self):
-        print("InMemoryRepo")
+from petisco import Builder, Dependency, Injector
+from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
+    InMemoryRepo,
+    MyRepo,
+)
 
 
 @pytest.mark.unit
 def test_injector_should_success_when_access_one_dynamic_attr_representing_a_dependency():
-    dependencies = [Dependency(name="repo", default_instance=MyRepo())]
+    dependencies = [Dependency(name="repo", default_builder=Builder(MyRepo))]
 
     Injector.set_dependencies(dependencies)
 
@@ -40,11 +26,11 @@ def test_injector_should_success_when_access_one_dynamic_attr_representing_a_dep
     "dependencies,expected_available_dependencies",
     [
         ([], []),
-        ([Dependency(name="repo", default_instance=MyRepo())], ["repo"]),
+        ([Dependency(name="repo", default_builder=Builder(MyRepo))], ["repo"]),
         (
             [
-                Dependency(name="repo", default_instance=MyRepo()),
-                Dependency(name="inmemory_repo", default_instance=InMemoryRepo()),
+                Dependency(name="repo", default_builder=Builder(MyRepo)),
+                Dependency(name="inmemory_repo", default_builder=Builder(InMemoryRepo)),
             ],
             ["repo", "inmemory_repo"],
         ),
