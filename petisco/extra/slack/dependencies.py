@@ -24,8 +24,8 @@ def get_slack_notifier_dependencies(token: str, channel: str) -> List[Dependency
     return [
         Dependency(
             name="notifier",
-            default_builder=Builder(NotImplementedNotifier),
+            default_builder=Builder(SlackNotifier, token=token, channel=channel),
             envar_modifier="PETISCO_NOTIFIER_TYPE",
-            builders={"slack": Builder(SlackNotifier, token=token, channel=channel)},
+            builders={"not_implemented": Builder(NotImplementedNotifier)},
         )
     ]

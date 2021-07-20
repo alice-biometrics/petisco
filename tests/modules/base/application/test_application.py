@@ -42,7 +42,7 @@ def test_application_should_construct_from_required_variables():
         "environment": "local",
         "dependencies": {
             "domain_event_bus": {"name": "NotImplementedDomainEventBus"},
-            "command_bus": {"name": "NotImplementedDomainEventBus"},
+            "command_bus": {"name": "NotImplementedCommandBus"},
             "domain_event_consumer": {"name": "NotImplementedMessageConsumer"},
             "command_consumer": {"name": "NotImplementedMessageConsumer"},
             "notifier": {"name": "NotImplementedNotifier"},

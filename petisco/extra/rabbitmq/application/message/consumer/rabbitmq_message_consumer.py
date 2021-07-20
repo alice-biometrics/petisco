@@ -61,10 +61,10 @@ class SubscriberItem:
 class RabbitMqMessageConsumer(MessageConsumer):
     def __init__(
         self,
-        connector: RabbitMqConnector,
         organization: str,
         service: str,
         max_retries: int,
+        connector: RabbitMqConnector = RabbitMqConnector(),
         verbose: bool = False,
         chaos: MessageChaos = NotImplementedMessageChaos(),
         logger: Optional[ILogger] = NotImplementedLogger(),

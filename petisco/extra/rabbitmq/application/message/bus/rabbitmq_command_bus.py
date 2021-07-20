@@ -13,7 +13,12 @@ from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 
 class RabbitMqCommandBus(CommandBus):
-    def __init__(self, connector: RabbitMqConnector, organization: str, service: str):
+    def __init__(
+        self,
+        organization: str,
+        service: str,
+        connector: RabbitMqConnector = RabbitMqConnector(),
+    ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"publisher-{self.exchange_name}"

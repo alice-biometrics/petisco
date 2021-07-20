@@ -42,6 +42,9 @@ from petisco.base.domain.message.message import Message
 from petisco.base.domain.message.message_bus import MessageBus
 from petisco.base.domain.message.message_consumer import MessageConsumer
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
+from petisco.base.domain.message.not_implemented_command_bus import (
+    NotImplementedCommandBus,
+)
 from petisco.base.domain.message.not_implemented_domain_event_bus import (
     NotImplementedDomainEventBus,
 )
@@ -91,6 +94,7 @@ base = [
     "DomainEventBus",
     "CommandBus",
     "NotImplementedDomainEventBus",
+    "NotImplementedCommandBus",
     "MessageSubscriber",
     "MessageConsumer",
     "AggregateRoot",
