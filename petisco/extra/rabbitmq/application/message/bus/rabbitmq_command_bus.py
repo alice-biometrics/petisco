@@ -22,7 +22,7 @@ class RabbitMqCommandBus(CommandBus):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"publisher-{self.exchange_name}"
-        self.configurer = RabbitMqMessageConfigurer(connector, organization, service)
+        self.configurer = RabbitMqMessageConfigurer(organization, service, connector)
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
 
     def dispatch(self, command: Command):

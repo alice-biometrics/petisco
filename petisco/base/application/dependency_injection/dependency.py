@@ -27,7 +27,7 @@ class Dependency:
             return self.default_builder.build()
 
         modifier = os.getenv(self.envar_modifier)
-        if not modifier or modifier not in self.builders:
+        if not modifier or not self.builders or modifier not in self.builders:
             return self.default_builder.build()
         else:
             instance = self.builders.get(modifier).build()

@@ -10,6 +10,9 @@ from petisco.base.domain.message.not_implemented_domain_event_bus import (
 from petisco.base.domain.message.not_implemented_message_comsumer import (
     NotImplementedMessageConsumer,
 )
+from petisco.base.domain.message.not_implemented_message_configurer import (
+    NotImplementedMessageConfigurer,
+)
 from petisco.base.misc.builder import Builder
 
 
@@ -27,14 +30,14 @@ def get_default_message_dependencies() -> List[Dependency]:
             envar_modifier="PETISCO_COMMAND_BUS_TYPE",
         ),
         Dependency(
-            name="domain_event_consumer",
-            default_builder=Builder(NotImplementedMessageConsumer),
-            envar_modifier="PETISCO_DOMAIN_EVENT_CONSUMER_TYPE",
+            name="message_configurer",
+            default_builder=Builder(NotImplementedMessageConfigurer),
+            envar_modifier="PETISCO_MESSAGE_CONFIGURER_TYPE",
         ),
         Dependency(
-            name="command_consumer",
+            name="message_consumer",
             default_builder=Builder(NotImplementedMessageConsumer),
-            envar_modifier="PETISCO_COMMAND_CONSUMER_TYPE",
+            envar_modifier="PETISCO_MESSAGE_CONSUMER_TYPE",
         ),
     ]
 
@@ -47,6 +50,9 @@ def get_rabbitmq_message_dependencies(
     )
     from petisco.extra.rabbitmq.application.message.bus.rabbitmq_domain_event_bus import (
         RabbitMqDomainEventBus,
+    )
+    from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
+        RabbitMqMessageConfigurer,
     )
     from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_message_consumer import (
         RabbitMqMessageConsumer,
@@ -70,14 +76,24 @@ def get_rabbitmq_message_dependencies(
             builders={"not_implemented": Builder(NotImplementedCommandBus)},
         ),
         Dependency(
-            name="domain_event_consumer",
+            name="message_configurer",
+            default_builder=Builder(
+                RabbitMqMessageConfigurer,
+                organization=organization,
+                service=service,
+            ),
+            envar_modifier="PETISCO_MESSAGE_CONFIGURER_TYPE",
+            builders={"not_implemented": Builder(NotImplementedMessageConfigurer)},
+        ),
+        Dependency(
+            name="message_consumer",
             default_builder=Builder(
                 RabbitMqMessageConsumer,
                 organization=organization,
                 service=service,
                 max_retries=max_retries,
             ),
-            envar_modifier="PETISCO_DOMAIN_EVENT_CONSUMER_TYPE",
+            envar_modifier="PETISCO_MESSAGE_CONSUMER_TYPE",
             builders={"not_implemented": Builder(NotImplementedMessageConsumer)},
         ),
     ]

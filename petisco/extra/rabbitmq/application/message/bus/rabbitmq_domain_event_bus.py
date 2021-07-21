@@ -3,7 +3,6 @@ from pika.exceptions import ChannelClosedByBroker
 
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
-from petisco.base.misc.builder import Builder
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
     RabbitMqMessageConfigurer,
 )
@@ -23,7 +22,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"publisher-{self.exchange_name}"
-        self.configurer = RabbitMqMessageConfigurer(connector, organization, service)
+        self.configurer = RabbitMqMessageConfigurer(organization, service, connector)
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
 
     def publish(self, domain_event: DomainEvent):
@@ -62,16 +61,3 @@ class RabbitMqDomainEventBus(DomainEventBus):
 
     def close(self):
         self.connector.close(self.rabbitmq_key)
-
-
-class RabbitMqDomainEventBusBuilder(Builder):
-    def __init__(self, organization: str, service: str):
-        self.organization = organization
-        self.service = service
-
-    def build(self) -> RabbitMqDomainEventBus:
-        return RabbitMqDomainEventBus(
-            connector=RabbitMqConnector(),
-            organization=self.organization,
-            service=self.service,
-        )

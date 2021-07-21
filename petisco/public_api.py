@@ -54,6 +54,9 @@ from petisco.base.domain.message.not_implemented_message_bus import (
 from petisco.base.domain.message.not_implemented_message_comsumer import (
     NotImplementedMessageConsumer,
 )
+from petisco.base.domain.message.not_implemented_message_configurer import (
+    NotImplementedMessageConfigurer,
+)
 from petisco.base.domain.model.aggregate_root import AggregateRoot
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
@@ -91,6 +94,7 @@ base = [
     "MessageBus",
     "NotImplementedMessageBus",
     "NotImplementedMessageConsumer",
+    "NotImplementedMessageConfigurer",
     "DomainEventBus",
     "CommandBus",
     "NotImplementedDomainEventBus",

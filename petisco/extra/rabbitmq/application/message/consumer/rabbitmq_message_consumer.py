@@ -23,7 +23,6 @@ from petisco.base.domain.message.message_handler_returns_none_error import (
     MessageHandlerReturnsNoneError,
 )
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
-from petisco.base.misc.builder import Builder
 from petisco.extra.rabbitmq.application.message.bus.rabbitmq_command_bus import (
     RabbitMqCommandBus,
 )
@@ -214,10 +213,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
             else:
                 connector = RabbitMqConsumerConnector(ch)
                 domain_event_bus = RabbitMqDomainEventBus(
-                    connector, self.organization, self.service
+                    self.organization, self.service, connector
                 )
                 command_bus = RabbitMqCommandBus(
-                    connector, self.organization, self.service
+                    self.organization, self.service, connector
                 )
                 subscriber.set_domain_event_bus(domain_event_bus)
                 subscriber.set_command_bus(command_bus)
@@ -445,18 +444,3 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self.connector.get_connection(self.rabbitmq_key).call_later(0, _execute_action)
 
         _await_for_thread()
-
-
-class RabbitMqMessageConsumerBuilder(Builder):
-    def __init__(self, organization: str, service: str, max_retries: int):
-        self.organization = organization
-        self.service = service
-        self.max_retries = max_retries
-
-    def build(self) -> RabbitMqMessageConsumer:
-        return RabbitMqMessageConsumer(
-            connector=RabbitMqConnector(),
-            organization=self.organization,
-            service=self.service,
-            max_retries=self.max_retries,
-        )
