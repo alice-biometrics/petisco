@@ -1,7 +1,7 @@
 from petisco.extra.rabbitmq import (
+    QueueConfig,
     RabbitMqConnector,
     RabbitMqMessageConfigurer,
-    QueueConfig,
 )
 from tests.modules.extra.rabbitmq.mother.defaults import (
     DEFAULT_ORGANIZATION,
@@ -14,16 +14,16 @@ class RabbitMqMessageConfigurerMother:
     def default(connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqMessageConfigurer(
-            connector, DEFAULT_ORGANIZATION, DEFAULT_SERVICE
+            DEFAULT_ORGANIZATION, DEFAULT_SERVICE, connector
         )
 
     @staticmethod
     def with_retry_ttl_10ms(connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqMessageConfigurer(
-            connector,
             DEFAULT_ORGANIZATION,
             DEFAULT_SERVICE,
+            connector,
             QueueConfig.default(default_retry_ttl=10),
         )
 
@@ -31,9 +31,9 @@ class RabbitMqMessageConfigurerMother:
     def with_main_and_retry_ttl_10ms(connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqMessageConfigurer(
-            connector,
             DEFAULT_ORGANIZATION,
             DEFAULT_SERVICE,
+            connector,
             QueueConfig.default(default_retry_ttl=10, default_main_ttl=10),
         )
 
@@ -41,9 +41,9 @@ class RabbitMqMessageConfigurerMother:
     def with_main_and_retry_ttl_100ms(connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqMessageConfigurer(
-            connector,
             DEFAULT_ORGANIZATION,
             DEFAULT_SERVICE,
+            connector,
             QueueConfig.default(default_retry_ttl=100, default_main_ttl=100),
         )
 
@@ -51,9 +51,9 @@ class RabbitMqMessageConfigurerMother:
     def with_service(service: str, connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqMessageConfigurer(
-            connector,
             DEFAULT_ORGANIZATION,
             service,
+            connector,
             QueueConfig.default(default_retry_ttl=10),
         )
 
@@ -61,9 +61,9 @@ class RabbitMqMessageConfigurerMother:
     def with_ttl_1s(connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqMessageConfigurer(
-            connector,
             DEFAULT_ORGANIZATION,
             DEFAULT_SERVICE,
+            connector,
             QueueConfig.default(default_retry_ttl=1000),
         )
 
@@ -73,5 +73,5 @@ class RabbitMqMessageConfigurerMother:
     ):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqMessageConfigurer(
-            connector, DEFAULT_ORGANIZATION, DEFAULT_SERVICE, queue_config
+            DEFAULT_ORGANIZATION, DEFAULT_SERVICE, connector, queue_config
         )

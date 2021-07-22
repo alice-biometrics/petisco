@@ -1,12 +1,11 @@
 from time import sleep
 
 import pytest
-from meiga import isFailure, Result, Error, isSuccess, Failure
+from meiga import Error, Failure, Result, isFailure, isSuccess
 
-from petisco.legacy import Event, event_handler, DEBUG
+from petisco.legacy import DEBUG, Event, event_handler
 from petisco.legacy.domain.errors.critical_error import CriticalError
 from petisco.legacy.event.shared.domain.event_subscriber import EventSubscriber
-
 from petisco.legacy.fixtures.testing_decorators import testing_with_rabbitmq
 from tests.modules.legacy.event.mothers.event_user_created_mother import (
     EventUserCreatedMother,
@@ -78,7 +77,7 @@ def test_should_publish_consume_with_event_handler_when_success_consumer():
 @pytest.mark.integration
 @testing_with_rabbitmq
 def test_should_publish_consume_with_event_handler_with_default_parameters_when_success_consumer(
-    given_any_petisco
+    given_any_petisco,
 ):
     spy = SpyEvents()
 
@@ -268,7 +267,7 @@ def test_should_publish_consume_with_event_handler_return_nothing():
 @pytest.mark.integration
 @testing_with_rabbitmq
 def test_should_publish_consume_with_event_handler_notify_when_fail_consumer_with_critical_error(
-    given_any_petisco
+    given_any_petisco,
 ):
     spy = SpyEvents()
     logger = FakeLogger()

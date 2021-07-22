@@ -9,9 +9,9 @@ from petisco.extra.rabbitmq.shared.rabbitmq_exchange_name_formatter import (
 class RabbitMqMessageStoreConfigurer:
     def __init__(
         self,
-        connector: RabbitMqConnector,
         organization: str,
         service: str,
+        connector: RabbitMqConnector,
         queue_config: QueueConfig,
     ):
         self._connector = connector

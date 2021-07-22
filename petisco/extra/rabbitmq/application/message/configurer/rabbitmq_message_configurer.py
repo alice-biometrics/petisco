@@ -8,25 +8,25 @@ from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_stor
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_subscribers_configurer import (
     RabbitMqMessageSubcribersConfigurer,
 )
-from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 from petisco.extra.rabbitmq.shared.queue_config import QueueConfig
+from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 
 class RabbitMqMessageConfigurer(MessageConfigurer):
     def __init__(
         self,
-        connector: RabbitMqConnector,
         organization: str,
         service: str,
+        connector: RabbitMqConnector = RabbitMqConnector(),
         queue_config: QueueConfig = QueueConfig.default(),
         use_store_queues: bool = True,
     ):
         self._use_store_queues = use_store_queues
         self.subscribers_configurer = RabbitMqMessageSubcribersConfigurer(
-            connector, organization, service, queue_config
+            organization, service, connector, queue_config
         )
         self.store_configurer = RabbitMqMessageStoreConfigurer(
-            connector, organization, service, queue_config
+            organization, service, connector, queue_config
         )
 
     def configure(self):

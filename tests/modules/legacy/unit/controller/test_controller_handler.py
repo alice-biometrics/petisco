@@ -1,10 +1,10 @@
 from unittest.mock import Mock
 
 import pytest
-from meiga import Success, isFailure, Failure
+from meiga import Failure, Success, isFailure
 
 from petisco import __version__
-from petisco.legacy import controller_handler, ERROR, DEBUG, IEventBus
+from petisco.legacy import DEBUG, ERROR, IEventBus, controller_handler
 from petisco.legacy.domain.errors.critical_error import CriticalError
 from petisco.legacy.event.shared.domain.request_responded import RequestResponded
 from tests.modules.legacy.unit.mocks.fake_logger import FakeLogger
@@ -194,7 +194,7 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
 
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_with_default_parameters(
-    given_any_petisco
+    given_any_petisco,
 ):
     @controller_handler()
     def my_controller(headers=None):

@@ -62,3 +62,18 @@ def test_dependency_should_return_default_when_optional_parameters_are_not_used(
     dependency = Dependency(name="repo", default_builder=Builder(MyRepo))
 
     assert isinstance(dependency.get_instance(), MyRepo)
+
+
+@pytest.mark.unit
+def test_dependency_should_return_default_when_optional_parameters_are_used_but_no_backup_builders_are_defined(
+    monkeypatch,
+):
+
+    monkeypatch.setenv("REPOSITORY", "other")
+    dependency = Dependency(
+        name="repo", envar_modifier="REPOSITORY", default_builder=Builder(MyRepo)
+    )
+
+    assert isinstance(dependency.get_instance(), MyRepo)
+
+    monkeypatch.undo()

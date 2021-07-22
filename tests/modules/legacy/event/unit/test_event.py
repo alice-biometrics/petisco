@@ -167,7 +167,7 @@ def test_should_update_event_with_info_id_without_deleting_meta_info(
 
 @pytest.mark.unit
 def test_should_load_json_when_there_is_not_attribute(
-    given_json_event_data_without_attributes
+    given_json_event_data_without_attributes,
 ):
 
     event = Event.from_json(given_json_event_data_without_attributes)

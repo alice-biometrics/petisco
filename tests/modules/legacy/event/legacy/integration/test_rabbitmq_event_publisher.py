@@ -18,7 +18,7 @@ from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_is_running_loc
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_a_rabbitmq_event_publisher_and_publish_a_event(
-    make_user_created_event
+    make_user_created_event,
 ):
     rabbitmq_connector = RabbitMqConnector()
     event = make_user_created_event()
@@ -49,7 +49,7 @@ def test_should_fail_publisher_when_connection_parameter_are_not_valid():
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_a_rabbitmq_event_publisher_and_publish_a_event_after_heartbeat(
-    make_user_created_event
+    make_user_created_event,
 ):
     event = make_user_created_event()
     rabbitmq_connector = RabbitMqConnector()

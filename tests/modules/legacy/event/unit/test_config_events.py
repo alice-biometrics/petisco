@@ -89,7 +89,7 @@ def test_should_load_config_event_from_valid_dictionary(given_valid_event_config
 
 @pytest.mark.unit
 def test_should_load_config_event_from_valid_dictionary_with_queue_subscribers(
-    given_valid_event_config_with_queue_subscribers
+    given_valid_event_config_with_queue_subscribers,
 ):
     config_events = ConfigEvents.from_dict(
         given_valid_event_config_with_queue_subscribers
@@ -100,7 +100,7 @@ def test_should_load_config_event_from_valid_dictionary_with_queue_subscribers(
 
 @pytest.mark.unit
 def test_should_raise_an_error_given_invalid_handlers_on_event_config(
-    given_invalid_handlers_on_event_config
+    given_invalid_handlers_on_event_config,
 ):
 
     with pytest.raises(TypeError):

@@ -10,16 +10,16 @@ class RabbitMqDomainEventBusMother:
     @staticmethod
     def default(connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
-        return RabbitMqDomainEventBus(connector, DEFAULT_ORGANIZATION, DEFAULT_SERVICE)
+        return RabbitMqDomainEventBus(DEFAULT_ORGANIZATION, DEFAULT_SERVICE, connector)
 
     @staticmethod
     def with_service(service: str, connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
-        return RabbitMqDomainEventBus(connector, DEFAULT_ORGANIZATION, service)
+        return RabbitMqDomainEventBus(DEFAULT_ORGANIZATION, service, connector)
 
     @staticmethod
     def with_info_id(connector: RabbitMqConnector = None):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqDomainEventBus(
-            connector, DEFAULT_ORGANIZATION, DEFAULT_SERVICE
+            DEFAULT_ORGANIZATION, DEFAULT_SERVICE, connector
         ).with_meta(MessageMetaMother.with_meta_with_info())
