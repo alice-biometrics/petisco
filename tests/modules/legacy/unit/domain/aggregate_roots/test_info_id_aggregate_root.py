@@ -69,7 +69,7 @@ def test_should_create_info_id_from_headers_none():
 
 @pytest.mark.unit
 def test_should_create_info_id_from_headers_with_only_correlation_id(
-    given_any_correlation_id
+    given_any_correlation_id,
 ):
 
     headers = {"X-Correlation-Id": given_any_correlation_id.value}

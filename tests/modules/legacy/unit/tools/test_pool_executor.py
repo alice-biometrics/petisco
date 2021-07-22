@@ -1,5 +1,5 @@
 import pytest
-from meiga import Success, Result, Error, isFailure
+from meiga import Error, Result, Success, isFailure
 
 from petisco.legacy import Executable, PoolExecutor
 
@@ -43,7 +43,7 @@ def test_pool_executor_should_execute_several_executables(
 @pytest.mark.unit
 @pytest.mark.parametrize("use_multi_threading", [True, False])
 def test_pool_executor_should_fail_when_executable_returns_a_failure(
-    use_multi_threading
+    use_multi_threading,
 ):
     def sum(param_1, param_2) -> Result[int, Error]:
         return isFailure

@@ -38,7 +38,7 @@ def test_should_create_default_rabbitmq_event_chaos():
 
 @pytest.mark.integration
 def test_should_create_default_rabbitmq_event_chaos_with_env_percentage_simulate_nack_1(
-    monkeypatch
+    monkeypatch,
 ):
     monkeypatch.setenv("EVENT_CHAOS_PERCENTAGE_SIMULATE_NACK", "1.0")
 
@@ -58,7 +58,7 @@ def test_should_create_default_rabbitmq_event_chaos_with_env_percentage_simulate
 
 @pytest.mark.integration
 def test_should_create_default_rabbitmq_event_chaos_with_env_percentage_simulate_failures_1(
-    monkeypatch
+    monkeypatch,
 ):
     monkeypatch.setenv("EVENT_CHAOS_PERCENTAGE_SIMULATE_FAILURES", "1.0")
     monkeypatch.setenv("EVENT_CHAOS_DELAY_BEFORE_EVENT_HANDLER_SECONDS", "0.2")

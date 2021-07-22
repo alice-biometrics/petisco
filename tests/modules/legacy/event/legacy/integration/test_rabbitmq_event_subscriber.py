@@ -1,22 +1,15 @@
+import os
+from time import sleep
 from typing import Callable
 
-from time import sleep
-
 import pytest
-import os
+from meiga import isSuccess
 
 from petisco.legacy.event.legacy.publisher.infrastructure.rabbitmq_event_publisher import (
     RabbitMQEventPublisher,
 )
-from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
-    RabbitMqConnector,
-)
 from petisco.legacy.event.legacy.subscriber.domain.config_event_subscriber import (
     ConfigEventSubscriber,
-)
-
-from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_is_running_locally import (
-    rabbitmq_is_running_locally,
 )
 from petisco.legacy.event.legacy.subscriber.domain.subscriber_handler import (
     subscriber_handler,
@@ -24,9 +17,13 @@ from petisco.legacy.event.legacy.subscriber.domain.subscriber_handler import (
 from petisco.legacy.event.legacy.subscriber.infrastructure.rabbitmq_event_subscriber import (
     RabbitMQEventSubscriber,
 )
-
 from petisco.legacy.event.shared.domain.event import Event
-from meiga import isSuccess
+from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
+    RabbitMqConnector,
+)
+from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_is_running_locally import (
+    rabbitmq_is_running_locally,
+)
 
 
 def await_for_it(seconds: float = 1.5):
@@ -55,7 +52,7 @@ def given_any_config_event_subscriber(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_a_rabbitmq_event_subscriber_and_then_close_it(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     subscriber = RabbitMQEventSubscriber(
         connector=RabbitMqConnector(),
@@ -81,7 +78,7 @@ def test_should_create_a_rabbitmq_event_subscriber_and_then_close_it(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_a_rabbitmq_event_subscriber_and_try_to_delete_twice(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     subscriber = RabbitMQEventSubscriber(
         connector=RabbitMqConnector(),
@@ -98,7 +95,7 @@ def test_should_create_a_rabbitmq_event_subscriber_and_try_to_delete_twice(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_a_rabbitmq_event_subscriber_and_then_unsubscribe_all_when_not_subscribe_all_before(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     subscriber = RabbitMQEventSubscriber(
         connector=RabbitMqConnector(),
@@ -109,7 +106,7 @@ def test_should_create_a_rabbitmq_event_subscriber_and_then_unsubscribe_all_when
 
 @pytest.mark.integration
 def test_should_fail_subscriber_when_connection_parameter_are_not_valid(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     with pytest.raises(TypeError):
         _ = RabbitMQEventSubscriber(
@@ -122,7 +119,7 @@ def test_should_fail_subscriber_when_connection_parameter_are_not_valid(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_a_rabbitmq_event_subscriber_and_check_info(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     subscriber = RabbitMQEventSubscriber(
         connector=RabbitMqConnector(),
@@ -156,7 +153,7 @@ def test_should_throw_a_exception_if_try_to_start_a_subscriber_with_no_subscribe
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_two_rabbitmq_event_subscriber_and_then_close_one_without_altering_the_other(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     subscriber = RabbitMQEventSubscriber(
         connector=RabbitMqConnector(),

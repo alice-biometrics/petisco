@@ -34,7 +34,7 @@ class RabbitMqCommandBus(CommandBus):
             routing_key = RabbitMqMessageQueueNameFormatter.format(
                 command, exchange_name=self.exchange_name
             )
-
+            channel.confirm_delivery()
             channel.basic_publish(
                 exchange=self.exchange_name,
                 routing_key=routing_key,

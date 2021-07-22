@@ -1,8 +1,8 @@
 import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
-from slack import WebClient
+from slack_sdk import WebClient
 
 from petisco.legacy.notifier.domain.notifier_message import NotifierMessage
 from petisco.legacy.notifier.infrastructure.slack.slack_notifier import SlackNotifier

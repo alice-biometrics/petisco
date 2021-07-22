@@ -1,5 +1,5 @@
-from slack import WebClient
-from slack.errors import SlackApiError
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 from petisco.legacy.notifier.domain.interface_notifier import INotifier
 from petisco.legacy.notifier.domain.notifier_message import NotifierMessage

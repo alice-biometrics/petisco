@@ -4,8 +4,9 @@ from pydantic.main import BaseModel
 
 
 class NotifierMessage(BaseModel):
-    title: Optional[str] = None
+    title: str
     message: Optional[str] = None
     meta: Optional[Dict] = None
     files: Optional[List[Dict]] = None
+    link: Optional[Dict[str, str]] = None
     # info_id: Optional[InfoId] = None

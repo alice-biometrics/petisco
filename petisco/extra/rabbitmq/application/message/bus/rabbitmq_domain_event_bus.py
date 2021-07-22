@@ -34,7 +34,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
             routing_key = RabbitMqMessageQueueNameFormatter.format(
                 domain_event, exchange_name=self.exchange_name
             )
-
+            channel.confirm_delivery()
             channel.basic_publish(
                 exchange=self.exchange_name,
                 routing_key=routing_key,
@@ -42,9 +42,12 @@ class RabbitMqDomainEventBus(DomainEventBus):
                 properties=self.properties,
             )
         except ChannelClosedByBroker:
-            # If domain event queue is not configured, it will be configured and then try to publish again.
-            self.configurer.configure()
-            self.publish(domain_event)
+            self._retry(domain_event)
+
+    def _retry(self, domain_event: DomainEvent):
+        # If domain event queue is not configured, it will be configured and then try to publish again.
+        self.configurer.configure()
+        self.publish(domain_event)
 
     def retry_publish_only_on_store_queue(self, domain_event: DomainEvent):
         self._check_is_domain_event(domain_event)

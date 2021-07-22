@@ -1,10 +1,10 @@
 from typing import List, Type
 
 import pytest
-from meiga import BoolResult, isSuccess, isFailure
-from meiga.assertions import assert_success, assert_failure
+from meiga import BoolResult, isFailure, isSuccess
+from meiga.assertions import assert_failure, assert_success
 
-from petisco import MessageSubscriber, Message, PrintMiddleware
+from petisco import Message, MessageSubscriber, PrintMiddleware
 from tests.modules.base.mothers.message_mother import MessageMother
 
 
@@ -47,7 +47,7 @@ def test_message_subscriber_should_construct_and_return_failure_on_handle_method
     [[PrintMiddleware]],
 )
 def test_message_subscriber_should_create_command_input_and_output(
-    configured_middlewares
+    configured_middlewares,
 ):
     class MyMessageSubscriber(MessageSubscriber):
         class Config:

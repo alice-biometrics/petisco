@@ -1,8 +1,8 @@
 import pytest
-from meiga import isSuccess, BoolResult, isFailure, Error, Failure
-from meiga.assertions import assert_success, assert_failure
+from meiga import BoolResult, Error, Failure, Success, isFailure, isSuccess
+from meiga.assertions import assert_failure, assert_success
 
-from petisco import Controller, PrintMiddleware
+from petisco import Controller, PrintMiddleware, UnknownError
 
 
 class MyError(Error):
@@ -67,7 +67,7 @@ def test_controller_should_return_mapped_by_error_map():
     [[], [PrintMiddleware], [PrintMiddleware, PrintMiddleware]],
 )
 def test_controller_should_return_success_result_with_middlewares(
-    configured_middlewares
+    configured_middlewares,
 ):
     class MyController(Controller):
         class Config:
@@ -113,3 +113,15 @@ def test_controller_should_raise_an_exception_if_execute_method_is_not_implement
             excinfo.value.message
             == "Petisco Controller must implement an execute method"
         )
+
+
+@pytest.mark.unit
+def test_controller_should_return_unknown_error():
+    class MyController(Controller):
+        def execute(self, num: int) -> BoolResult:
+            result = num / 0
+            return Success(result)
+
+    result = MyController().execute(2)
+
+    assert_failure(result, value_is_instance_of=UnknownError)
