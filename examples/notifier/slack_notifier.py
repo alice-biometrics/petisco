@@ -48,7 +48,7 @@ def notify_exception():
         lineno = tb.lineno if tb and hasattr(tb, "lineno") else None
 
         notifier_exception_message = NotifierExceptionMessage(
-            title=":man-shrugging::skin-tone-6: uncontroller exception",
+            title=":man-shrugging::skin-tone-6: uncontrolled exception",
             executor="MyUseCase",
             exception=exception,
             traceback=traceback.format_exc(),

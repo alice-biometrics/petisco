@@ -23,7 +23,7 @@ class NotifierMiddleware(Middleware):
             if issubclass(error.__class__, UnknownError):
                 notifier_exception_message = (
                     NotifierExceptionMessage.from_unknown_error(
-                        error, title="Uncontroller Exception"
+                        error, title="Uncontrolled Exception"
                     )
                 )
                 notifier_exception_message.meta["petisco"] = __version__
