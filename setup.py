@@ -1,10 +1,10 @@
 import os
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 PACKAGE_NAME = "petisco"
-VERSION = open("petisco/VERSION", "r").read()
+VERSION = open("petisco/VERSION", "r").read().rstrip()
 
 # The text of the README file
 with open(os.path.join(CURRENT_DIR, "README.md")) as fid:

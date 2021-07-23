@@ -77,12 +77,10 @@ class Application(BaseSettings):
             notifier: Notifier = Injector.get("notifier")
             notifier.publish(
                 NotifierMessage(
-                    title="Service Deployed",
-                    message=f"{self.name} (v{self.version}) has been deployed",
+                    title=":rocket: {self.name} is deployed",
                     meta={
-                        "app_name": self.name,
-                        "app_version": self.version,
-                        "petisco_version": __version__,
+                        "application": f"{self.name} (v{self.version})",
+                        "petisco": __version__,
                         "environment": self.environment,
                     },
                 )
