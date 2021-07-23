@@ -3,6 +3,7 @@
 
 """Public API of Alice Petisco Framework"""
 from petisco.base.application.application import Application
+from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.controller.controller import Controller
 from petisco.base.application.controller.http_error import HttpError
 from petisco.base.application.dependency_injection.dependency import Dependency
@@ -129,6 +130,7 @@ base = [
     "Repository",
     "AppService",
     "Application",
+    "ApplicationConfigurer",
     "Builder",
 ]
 modules = []

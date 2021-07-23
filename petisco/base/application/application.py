@@ -1,8 +1,9 @@
-from typing import Any, Callable, List, Optional
+from typing import Callable, List, Optional
 
 from pydantic import BaseSettings, Field
 
 from petisco import __version__
+from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.application.dependency_injection.injector import Injector
 from petisco.base.application.notifier.notifier import Notifier
@@ -20,19 +21,27 @@ class Application(BaseSettings):
     organization: str
     environment: str = Field("local", env="ENVIRONMENT")
     dependencies_provider: Optional[Callable[..., List[Dependency]]] = lambda: []
-    configurers: Optional[List[Callable[[bool], Any]]] = []
+    configurers: Optional[List[ApplicationConfigurer]] = []
 
     def configure(self, testing: bool = False):
+
+        before_dependecies_configurers = [
+            configurer
+            for configurer in self.configurers
+            if configurer.execute_after_dependencies is False
+        ]
+        for configurer in before_dependecies_configurers:
+            configurer.execute(testing)
+
         Injector.set_dependencies(self.get_dependencies())
-        for configurer in self.configurers:
-            if configurer:
-                try:
-                    configurer(testing)
-                except TypeError:  # noqa
-                    callable_name = getattr(configurer, "__name__", repr(configurer))
-                    raise TypeError(
-                        f'Given configure function ("{callable_name}") must be defined as Callable[[bool], Any] receiving a boolean as an input.'
-                    )
+
+        after_dependencies_configurers = [
+            configurer
+            for configurer in self.configurers
+            if configurer.execute_after_dependencies is True
+        ]
+        for configurer in after_dependencies_configurers:
+            configurer.execute(testing)
 
     def get_dependencies(self) -> List[Dependency]:
         default_dependencies = (

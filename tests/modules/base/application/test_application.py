@@ -1,9 +1,9 @@
 import functools
-from typing import List
+from typing import List, NoReturn
 
 import pytest
 
-from petisco import Application, Dependency, Injector
+from petisco import Application, ApplicationConfigurer, Dependency, Injector
 from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 
@@ -99,48 +99,34 @@ def test_application_should_construct_with_a_dependency_overwrite():
 @pytest.mark.unit
 @testing_with_empty_injector
 def test_application_should_construct_with_configurers():
-    def configurer(testing: bool):
-        pass
+    class MyApplicationConfigurer(ApplicationConfigurer):
+        def execute(self, testing: bool = False) -> NoReturn:
+            pass
 
     Application(
         name="service",
         version="1.0.0",
         organization="acme",
-        configurers=[configurer, configurer],
+        configurers=[
+            MyApplicationConfigurer(),
+            MyApplicationConfigurer(execute_after_dependencies=True),
+        ],
     ).configure()
 
 
 @pytest.mark.unit
 @testing_with_empty_injector
-def test_application_should_raise_an_exception_when_configurer_do_not_receive_a_boolean_value():
-    def configurer():
-        pass
-
-    with pytest.raises(TypeError) as excinfo:
-        Application(
-            name="service",
-            version="1.0.0",
-            organization="acme",
-            configurers=[configurer],
-        ).configure()
-    assert (
-        'Given configure function ("configurer") must be defined as Callable[[bool], Any] receiving a boolean as an input.'
-        in str(excinfo.value)
-    )
-
-
-@pytest.mark.unit
-@testing_with_empty_injector
 def test_application_should_raise_an_exception_when_configurer_with_an_exeption():
-    def configurer(testing: bool):
-        raise RuntimeError("Our Error")
+    class MyApplicationConfigurer(ApplicationConfigurer):
+        def execute(self, testing: bool = False) -> NoReturn:
+            raise RuntimeError("Our Error")
 
     with pytest.raises(RuntimeError) as excinfo:
         Application(
             name="service",
             version="1.0.0",
             organization="acme",
-            configurers=[configurer],
+            configurers=[MyApplicationConfigurer()],
         ).configure()
     assert "Our Error" in str(excinfo.value)
 
