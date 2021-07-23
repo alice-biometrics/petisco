@@ -10,6 +10,9 @@ from petisco.base.application.dependency_injection.injector import Injector
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
+from petisco.base.application.notifier.not_implemented_notifier import (
+    NotImplementedNotifier,
+)
 from petisco.base.application.notifier.notifier import Notifier
 from petisco.base.application.notifier.notifier_exception_message import (
     NotifierExceptionMessage,
@@ -81,6 +84,7 @@ base = [
     "Notifier",
     "NotifierMessage",
     "NotifierExceptionMessage",
+    "NotImplementedNotifier",
     "PrintMiddleware",
     "UseCase",
     "UseCaseUncontrolledError",
