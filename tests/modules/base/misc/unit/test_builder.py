@@ -95,9 +95,7 @@ def test_builder_raise_an_exception_with_error_in_constructor():
     with pytest.raises(RuntimeError) as excinfo:
         builder = Builder(MyClass)
         builder.build()
-    assert "Error instantiating MyClass\nTypeError('My Exception',)" in str(
-        excinfo.value
-    )
+    assert "Error instantiating MyClass" in str(excinfo.value)
 
 
 @pytest.mark.unit
@@ -110,6 +108,4 @@ def test_builder_raise_an_exception_with_error_in_builder_class():
     with pytest.raises(RuntimeError) as excinfo:
         builder = Builder(MyClass, is_builder=True)
         builder.build()
-    assert "Error instantiating MyClass\nTypeError('My Exception',)" in str(
-        excinfo.value
-    )
+    assert "Error instantiating MyClass" in str(excinfo.value)
