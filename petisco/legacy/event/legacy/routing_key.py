@@ -1,6 +1,6 @@
 from typing import Any
 
-from meiga import Result, Error, Success
+from meiga import Error, Result, Success
 
 from petisco.legacy.domain.value_objects.value_object import ValueObject
 
@@ -10,11 +10,12 @@ class RoutingKey(ValueObject):
         self.value = None if value == "None" else value
         if self.value:
             try:
-                self.organization, self.service, self.version, self.type_routing_key = self.value.split(
-                    "."
-                )[
-                    :4
-                ]
+                (
+                    self.organization,
+                    self.service,
+                    self.version,
+                    self.type_routing_key,
+                ) = self.value.split(".")[:4]
                 self.event_name = ".".join(self.value.split(".")[4:])
                 self.version = int(self.version)
             except ValueError:

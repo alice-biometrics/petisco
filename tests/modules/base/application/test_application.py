@@ -21,8 +21,8 @@ def testing_with_empty_injector(func):
 DEFAULT_AVAILABLE_DEPENDENCIES = [
     "domain_event_bus",
     "command_bus",
-    "domain_event_consumer",
-    "command_consumer",
+    "message_configurer",
+    "message_consumer",
     "notifier",
 ]
 
@@ -43,8 +43,8 @@ def test_application_should_construct_from_required_variables():
         "dependencies": {
             "domain_event_bus": {"name": "NotImplementedDomainEventBus"},
             "command_bus": {"name": "NotImplementedCommandBus"},
-            "domain_event_consumer": {"name": "NotImplementedMessageConsumer"},
-            "command_consumer": {"name": "NotImplementedMessageConsumer"},
+            "message_configurer": {"name": "NotImplementedMessageConfigurer"},
+            "message_consumer": {"name": "NotImplementedMessageConsumer"},
             "notifier": {"name": "NotImplementedNotifier"},
         },
     } == application.info()

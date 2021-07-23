@@ -10,6 +10,11 @@ from petisco.base.application.dependency_injection.injector import Injector
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
+from petisco.base.application.notifier.notifier import Notifier
+from petisco.base.application.notifier.notifier_exception_message import (
+    NotifierExceptionMessage,
+)
+from petisco.base.application.notifier.notifier_message import NotifierMessage
 from petisco.base.application.patterns.app_service import AppService
 from petisco.base.application.patterns.repository import Repository
 from petisco.base.application.use_case.use_case import UseCase
@@ -31,6 +36,7 @@ from petisco.base.domain.errors.defaults.not_found import (
     UserNotFound,
 )
 from petisco.base.domain.errors.domain_error import DomainError
+from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.domain.message.all_message_subscriber import AllMessageSubscriber
 from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.command_bus import CommandBus
@@ -54,6 +60,9 @@ from petisco.base.domain.message.not_implemented_message_bus import (
 from petisco.base.domain.message.not_implemented_message_comsumer import (
     NotImplementedMessageConsumer,
 )
+from petisco.base.domain.message.not_implemented_message_configurer import (
+    NotImplementedMessageConfigurer,
+)
 from petisco.base.domain.model.aggregate_root import AggregateRoot
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
@@ -69,12 +78,16 @@ base = [
     "ResultMapper",
     "Middleware",
     "NotifierMiddleware",
+    "Notifier",
+    "NotifierMessage",
+    "NotifierExceptionMessage",
     "PrintMiddleware",
     "UseCase",
     "UseCaseUncontrolledError",
     "DEFAULT_HTTP_ERROR_MAP",
     "assert_http",
     "DomainError",
+    "UnknownError",
     "NotFound",
     "AlreadyExists",
     "ClientNotFound",
@@ -91,6 +104,7 @@ base = [
     "MessageBus",
     "NotImplementedMessageBus",
     "NotImplementedMessageConsumer",
+    "NotImplementedMessageConfigurer",
     "DomainEventBus",
     "CommandBus",
     "NotImplementedDomainEventBus",

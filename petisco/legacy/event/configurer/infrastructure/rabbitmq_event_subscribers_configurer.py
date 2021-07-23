@@ -5,14 +5,14 @@ from petisco.legacy.event.configurer.infrastructure.rabbitmq_declarer import (
 )
 from petisco.legacy.event.queue.domain.queue_config import QueueConfig
 from petisco.legacy.event.shared.domain.event_subscriber import EventSubscriber
-from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_exchange_name_formatter import (
-    RabbitMqExchangeNameFormatter,
+from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
+    RabbitMqConnector,
 )
 from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_event_subscriber_queue_name_formatter import (
     RabbitMqEventSubscriberQueueNameFormatter,
 )
-from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
-    RabbitMqConnector,
+from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_exchange_name_formatter import (
+    RabbitMqExchangeNameFormatter,
 )
 
 
@@ -68,11 +68,15 @@ class RabbitMqEventSubcribersConfigurer:
                 queue_name = RabbitMqEventSubscriberQueueNameFormatter.format(
                     subscriber, exchange_name=self._exchange_name
                 )
-                retry_queue_name = RabbitMqEventSubscriberQueueNameFormatter.format_retry(
-                    subscriber, exchange_name=self._exchange_name
+                retry_queue_name = (
+                    RabbitMqEventSubscriberQueueNameFormatter.format_retry(
+                        subscriber, exchange_name=self._exchange_name
+                    )
                 )
-                dead_letter_queue_name = RabbitMqEventSubscriberQueueNameFormatter.format_dead_letter(
-                    subscriber, exchange_name=self._exchange_name
+                dead_letter_queue_name = (
+                    RabbitMqEventSubscriberQueueNameFormatter.format_dead_letter(
+                        subscriber, exchange_name=self._exchange_name
+                    )
                 )
                 for suffix in subscriber.get_handlers_names():
                     name = f"{queue_name}.{suffix}"
@@ -94,11 +98,15 @@ class RabbitMqEventSubcribersConfigurer:
             base_queue_name = RabbitMqEventSubscriberQueueNameFormatter.format(
                 subscriber, exchange_name=exchange_name
             )
-            base_retry_queue_name = RabbitMqEventSubscriberQueueNameFormatter.format_retry(
-                subscriber, exchange_name=exchange_name
+            base_retry_queue_name = (
+                RabbitMqEventSubscriberQueueNameFormatter.format_retry(
+                    subscriber, exchange_name=exchange_name
+                )
             )
-            base_dead_letter_queue_name = RabbitMqEventSubscriberQueueNameFormatter.format_dead_letter(
-                subscriber, exchange_name=exchange_name
+            base_dead_letter_queue_name = (
+                RabbitMqEventSubscriberQueueNameFormatter.format_dead_letter(
+                    subscriber, exchange_name=exchange_name
+                )
             )
             routing_key = base_queue_name
 

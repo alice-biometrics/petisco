@@ -4,6 +4,7 @@ import pytest
 from fastapi import FastAPI, Header
 from fastapi.testclient import TestClient
 from meiga import BoolResult, Failure, isFailure, isSuccess
+
 from petisco import NotFound, assert_http
 from petisco.extra.fastapi import FastAPIController
 
@@ -22,7 +23,7 @@ class MyController(FastAPIController):
 
 
 @app.get("/test")
-def test_entry_point(x_behavior: Optional[str] = Header("success")):
+def entry_point(x_behavior: Optional[str] = Header("success")):
     return MyController().execute(x_behavior)
 
 

@@ -1,7 +1,7 @@
 import pytest
 from meiga import Success
 
-from petisco.legacy import controller_handler, TokenManager, InfoId, Petisco
+from petisco.legacy import InfoId, Petisco, TokenManager, controller_handler
 from petisco.legacy.security.token_manager.accepted_token import AcceptedToken
 
 
@@ -29,7 +29,9 @@ def test_should_execute_a_controller_with_a_string_parameter(given_any_petisco):
 
 
 @pytest.mark.unit
-def test_should_execute_a_controller_with_default_headers_parameter(given_any_petisco,):
+def test_should_execute_a_controller_with_default_headers_parameter(
+    given_any_petisco,
+):
     @controller_handler()
     def my_controller(headers):
         assert isinstance(headers, dict)

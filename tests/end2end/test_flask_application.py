@@ -41,7 +41,7 @@ def test_should_return_200_when_call_environment_with_happy_path_with_apikey(
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
 def test_should_return_401_when_call_environment_with_happy_path_without_apikey(
-    client_app
+    client_app,
 ):
     headers = {"Accept": "application/json"}
     response = client_app.get("/petisco/environment", headers=headers)
@@ -74,7 +74,7 @@ def test_should_return_200_when_call_sum_with_valid_values(client_app):
     not flask_extension_is_installed(), reason="Flask extension is not installed"
 )
 def test_should_return_200_when_call_sum_with_valid_values_with_external_headers(
-    client_app
+    client_app,
 ):
     headers = {
         "Content-Type": "multipart/form-data",
