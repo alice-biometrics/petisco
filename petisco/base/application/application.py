@@ -23,6 +23,7 @@ class Application(BaseSettings):
     configurers: Optional[List[Callable[[bool], Any]]] = []
 
     def configure(self, testing: bool = False):
+        Injector.set_dependencies(self.get_dependencies())
         for configurer in self.configurers:
             if configurer:
                 try:
@@ -32,7 +33,6 @@ class Application(BaseSettings):
                     raise TypeError(
                         f'Given configure function ("{callable_name}") must be defined as Callable[[bool], Any] receiving a boolean as an input.'
                     )
-        Injector.set_dependencies(self.get_dependencies())
 
     def get_dependencies(self) -> List[Dependency]:
         default_dependencies = (
