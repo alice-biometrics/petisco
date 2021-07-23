@@ -50,7 +50,7 @@ def test_builder_fail_and_raise_an_error_when_rquired_positional_argument_is_not
             self.arg1 = arg1
             self.arg2 = arg2
 
-    with pytest.raises(TypeError):
+    with pytest.raises(RuntimeError):
         Builder(MyClass).build()
 
 
