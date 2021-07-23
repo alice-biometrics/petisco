@@ -37,9 +37,10 @@ jobs:
         git config --global user.name "Alice Biometrics"
         git commit -m "Update version to ${RELEASE_VERSION}"
     - name: Push changes
-      uses: alice-biometrics/github-push-action@v1
+      uses: alice-biometrics/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+        branch: v1
     - name: Check pip installation
       run: |
         pip install petisco==${RELEASE_VERSION} || true
