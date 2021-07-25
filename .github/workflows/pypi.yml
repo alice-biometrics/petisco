@@ -21,7 +21,7 @@ jobs:
     - name: Set RELEASE_VERSION
       run: echo "RELEASE_VERSION=$(echo ${GITHUB_REF:11})" >> $GITHUB_ENV
     - name: Update VERSION file
-      run: echo ${RELEASE_VERSION} > ${PACKAGE_NAME}/VERSION
+      run: echo -ne ${RELEASE_VERSION} > ${PACKAGE_NAME}/VERSION
     - name: Install dependencies
       run: pip install setuptools wheel twine
     - name: Build and publish
