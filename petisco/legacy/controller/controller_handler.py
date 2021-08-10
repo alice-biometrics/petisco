@@ -1,36 +1,35 @@
 import inspect
 import traceback
-
 from functools import wraps
-from typing import Callable, Tuple, Dict, List, Any
-from meiga import Result, Error, Success
+from typing import Any, Callable, Dict, List, Tuple
+
+from meiga import Error, Result, Success
 from meiga.decorators import meiga
 
-from petisco.legacy.event.bus.domain.interface_event_bus import IEventBus
 from petisco.legacy.application.petisco import Petisco
+from petisco.legacy.controller.errors.http_error import HttpError
 from petisco.legacy.controller.errors.internal_http_error import InternalHttpError
 from petisco.legacy.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
-
 from petisco.legacy.domain.aggregate_roots.info_id import InfoId
 from petisco.legacy.domain.errors.critical_error import CriticalError
-
+from petisco.legacy.event.bus.domain.interface_event_bus import IEventBus
 from petisco.legacy.event.shared.domain.request_responded import RequestResponded
 from petisco.legacy.frameworks.flask.flask_headers_provider import (
     flask_headers_provider,
 )
-from petisco.legacy.logger.interface_logger import ERROR, DEBUG
-from petisco.legacy.controller.errors.http_error import HttpError
+from petisco.legacy.logger.interface_logger import DEBUG, ERROR
+from petisco.legacy.logger.log_message import LogMessage
 from petisco.legacy.notifier.domain.interface_notifier import INotifier
 from petisco.legacy.notifier.domain.notifier_exception_message import (
     NotifierExceptionMessage,
 )
+from petisco.legacy.notifier.domain.notifier_message import NotifierMessage
 from petisco.legacy.security.token_manager.not_implemented_token_manager import (
     NotImplementedTokenManager,
 )
 from petisco.legacy.security.token_manager.token_manager import TokenManager
-from petisco.legacy.logger.log_message import LogMessage
 from petisco.legacy.tools.timer import timer
 
 DEFAULT_SUCCESS_MESSAGE = {"message": "OK"}, 200
@@ -171,7 +170,7 @@ class _ControllerHandler:
 
                     if result_controller.is_failure:
                         http_response = self.handle_failure(
-                            log_message, result_controller
+                            log_message, result_controller, info_id, func.__name__
                         )
                     else:
                         message = self._get_success_message(result_controller)
@@ -252,7 +251,11 @@ class _ControllerHandler:
                 )
 
     def handle_failure(
-        self, log_message: LogMessage, result: Result
+        self,
+        log_message: LogMessage,
+        result: Result,
+        info_id: InfoId = None,
+        controller: str = None,
     ) -> Tuple[dict, int]:
         self.logger.log(ERROR, log_message.set_message(f"{result}"))
         known_result_failure_handler = KnownResultFailureHandler(result)
@@ -265,7 +268,15 @@ class _ControllerHandler:
                     raise TypeError(
                         "Returned object from error_handler must be subclasses of HttpError"
                     )
-
+                if http_error.code >= 500:
+                    self.notifier.publish(
+                        NotifierMessage(
+                            title=f"Internal error in controller {controller}",
+                            message=http_error.message,
+                            info_id=info_id,
+                            info_petisco=Petisco.get_info(),
+                        )
+                    )
                 http_response = http_error.handle()
         else:
             http_response = known_result_failure_handler.http_error.handle()
