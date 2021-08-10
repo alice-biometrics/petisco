@@ -22,6 +22,7 @@ from petisco.logger.interface_logger import ERROR, DEBUG
 from petisco.controller.errors.http_error import HttpError
 from petisco.notifier.domain.interface_notifier import INotifier
 from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
+from petisco.notifier.domain.notifier_message import NotifierMessage
 from petisco.security.token_manager.not_implemented_token_manager import (
     NotImplementedTokenManager,
 )
@@ -167,7 +168,7 @@ class _ControllerHandler:
 
                     if result_controller.is_failure:
                         http_response = self.handle_failure(
-                            log_message, result_controller
+                            log_message, result_controller, info_id, func.__name__
                         )
                     else:
                         message = self._get_success_message(result_controller)
@@ -248,7 +249,11 @@ class _ControllerHandler:
                 )
 
     def handle_failure(
-        self, log_message: LogMessage, result: Result
+        self,
+        log_message: LogMessage,
+        result: Result,
+        info_id: InfoId = None,
+        controller: str = None,
     ) -> Tuple[dict, int]:
         self.logger.log(ERROR, log_message.set_message(f"{result}"))
         known_result_failure_handler = KnownResultFailureHandler(result)
@@ -260,6 +265,15 @@ class _ControllerHandler:
                 if not issubclass(http_error.__class__, HttpError):
                     raise TypeError(
                         "Returned object from error_handler must be subclasses of HttpError"
+                    )
+                if http_error.code >= 500:
+                    self.notifier.publish(
+                        NotifierMessage(
+                            title=f"Internal error in controller {controller}",
+                            message=http_error.message,
+                            info_id=info_id,
+                            info_petisco=Petisco.get_info(),
+                        )
                     )
 
                 http_response = http_error.handle()
