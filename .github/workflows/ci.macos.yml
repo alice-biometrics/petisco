@@ -6,13 +6,13 @@ on:
       - '*.md'
       - 'petisco/VERSION'
     branches: 
-      - master
+      - legacy
   push:
     paths-ignore:
       - '*.md'
       - 'petisco/VERSION'
     branches:
-      - master
+      - legacy
 
 jobs:
   ci-macos:
