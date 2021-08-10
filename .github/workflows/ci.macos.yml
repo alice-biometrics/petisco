@@ -7,12 +7,14 @@ on:
       - 'petisco/VERSION'
     branches: 
       - v1
+      - master
   push:
     paths-ignore:
       - '*.md'
       - 'petisco/VERSION'
     branches:
       - v1
+      - master
 
 jobs:
   ci-macos:
