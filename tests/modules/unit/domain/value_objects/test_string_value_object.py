@@ -53,7 +53,10 @@ def test_should_inherit_from_string_value_object_and_add_an_ensure_clause():
 
 
 @pytest.mark.unit
-def test_should_inherit_from_string_value_object_and_raise_exception_when_not_supporting_utf8mb4():
+@pytest.mark.parametrize("value", ["Alex", "Íñigo", "João"])
+def test_should_inherit_from_string_value_object_with_disallowed_utf8mb4_and_create_objects_successfully(
+    value,
+):
     class Name(StringValueObject):
         def __init__(self, value: str):
             super(Name, self).__init__(value)
@@ -61,12 +64,22 @@ def test_should_inherit_from_string_value_object_and_raise_exception_when_not_su
         def guard(self):
             self._ensure_value_contains_valid_char(allow_utf8mb4=False)
 
-    value = "Alex"
     name = Name(value)
-
     assert isinstance(name, Name)
     assert name.value == value
 
-    invalid_value = "𝘼𝙡𝙚𝙭"
+
+@pytest.mark.unit
+@pytest.mark.parametrize("value", ["𝘼𝙡𝙚𝙭", "Alex𖥔", "Alex😃"])
+def test_should_inherit_from_string_value_object_with_disallowed_utf8mb4_and_raise_exception_with_utf8mb4_values(
+    value,
+):
+    class Name(StringValueObject):
+        def __init__(self, value: str):
+            super(Name, self).__init__(value)
+
+        def guard(self):
+            self._ensure_value_contains_valid_char(allow_utf8mb4=False)
+
     with pytest.raises(InvalidStringValueObjectError):
-        Name(invalid_value)
+        Name(value)

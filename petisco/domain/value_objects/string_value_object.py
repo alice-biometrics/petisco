@@ -48,8 +48,14 @@ class StringValueObject(ValueObject):
             r"^[\w]*(([',. -][\s]?[\w]?)?[\w]*)*$", self.value
         ):
             self._raise_error(raise_cls)
-        if not allow_utf8mb4 and re.match("[^\u0000-\uffff]", self.value):
-            self._raise_error(raise_cls)
+        if not allow_utf8mb4:
+            if not all(
+                [
+                    re.match("[^\u0000-\uffff]", char) is None
+                    for char in list(self.value)
+                ]
+            ):
+                self._raise_error(raise_cls)
 
     def _ensure_value_is_less_than_n_char(
         self, max_num_chars: int, raise_cls=ExceedLengthLimitValueObjectError

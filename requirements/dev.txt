@@ -8,6 +8,6 @@ pytest-variables[yaml]
 pytest-clarity
 requests-mock==1.8.0
 hypothesis==4.34.0
-pre-commit==1.18.3
+pre-commit==2.9.2
 twine==1.13.0
 fakeredis==1.1.1
