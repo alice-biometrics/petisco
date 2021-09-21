@@ -1,8 +1,10 @@
+import logging
+
 import pytest
 from fastapi import HTTPException
 from meiga import BoolResult, Failure, Result, Success, isFailure, isSuccess
 
-from petisco import AlreadyExists, HttpError, NotFound, PrintMiddleware
+from petisco import AlreadyExists, DomainError, HttpError, NotFound, PrintMiddleware
 from petisco.extra.fastapi import (
     FASTAPI_DEFAULT_RESPONSE,
     FastAPIController,
@@ -31,6 +33,20 @@ def test_fastapi_controller_should_raise_http_exception_when_failure_result():
 
     assert excinfo.value.status_code == 500
     assert excinfo.value.detail == "Unknown Error"
+
+
+@pytest.mark.unit
+def test_fastapi_controller_should_logging_error_with_traceback(caplog):
+    class MyController(FastAPIController):
+        def execute(self) -> BoolResult:
+            raise TypeError("test_error")
+
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(HTTPException):
+            MyController().execute()
+
+    assert "test_error" in caplog.text
+    assert __name__ in caplog.text
 
 
 @pytest.mark.unit
@@ -63,6 +79,24 @@ def test_fastapi_controller_should_raise_fastapi_http_exception_mapped_by_error_
 
     assert excinfo.value.status_code == 404
     assert excinfo.value.detail == "Task not Found"
+
+
+@pytest.mark.unit
+def test_fastapi_controller_should_logging_error_message_with_non_mapped_error(caplog):
+    class MyError(DomainError):
+        def get_specify_detail(self) -> str:
+            return "My Error"
+
+    class MyController(FastAPIController):
+        def execute(self) -> BoolResult:
+            return Failure(MyError())
+
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(HTTPException) as excinfo:
+            MyController().execute()
+
+    assert excinfo.value.status_code == 500
+    assert "Error 'MyError' is not mapped in controller" in caplog.text
 
 
 @pytest.mark.unit

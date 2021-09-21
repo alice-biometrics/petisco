@@ -3,7 +3,7 @@ from functools import wraps
 from types import FunctionType
 from typing import Any
 
-from meiga import Result, Error, NotImplementedMethodError, Failure
+from meiga import Error, Failure, NotImplementedMethodError, Result
 from meiga.on_failure_exception import OnFailureException
 
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
@@ -21,7 +21,11 @@ def wrapper(method):
         except Error as error:
             return Failure(error)
         except Exception as exception:
-            return Failure(UseCaseUncontrolledError(exception))
+            uncontrolled_error = UseCaseUncontrolledError.from_exception(
+                exception=exception,
+                arguments=args,
+            )
+            return Failure(uncontrolled_error)
 
     return wrapped
 

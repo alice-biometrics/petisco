@@ -1,19 +1,36 @@
+import logging
 from typing import Dict
 
 from fastapi import HTTPException
 from meiga import Result
 
-from petisco.base.domain.errors.domain_error import DomainError
 from petisco.base.application.controller.http_error import (
     DEFAULT_HTTP_ERROR_DETAIL,
     HttpError,
 )
+from petisco.base.domain.errors.domain_error import DomainError
+from petisco.base.domain.errors.unknown_error import UnknownError
+
+logger = logging.getLogger()
 
 
 def fastapi_failure_handler(result: Result, error_map: Dict[type, HttpError]):
     domain_error = result.value
     error_type = type(domain_error)
     http_error = error_map.get(error_type, HttpError())
+
+    if isinstance(result.value, UnknownError):
+        error_info = {
+            "executor": result.value.executor,
+            "message": result.value.message,
+            "traceback": result.value.traceback,
+        }
+        logger.error(error_info)
+    elif error_type not in error_map:
+        error_info = {
+            "message": f"Error '{result.value.__class__.__name__}' is not mapped in controller"
+        }
+        logger.error(error_info)
 
     detail = "Unknown Error"
     if isinstance(domain_error, DomainError):

@@ -1,6 +1,5 @@
-from meiga import Error
+from petisco.base.domain.errors.unknown_error import UnknownError
 
 
-class UseCaseUncontrolledError(Error):
-    def __init__(self, exception: Exception):
-        self.exception = exception
+class UseCaseUncontrolledError(UnknownError):
+    pass
