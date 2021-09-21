@@ -20,12 +20,7 @@ def fastapi_failure_handler(result: Result, error_map: Dict[type, HttpError]):
     http_error = error_map.get(error_type, HttpError())
 
     if isinstance(result.value, UnknownError):
-        error_info = {
-            "executor": result.value.executor,
-            "message": result.value.message,
-            "traceback": result.value.traceback,
-        }
-        logger.error(error_info)
+        logger.error(result.value.__dict__)
     elif error_type not in error_map:
         error_info = {
             "message": f"Error '{result.value.__class__.__name__}' is not mapped in controller"
