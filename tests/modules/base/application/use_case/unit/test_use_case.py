@@ -1,6 +1,6 @@
 import pytest
-from meiga import Result, Error, Success, BoolResult, Failure, isSuccess
-from meiga.assertions import assert_success, assert_failure
+from meiga import BoolResult, Error, Failure, Result, Success, isSuccess
+from meiga.assertions import assert_failure, assert_success
 from meiga.on_failure_exception import OnFailureException
 
 from petisco import UseCase, UseCaseUncontrolledError
@@ -44,7 +44,7 @@ def test_use_case_should_return_failure_result_when_raise_on_failure_exception_f
 
 
 @pytest.mark.unit
-def test_use_case_should_return_failure_result_when_raise_an_uncontrolled_error():
+def test_use_case_should_return_failure_result_when_raise_an_uncontrolled_error_with_traceback():
 
     expected_exception = TypeError("whatever")
 
@@ -59,6 +59,8 @@ def test_use_case_should_return_failure_result_when_raise_an_uncontrolled_error(
         value_is_instance_of=UseCaseUncontrolledError,
         value_is_equal_to=UseCaseUncontrolledError(expected_exception),
     )
+    assert __name__ in result.value.traceback
+    assert "whatever" in result.value.traceback
 
 
 @pytest.mark.unit
