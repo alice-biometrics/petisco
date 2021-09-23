@@ -50,7 +50,7 @@ def test_builder_fail_and_raise_an_error_when_rquired_positional_argument_is_not
             self.arg1 = arg1
             self.arg2 = arg2
 
-    with pytest.raises(TypeError):
+    with pytest.raises(RuntimeError):
         Builder(MyClass).build()
 
 
@@ -84,3 +84,28 @@ def test_builder_success_with_builder_class_with_arguments():
     assert isinstance(my_class, MyClass)
     assert my_class.arg1 == "arg1"
     assert my_class.arg2 == "arg2"
+
+
+@pytest.mark.unit
+def test_builder_raise_an_exception_with_error_in_constructor():
+    class MyClass:
+        def __init__(self):
+            raise TypeError("My Exception")
+
+    with pytest.raises(RuntimeError) as excinfo:
+        builder = Builder(MyClass)
+        builder.build()
+    assert "Error instantiating MyClass" in str(excinfo.value)
+
+
+@pytest.mark.unit
+def test_builder_raise_an_exception_with_error_in_builder_class():
+    class MyClass:
+        @staticmethod
+        def build():
+            raise TypeError("My Exception")
+
+    with pytest.raises(RuntimeError) as excinfo:
+        builder = Builder(MyClass, is_builder=True)
+        builder.build()
+    assert "Error instantiating MyClass" in str(excinfo.value)

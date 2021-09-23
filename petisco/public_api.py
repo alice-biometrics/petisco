@@ -3,6 +3,7 @@
 
 """Public API of Alice Petisco Framework"""
 from petisco.base.application.application import Application
+from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.controller.controller import Controller
 from petisco.base.application.controller.http_error import HttpError
 from petisco.base.application.dependency_injection.dependency import Dependency
@@ -10,6 +11,9 @@ from petisco.base.application.dependency_injection.injector import Injector
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
+from petisco.base.application.notifier.not_implemented_notifier import (
+    NotImplementedNotifier,
+)
 from petisco.base.application.notifier.notifier import Notifier
 from petisco.base.application.notifier.notifier_exception_message import (
     NotifierExceptionMessage,
@@ -81,6 +85,7 @@ base = [
     "Notifier",
     "NotifierMessage",
     "NotifierExceptionMessage",
+    "NotImplementedNotifier",
     "PrintMiddleware",
     "UseCase",
     "UseCaseUncontrolledError",
@@ -125,6 +130,7 @@ base = [
     "Repository",
     "AppService",
     "Application",
+    "ApplicationConfigurer",
     "Builder",
 ]
 modules = []
