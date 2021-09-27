@@ -1,25 +1,23 @@
 import inspect
 import traceback
-
 from functools import wraps
-from typing import Callable, Tuple, Dict, List, Any
-from meiga import Result, Error, Success
-from meiga.decorators import meiga
+from typing import Any, Callable, Dict, List, Tuple
 
-from petisco.event.bus.domain.interface_event_bus import IEventBus
+from meiga import Error, Result, Success
+from meiga.decorators import meiga
 from petisco.application.petisco import Petisco
+from petisco.controller.errors.http_error import HttpError
 from petisco.controller.errors.internal_http_error import InternalHttpError
 from petisco.controller.errors.known_result_failure_handler import (
     KnownResultFailureHandler,
 )
-
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.domain.errors.critical_error import CriticalError
-
+from petisco.event.bus.domain.interface_event_bus import IEventBus
 from petisco.event.shared.domain.request_responded import RequestResponded
 from petisco.frameworks.flask.flask_headers_provider import flask_headers_provider
-from petisco.logger.interface_logger import ERROR, DEBUG
-from petisco.controller.errors.http_error import HttpError
+from petisco.logger.interface_logger import DEBUG, ERROR
+from petisco.logger.log_message import LogMessage
 from petisco.notifier.domain.interface_notifier import INotifier
 from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 from petisco.notifier.domain.notifier_message import NotifierMessage
@@ -30,7 +28,6 @@ from petisco.security.token_manager.not_implemented_token_manager import (
     NotImplementedTokenManager,
 )
 from petisco.security.token_manager.token_manager import TokenManager
-from petisco.logger.log_message import LogMessage
 from petisco.tools.timer import timer
 
 DEFAULT_SUCCESS_MESSAGE = {"message": "OK"}, 200
@@ -220,7 +217,11 @@ class _ControllerHandler:
             if self.inject_apm_metadata and apm_extension_is_installed():
                 import elasticapm
 
-                elasticapm.set_custom_context({"info_id": info_id.to_dict()})
+                elasticapm.label(
+                    client_id=info_id.to_dict()["client_id"],
+                    user_id=info_id.to_dict()["user_id"],
+                    correlation_id=info_id.to_dict()["correlation_id"],
+                )
 
             return http_response
 

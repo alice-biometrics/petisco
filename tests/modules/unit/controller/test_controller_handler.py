@@ -12,9 +12,9 @@ from tests.modules.unit.mocks.log_message_mother import LogMessageMother
 
 
 @pytest.mark.unit
-@patch.object(elasticapm, "set_custom_context")
+@patch.object(elasticapm, "label")
 def test_should_execute_successfully_a_empty_controller_without_input_parameters(
-    elastic_apm_set_custom_context_mock,
+    elastic_apm_label_mock,
     given_any_petisco,
     given_any_info_id,
     given_headers_provider,
@@ -70,17 +70,17 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
         "message_size": 17,
     }
     assert request_responded.http_response["status_code"] == 200
-    elastic_apm_set_custom_context_mock.assert_called_once()
-    assert (
-        elastic_apm_set_custom_context_mock.call_args[0][0]["info_id"]
-        == given_any_info_id.to_dict()
-    )
+    elastic_apm_label_mock.assert_called_once()
+    apm_label_args = elastic_apm_label_mock.call_args[1]
+    assert apm_label_args["client_id"] == given_any_info_id.client_id.value
+    assert apm_label_args["user_id"] == given_any_info_id.user_id.value
+    assert apm_label_args["correlation_id"] == given_any_info_id.correlation_id.value
 
 
 @pytest.mark.unit
-@patch.object(elasticapm, "set_custom_context")
+@patch.object(elasticapm, "label")
 def test_should_execute_successfully_a_controller_without_publish_events_nor_inject_apm_metadata(
-    elastic_apm_set_custom_context_mock,
+    elastic_apm_label_mock,
     given_any_petisco,
     given_any_info_id,
     given_headers_provider,
@@ -101,7 +101,7 @@ def test_should_execute_successfully_a_controller_without_publish_events_nor_inj
     assert http_response == ({"message": "OK"}, 200)
 
     mock_event_bus.publish.assert_not_called()
-    elastic_apm_set_custom_context_mock.assert_not_called()
+    elastic_apm_label_mock.assert_not_called()
 
 
 @pytest.mark.unit
