@@ -1,9 +1,9 @@
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
+import elasticapm
 import pytest
-from meiga import Success, isFailure, Failure
-
-from petisco import controller_handler, ERROR, __version__, DEBUG, IEventBus
+from meiga import Failure, Success, isFailure
+from petisco import DEBUG, ERROR, IEventBus, __version__, controller_handler
 from petisco.domain.errors.critical_error import CriticalError
 from petisco.event.shared.domain.request_responded import RequestResponded
 from tests.modules.unit.mocks.fake_logger import FakeLogger
@@ -12,8 +12,12 @@ from tests.modules.unit.mocks.log_message_mother import LogMessageMother
 
 
 @pytest.mark.unit
+@patch.object(elasticapm, "set_custom_context")
 def test_should_execute_successfully_a_empty_controller_without_input_parameters(
-    given_any_petisco, given_any_info_id, given_headers_provider
+    elastic_apm_set_custom_context_mock,
+    given_any_petisco,
+    given_any_info_id,
+    given_headers_provider,
 ):
 
     logger = FakeLogger()
@@ -24,6 +28,7 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
         app_version=__version__,
         logger=logger,
         send_request_responded_event=True,
+        inject_apm_metadata=True,
         event_bus=mock_event_bus,
         headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
     )
@@ -65,6 +70,38 @@ def test_should_execute_successfully_a_empty_controller_without_input_parameters
         "message_size": 17,
     }
     assert request_responded.http_response["status_code"] == 200
+    elastic_apm_set_custom_context_mock.assert_called_once()
+    assert (
+        elastic_apm_set_custom_context_mock.call_args[0][0]["info_id"]
+        == given_any_info_id.to_dict()
+    )
+
+
+@pytest.mark.unit
+@patch.object(elasticapm, "set_custom_context")
+def test_should_execute_successfully_a_controller_without_publish_events_nor_inject_apm_metadata(
+    elastic_apm_set_custom_context_mock,
+    given_any_petisco,
+    given_any_info_id,
+    given_headers_provider,
+):
+    mock_event_bus = Mock(IEventBus)
+
+    @controller_handler(
+        app_name="petisco",
+        logger=FakeLogger(),
+        event_bus=mock_event_bus,
+        headers_provider=given_headers_provider(given_any_info_id.get_http_headers()),
+    )
+    def my_controller():
+        return Success("Hello Petisco")
+
+    http_response = my_controller()
+
+    assert http_response == ({"message": "OK"}, 200)
+
+    mock_event_bus.publish.assert_not_called()
+    elastic_apm_set_custom_context_mock.assert_not_called()
 
 
 @pytest.mark.unit
@@ -193,7 +230,7 @@ def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as
 
 @pytest.mark.unit
 def test_should_execute_successfully_a_empty_controller_with_default_parameters(
-    given_any_petisco
+    given_any_petisco,
 ):
     @controller_handler()
     def my_controller(headers=None):

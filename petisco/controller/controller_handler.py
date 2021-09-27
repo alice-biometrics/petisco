@@ -23,6 +23,9 @@ from petisco.controller.errors.http_error import HttpError
 from petisco.notifier.domain.interface_notifier import INotifier
 from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 from petisco.notifier.domain.notifier_message import NotifierMessage
+from petisco.persistence.elastic.apm_extension_is_installed import (
+    apm_extension_is_installed,
+)
 from petisco.security.token_manager.not_implemented_token_manager import (
     NotImplementedTokenManager,
 )
@@ -53,6 +56,7 @@ class _ControllerHandler:
         logging_types_blacklist: List[Any] = [bytes],
         event_bus: IEventBus = DEFAULT_EVENT_BUS,
         send_request_responded_event: bool = False,
+        inject_apm_metadata: bool = False,
     ):
         """
         Parameters
@@ -79,6 +83,8 @@ class _ControllerHandler:
             A IEventBus implementation. If not specified it will get it from Petisco.get_event_bus().
         send_request_responded_event
             Boolean to select if RequestResponded event is send. It will use provided publisher
+        inject_apm_metadata
+            Boolean to inject info_id in metadata of current apm transaction.
         """
         self.app_name = app_name
         self.app_version = app_version
@@ -91,6 +97,7 @@ class _ControllerHandler:
         self.headers_provider = headers_provider
         self.logging_types_blacklist = logging_types_blacklist
         self.send_request_responded_event = send_request_responded_event
+        self.inject_apm_metadata = inject_apm_metadata
 
     def _check_app_name(self):
         if self.app_name == DEFAULT_ERROR_MESSAGE:
@@ -209,6 +216,11 @@ class _ControllerHandler:
                 ).add_info_id(info_id)
 
                 self.event_bus.publish(request_responded)
+
+            if self.inject_apm_metadata and apm_extension_is_installed():
+                import elasticapm
+
+                elasticapm.set_custom_context({"info_id": info_id.to_dict()})
 
             return http_response
 
