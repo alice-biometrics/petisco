@@ -1,4 +1,6 @@
-from typing import Dict, List
+import sys
+import traceback
+from typing import Any, Dict, List, Optional
 
 from meiga import Error
 
@@ -58,3 +60,25 @@ class UnknownError(Error):
         filename_str = f"\n{self.filename}" if self.filename else ""
         lineno_str = f"\n{self.lineno}" if self.lineno else ""
         return f"{self.__class__.__name__}{executor_str}: {self.message}.{traceback_str}.{input_parameters_str}{filename_str}{lineno_str}"
+
+    @classmethod
+    def from_exception(
+        cls,
+        exception: Exception,
+        arguments: Any,
+        class_name: Optional[str] = None,
+    ):
+        _, _, tb = sys.exc_info()
+        tb = traceback.extract_tb(tb)[-1]
+        filename = tb.filename if tb and hasattr(tb, "filename") else None
+        lineno = tb.lineno if tb and hasattr(tb, "lineno") else None
+
+        unknown_error = cls(
+            exception=exception,
+            input_parameters=arguments,
+            executor=class_name,
+            traceback=traceback.format_exc(),
+            filename=filename,
+            lineno=lineno,
+        )
+        return unknown_error

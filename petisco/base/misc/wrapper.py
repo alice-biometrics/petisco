@@ -1,5 +1,3 @@
-import sys
-import traceback
 from functools import wraps
 from inspect import signature
 
@@ -30,18 +28,10 @@ def wrapper(execute_func, wrapped_class_name, config, mapper):
         except Error as error:
             result = Failure(error)
         except Exception as exception:
-            _, _, tb = sys.exc_info()
-            tb = traceback.extract_tb(tb)[-1]
-            filename = tb.filename if tb and hasattr(tb, "filename") else None
-            lineno = tb.lineno if tb and hasattr(tb, "lineno") else None
-
-            unknown_error = UnknownError(
+            unknown_error = UnknownError.from_exception(
                 exception=exception,
-                input_parameters=arguments if len(arguments) > 0 else args,
-                executor=wrapped_class_name,
-                traceback=traceback.format_exc(),
-                filename=filename,
-                lineno=lineno,
+                arguments=arguments if len(arguments) > 0 else args,
+                class_name=wrapped_class_name,
             )
             result = Failure(unknown_error)
 
