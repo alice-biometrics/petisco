@@ -40,7 +40,7 @@ jobs:
       uses: alice-biometrics/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-        branch: v1
+        branch: master
     - name: Check pip installation
       run: |
         pip install petisco==${RELEASE_VERSION} || true
