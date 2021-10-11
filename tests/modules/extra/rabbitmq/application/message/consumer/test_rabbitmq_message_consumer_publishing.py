@@ -1,12 +1,10 @@
 from time import sleep
 
 import pytest
-from meiga import isSuccess, BoolResult
+from meiga import BoolResult, isSuccess
 
-from petisco import DomainEvent, Command
-from petisco.extra.rabbitmq import RabbitMqDomainEventBus, RabbitMqCommandBus
-
-from petisco.legacy.fixtures.testing_decorators import testing_with_rabbitmq
+from petisco import Command, DomainEvent
+from petisco.extra.rabbitmq import RabbitMqCommandBus, RabbitMqDomainEventBus
 from tests.modules.extra.rabbitmq.mother.command_persist_user_mother import (
     CommandPersistUserMother,
 )
@@ -29,6 +27,7 @@ from tests.modules.extra.rabbitmq.mother.rabbitmq_message_consumer_mother import
     RabbitMqMessageConsumerMother,
 )
 from tests.modules.extra.rabbitmq.utils.spy_messages import SpyMessages
+from tests.modules.extra.testing_decorators import testing_with_rabbitmq
 
 
 @pytest.mark.integration

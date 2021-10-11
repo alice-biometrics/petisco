@@ -1,11 +1,9 @@
 from time import sleep
 
 import pytest
-from meiga import isSuccess, BoolResult, isFailure
+from meiga import BoolResult, isFailure, isSuccess
 
 from petisco import DomainEvent
-
-from petisco.legacy.fixtures.testing_decorators import testing_with_rabbitmq
 from tests.modules.extra.rabbitmq.mother.domain_event_user_created_mother import (
     DomainEventUserCreatedMother,
 )
@@ -22,6 +20,7 @@ from tests.modules.extra.rabbitmq.mother.rabbitmq_message_consumer_mother import
     RabbitMqMessageConsumerMother,
 )
 from tests.modules.extra.rabbitmq.utils.spy_messages import SpyMessages
+from tests.modules.extra.testing_decorators import testing_with_rabbitmq
 
 
 @pytest.mark.integration

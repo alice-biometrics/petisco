@@ -2,6 +2,8 @@ from petisco.extra.rabbitmq.dependencies import get_default_message_dependencies
 from petisco.extra.rabbitmq.is_pika_available import is_pika_available
 
 __all__ = ["get_default_message_dependencies"]
+
+
 if is_pika_available():
 
     from petisco.extra.rabbitmq.application.chaos.rabbitmq_message_chaos import (
@@ -23,6 +25,9 @@ if is_pika_available():
     from petisco.extra.rabbitmq.shared.queue_config import QueueConfig
     from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
     from petisco.extra.rabbitmq.shared.rabbitmq_declarer import RabbitMqDeclarer
+    from petisco.extra.rabbitmq.shared.rabbitmq_is_running_locally import (
+        rabbitmq_is_running_locally,
+    )
     from petisco.extra.rabbitmq.shared.specific_queue_config import SpecificQueueConfig
 
     __all__ += [
@@ -36,4 +41,5 @@ if is_pika_available():
         "RabbitMqCommandBus",
         "get_rabbitmq_message_dependencies",
         "RabbitMqMessageChaos",
+        "rabbitmq_is_running_locally",
     ]

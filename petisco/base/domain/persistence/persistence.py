@@ -1,6 +1,6 @@
 import inspect
-from typing import List, Callable
 from dataclasses import dataclass
+from typing import Callable, List
 
 from petisco.base.domain.persistence.interface_database import Database
 from petisco.base.misc.singleton import Singleton
@@ -85,11 +85,11 @@ class Persistence(metaclass=Singleton):
     @staticmethod
     def is_available(database_name: str = None):
         def log_warning(message: str):
-            from petisco.legacy import Petisco, DEBUG, LogMessage
-
-            logger = Petisco.get_logger()
-            log_message = LogMessage(operation="persistence", layer="infrastructure")
-            logger.log(DEBUG, log_message.set_message(message))
+            print(message)
+            # from petisco.legacy import DEBUG, LogMessage
+            # logger =
+            # log_message = LogMessage(operation="persistence", layer="infrastructure")
+            # logger.log(DEBUG, log_message.set_message(message))
 
         databases = Persistence.get_instance()._databases
         if database_name is not None:

@@ -4,7 +4,6 @@ import pytest
 from meiga import BoolResult, isSuccess
 
 from petisco import DomainEvent
-from petisco.legacy.fixtures.testing_decorators import testing_with_rabbitmq
 from tests.modules.extra.rabbitmq.mother.command_persist_user_mother import (
     CommandPersistUserMother,
 )
@@ -21,6 +20,7 @@ from tests.modules.extra.rabbitmq.mother.rabbitmq_message_consumer_mother import
     RabbitMqMessageConsumerMother,
 )
 from tests.modules.extra.rabbitmq.utils.spy_messages import SpyMessages
+from tests.modules.extra.testing_decorators import testing_with_rabbitmq
 
 
 @pytest.mark.integration
