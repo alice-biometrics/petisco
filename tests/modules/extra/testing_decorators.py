@@ -2,13 +2,11 @@ import functools
 
 import pytest
 
-from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_is_running_locally import (
+from petisco.extra.elastic.elastic_is_running_locally import elastic_is_running_locally
+from petisco.extra.rabbitmq.shared.rabbitmq_is_running_locally import (
     rabbitmq_is_running_locally,
 )
-from petisco.legacy.persistence.elastic.elastic_is_running_locally import (
-    elastic_is_running_locally,
-)
-from petisco.legacy.persistence.sql.mysql_is_running_locally import (
+from petisco.extra.sqlalchemy.sql.mysql_is_running_locally import (
     mysql_is_running_locally,
 )
 

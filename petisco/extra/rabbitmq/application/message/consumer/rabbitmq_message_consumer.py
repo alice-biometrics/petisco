@@ -29,8 +29,14 @@ from petisco.extra.rabbitmq.application.message.bus.rabbitmq_command_bus import 
 from petisco.extra.rabbitmq.application.message.bus.rabbitmq_domain_event_bus import (
     RabbitMqDomainEventBus,
 )
+from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import (
+    RabbitMqConsumerConnector,
+)
 from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_event_consumer_logger import (
     RabbitMqMessageConsumerLogger,
+)
+from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_event_consumer_printer import (
+    RabbitMqEventConsumerPrinter,
 )
 from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_subscriber_queue_name_formatter import (
     RabbitMqMessageSubscriberQueueNameFormatter,
@@ -38,12 +44,6 @@ from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_subsc
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 from petisco.extra.rabbitmq.shared.rabbitmq_exchange_name_formatter import (
     RabbitMqExchangeNameFormatter,
-)
-from petisco.legacy.event.consumer.infrastructure.rabbitmq_event_consumer_printer import (
-    RabbitMqEventConsumerPrinter,
-)
-from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_consumer_connector import (
-    RabbitMqConsumerConnector,
 )
 from petisco.legacy.logger.interface_logger import ILogger
 from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger

@@ -5,7 +5,6 @@ import pytest
 from pika import BlockingConnection
 
 from petisco.extra.rabbitmq import RabbitMqConnector
-from petisco.legacy.fixtures import testing_with_rabbitmq
 from tests.modules.extra.rabbitmq.mother.defaults import DEFAULT_EXCHANGE_NAME
 from tests.modules.extra.rabbitmq.mother.domain_event_user_created_mother import (
     DomainEventUserCreatedMother,
@@ -16,6 +15,7 @@ from tests.modules.extra.rabbitmq.mother.rabbitmq_domain_event_bus_mother import
 from tests.modules.extra.rabbitmq.mother.rabbitmq_message_configurer_mother import (
     RabbitMqMessageConfigurerMother,
 )
+from tests.modules.extra.testing_decorators import testing_with_rabbitmq
 
 
 @pytest.mark.integration
