@@ -35,14 +35,14 @@ Imagine you have a domain where your business logic is to manage a task system, 
 
 Use `Uuid` to generate new identificators
 
-```
+```python
 from petisco import Uuid
 uuid = Uuid.v4()
 ```
 
 Additionally, you can extend it:
 
-```
+```python
 from petisco import Uuid
 
 class TaskId(Uuid):
@@ -154,6 +154,8 @@ class Task(AggregateRoot):
 #### Extras
 
 ###### RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
+
+⚠️ TODO: It is outdated (v0)
 
 To test RabbitEventManager you need to run locally a RabbitMQ application, otherwise related test will be skipped.
 Please, check the official doc here: https://www.rabbitmq.com/download.html
