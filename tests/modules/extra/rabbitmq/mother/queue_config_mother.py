@@ -1,5 +1,5 @@
+from petisco.extra.rabbitmq import SpecificQueueConfig
 from petisco.extra.rabbitmq.shared.queue_config import QueueConfig
-from petisco.legacy.event.queue.domain.specific_queue_config import SpecificQueueConfig
 
 
 class QueueConfigMother:

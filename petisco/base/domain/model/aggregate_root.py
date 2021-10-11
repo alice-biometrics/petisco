@@ -1,16 +1,16 @@
 from abc import ABC
 from typing import List
 
-from pydantic.main import BaseModel
+from pydantic import BaseModel, PrivateAttr
 
-from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.message.domain_event import DomainEvent
+from petisco.base.domain.model.uuid import Uuid
 
 
 class AggregateRoot(ABC, BaseModel):
     aggregate_id: Uuid
     aggregate_version: int = 1
-    _domain_events = []
+    _domain_events = PrivateAttr([])
 
     def record(self, domain_event: DomainEvent):
         self._domain_events.append(domain_event)

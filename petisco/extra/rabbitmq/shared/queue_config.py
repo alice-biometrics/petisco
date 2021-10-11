@@ -1,6 +1,6 @@
 from typing import Dict
 
-from petisco.legacy.event.queue.domain.specific_queue_config import SpecificQueueConfig
+from petisco.extra.rabbitmq.shared.specific_queue_config import SpecificQueueConfig
 
 
 class QueueConfig:

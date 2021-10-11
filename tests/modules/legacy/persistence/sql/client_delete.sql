@@ -1,1 +1,0 @@
-DELETE FROM Client WHERE name=="myclient"

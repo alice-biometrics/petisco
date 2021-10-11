@@ -99,7 +99,7 @@ class MyUserSqlRepository(SqlRepository):
                 .filter(self.UserModel.client_id == client_internal_id)
                 .first()
             )
-            self.fail_if_entity_not_exist(user_model, user_id).unwrap_or_return()
+            self.fail_if_entity_not_found(user_model, user_id).unwrap_or_return()
             user = User.from_dict(user_model.__dict__)
             return Success(user)
 
@@ -113,7 +113,7 @@ class MyUserSqlRepository(SqlRepository):
                 .filter(self.UserModel.client_id == client_internal_id)
                 .all()
             )
-            self.fail_if_entities_not_exist(user_models).unwrap_or_return()
+            self.fail_if_entities_not_found(user_models).unwrap_or_return()
             users = [User.from_dict(user_model.__dict__) for user_model in user_models]
             return Success(users)
 

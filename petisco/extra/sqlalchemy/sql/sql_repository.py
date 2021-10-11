@@ -1,6 +1,5 @@
 from abc import ABCMeta, abstractmethod
 
-from deprecation import deprecated
 from meiga import (
     BoolResult,
     Error,
@@ -103,17 +102,3 @@ class SqlRepository(Repository, metaclass=ABCMeta):
     @abstractmethod
     def remove(self, *args, **kwargs) -> BoolResult:
         return NotImplementedMethodError
-
-    @classmethod
-    @deprecated("This method is deprecated. Please, use fail_if_entity_not_found")
-    def fail_if_entity_not_exist(
-        cls, model, entity_id: Uuid, result_error: Error = None
-    ) -> BoolResult:
-        return cls.fail_if_entity_not_found(model, entity_id, result_error)
-
-    @classmethod
-    @deprecated("This method is deprecated. Please, use fail_if_entities_not_found")
-    def fail_if_entities_not_exist(
-        cls, model, result_error: Error = None
-    ) -> BoolResult:
-        return cls.fail_if_entities_not_found(model, result_error)

@@ -1,6 +1,4 @@
-from petisco.legacy.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
-    RabbitMqConnector,
-)
+from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 
 class RabbitMqDeclarer:
