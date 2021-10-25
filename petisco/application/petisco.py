@@ -1,6 +1,7 @@
 import inspect
 import os
 import time
+from datetime import datetime
 from os import environ
 from typing import Callable, Dict, Any
 
@@ -90,8 +91,8 @@ class Petisco(metaclass=Singleton):
         self._set_tasks()
         self._options = config.options
         self._deploy_checker = DeployChecker(
-            time_deploy=__deploy_timestamp__,
-            time_to_consider_restart=60,
+            deploy_time=__deploy_timestamp__,
+            courtesy_minutes=os.getenv("PETISCO_DEPLOY_COURTESY_MINUTES", 60),
         )
 
     @staticmethod
@@ -168,7 +169,7 @@ class Petisco(metaclass=Singleton):
         self.info["config_events"] = self.config_events.info()
 
     def _publish_deploy_event(self):
-        if self._deploy_checker.was_recently_deployed():
+        if self._deploy_checker.was_recently_deployed(datetime.utcnow()):
             event = ServiceDeployed(
                 app_name=self._app_name, app_version=self._app_version
             )
@@ -185,7 +186,7 @@ class Petisco(metaclass=Singleton):
             self.event_publisher.publish(event)
 
     def _notify_restart(self):
-        if not self._deploy_checker.was_recently_deployed():
+        if not self._deploy_checker.was_recently_deployed(datetime.utcnow()):
             self._notifier.publish(
                 NotifierMessage(
                     title="Service Restarted",
