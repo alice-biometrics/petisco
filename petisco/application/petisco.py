@@ -1,12 +1,14 @@
 import inspect
 import os
 import time
+from datetime import datetime
 from os import environ
 from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
 from deprecation import deprecated
 
+from petisco.application.deploy_checker import DeployChecker
 from petisco.event.bus.infrastructure.not_implemented_event_bus import (
     NotImplementedEventBus,
 )
@@ -24,6 +26,7 @@ from petisco.event.shared.domain.service_deployed import ServiceDeployed
 from petisco.event.legacy.subscriber.domain.interface_event_subscriber import (
     IEventSubscriber,
 )
+from petisco.event.shared.domain.service_restarted import ServiceRestarted
 from petisco.event.shared.infrastructure.configure_events_infrastructure import (
     configure_events_infrastructure,
 )
@@ -43,7 +46,7 @@ from petisco.application.interface_app_service import IService, IAppService
 from petisco.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )
-from petisco import __version__
+from petisco import __version__, __deploy_timestamp__
 from petisco.tasks.infrastructure.not_implemented_task_executor import (
     NotImplementedTaskExecutor,
 )
@@ -87,6 +90,10 @@ class Petisco(metaclass=Singleton):
         self._set_events_configuration()
         self._set_tasks()
         self._options = config.options
+        self._deploy_checker = DeployChecker(
+            deploy_time=__deploy_timestamp__,
+            courtesy_minutes=os.getenv("PETISCO_DEPLOY_COURTESY_MINUTES", 60),
+        )
 
     @staticmethod
     def get_instance():
@@ -111,10 +118,10 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def from_filename(filename: str):
         """
-       Parameters
-       ----------
-       filename
-           YAML-based configuration file (default petisco.yml)
+        Parameters
+        ----------
+        filename
+            YAML-based configuration file (default petisco.yml)
         """
         print(f"Loading petisco from: {filename}")
 
@@ -135,9 +142,11 @@ class Petisco(metaclass=Singleton):
             return
 
         config_events = ConfigEvents.from_filename(filename).unwrap_or_throw()
-        self.event_bus, self.event_configurer, self.event_consumer = configure_events_infrastructure(
-            config_events, self._logger
-        )
+        (
+            self.event_bus,
+            self.event_configurer,
+            self.event_consumer,
+        ) = configure_events_infrastructure(config_events, self._logger)
 
         if config_events.event_subscribers:
             self.event_configurer.configure_subscribers(config_events.event_subscribers)
@@ -160,7 +169,14 @@ class Petisco(metaclass=Singleton):
         self.info["config_events"] = self.config_events.info()
 
     def _publish_deploy_event(self):
-        event = ServiceDeployed(app_name=self._app_name, app_version=self._app_version)
+        if self._deploy_checker.was_recently_deployed(datetime.utcnow()):
+            event = ServiceDeployed(
+                app_name=self._app_name, app_version=self._app_version
+            )
+        else:
+            event = ServiceRestarted(
+                app_name=self._app_name, app_version=self._app_version
+            )
 
         if self.config_events and self.config_events.publish_deploy_event:
             self.event_bus.publish(event)
@@ -169,14 +185,15 @@ class Petisco(metaclass=Singleton):
         if self.config.config_events.publish_deploy_event:
             self.event_publisher.publish(event)
 
-    def _notify_deploy(self):
-        self._notifier.publish(
-            NotifierMessage(
-                title="Service deployed",
-                message=f"{self._app_name} has been deployed",
-                info_petisco=self.get_info(),
+    def _notify_restart(self):
+        if not self._deploy_checker.was_recently_deployed(datetime.utcnow()):
+            self._notifier.publish(
+                NotifierMessage(
+                    title="Service Restarted",
+                    message=f"{self._app_name} has been restarted. Original deploy was at {self._deploy_checker.get_deploy_time()}",
+                    info_petisco=self.get_info(),
+                )
             )
-        )
 
     def _set_tasks(self):
         config_tasks = self.config.config_tasks
@@ -205,8 +222,8 @@ class Petisco(metaclass=Singleton):
         if config_persistence and config_persistence.configs:
             for config_key, config_value in config_persistence.configs.items():
                 if config_value.type == "sql":
-                    import_database_models_func = config_persistence.get_import_database_models_func(
-                        config_key
+                    import_database_models_func = (
+                        config_persistence.get_import_database_models_func(config_key)
                     )
 
                     config_value.config(import_database_models_func)
@@ -305,7 +322,7 @@ class Petisco(metaclass=Singleton):
         self._schedule_tasks()
         self._log_status()
         self._publish_deploy_event()
-        self._notify_deploy()
+        self._notify_restart()
 
     def load_services_and_repositories(self):
         self._set_services_and_repositories_from_providers()
