@@ -111,10 +111,10 @@ class Petisco(metaclass=Singleton):
     @staticmethod
     def from_filename(filename: str):
         """
-       Parameters
-       ----------
-       filename
-           YAML-based configuration file (default petisco.yml)
+        Parameters
+        ----------
+        filename
+            YAML-based configuration file (default petisco.yml)
         """
         print(f"Loading petisco from: {filename}")
 
@@ -135,9 +135,11 @@ class Petisco(metaclass=Singleton):
             return
 
         config_events = ConfigEvents.from_filename(filename).unwrap_or_throw()
-        self.event_bus, self.event_configurer, self.event_consumer = configure_events_infrastructure(
-            config_events, self._logger
-        )
+        (
+            self.event_bus,
+            self.event_configurer,
+            self.event_consumer,
+        ) = configure_events_infrastructure(config_events, self._logger)
 
         if config_events.event_subscribers:
             self.event_configurer.configure_subscribers(config_events.event_subscribers)
@@ -205,8 +207,8 @@ class Petisco(metaclass=Singleton):
         if config_persistence and config_persistence.configs:
             for config_key, config_value in config_persistence.configs.items():
                 if config_value.type == "sql":
-                    import_database_models_func = config_persistence.get_import_database_models_func(
-                        config_key
+                    import_database_models_func = (
+                        config_persistence.get_import_database_models_func(config_key)
                     )
 
                     config_value.config(import_database_models_func)

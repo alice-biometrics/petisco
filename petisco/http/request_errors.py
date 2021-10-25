@@ -67,17 +67,10 @@ class MultipartFormatRequestError(RequestError):
 
 
 class MissingSchemaRequestError(RequestError):
-    @staticmethod
-    def from_response(response):
-        return MissingSchemaRequestError(
-            error_name="MissingSchemaRequestError",
-            error_message=json.dumps({"error": "Missing schema in request"}),
-            status_code=422,
-            url=response.url,
-            headers=response.headers,
-            content=response.content,
-            completed_in_ms=TimeDeltaParser.ms_from_timedelta(response.elapsed),
-        )
+    def __init__(self):
+        self.error_name = ("MissingSchemaRequestError",)
+        self.error_message = (json.dumps({"error": "Missing schema in request"}),)
+        self.status_code = 422
 
 
 class TimeoutRequestError(RequestError):

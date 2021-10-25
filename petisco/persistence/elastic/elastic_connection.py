@@ -42,4 +42,4 @@ class ElasticConnection:
         if self.host.startswith("http"):
             return [f"{self.host}:{self.port}"]
         else:
-            return [{'host': self.host, 'port': self.port}]
+            return [{"host": self.host, "port": self.port}]

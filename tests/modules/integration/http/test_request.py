@@ -79,7 +79,6 @@ def test_should_fail_when_request_method_returns_missing_schema_error(
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=MissingSchemaRequestError)
         assert result.value.status_code == 422
-        assert result.value.url == given_any_url
 
 
 @pytest.mark.integration

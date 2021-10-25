@@ -80,7 +80,7 @@ def test_should_load_petisco_from_yml_and_check_logger_level(
 
 @pytest.mark.end2end
 def test_should_check_if_given_any_petisco_fixture_is_working_as_expected(
-    given_any_petisco
+    given_any_petisco,
 ):
     assert given_any_petisco._app_name == "petisco"
     assert given_any_petisco._app_version == "1.0.0"
@@ -91,10 +91,10 @@ def test_should_check_error_when_petisco_is_not_initialized():
     with pytest.raises(Exception) as excinfo:
         Petisco.get_instance()
         solutions_text = (
-            f"\t Possible Solutions:\n"
-            f"\t  * If you are testing and need any preconfigured Petisco, you can use the fixture given_any_petisco.\n"
-            f"\t  * If you are testing and need specific preconfigured Petisco, you can create a fixture loading a petisco and then clearing.\n"
-            f"\t  * If you are running a Petisco application, please review your loading process, petisco.yml is probably failing.\n"
+            "\t Possible Solutions:\n"
+            "\t  * If you are testing and need any preconfigured Petisco, you can use the fixture given_any_petisco.\n"
+            "\t  * If you are testing and need specific preconfigured Petisco, you can create a fixture loading a petisco and then clearing.\n"
+            "\t  * If you are running a Petisco application, please review your loading process, petisco.yml is probably failing.\n"
         )
         assert solutions_text in str(excinfo.value)
 
