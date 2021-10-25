@@ -81,6 +81,7 @@ class Config:
         petisco_yml_folder = yaml_dict.get("petisco_yml_folder")
         app_config = yaml_dict.get("app")
         app_name = app_config.get("name")
+
         app_version = Config.get_version(
             petisco_yml_folder, app_config.get("version")
         ).unwrap_or_return()

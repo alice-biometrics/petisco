@@ -22,6 +22,7 @@ class ElasticDatabase(IDatabase):
 
     def create(self):
         from elasticsearch import Elasticsearch
+
         self.session = Elasticsearch(
             self.connection.to_elastic_format(),
             http_auth=self.connection.http_auth,

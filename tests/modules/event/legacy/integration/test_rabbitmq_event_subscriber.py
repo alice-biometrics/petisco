@@ -53,7 +53,7 @@ def given_any_config_event_subscriber(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_a_rabbitmq_event_subscriber_and_then_close_it(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     subscriber = RabbitMQEventSubscriber(
         connector=RabbitMqConnector(),
@@ -79,7 +79,7 @@ def test_should_create_a_rabbitmq_event_subscriber_and_then_close_it(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_a_rabbitmq_event_subscriber_and_try_to_delete_twice(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     subscriber = RabbitMQEventSubscriber(
         connector=RabbitMqConnector(),
@@ -96,7 +96,7 @@ def test_should_create_a_rabbitmq_event_subscriber_and_try_to_delete_twice(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_a_rabbitmq_event_subscriber_and_then_unsubscribe_all_when_not_subscribe_all_before(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     subscriber = RabbitMQEventSubscriber(
         connector=RabbitMqConnector(),
@@ -107,7 +107,7 @@ def test_should_create_a_rabbitmq_event_subscriber_and_then_unsubscribe_all_when
 
 @pytest.mark.integration
 def test_should_fail_subscriber_when_connection_parameter_are_not_valid(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     with pytest.raises(TypeError):
         _ = RabbitMQEventSubscriber(
@@ -120,7 +120,7 @@ def test_should_fail_subscriber_when_connection_parameter_are_not_valid(
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_a_rabbitmq_event_subscriber_and_check_info(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     subscriber = RabbitMQEventSubscriber(
         connector=RabbitMqConnector(),
@@ -154,7 +154,7 @@ def test_should_throw_a_exception_if_try_to_start_a_subscriber_with_no_subscribe
     not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 )
 def test_should_create_two_rabbitmq_event_subscriber_and_then_close_one_without_altering_the_other(
-    given_any_config_event_subscriber
+    given_any_config_event_subscriber,
 ):
     subscriber = RabbitMQEventSubscriber(
         connector=RabbitMqConnector(),
