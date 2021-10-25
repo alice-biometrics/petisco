@@ -20,17 +20,19 @@ def get_error_message(error_message_title, response):
 
 class RequestError(Error):
     def __init__(
-        self,
-        error_name: str,
-        error_message: str,
-        status_code: int,
-        headers: dict = None,
-        content: dict = None,
-        completed_in_ms: float = None,
+            self,
+            error_name: str,
+            error_message: str,
+            status_code: int,
+            url: str,
+            headers: dict = None,
+            content: dict = None,
+            completed_in_ms: float = None,
     ):
         self.error_name = error_name
         self.error_message = error_message
         self.status_code = status_code
+        self.url = url
         self.headers = headers if headers else None
         self._set_content(content)
         self.completed_in_ms = completed_in_ms
@@ -46,7 +48,7 @@ class RequestError(Error):
                 pass
 
     def __repr__(self):
-        return f"{self.error_name} ({self.status_code}) -> {self.error_message} (completed_in: {self.completed_in_ms})"
+        return f"{self.error_name} ({self.status_code} | {self.url}) -> {self.error_message} (completed_in: {self.completed_in_ms})"
 
 
 class MultipartFormatRequestError(RequestError):
@@ -57,6 +59,7 @@ class MultipartFormatRequestError(RequestError):
             error_name="MultipartFormatRequestError",
             error_message=json.dumps(error_message),
             status_code=response.status_code,
+            url=response.url,
             headers=response.headers,
             content=response.content,
             completed_in_ms=TimeDeltaParser.ms_from_timedelta(response.elapsed),
@@ -64,29 +67,32 @@ class MultipartFormatRequestError(RequestError):
 
 
 class MissingSchemaRequestError(RequestError):
-    def __init__(self):
+    def __init__(self, url: str):
         super().__init__(
             error_name="MissingSchemaRequestError",
             error_message=json.dumps({"error": "Missing schema in request"}),
             status_code=422,
+            url=url
         )
 
 
 class TimeoutRequestError(RequestError):
-    def __init__(self):
+    def __init__(self, url: str):
         super().__init__(
             error_name="TimeoutRequestError",
             error_message=json.dumps({"error": "Timeout error"}),
             status_code=408,
+            url=url
         )
 
 
 class ConnectionRequestError(RequestError):
-    def __init__(self):
+    def __init__(self, url: str):
         super().__init__(
             error_name="ConnectionRequestError",
             error_message=json.dumps({"error": "Connection error"}),
             status_code=503,
+            url=url
         )
 
 
@@ -98,6 +104,7 @@ class BadRequestError(RequestError):
             error_name="BadRequestError",
             error_message=json.dumps(error_message),
             status_code=response.status_code,
+            url=response.url,
             headers=response.headers,
             content=response.content if response.content else response.text,
             completed_in_ms=TimeDeltaParser.ms_from_timedelta(response.elapsed),
@@ -112,6 +119,7 @@ class UnauthorizedRequestError(RequestError):
             error_name="UnauthorizedRequestError",
             error_message=json.dumps(error_message),
             status_code=response.status_code,
+            url=response.url,
             headers=response.headers,
             content=response.content,
             completed_in_ms=TimeDeltaParser.ms_from_timedelta(response.elapsed),
@@ -126,13 +134,17 @@ class UnknownRequestError(RequestError):
             error_name="UnknownRequestError",
             error_message=json.dumps(error_message),
             status_code=response.status_code,
+            url=response.url,
             headers=response.headers,
             content=response.content,
             completed_in_ms=TimeDeltaParser.ms_from_timedelta(response.elapsed),
         )
 
     @staticmethod
-    def from_exception(exc):
+    def from_exception(exc, url: str):
         return UnknownRequestError(
-            error_name="UnknownRequestError", error_message=str(exc), status_code=500
+            error_name="UnknownRequestError",
+            error_message=str(exc),
+            status_code=500,
+            url=url
         )

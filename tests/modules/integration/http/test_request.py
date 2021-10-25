@@ -16,7 +16,7 @@ from petisco import (
 
 @pytest.fixture
 def given_any_url():
-    return "http://alicebiometrics.com"
+    return "http://alicebiometrics.com/"
 
 
 @pytest.fixture
@@ -66,6 +66,7 @@ def test_should_fail_when_request_method_raise_unauthorized_error(
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=UnauthorizedRequestError)
         assert result.value.status_code == 401
+        assert result.value.url == given_any_url
 
 
 @pytest.mark.integration
@@ -78,6 +79,7 @@ def test_should_fail_when_request_method_returns_missing_schema_error(
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=MissingSchemaRequestError)
         assert result.value.status_code == 422
+        assert result.value.url == given_any_url
 
 
 @pytest.mark.integration
@@ -88,6 +90,7 @@ def test_should_fail_when_request_method_returns_timeout_error(method, given_any
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=TimeoutRequestError)
         assert result.value.status_code == 408
+        assert result.value.url == given_any_url
 
 
 @pytest.mark.integration
@@ -100,6 +103,7 @@ def test_should_fail_when_request_method_returns_connection_error(
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=ConnectionRequestError)
         assert result.value.status_code == 503
+        assert result.value.url == given_any_url
 
 
 @pytest.mark.integration
@@ -112,6 +116,7 @@ def test_should_fail_when_request_method_returns_bad_request_error(
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=BadRequestError)
         assert result.value.status_code == 400
+        assert result.value.url == given_any_url
 
 
 @pytest.mark.integration
@@ -140,6 +145,7 @@ def test_should_fail_when_request_method_returns_unknown_error(
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=UnknownRequestError)
         assert result.value.status_code == status_code
+        assert result.value.url == given_any_url
 
 
 @pytest.mark.integration
@@ -152,6 +158,7 @@ def test_should_fail_when_request_method_returns_unknown_error_when_raise_an_unc
         result = Request.execute(given_any_url, method)
         assert_failure(result, value_is_instance_of=UnknownRequestError)
         assert result.value.status_code == 500
+        assert result.value.url == given_any_url
 
 
 @pytest.mark.integration
@@ -190,3 +197,4 @@ def test_should_fail_with_expected_values_when_use_request(
         assert result.value.status_code == 400
         assert result.value.headers == expected_headers
         assert result.value.content == expected_content
+        assert result.value.url == given_any_url
