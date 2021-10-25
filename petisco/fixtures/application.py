@@ -123,6 +123,12 @@ def given_any_header_with_valid_token_with_user_id(
 @pytest.fixture
 def given_any_petisco():
     Petisco.clear()
-    petisco = Petisco(config=Config(app_name="petisco", app_version="1.0.0"))
+    petisco = Petisco(
+        config=Config(
+            app_name="petisco",
+            app_version="1.0.0",
+            deploy_time="2021-10-25 09:58:42+00:00",
+        )
+    )
     yield petisco
     Petisco.clear()
