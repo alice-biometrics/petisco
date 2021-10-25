@@ -116,11 +116,11 @@ class Request:
             elif request == "DELETE":
                 response = requests.delete(url=url, headers=headers, timeout=(5, 25))
         except MissingSchema:
-            return Failure(MissingSchemaRequestError(url=url))
+            return Failure(MissingSchemaRequestError.from_response(response))
         except Timeout:
-            return Failure(TimeoutRequestError(url=url))
+            return Failure(TimeoutRequestError.from_response(response))
         except ConnectionError:
-            return Failure(ConnectionRequestError(url=url))
+            return Failure(ConnectionRequestError.from_response(response))
         except Exception as e:
             return Failure(UnknownRequestError.from_exception(e, url=url))
 

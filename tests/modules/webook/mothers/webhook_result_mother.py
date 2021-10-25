@@ -64,7 +64,7 @@ class WebhookResultMother:
                 "apikey": "'b0b905d6-228f-44bf-a130-c85d7aecd765",
             },
             request_body={"payload": "ok"},
-            result=Failure(TimeoutRequestError(url="url")),
+            result=Failure(TimeoutRequestError.from_response(Response(408))),
         )
 
     @staticmethod

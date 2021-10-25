@@ -20,14 +20,14 @@ def get_error_message(error_message_title, response):
 
 class RequestError(Error):
     def __init__(
-            self,
-            error_name: str,
-            error_message: str,
-            status_code: int,
-            url: str,
-            headers: dict = None,
-            content: dict = None,
-            completed_in_ms: float = None,
+        self,
+        error_name: str,
+        error_message: str,
+        status_code: int,
+        url: str,
+        headers: dict = None,
+        content: dict = None,
+        completed_in_ms: float = None,
     ):
         self.error_name = error_name
         self.error_message = error_message
@@ -67,32 +67,44 @@ class MultipartFormatRequestError(RequestError):
 
 
 class MissingSchemaRequestError(RequestError):
-    def __init__(self, url: str):
-        super().__init__(
+    @staticmethod
+    def from_response(response):
+        return MissingSchemaRequestError(
             error_name="MissingSchemaRequestError",
             error_message=json.dumps({"error": "Missing schema in request"}),
             status_code=422,
-            url=url
+            url=response.url,
+            headers=response.headers,
+            content=response.content,
+            completed_in_ms=TimeDeltaParser.ms_from_timedelta(response.elapsed),
         )
 
 
 class TimeoutRequestError(RequestError):
-    def __init__(self, url: str):
-        super().__init__(
+    @staticmethod
+    def from_response(response):
+        return TimeoutRequestError(
             error_name="TimeoutRequestError",
             error_message=json.dumps({"error": "Timeout error"}),
             status_code=408,
-            url=url
+            url=response.url,
+            headers=response.headers,
+            content=response.content,
+            completed_in_ms=TimeDeltaParser.ms_from_timedelta(response.elapsed),
         )
 
 
 class ConnectionRequestError(RequestError):
-    def __init__(self, url: str):
-        super().__init__(
+    @staticmethod
+    def from_response(response):
+        return ConnectionRequestError(
             error_name="ConnectionRequestError",
             error_message=json.dumps({"error": "Connection error"}),
             status_code=503,
-            url=url
+            url=response.url,
+            headers=response.headers,
+            content=response.content,
+            completed_in_ms=TimeDeltaParser.ms_from_timedelta(response.elapsed),
         )
 
 
@@ -146,5 +158,5 @@ class UnknownRequestError(RequestError):
             error_name="UnknownRequestError",
             error_message=str(exc),
             status_code=500,
-            url=url
+            url=url,
         )
