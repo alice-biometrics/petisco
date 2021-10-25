@@ -14,6 +14,7 @@ def test_should_load_petisco_from_yml(petisco_yml_path_end2end, given_petisco_ve
     expected_petisco_info = {
         "app_name": "toy-app",
         "app_version": "1.0.0",
+        "deploy_time": "2021-10-25 11:11:11+00:00",
         "petisco_version": given_petisco_version,
         "environment": None,
         "event_publisher": {"name": "NotImplementedEventPublisher"},

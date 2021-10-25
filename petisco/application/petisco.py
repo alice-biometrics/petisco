@@ -1,12 +1,14 @@
 import inspect
 import os
 import time
+from datetime import datetime
 from os import environ
 from typing import Callable, Dict, Any
 
 from dataclasses import dataclass
 from deprecation import deprecated
 
+from petisco.application.deploy_checker import DeployChecker
 from petisco.event.bus.infrastructure.not_implemented_event_bus import (
     NotImplementedEventBus,
 )
@@ -24,6 +26,7 @@ from petisco.event.shared.domain.service_deployed import ServiceDeployed
 from petisco.event.legacy.subscriber.domain.interface_event_subscriber import (
     IEventSubscriber,
 )
+from petisco.event.shared.domain.service_restarted import ServiceRestarted
 from petisco.event.shared.infrastructure.configure_events_infrastructure import (
     configure_events_infrastructure,
 )
@@ -73,11 +76,13 @@ class Petisco(metaclass=Singleton):
         self.config = config
         self._app_name = config.app_name
         self._app_version = config.app_version
+        self._deploy_time = config.deploy_time
         self._logger = config.get_logger()
         self._environment = environ.get("ENVIRONMENT", None)
         self.info = {
             "app_name": self._app_name,
             "app_version": self._app_version,
+            "deploy_time": self._deploy_time,
             "petisco_version": __version__,
             "environment": self._environment,
             "elapsed_time": {},
@@ -87,6 +92,10 @@ class Petisco(metaclass=Singleton):
         self._set_events_configuration()
         self._set_tasks()
         self._options = config.options
+        self._deploy_checker = DeployChecker(
+            deploy_time=self._deploy_time,
+            courtesy_minutes=int(os.getenv("PETISCO_DEPLOY_COURTESY_MINUTES", 60)),
+        )
 
     @staticmethod
     def get_instance():
@@ -162,7 +171,14 @@ class Petisco(metaclass=Singleton):
         self.info["config_events"] = self.config_events.info()
 
     def _publish_deploy_event(self):
-        event = ServiceDeployed(app_name=self._app_name, app_version=self._app_version)
+        if self._deploy_checker.was_recently_deployed(datetime.utcnow()):
+            event = ServiceDeployed(
+                app_name=self._app_name, app_version=self._app_version
+            )
+        else:
+            event = ServiceRestarted(
+                app_name=self._app_name, app_version=self._app_version
+            )
 
         if self.config_events and self.config_events.publish_deploy_event:
             self.event_bus.publish(event)
@@ -171,14 +187,15 @@ class Petisco(metaclass=Singleton):
         if self.config.config_events.publish_deploy_event:
             self.event_publisher.publish(event)
 
-    def _notify_deploy(self):
-        self._notifier.publish(
-            NotifierMessage(
-                title="Service deployed",
-                message=f"{self._app_name} has been deployed",
-                info_petisco=self.get_info(),
+    def _notify_restart(self):
+        if not self._deploy_checker.was_recently_deployed(datetime.utcnow()):
+            self._notifier.publish(
+                NotifierMessage(
+                    title="Service Restarted",
+                    message=f"{self._app_name} has been restarted. Original deploy was at {self._deploy_checker.get_deploy_time()}",
+                    info_petisco=self.get_info(),
+                )
             )
-        )
 
     def _set_tasks(self):
         config_tasks = self.config.config_tasks
@@ -307,7 +324,7 @@ class Petisco(metaclass=Singleton):
         self._schedule_tasks()
         self._log_status()
         self._publish_deploy_event()
-        self._notify_deploy()
+        self._notify_restart()
 
     def load_services_and_repositories(self):
         self._set_services_and_repositories_from_providers()
