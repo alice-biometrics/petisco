@@ -1,5 +1,6 @@
 import json
 from json.decoder import JSONDecodeError
+from typing import Tuple
 
 from meiga import Error
 
@@ -77,13 +78,14 @@ class MissingSchemaRequestError(RequestError):
 
 
 class TimeoutRequestError(RequestError):
-    def __init__(self, url: str):
+    def __init__(self, url: str, timeout: Tuple[int, int]):
         super().__init__(
             error_name="TimeoutRequestError",
             error_message=json.dumps({"error": "Timeout error"}),
             status_code=408,
             url=url,
         )
+        self.timeout = timeout
 
 
 class ConnectionRequestError(RequestError):
