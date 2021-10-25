@@ -16,7 +16,7 @@ from petisco import (
 
 @pytest.fixture
 def given_any_url():
-    return "http://alicebiometrics.com"
+    return "http://alicebiometrics.com/"
 
 
 @pytest.fixture
