@@ -94,7 +94,7 @@ class Petisco(metaclass=Singleton):
         self._options = config.options
         self._deploy_checker = DeployChecker(
             deploy_time=self._deploy_time,
-            courtesy_minutes=os.getenv("PETISCO_DEPLOY_COURTESY_MINUTES", 60),
+            courtesy_minutes=int(os.getenv("PETISCO_DEPLOY_COURTESY_MINUTES", 60)),
         )
 
     @staticmethod
