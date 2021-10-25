@@ -13,6 +13,8 @@ from petisco.http.request_errors import (
 )
 from petisco.http.response import Response
 
+DEFAULT_TIMEOUT = (5, 25)
+
 
 class Request:
     @staticmethod
@@ -91,7 +93,7 @@ class Request:
                     url=url,
                     params=string_info,
                     headers=headers,
-                    timeout=(5, 25),
+                    timeout=DEFAULT_TIMEOUT,
                     auth=auth,
                 )
             elif request == "POST":
@@ -101,7 +103,7 @@ class Request:
                     data=string_info,
                     json=json_info,
                     headers=headers,
-                    timeout=(5, 25),
+                    timeout=DEFAULT_TIMEOUT,
                     auth=auth,
                 )
             elif request == "PATCH":
@@ -110,15 +112,17 @@ class Request:
                     data=string_info,
                     json=json_info,
                     headers=headers,
-                    timeout=(5, 25),
+                    timeout=DEFAULT_TIMEOUT,
                     auth=auth,
                 )
             elif request == "DELETE":
-                response = requests.delete(url=url, headers=headers, timeout=(5, 25))
+                response = requests.delete(
+                    url=url, headers=headers, timeout=DEFAULT_TIMEOUT
+                )
         except MissingSchema:
             return Failure(MissingSchemaRequestError(url=url))
         except Timeout:
-            return Failure(TimeoutRequestError(url=url))
+            return Failure(TimeoutRequestError(url=url, timeout=DEFAULT_TIMEOUT))
         except ConnectionError:
             return Failure(ConnectionRequestError(url=url))
         except Exception as e:
