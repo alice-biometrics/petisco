@@ -35,6 +35,7 @@ class Config:
         self,
         app_name: str,
         app_version: str,
+        deploy_time: str,
         petisco_yml_folder: str = None,
         config_tasks: ConfigTasks = None,
         config_framework: ConfigFramework = None,
@@ -47,6 +48,7 @@ class Config:
     ):
         self.app_name = app_name
         self.app_version = app_version
+        self.deploy_time = deploy_time
         self.petisco_yml_folder = petisco_yml_folder
         self.config_tasks = config_tasks
         self.config_framework = config_framework
@@ -83,6 +85,10 @@ class Config:
             petisco_yml_folder, app_config.get("version")
         ).unwrap_or_return()
 
+        deploy_time = Config.get_deploy_time(
+            petisco_yml_folder, app_config.get("deploy_time")
+        ).unwrap_or_return()
+
         config_tasks = ConfigTasks.from_dict(yaml_dict.get("tasks"))
 
         config_framework = ConfigFramework.from_dict(yaml_dict.get("framework"))
@@ -108,6 +114,7 @@ class Config:
                 petisco_yml_folder=petisco_yml_folder,
                 app_name=app_name,
                 app_version=app_version,
+                deploy_time=deploy_time,
                 config_tasks=config_tasks,
                 config_framework=config_framework,
                 config_logger=config_logger,
@@ -124,22 +131,56 @@ class Config:
         if isinstance(config_version, str):
             return Success(config_version)
         else:
-            version_filename = config_version.get("from_file")
-            if not version_filename:
-                Failure(
+            version_filename = (
+                config_version.get("from_file", "VERSION")
+                if config_version
+                else "VERSION"
+            )
+            try:
+
+                version_filename = f"{petisco_yml_folder}/{version_filename}"
+                if not os.path.isfile(version_filename):
+                    return Failure(
+                        ConfigFileNotValidError(
+                            f"VERSION file does not exist ({version_filename})"
+                        )
+                    )
+                version = open(version_filename, "r").read()
+            except:  # noqa
+                return Failure(
                     ConfigFileNotValidError(
                         "If you don't specify the version directly, you must associate a file with from_file key"
                     )
                 )
 
-            version_filename = f"{petisco_yml_folder}/{version_filename}"
-            if not os.path.isfile(version_filename):
+            return Success(version.rstrip("\n"))
+
+    @staticmethod
+    def get_deploy_time(petisco_yml_folder, config_deploy_time) -> Result[str, Error]:
+        if isinstance(config_deploy_time, str):
+            return Success(config_deploy_time)
+        else:
+            deploy_time_filename = (
+                config_deploy_time.get("from_file", "DEPLOY")
+                if config_deploy_time
+                else "DEPLOY"
+            )
+
+            try:
+                deploy_time_filename = f"{petisco_yml_folder}/{deploy_time_filename}"
+                if not os.path.isfile(deploy_time_filename):
+                    return Failure(
+                        ConfigFileNotValidError(
+                            f"DEPLOY file does not exist ({deploy_time_filename})"
+                        )
+                    )
+                version = open(deploy_time_filename, "r").read()
+            except:  # noqa
                 return Failure(
                     ConfigFileNotValidError(
-                        f"Version from_file does not exist ({version_filename})"
+                        "If you don't specify the deploy_time directly, you must associate a file with from_file key or have available a DEPLOY file in the root path"
                     )
                 )
-            version = open(version_filename, "r").read()
             return Success(version.rstrip("\n"))
 
     @staticmethod

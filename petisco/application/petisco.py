@@ -46,7 +46,7 @@ from petisco.application.interface_app_service import IService, IAppService
 from petisco.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )
-from petisco import __version__, __deploy_timestamp__
+from petisco import __version__
 from petisco.tasks.infrastructure.not_implemented_task_executor import (
     NotImplementedTaskExecutor,
 )
@@ -76,11 +76,13 @@ class Petisco(metaclass=Singleton):
         self.config = config
         self._app_name = config.app_name
         self._app_version = config.app_version
+        self._deploy_time = config.deploy_time
         self._logger = config.get_logger()
         self._environment = environ.get("ENVIRONMENT", None)
         self.info = {
             "app_name": self._app_name,
             "app_version": self._app_version,
+            "deploy_time": self._deploy_time,
             "petisco_version": __version__,
             "environment": self._environment,
             "elapsed_time": {},
@@ -91,7 +93,7 @@ class Petisco(metaclass=Singleton):
         self._set_tasks()
         self._options = config.options
         self._deploy_checker = DeployChecker(
-            deploy_time=__deploy_timestamp__,
+            deploy_time=self._deploy_time,
             courtesy_minutes=os.getenv("PETISCO_DEPLOY_COURTESY_MINUTES", 60),
         )
 
