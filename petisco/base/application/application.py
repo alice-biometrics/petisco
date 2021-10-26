@@ -1,14 +1,13 @@
+from datetime import datetime, timedelta
 from typing import Callable, List, Optional
 
 from pydantic import BaseSettings, Field
 
-from petisco import __version__
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.application.dependency_injection.injector import Injector
 from petisco.base.application.notifier.notifier import Notifier
 from petisco.base.application.notifier.notifier_message import NotifierMessage
-from petisco.base.domain.message.chaos.service_deployed import ServiceDeployed
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
 from petisco.extra.rabbitmq.dependencies import get_default_message_dependencies
@@ -19,6 +18,7 @@ class Application(BaseSettings):
     name: str
     version: str
     organization: str
+    deployed_at: Optional[datetime]
     environment: str = Field("local", env="ENVIRONMENT")
     dependencies_provider: Optional[Callable[..., List[Dependency]]] = lambda: []
     configurers: Optional[List[ApplicationConfigurer]] = []
@@ -62,6 +62,11 @@ class Application(BaseSettings):
 
     def info(self):
         info = self.dict()
+        info["deployed_at"] = (
+            self.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
+            if self.deployed_at
+            else None
+        )
         info["dependencies"] = {
             dependency.name: dependency.get_instance().info()
             for dependency in self.get_dependencies()
@@ -70,30 +75,22 @@ class Application(BaseSettings):
         del info["configurers"]
         return info
 
-    def publish_deploy_event(self, domain_event: Optional[DomainEvent] = None):
+    def was_deploy_few_minutes_ago(self, minutes: int = 25):
+        return datetime.utcnow() < self.deployed_at + timedelta(minutes=minutes)
+
+    def publish_domain_event(self, domain_event: DomainEvent):
         try:
             domain_event_bus: DomainEventBus = Injector.get("domain_event_bus")
-            domain_event_bus.publish(
-                ServiceDeployed(app_name=self.name, app_version=self.version)
-            )
+            domain_event_bus.publish(domain_event)
         except:  # noqa
             raise TypeError(
                 'To publish an event to the domain event bus, please add a dependency with name "domain_event_bus" on Application dependencies'
             )
 
-    def notify_deploy(self):
+    def notify(self, message: NotifierMessage):
         try:
             notifier: Notifier = Injector.get("notifier")
-            notifier.publish(
-                NotifierMessage(
-                    title=f":rocket: {self.name} is deployed",
-                    meta={
-                        "application": f"{self.name} (v{self.version.rstrip()})",
-                        "petisco": __version__,
-                        "environment": self.environment,
-                    },
-                )
-            )
+            notifier.publish(message)
         except:  # noqa
             raise TypeError(
                 'To notify the deploy, please add a dependency with name "notifier" on Application dependencies'

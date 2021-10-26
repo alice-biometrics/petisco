@@ -1,9 +1,17 @@
 import functools
+from datetime import datetime
 from typing import List, NoReturn
 
 import pytest
 
-from petisco import Application, ApplicationConfigurer, Dependency, Injector
+from petisco import (
+    Application,
+    ApplicationConfigurer,
+    Dependency,
+    DomainEvent,
+    Injector,
+    NotifierMessage,
+)
 from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 
@@ -31,7 +39,11 @@ DEFAULT_AVAILABLE_DEPENDENCIES = [
 @testing_with_empty_injector
 def test_application_should_construct_from_required_variables():
 
-    application = Application(name="service", version="1.0.0", organization="acme")
+    deployed_at = datetime(year=2021, month=10, day=25, hour=11, minute=11)
+
+    application = Application(
+        name="service", version="1.0.0", organization="acme", deployed_at=deployed_at
+    )
     application.configure()
 
     assert DEFAULT_AVAILABLE_DEPENDENCIES == Injector.get_available_dependencies()
@@ -39,6 +51,7 @@ def test_application_should_construct_from_required_variables():
         "name": "service",
         "version": "1.0.0",
         "organization": "acme",
+        "deployed_at": deployed_at.strftime("%m/%d/%Y, %H:%M:%S"),
         "environment": "local",
         "dependencies": {
             "domain_event_bus": {"name": "NotImplementedDomainEventBus"},
@@ -133,7 +146,7 @@ def test_application_should_raise_an_exception_when_configurer_with_an_exeption(
 
 @pytest.mark.unit
 @testing_with_empty_injector
-def test_application_should_publish_service_deployed_domain_event():
+def test_application_should_publish_a_domain_event():
     def dependencies_provider() -> List[Dependency]:
         return [DependencyMother.domain_event_bus()]
 
@@ -144,17 +157,29 @@ def test_application_should_publish_service_deployed_domain_event():
         dependencies_provider=dependencies_provider,
     )
     application.configure()
-    application.publish_deploy_event()
+
+    class MyDomainEvent(DomainEvent):
+        pass
+
+    application.publish_domain_event(MyDomainEvent())
 
 
 @pytest.mark.unit
 @testing_with_empty_injector
-def test_application_should_notify_deploy():
+def test_application_should_notify_a_message():
+    deployed_at = datetime(year=2021, month=10, day=25, hour=11, minute=11)
 
     application = Application(
-        name="service",
-        version="1.0.0",
-        organization="acme",
+        name="service", version="1.0.0", organization="acme", deployed_at=deployed_at
     )
     application.configure()
-    application.notify_deploy()
+
+    message = NotifierMessage(
+        title=f":thinking_face: {application.name} is restarted",
+        meta={
+            "application": f"{application.name} (v{application.version.rstrip()})",
+            "environment": application.environment,
+            "deployed_at": application.deployed_at.strftime("%m/%d/%Y, %H:%M:%S"),
+        },
+    )
+    application.notify(message)
