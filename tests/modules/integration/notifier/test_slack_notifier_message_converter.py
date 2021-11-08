@@ -1,5 +1,4 @@
 import pytest
-
 from petisco.notifier.infrastructure.slack.slack_notifier_message_converter import (
     SlackNotifierMessageConverter,
 )
@@ -76,9 +75,9 @@ def test_should_convert_a_notifier_exception_message(
 
 @pytest.mark.integration
 def test_should_truncate_a_long_block_when_convert_slack_notifier(
-    given_long_traceback_complete_notifier_exception_message,
+    given_long_notifier_exception_message,
 ):
     converter = SlackNotifierMessageConverter()
-    blocks = converter.convert(given_long_traceback_complete_notifier_exception_message)
-    assert "text" in blocks[5].keys()
-    assert len(blocks[5]["text"]["text"]) < 3000
+    blocks = converter.convert(given_long_notifier_exception_message)
+    block_contents = [block["text"]["text"] for block in blocks if block.get("text")]
+    assert len("".join(block_contents)) < 3000

@@ -164,16 +164,16 @@ def given_any_complete_notifier_exception_message(
 
 
 @pytest.fixture
-def given_long_traceback_complete_notifier_exception_message(
+def given_long_notifier_exception_message(
     given_any_client_id,
     given_any_user_id,
     given_any_message,
     given_any_info_petisco,
     given_any_exception,
-    given_long_traceback,
+    given_long_traceback
 ):
     return NotifierExceptionMessage(
-        executor="test_function",
+        executor="test_log_function" * 20,
         exception=given_any_exception,
         traceback=given_long_traceback,
         info_id=InfoId(client_id=given_any_client_id, user_id=given_any_user_id),
