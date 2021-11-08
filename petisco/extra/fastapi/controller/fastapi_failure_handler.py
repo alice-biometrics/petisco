@@ -24,13 +24,20 @@ def fastapi_failure_handler(result: Result, error_map: Dict[type, HttpError]):
     if is_elastic_apm_available():
         apm_inject_in_custom_context(key="http_response", value=str(http_error))
 
+    internal_error_message = None
     if isinstance(result.value, UnknownError):
-        logger.error(result.value.__dict__)
+        internal_error_message = str(result.value.__dict__)
     elif error_type not in error_map:
-        error_info = {
-            "message": f"Error '{result.value.__class__.__name__}' is not mapped in controller"
-        }
-        logger.error(error_info)
+        internal_error_message = (
+            f"Error '{result.value.__class__.__name__}' is not mapped in controller"
+        )
+
+    if internal_error_message is not None:
+        logger.error(internal_error_message)
+        if is_elastic_apm_available():
+            apm_inject_in_custom_context(
+                key="internal_error_message", value=internal_error_message
+            )
 
     detail = "Unknown Error"
     if isinstance(domain_error, DomainError):
