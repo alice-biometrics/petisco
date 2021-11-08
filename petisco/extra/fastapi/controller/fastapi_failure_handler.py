@@ -10,6 +10,8 @@ from petisco.base.application.controller.http_error import (
 )
 from petisco.base.domain.errors.domain_error import DomainError
 from petisco.base.domain.errors.unknown_error import UnknownError
+from petisco.extra.elastic.elastic_apm_injections import apm_inject_in_custom_context
+from petisco.extra.elastic.is_elastic_apm_available import is_elastic_apm_available
 
 logger = logging.getLogger()
 
@@ -18,6 +20,9 @@ def fastapi_failure_handler(result: Result, error_map: Dict[type, HttpError]):
     domain_error = result.value
     error_type = type(domain_error)
     http_error = error_map.get(error_type, HttpError())
+
+    if is_elastic_apm_available():
+        apm_inject_in_custom_context(key="http_response", value=str(http_error))
 
     if isinstance(result.value, UnknownError):
         logger.error(result.value.__dict__)

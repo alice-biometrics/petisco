@@ -1,5 +1,7 @@
 import logging
+from unittest.mock import patch
 
+import elasticapm
 import pytest
 from fastapi import HTTPException
 from meiga import BoolResult, Failure, Result, Success, isFailure, isSuccess
@@ -66,10 +68,15 @@ def test_fastapi_controller_should_return_mapped_success_handler():
 
 
 @pytest.mark.unit
-def test_fastapi_controller_should_raise_fastapi_http_exception_mapped_by_error_map():
+@patch.object(elasticapm, "set_custom_context")
+def test_fastapi_controller_should_raise_fastapi_http_exception_mapped_and_inject_info_in_apm(
+    apm_set_custom_context_mock,
+):
+    http_error = HttpError(status_code=404, detail="Task not Found")
+
     class MyController(FastAPIController):
         class Config:
-            error_map = {NotFound: HttpError(status_code=404, detail="Task not Found")}
+            error_map = {NotFound: http_error}
 
         def execute(self) -> BoolResult:
             return Failure(NotFound())
@@ -77,8 +84,41 @@ def test_fastapi_controller_should_raise_fastapi_http_exception_mapped_by_error_
     with pytest.raises(HTTPException) as excinfo:
         MyController().execute()
 
-    assert excinfo.value.status_code == 404
-    assert excinfo.value.detail == "Task not Found"
+    assert excinfo.value.status_code == http_error.status_code
+    assert excinfo.value.detail == http_error.detail
+
+    apm_set_custom_context_mock.assert_called()
+    apm_set_custom_context_arg = apm_set_custom_context_mock.call_args[0][0]
+
+    assert apm_set_custom_context_arg["http_response"] == str(http_error)
+
+
+@pytest.mark.unit
+@patch(
+    "petisco.extra.elastic.is_elastic_apm_available",
+    return_value=False,
+)
+@patch.object(elasticapm, "set_custom_context")
+def test_fastapi_controller_should_should_raise_fastapi_http_exception_mapped_without_inject_it_in_apm(
+    apm_set_custom_context_mock, apm_is_available_mock
+):
+    http_error = HttpError(status_code=404, detail="Task not Found")
+
+    class MyController(FastAPIController):
+        class Config:
+            error_map = {NotFound: http_error}
+
+        def execute(self) -> BoolResult:
+            return Failure(NotFound())
+
+    with pytest.raises(HTTPException) as excinfo:
+        MyController().execute()
+
+        assert excinfo.value.status_code == http_error.status_code
+        assert excinfo.value.detail == http_error.detail
+
+        apm_is_available_mock.assert_called_once()
+        apm_set_custom_context_mock.assert_not_called()
 
 
 @pytest.mark.unit
