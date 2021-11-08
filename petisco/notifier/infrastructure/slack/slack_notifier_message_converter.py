@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
@@ -17,7 +17,11 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f":cookie: *Message from Petisco*\n*Application:* {info_petisco['app_name']} ({info_petisco['app_version']})\n*Petisco:* {info_petisco['petisco_version']}\n*Environment:* {info_petisco['environment']}",
+                "text": (
+                    f":cookie: *Message from Petisco*\n*Application:* {info_petisco['app_name']} "
+                    f"({info_petisco['app_version']})\n*Petisco:* {info_petisco['petisco_version']}\n"
+                    f"*Environment:* {info_petisco['environment']}"
+                ),
             },
         }
 
@@ -55,15 +59,20 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
     def __get_blocks_exception_message(
         self, notifier_message: NotifierExceptionMessage
     ) -> List[Dict]:
-        blocks = []
+        blocks = self.__get_common_blocks(notifier_message)
 
         exception_block = {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f":fire: *Exception* \n*Class*: {notifier_message.exception.__class__} *Description:* {notifier_message.exception}",
+                "text": (
+                    f":fire: *Exception* \n*Class*: {notifier_message.exception.__class__} "
+                    f"*Description:* {notifier_message.exception}"
+                ),
             },
         }
+        blocks.append(exception_block)
+
         executor_block = {
             "type": "section",
             "text": {
@@ -71,9 +80,9 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
                 "text": f":pushpin: *Executor*\n{notifier_message.executor}",
             },
         }
+        blocks.append(executor_block)
 
         input_parameters_block_text = f":arrow_right: *Input Parameters*\n"
-
         if notifier_message.input_parameters:
             for k, v in notifier_message.input_parameters.items():
                 input_parameters_block_text += f"* {k}: {v}\n"
@@ -84,17 +93,19 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
             "type": "section",
             "text": {"type": "mrkdwn", "text": input_parameters_block_text},
         }
+        blocks.append(input_parameters_block)
+
+        traceback_base_str = ":scroll: *Traceback*\n```{}```"
+        message_length = self._get_blocks_length(blocks) + len(traceback_base_str)
         traceback_block = {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f":scroll: *Traceback*\n```{notifier_message.traceback[:2500]}```",
+                "text": traceback_base_str.format(
+                    notifier_message.traceback[: 3000 - message_length]
+                ),
             },
         }
-        blocks += self.__get_common_blocks(notifier_message)
-        blocks.append(exception_block)
-        blocks.append(executor_block)
-        blocks.append(input_parameters_block)
         blocks.append(traceback_block)
         return blocks
 
@@ -122,3 +133,9 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
                 blocks.append(title_block)
             blocks.append(message_block)
         return blocks
+
+    def _get_blocks_length(self, blocks: List[dict]) -> int:
+        block_contents = [
+            block["text"]["text"] for block in blocks if block.get("text")
+        ]
+        return len("".join(block_contents))
