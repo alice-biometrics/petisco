@@ -291,6 +291,11 @@ class _ControllerHandler:
                 http_response = http_error.handle()
         else:
             http_response = known_result_failure_handler.http_error.handle()
+        if apm_extension_is_installed():
+            import elasticapm
+
+            elasticapm.set_custom_context({"http_response": http_response})
+
         return http_response
 
 
