@@ -200,6 +200,10 @@ class _ControllerHandler:
                         info_petisco=Petisco.get_info(),
                     )
                 )
+                if apm_extension_is_installed():
+                    import elasticapm
+
+                    elasticapm.set_custom_context({"internal_error_message": message})
 
             if self.send_request_responded_event:
 
