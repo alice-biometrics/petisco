@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from petisco.base.application.notifier.notifier_exception_message import (
     NotifierExceptionMessage,
@@ -89,11 +89,20 @@ class ExceptionBlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter
         }
         return executor_block
 
-    def _create_error_block(self, notifier_exception_message: NotifierExceptionMessage):
+    def _create_error_block(
+        self, notifier_exception_message: NotifierExceptionMessage, max_length: int
+    ):
         error_block = None
         if notifier_exception_message.exception:
-            text_error = f"*Class*: {notifier_exception_message.exception.__class__}\n>{notifier_exception_message.exception}"
-            text_error += f"\n```{notifier_exception_message.traceback[:2500]}```"
+            text_error = (
+                f"*Class*: {notifier_exception_message.exception.__class__}\n"
+                f">{notifier_exception_message.exception}"
+            )
+            traceback_base_str = "\n```{}```"
+            final_max_length = max_length - len(text_error) - len(traceback_base_str)
+            text_error += traceback_base_str.format(
+                notifier_exception_message.traceback[:final_max_length]
+            )
             error_block = {
                 "type": "section",
                 "text": {
@@ -103,18 +112,27 @@ class ExceptionBlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter
             }
         return error_block
 
+    def _get_blocks_length(self, blocks: List[dict]) -> int:
+        block_contents = [
+            block["text"]["text"] for block in blocks if block.get("text")
+        ]
+        return len("".join(block_contents))
+
     def convert(self, notifier_exception_message: NotifierExceptionMessage):
 
         blocks = []
         header_block = self._create_header_block(notifier_exception_message.title)
-        message_block = self._create_message_block(notifier_exception_message)
-        executor_block = self._create_executor_block(notifier_exception_message)
-        error_block = self._create_error_block(notifier_exception_message)
-
         blocks.append(header_block)
+        message_block = self._create_message_block(notifier_exception_message)
         if message_block:
             blocks.append(message_block)
+        executor_block = self._create_executor_block(notifier_exception_message)
         blocks.append(executor_block)
+
+        message_length = self._get_blocks_length(blocks)
+        error_block = self._create_error_block(
+            notifier_exception_message, max_length=3000 - message_length
+        )
 
         if error_block:
             blocks.append(error_block)
