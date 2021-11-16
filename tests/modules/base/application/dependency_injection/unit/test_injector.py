@@ -5,6 +5,8 @@ from tests.modules.base.application.dependency_injection.unit.dummy_repositories
     InMemoryRepo,
     MyRepo,
     MyRepoWithBuilderAndDependency,
+    MyRepoWithBuilderAndSeveralDependency,
+    Repo,
 )
 
 
@@ -17,7 +19,6 @@ def test_injector_should_success_when_access_one_dynamic_attr_representing_a_dep
     assert Injector.get_available_dependencies() == ["repo"]
 
     assert isinstance(Injector().get("repo"), MyRepo)
-    assert isinstance(Injector().repo, MyRepo)
 
     Injector.clear()
 
@@ -45,10 +46,6 @@ def test_injector_should_return_several_available_dependencies(
 
     assert Injector.get_available_dependencies() == expected_available_dependencies
 
-    injector = Injector()
-    for available_dependency in expected_available_dependencies:
-        assert getattr(injector, available_dependency)
-
     Injector.clear()
 
 
@@ -74,16 +71,37 @@ def test_injector_should_return_several_available_dependencies(
                 ),
             ),
         ],
+        [
+            Dependency(name="repo", default_builder=Builder(MyRepo)),
+            Dependency(name="other-repo", default_builder=Builder(MyRepo)),
+            Dependency(
+                name="repo-with-dependency",
+                default_builder=Builder(
+                    MyRepoWithBuilderAndDependency, is_builder=True
+                ),
+            ),
+            Dependency(
+                name="repo-with-3-dependencies",
+                default_builder=Builder(
+                    MyRepoWithBuilderAndSeveralDependency, is_builder=True
+                ),
+            ),
+        ],
     ],
 )
 def test_injector_should_success_when_add_dependecies_which_depends_from_another_dependency(
     dependencies,
 ):
+    expected_dependencies_names = [dependency.name for dependency in dependencies]
+
     Injector.set_dependencies(dependencies)
 
-    assert Injector.get_available_dependencies() == ["repo", "repo-with-dependency"]
+    assert (
+        Injector.get_available_dependencies().sort()
+        == expected_dependencies_names.sort()
+    )
 
-    assert isinstance(Injector().get("repo"), MyRepo)
-    assert isinstance(Injector().repo, MyRepo)
+    for name in expected_dependencies_names:
+        assert isinstance(Injector().get(name), Repo)
 
     Injector.clear()
