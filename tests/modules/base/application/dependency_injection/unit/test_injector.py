@@ -4,6 +4,7 @@ from petisco import Builder, Dependency, Injector
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
     InMemoryRepo,
     MyRepo,
+    MyRepoWithBuilderAndDependency,
 )
 
 
@@ -47,5 +48,42 @@ def test_injector_should_return_several_available_dependencies(
     injector = Injector()
     for available_dependency in expected_available_dependencies:
         assert getattr(injector, available_dependency)
+
+    Injector.clear()
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "dependencies",
+    [
+        [
+            Dependency(
+                name="repo-with-dependency",
+                default_builder=Builder(
+                    MyRepoWithBuilderAndDependency, is_builder=True
+                ),
+            ),
+            Dependency(name="repo", default_builder=Builder(MyRepo)),
+        ],
+        [
+            Dependency(name="repo", default_builder=Builder(MyRepo)),
+            Dependency(
+                name="repo-with-dependency",
+                default_builder=Builder(
+                    MyRepoWithBuilderAndDependency, is_builder=True
+                ),
+            ),
+        ],
+    ],
+)
+def test_injector_should_success_when_add_dependecies_which_depends_from_another_dependency(
+    dependencies,
+):
+    Injector.set_dependencies(dependencies)
+
+    assert Injector.get_available_dependencies() == ["repo", "repo-with-dependency"]
+
+    assert isinstance(Injector().get("repo"), MyRepo)
+    assert isinstance(Injector().repo, MyRepo)
 
     Injector.clear()
