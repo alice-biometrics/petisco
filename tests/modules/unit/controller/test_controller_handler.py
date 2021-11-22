@@ -195,27 +195,6 @@ def test_should_execute_with_a_failure_a_empty_controller_without_input_paramete
 
 
 @pytest.mark.unit
-@patch(
-    "petisco.controller.controller_handler.apm_extension_is_installed",
-    return_value=False,
-)
-@patch.object(elasticapm, "set_custom_context")
-def test_should_execute_with_a_failure_without_inject_http_response_in_apm_due_is_not_installed(
-    elastic_apm_set_custom_context_mock,
-    apm_extension_is_installed_mock,
-    given_any_petisco,
-):
-    @controller_handler()
-    def my_controller():
-        return isFailure
-
-    my_controller()
-
-    apm_extension_is_installed_mock.assert_called_once()
-    elastic_apm_set_custom_context_mock.assert_not_called()
-
-
-@pytest.mark.unit
 def test_should_execute_with_a_failure_a_empty_controller_with_correlation_id_as_only_input_parameter(
     given_any_petisco, given_any_info_id, given_headers_provider
 ):
