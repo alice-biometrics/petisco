@@ -16,6 +16,10 @@ on:
       - v1
       - master
 
+env:
+  SLACK_TOKEN: ${{ secrets.SLACK_WEBHOOK_STAGING }}
+  SLACK_TESTS_CHANNEL: 'testing'
+
 jobs:
   ci:
     strategy:
