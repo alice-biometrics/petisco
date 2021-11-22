@@ -60,30 +60,6 @@ def test_fastapi_controller_should_logging_error_with_traceback_and_inject_in_ap
 
 
 @pytest.mark.unit
-@patch(
-    "petisco.extra.elastic.is_elastic_apm_available",
-    return_value=False,
-)
-@patch.object(elasticapm, "set_custom_context")
-def test_fastapi_controller_should_logging_error_trace_without_inject_it_in_apm(
-    apm_set_custom_context_mock, apm_is_available_mock, caplog
-):
-    class MyController(FastAPIController):
-        def execute(self) -> BoolResult:
-            raise TypeError("test_error")
-
-    with caplog.at_level(logging.ERROR):
-        with pytest.raises(HTTPException):
-            MyController().execute()
-
-            assert "test_error" in caplog.text
-            assert __name__ in caplog.text
-
-            apm_is_available_mock.assert_called_once()
-            apm_set_custom_context_mock.assert_not_called()
-
-
-@pytest.mark.unit
 def test_fastapi_controller_should_return_mapped_success_handler():
     expected_result = {"message", "ok"}
 
@@ -123,34 +99,6 @@ def test_fastapi_controller_should_raise_fastapi_http_exception_mapped_and_injec
     apm_set_custom_context_arg = apm_set_custom_context_mock.call_args[0][0]
 
     assert apm_set_custom_context_arg["http_response"] == str(http_error)
-
-
-@pytest.mark.unit
-@patch(
-    "petisco.extra.elastic.is_elastic_apm_available",
-    return_value=False,
-)
-@patch.object(elasticapm, "set_custom_context")
-def test_fastapi_controller_should_should_raise_fastapi_http_exception_mapped_without_inject_it_in_apm(
-    apm_set_custom_context_mock, apm_is_available_mock
-):
-    http_error = HttpError(status_code=404, detail="Task not Found")
-
-    class MyController(FastAPIController):
-        class Config:
-            error_map = {NotFound: http_error}
-
-        def execute(self) -> BoolResult:
-            return Failure(NotFound())
-
-    with pytest.raises(HTTPException) as excinfo:
-        MyController().execute()
-
-        assert excinfo.value.status_code == http_error.status_code
-        assert excinfo.value.detail == http_error.detail
-
-        apm_is_available_mock.assert_called_once()
-        apm_set_custom_context_mock.assert_not_called()
 
 
 @pytest.mark.unit
