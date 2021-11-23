@@ -29,7 +29,7 @@ class TestSlackNotifier:
     def test_publish_exception_should_send_notification(self):
         notifier = self.get_slack_notifier()
         try:
-            raise Exception("Error")
+            raise Exception(LONG_TEXT)
         except Exception as exception:
             error = UnknownError.from_exception(exception=exception, arguments=[])
             notifier_exception_message = NotifierExceptionMessage.from_unknown_error(
