@@ -10,7 +10,7 @@ LONG_TEXT = "long_text" * 1000
 
 
 @pytest.mark.skipif(
-    condition=os.getenv("SLACK_TOKEN") is not None,
+    condition=os.getenv("SLACK_TOKEN") is None,
     reason="Slack token is a github secret only available in CI workflows",
 )
 @pytest.mark.integration
