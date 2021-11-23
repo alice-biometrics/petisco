@@ -3,6 +3,7 @@ import traceback
 from functools import wraps
 from typing import Any, Callable, Dict, List, Tuple
 
+import elasticapm
 from meiga import Error, Result, Success
 from meiga.decorators import meiga
 from petisco.application.petisco import Petisco
@@ -21,9 +22,6 @@ from petisco.logger.log_message import LogMessage
 from petisco.notifier.domain.interface_notifier import INotifier
 from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 from petisco.notifier.domain.notifier_message import NotifierMessage
-from petisco.persistence.elastic.apm_extension_is_installed import (
-    apm_extension_is_installed,
-)
 from petisco.security.token_manager.not_implemented_token_manager import (
     NotImplementedTokenManager,
 )
@@ -201,6 +199,8 @@ class _ControllerHandler:
                     )
                 )
 
+                elasticapm.set_custom_context({"internal_error_message": message})
+
             if self.send_request_responded_event:
 
                 request_responded = RequestResponded(
@@ -214,9 +214,7 @@ class _ControllerHandler:
 
                 self.event_bus.publish(request_responded)
 
-            if self.inject_apm_metadata and apm_extension_is_installed():
-                import elasticapm
-
+            if self.inject_apm_metadata:
                 elasticapm.label(
                     client_id=info_id.to_dict()["client_id"],
                     user_id=info_id.to_dict()["user_id"],
@@ -291,6 +289,9 @@ class _ControllerHandler:
                 http_response = http_error.handle()
         else:
             http_response = known_result_failure_handler.http_error.handle()
+
+        elasticapm.set_custom_context({"http_response": http_response})
+
         return http_response
 
 

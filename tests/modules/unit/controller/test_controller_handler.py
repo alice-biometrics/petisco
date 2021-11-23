@@ -144,8 +144,12 @@ def test_should_execute_successfully_a_empty_controller_with_correlation_id_as_o
 
 
 @pytest.mark.unit
+@patch.object(elasticapm, "set_custom_context")
 def test_should_execute_with_a_failure_a_empty_controller_without_input_parameters(
-    given_any_petisco, given_any_info_id, given_headers_provider
+    elastic_apm_set_custom_context_mock,
+    given_any_petisco,
+    given_any_info_id,
+    given_headers_provider,
 ):
 
     logger = FakeLogger()
@@ -163,6 +167,10 @@ def test_should_execute_with_a_failure_a_empty_controller_without_input_paramete
         {"error": {"message": "Unknown Error", "type": "HttpError"}},
         500,
     )
+
+    elastic_apm_set_custom_context_mock.assert_called_once()
+    apm_set_custom_context_arg = elastic_apm_set_custom_context_mock.call_args[0][0]
+    assert apm_set_custom_context_arg["http_response"] == http_response
 
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
@@ -281,8 +289,12 @@ def test_should_execute_successfully_a_filtered_object_by_blacklist(
 
 
 @pytest.mark.unit
+@patch.object(elasticapm, "set_custom_context")
 def test_should_log_an_exception_occurred_on_the_controller(
-    given_any_petisco, given_any_info_id, given_headers_provider
+    elastic_apm_set_custom_context_mock,
+    given_any_petisco,
+    given_any_info_id,
+    given_headers_provider,
 ):
 
     logger = FakeLogger()
@@ -303,6 +315,12 @@ def test_should_log_an_exception_occurred_on_the_controller(
 
     first_logging_message = logger.get_logging_messages()[0]
     second_logging_message = logger.get_logging_messages()[1]
+    elastic_apm_set_custom_context_mock.assert_called_once()
+    apm_set_custom_context_arg = elastic_apm_set_custom_context_mock.call_args[0][0]
+    assert (
+        apm_set_custom_context_arg["internal_error_message"]
+        == second_logging_message[1]["data"]["message"]
+    )
 
     assert first_logging_message == (
         DEBUG,
