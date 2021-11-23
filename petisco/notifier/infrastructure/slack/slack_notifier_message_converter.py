@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
@@ -24,7 +24,7 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
     def _info_id_block(self, info_id: InfoId) -> Optional[Dict]:
         if not info_id:
             return None
-        info_id_text = f":information_source: *InfoId*\n"
+        info_id_text = ":information_source: *InfoId*\n"
         info_id_available = False
         if info_id.client_id:
             info_id_text += f"*ClientId:* {info_id.client_id.value}\n"
@@ -61,7 +61,7 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f":fire: *Exception* \n*Class*: {notifier_message.exception.__class__} *Description:* {notifier_message.exception}",
+                "text": f":fire: *Exception* \n*Class*: {notifier_message.exception.__class__} *Description:* {str(notifier_message.exception)[:2500]}",
             },
         }
         executor_block = {
@@ -72,7 +72,7 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
             },
         }
 
-        input_parameters_block_text = f":arrow_right: *Input Parameters*\n"
+        input_parameters_block_text = ":arrow_right: *Input Parameters*\n"
 
         if notifier_message.input_parameters:
             for k, v in notifier_message.input_parameters.items():
@@ -82,7 +82,10 @@ class SlackNotifierMessageConverter(ISlackNotifierMessageConverter):
 
         input_parameters_block = {
             "type": "section",
-            "text": {"type": "mrkdwn", "text": input_parameters_block_text},
+            "text": {
+                "type": "mrkdwn",
+                "text": input_parameters_block_text[:2500],
+            },
         }
         traceback_block = {
             "type": "section",

@@ -1,20 +1,44 @@
-import json
-from unittest.mock import patch, MagicMock
+import os
 
 import pytest
-from slack import WebClient
-
-from petisco.notifier.domain.notifier_message import NotifierMessage
+from petisco import NotifierMessage
+from petisco.notifier.domain.notifier_exception_message import NotifierExceptionMessage
 from petisco.notifier.infrastructure.slack.slack_notifier import SlackNotifier
+from tests.modules.shared.info_id_mother import InfoIdMother
+
+LONG_TEXT = "long_text" * 1000
 
 
+@pytest.mark.skipif(
+    condition=os.getenv("SLACK_TOKEN") is not None,
+    reason="Slack token is a github secret only available in CI workflows",
+)
 @pytest.mark.integration
-@patch.object(WebClient, "chat_postMessage")
-def test_should_publish_a_notifier_message(mock_slack_client):
+class TestSlackNotifier:
+    @staticmethod
+    def get_slack_notifier():
+        slack_token = os.getenv("SLACK_TOKEN")
+        slack_tests_channel = os.getenv("SLACK_TESTS_CHANNEL")
+        return SlackNotifier(token=slack_token, channel=slack_tests_channel)
 
-    notifier = SlackNotifier(token="test_token", channel="#feed")
-    notifier.publish(NotifierMessage(message="Test message"))
-    mock_slack_client.return_value = MagicMock(
-        status_code=200, response=json.dumps({"key": "value"})
-    )
-    mock_slack_client.assert_called_once()
+    def test_publish_should_send_notification(self):
+        notifier = self.get_slack_notifier()
+        notifier_message = NotifierMessage(title="Test title", message="test message")
+        notifier.publish(notifier_message=notifier_message)
+
+    def test_publish_exception_should_send_notification(self):
+        import traceback
+
+        notifier = self.get_slack_notifier()
+        try:
+            raise Exception(LONG_TEXT)
+        except Exception as exception:
+            notifier_exception_message = NotifierExceptionMessage(
+                exception=exception,
+                input_parameters={"key": LONG_TEXT},
+                executor="executor",
+                traceback=traceback.format_exc() + LONG_TEXT,
+                info_id=InfoIdMother.random(),
+                info_petisco={},
+            )
+            notifier.publish(notifier_message=notifier_exception_message)
