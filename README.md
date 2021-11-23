@@ -4,8 +4,8 @@
 
 Petisco is a framework for helping Python developers to build clean Applications in Python.
 
-⚠️ disclaimer: Current version now is v1 (not stable yet). 
-You can found the deprecated version v0 in `v0` branch,
+⚠️ Disclaimer: Current version now is v1 (not stable yet). 
+You can found the deprecated version v0 in `legacy` branch.
 
 
 ## Installation :computer:

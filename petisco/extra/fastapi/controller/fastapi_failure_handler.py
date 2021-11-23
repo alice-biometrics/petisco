@@ -1,6 +1,7 @@
 import logging
 from typing import Dict
 
+import elasticapm
 from fastapi import HTTPException
 from meiga import Result
 
@@ -19,13 +20,21 @@ def fastapi_failure_handler(result: Result, error_map: Dict[type, HttpError]):
     error_type = type(domain_error)
     http_error = error_map.get(error_type, HttpError())
 
+    elasticapm.set_custom_context({"http_response": str(http_error)})
+
+    internal_error_message = None
     if isinstance(result.value, UnknownError):
-        logger.error(result.value.__dict__)
+        internal_error_message = str(result.value.__dict__)
     elif error_type not in error_map:
-        error_info = {
-            "message": f"Error '{result.value.__class__.__name__}' is not mapped in controller"
-        }
-        logger.error(error_info)
+        internal_error_message = (
+            f"Error '{result.value.__class__.__name__}' is not mapped in controller"
+        )
+
+    if internal_error_message is not None:
+        logger.error(internal_error_message)
+        elasticapm.set_custom_context(
+            {"internal_error_message": internal_error_message}
+        )
 
     detail = "Unknown Error"
     if isinstance(domain_error, DomainError):
