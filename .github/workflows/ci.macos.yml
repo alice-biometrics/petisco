@@ -48,7 +48,7 @@ jobs:
         lume -lint
     - name: Test
       env:
-        SLACK_TOKEN: ${{ secrets.SLACK_STAGING_TOKEN }}
+        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN_STAGING }}
         SLACK_TESTS_CHANNEL: 'testing'
       run: |
         lume -build -test -test-command-line
