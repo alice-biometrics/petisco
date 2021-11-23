@@ -1,5 +1,4 @@
 import os
-from unittest import skipIf
 
 import pytest
 
@@ -9,7 +8,7 @@ from petisco.extra.slack import SlackNotifier
 LONG_TEXT = "long_text" * 1000
 
 
-@skipIf(
+@pytest.mark.skipif(
     condition=os.getenv("SLACK_TOKEN") is None,
     reason="Slack token is a github secret only available in CI workflows",
 )
