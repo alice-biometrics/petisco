@@ -16,10 +16,6 @@ on:
       - v1
       - master
 
-env:
-  SLACK_TOKEN: ${{ secrets.SLACK_WEBHOOK_STAGING }}
-  SLACK_TESTS_CHANNEL: 'testing'
-
 jobs:
   ci-macos:
 
@@ -51,5 +47,8 @@ jobs:
       run: |
         lume -lint
     - name: Test
+      env:
+        SLACK_TOKEN: ${{ secrets.SLACK_STAGING_TOKEN }}
+        SLACK_TESTS_CHANNEL: 'testing'
       run: |
         lume -build -test -test-command-line
