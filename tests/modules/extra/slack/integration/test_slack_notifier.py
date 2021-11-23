@@ -30,7 +30,9 @@ class TestSlackNotifier:
         try:
             raise Exception(LONG_TEXT)
         except Exception as exception:
-            error = UnknownError.from_exception(exception=exception, arguments=[])
+            error = UnknownError.from_exception(
+                exception=exception, arguments={"param": LONG_TEXT}
+            )
             notifier_exception_message = NotifierExceptionMessage.from_unknown_error(
                 unknown_error=error, title="Test title error"
             )
