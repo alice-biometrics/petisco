@@ -81,7 +81,7 @@ class ExceptionBlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter
             input_parameters_text = ""
             for k, v in notifier_exception_message.input_parameters.items():
                 input_parameters_text += f"\n>{k}: {v}"
-            text_executor += input_parameters_text
+            text_executor += input_parameters_text[: 3000 - len(text_executor)]
 
         executor_block["text"] = {
             "type": "mrkdwn",
@@ -92,8 +92,16 @@ class ExceptionBlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter
     def _create_error_block(self, notifier_exception_message: NotifierExceptionMessage):
         error_block = None
         if notifier_exception_message.exception:
-            text_error = f"*Class*: {notifier_exception_message.exception.__class__}\n>{notifier_exception_message.exception}"
-            text_error += f"\n```{notifier_exception_message.traceback[:2500]}```"
+            text_error = (
+                f"*Class*: {notifier_exception_message.exception.__class__}\n"
+                f">{str(notifier_exception_message.exception)[:500]}"
+            )
+            traceback_base_str = "\n```{}```"
+            traceback_max_length = 3000 - len(text_error) - len(traceback_base_str)
+            text_error += traceback_base_str.format(
+                notifier_exception_message.traceback[:traceback_max_length]
+            )
+
             error_block = {
                 "type": "section",
                 "text": {
