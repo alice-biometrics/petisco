@@ -44,6 +44,9 @@ jobs:
       run: |
         lume -lint
     - name: Test
+      env:
+        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN_STAGING }}
+        SLACK_TESTS_CHANNEL: 'testing'
       run: |
         lume -build -test-with-rabbitmq-mysql-and-elastic -test-command-line
     - name: Test end2end
