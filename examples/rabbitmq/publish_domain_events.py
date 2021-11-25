@@ -1,11 +1,11 @@
 from time import sleep
 
-from examples.rabbitmq.common import ORGANIZATION, SERVICE, UserCreated, UserConfirmed
+from examples.rabbitmq.common import ORGANIZATION, SERVICE, UserConfirmed, UserCreated
 from petisco import Uuid
 from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqDomainEventBus
 
 connector = RabbitMqConnector()
-domain_event_bus = RabbitMqDomainEventBus(connector, ORGANIZATION, SERVICE)
+domain_event_bus = RabbitMqDomainEventBus(ORGANIZATION, SERVICE, connector)
 
 user_id = Uuid.v4()
 user_created = UserCreated(user_id=user_id)

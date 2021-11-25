@@ -26,4 +26,4 @@ class ClientId(ValueObject):
         if not cls._allow_utf8mb4 and re.match("[^\u0000-\uffff]", value):
             raise InvalidClientId(uuid_value=value)
 
-        return value.title()
+        return value

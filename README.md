@@ -155,10 +155,8 @@ class Task(AggregateRoot):
 
 ###### RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
 
-⚠️ TODO: It is outdated (v0)
-
-To test RabbitEventManager you need to run locally a RabbitMQ application, otherwise related test will be skipped.
-Please, check the official doc here: https://www.rabbitmq.com/download.html
+To test how petisco can help you on rabbitmq queues management you need to run locally a RabbitMQ application, otherwise related test will be skipped.
+Please, check the official doc here: https://www.rabbitmq.com/download.html.
 
 Run RabbitMQ with docker
 
@@ -166,28 +164,33 @@ Run RabbitMQ with docker
 docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
-Please, check examples in [examples/pubsub](examples/pubsub)
+You can check the RabbitMQ status on [http://localhost:15672/#/](http://localhost:15672/#/) (guest:guest).
 
-Run a Subscriber
+Find [here](examples/rabbitmq) some petisco examples.
 
-```console
-python examples/pubsub/sub.py
-```
-
-Run a Publisher:
+**Configure the rabbitmq**
 
 ```console
-python examples/pubsub/pub.py
+python examples/rabbitmq/configure.py
 ```
 
-Run a Subscriber linked to a dead letter queues.
+**Start consuming messages**
 
 ```console
-python examples/pubsub/dl_sub.py
+python examples/rabbitmq/consume.py
 ```
 
-This can be used to requeue nack events.
+**Publish some Domain Events**
 
+```console
+python examples/rabbitmq/publish_domain_events.py
+```
+
+**Dispatch a Command**
+
+```console
+python examples/rabbitmq/dispatch_commands.py
+```
 
 ##### Configurations
 

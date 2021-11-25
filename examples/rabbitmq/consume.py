@@ -1,6 +1,6 @@
 import logging
 
-from examples.rabbitmq.common import ORGANIZATION, SERVICE, MAX_RETRIES, subscribers
+from examples.rabbitmq.common import MAX_RETRIES, ORGANIZATION, SERVICE, subscribers
 from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqMessageConsumer
 from petisco.legacy import LoggingBasedLogger
 
@@ -15,7 +15,7 @@ def get_logger():
 
 connector = RabbitMqConnector()
 consumer = RabbitMqMessageConsumer(
-    connector, ORGANIZATION, SERVICE, MAX_RETRIES, logger=get_logger()
+    ORGANIZATION, SERVICE, MAX_RETRIES, connector, logger=get_logger()
 )
 consumer.add_subscribers(subscribers)
 
