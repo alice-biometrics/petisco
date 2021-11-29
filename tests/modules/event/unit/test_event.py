@@ -1,5 +1,4 @@
 import pytest
-
 from petisco import Event, Name, unique_events
 
 
@@ -51,6 +50,19 @@ def test_should_create_an_event_and_check_to_dict_from_dict(
     assert event == retrieved_event
     assert event.event_info_id == given_any_info_id.to_dict()
     assert event.name == given_any_name
+
+
+@pytest.mark.unit
+def test_should_add_default_type_message():
+    default_type_message = "domain_event"
+    event = UserCreated(name="user_created")
+    event_dict = event.to_dict()
+
+    retrieved_event = UserCreated.from_dict(event_dict)
+
+    assert event == retrieved_event
+    assert retrieved_event.event_type == default_type_message
+    assert event_dict["data"].get("type_message") == default_type_message
 
 
 @pytest.mark.unit

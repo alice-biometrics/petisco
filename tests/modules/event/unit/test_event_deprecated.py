@@ -1,5 +1,4 @@
 import pytest
-
 from petisco import EventId
 from tests.modules.event.unit.test_event import UserCreated
 
@@ -21,6 +20,7 @@ def test_should_create_an_event_from_deprecated_version():
             "version": "0",  # old format event will be set to 0 version
             "occurred_on": "2020-04-30 09:05:58.965449",
             "attributes": {"name": "Name"},
+            "type_message": "domain_event",
             "meta": {},
         }
     }
@@ -95,6 +95,7 @@ def test_should_create_an_event_from_deprecated_version_with_info_id(
                 "document_id": "SIgradfXfWNbtDfsA0sqwgJWpMs=",
                 "manual": False,
             },
+            "type_message": "domain_event",
             "meta": {"info_id": expected_info_id},
         }
     }
