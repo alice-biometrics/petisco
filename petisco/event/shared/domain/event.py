@@ -1,13 +1,10 @@
+import json
 import re
 from datetime import datetime
-from typing import Dict
+from typing import Dict, List
 
 from petisco.domain.value_objects.value_object import ValueObject
 from petisco.event.shared.domain.event_id import EventId
-
-import json
-
-from typing import List
 
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
@@ -15,6 +12,7 @@ TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 class Event:
     event_id: EventId = None
     event_name: str = None
+    event_type: str = None
     event_occurred_on: str = None
     event_version: int = None
     event_info_id: Dict = None
@@ -73,6 +71,7 @@ class Event:
             "data": {
                 "id": raw_dict.pop("event_id").value,
                 "type": raw_dict.pop("event_name"),
+                "type_message": raw_dict.pop("event_type", "domain_event"),
                 "version": str(raw_dict.pop("event_version")),
                 "occurred_on": raw_dict.pop("event_occurred_on").strftime(TIME_FORMAT),
                 "attributes": {},
@@ -104,6 +103,11 @@ class Event:
 
         if "type" in data and isinstance(data["type"], str):
             event_dictionary["event_name"] = data["type"]
+
+        if "type_message" in data and isinstance(data["type_message"], str):
+            event_dictionary["event_type"] = data["type_message"]
+        else:
+            event_dictionary["event_type"] = "domain_event"
 
         if "version" in data and isinstance(data["version"], str):
             event_dictionary["event_version"] = int(data["version"])
@@ -179,9 +183,9 @@ class Event:
         if not info_id:
             return self
 
-        from petisco.domain.aggregate_roots.info_id import (
+        from petisco.domain.aggregate_roots.info_id import (  # internal import to avoid circular dependency
             InfoId,
-        )  # internal import to avoid circular dependency
+        )
 
         if not isinstance(info_id, InfoId):
             raise TypeError("Event.add_info_id() expect a InfoId class (from petisco)")
