@@ -50,3 +50,17 @@ def test_http_error_should_success_when_construct_a_inherit_http_error_with_stat
     assert http_error.status_code == 422
     assert http_error.detail == "my-message"
     assert http_error.type_error == "my-error"
+
+
+@pytest.mark.unit
+def test_http_error_should_success_when_construct_with_headers():
+    class MyHttpError(HttpError):
+        status_code = 401
+        detail = "Unauthorized"
+        headers = {"WWW-Authenticate": 'authType="OTP"'}
+
+    http_error = MyHttpError()
+
+    assert http_error.status_code == 401
+    assert http_error.detail == "Unauthorized"
+    assert http_error.headers == {"WWW-Authenticate": 'authType="OTP"'}
