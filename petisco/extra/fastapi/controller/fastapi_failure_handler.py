@@ -43,4 +43,6 @@ def fastapi_failure_handler(result: Result, error_map: Dict[type, HttpError]):
             if http_error.detail != DEFAULT_HTTP_ERROR_DETAIL
             else domain_error.detail()
         )
-    raise HTTPException(status_code=http_error.status_code, detail=detail)
+    raise HTTPException(
+        status_code=http_error.status_code, detail=detail, headers=http_error.headers
+    )

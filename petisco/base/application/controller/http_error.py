@@ -8,6 +8,7 @@ DEFAULT_HTTP_ERROR_DETAIL = "Unknown Error"
 class HttpError(BaseModel):
     status_code: Optional[int] = 500
     detail: Optional[str] = DEFAULT_HTTP_ERROR_DETAIL
+    headers: Optional[dict] = None
     type_error: Optional[str] = None
 
     @validator("type_error", always=True)
