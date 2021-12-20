@@ -1,7 +1,6 @@
-meiga>=1.2.12
+meiga==1.2.12
 pydantic==1.8.2
 requests==2.24.0
 pyjwt==2.1.0
-cryptography>=2.1.4
 validators==0.18.2
 elastic-apm==6.4.0

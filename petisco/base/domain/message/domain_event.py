@@ -1,5 +1,5 @@
 import json
-from typing import Dict, Optional, Type
+from typing import Dict, Optional, Type, Union
 
 from petisco.base.domain.message.message import Message
 
@@ -19,7 +19,7 @@ class DomainEvent(Message):
         return domain_event
 
     @staticmethod
-    def from_json(message_json: str, target_type: Optional[Type] = None):
+    def from_json(message_json: Union[str,bytes], target_type: Optional[Type] = None):
         event_dict = json.loads(message_json)
         return DomainEvent.from_dict(event_dict, target_type)
 

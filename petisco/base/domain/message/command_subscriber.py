@@ -24,3 +24,6 @@ class CommandSubscriber(MessageSubscriber):
 
     def get_message_subscribers_info(self) -> List[MessageSubscriberInfo]:
         return [MessageSubscriberInfo.from_class_type(self.subscribed_to())]
+
+
+
