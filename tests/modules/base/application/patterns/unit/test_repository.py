@@ -2,7 +2,6 @@ import pytest
 from meiga import Result
 
 from petisco.base.application.patterns.repository import Repository
-from tests.modules.base.mothers.info_id_mother import InfoIdMother
 
 
 class TestRepository(Repository):
