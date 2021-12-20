@@ -5,13 +5,13 @@ from typing import List, Type
 
 from meiga import BoolResult
 
+from petisco.base.domain.message.command_bus import CommandBus
+from petisco.base.domain.message.domain_event_bus import DomainEventBus
+from petisco.base.domain.message.message import Message
+from petisco.base.domain.message.message_subscriber_info import MessageSubscriberInfo
 from petisco.base.domain.message.not_implemented_message_bus import (
     NotImplementedMessageBus,
 )
-from petisco.base.domain.message.domain_event_bus import DomainEventBus
-from petisco.base.domain.message.command_bus import CommandBus
-from petisco.base.domain.message.message import Message
-from petisco.base.domain.message.message_subscriber_info import MessageSubscriberInfo
 from petisco.base.misc.interface import Interface
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.base.misc.wrapper import wrapper

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-from petisco.legacy import StringValueObject
 from meiga import Error
+
+from petisco.legacy import StringValueObject
 
 
 class UsernameIsNotLowerError(Error):

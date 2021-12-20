@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import Callable, List
 
 from sqlalchemy.orm import scoped_session
 
@@ -51,7 +51,7 @@ class MySqlDatabase(Database):
         self.persistence_models.import_models()
         from sqlalchemy import create_engine
         from sqlalchemy.orm import sessionmaker
-        from sqlalchemy_utils import database_exists, create_database
+        from sqlalchemy_utils import create_database, database_exists
 
         engine = create_engine(
             self.connection.url,

@@ -3,7 +3,7 @@ from functools import wraps
 from types import FunctionType
 from typing import Any
 
-from meiga import Result, Error, NotImplementedMethodError, Failure
+from meiga import Error, Failure, NotImplementedMethodError, Result
 from meiga.on_failure_exception import OnFailureException
 
 from petisco.base.application.use_case.use_case_uncontrolled_error import (

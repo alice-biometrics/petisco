@@ -3,8 +3,8 @@ import re
 from datetime import datetime
 from typing import Dict
 
-from petisco.base.domain.model.value_object import ValueObject
 from petisco.base.domain.model.uuid import Uuid
+from petisco.base.domain.model.value_object import ValueObject
 
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 

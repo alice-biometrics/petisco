@@ -1,6 +1,6 @@
 import pytest
 
-from petisco import ValueObject, InvalidValueObject
+from petisco import InvalidValueObject, ValueObject
 
 
 @pytest.mark.unit

@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Column, Float, ForeignKey
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
 
 from petisco.base.domain.persistence.persistence import Persistence
 

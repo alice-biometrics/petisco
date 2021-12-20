@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Any
 
-from meiga import Result, Error, NotImplementedMethodError
+from meiga import Error, NotImplementedMethodError, Result
 
 from petisco.base.application.controller.controller import Controller
 from petisco.extra.fastapi.controller.fastapi_result_mapper import FastAPIResultMapper

@@ -1,6 +1,6 @@
 import pytest
 
-from petisco import DomainEvent, AggregateRoot, Uuid
+from petisco import AggregateRoot, DomainEvent, Uuid
 
 
 class MyAggregateRootCreated(DomainEvent):

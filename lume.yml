@@ -16,6 +16,7 @@ steps:
     run:
       - black --check .
       - flake8 petisco
+      - isort .
   check-requirements:
     run: safety check -r requirements/requirements.txt
   static-analysis:

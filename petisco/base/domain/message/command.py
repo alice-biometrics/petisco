@@ -19,7 +19,7 @@ class Command(Message):
         return command
 
     @staticmethod
-    def from_json(message_json: Union[str,bytes], target_type: Optional[Type] = None):
+    def from_json(message_json: Union[str, bytes], target_type: Optional[Type] = None):
         event_dict = json.loads(message_json)
         return Command.from_dict(event_dict, target_type)
 

@@ -1,13 +1,13 @@
-from typing import Type, Callable, List
+from typing import Callable, List, Type
 
 from meiga import BoolResult
 
 from petisco import (
-    DomainEvent,
-    DomainEventSubscriber,
     AllMessageSubscriber,
     Command,
     CommandSubscriber,
+    DomainEvent,
+    DomainEventSubscriber,
 )
 
 

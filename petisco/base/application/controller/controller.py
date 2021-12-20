@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-
 from types import FunctionType
-from typing import List, Any
+from typing import Any, List
 
 from meiga import Error, NotImplementedMethodError, Result
 

@@ -1,15 +1,15 @@
 from typing import List, Type
 
-from meiga import isSuccess, BoolResult
+from meiga import BoolResult, isSuccess
 
 from petisco import (
-    DomainEvent,
-    Uuid,
-    Message,
-    DomainEventSubscriber,
     AllMessageSubscriber,
-    CommandSubscriber,
     Command,
+    CommandSubscriber,
+    DomainEvent,
+    DomainEventSubscriber,
+    Message,
+    Uuid,
 )
 
 # Configuration #################################################

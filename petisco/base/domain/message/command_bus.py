@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
-from petisco.base.domain.message.message_bus import MessageBus
 from petisco.base.domain.message.command import Command
+from petisco.base.domain.message.message_bus import MessageBus
 
 
 class CommandBus(MessageBus):
