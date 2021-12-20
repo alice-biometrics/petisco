@@ -1,6 +1,6 @@
 from petisco.extra.elastic.is_elastic_available import is_elastic_available
 
-rabbitmq = []
+rabbitmq = list()
 if is_elastic_available():
 
     from petisco.extra.elastic.elastic_connection import ElasticConnection

@@ -1,6 +1,6 @@
 import copy
+from abc import ABC, abstractmethod
 from typing import Dict, List
-from abc import abstractmethod, ABC
 
 from petisco.base.domain.message.message import Message
 

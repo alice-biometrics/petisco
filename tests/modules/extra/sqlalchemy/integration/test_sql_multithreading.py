@@ -4,7 +4,7 @@ from time import sleep
 
 import pytest
 
-from petisco import Uuid, Persistence
+from petisco import Persistence, Uuid
 from petisco.extra.sqlalchemy import (
     MySqlConnection,
     MySqlDatabase,

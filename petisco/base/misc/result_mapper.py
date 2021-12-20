@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Dict, Callable, Any
+from typing import Any, Callable, Dict
 
 from meiga import Result
 

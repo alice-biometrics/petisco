@@ -4,7 +4,7 @@ from petisco import PersistenceModels
 from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
     ModelFilenameMother,
 )
-from tests.modules.extra.sqlalchemy.ymls.object.models import UserModel, ProductModel
+from tests.modules.extra.sqlalchemy.ymls.object.models import ProductModel, UserModel
 
 
 @pytest.mark.unit

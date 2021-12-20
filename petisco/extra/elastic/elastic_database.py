@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import Callable, List
 
 from petisco.base.domain.persistence.interface_database import Database
 from petisco.extra.elastic.elastic_connection import ElasticConnection

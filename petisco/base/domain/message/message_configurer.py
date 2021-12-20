@@ -1,5 +1,5 @@
-from typing import List
 from abc import abstractmethod
+from typing import List
 
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
 from petisco.base.misc.interface import Interface

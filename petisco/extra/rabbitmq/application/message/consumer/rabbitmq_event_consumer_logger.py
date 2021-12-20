@@ -5,7 +5,7 @@ from pika import BasicProperties
 from pika.spec import Basic
 
 from petisco.base.domain.message.consumer_derived_action import ConsumerDerivedAction
-from petisco.legacy.logger.interface_logger import ILogger, DEBUG
+from petisco.legacy.logger.interface_logger import DEBUG, ILogger
 from petisco.legacy.logger.log_message import LogMessage
 from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
 

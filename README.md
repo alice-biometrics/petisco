@@ -5,7 +5,7 @@
 Petisco is a framework for helping Python developers to build clean Applications in Python.
 
 ⚠️ Disclaimer: Current version now is v1 (not stable yet). 
-You can found the deprecated version v0 in `legacy` branch.
+Find deprecated version (v0) in `legacy` branch.
 
 
 ## Installation :computer:
@@ -17,11 +17,7 @@ pip install petisco
 Installation with Extras 
 
 ```console
-pip install petisco[fastapi]
-pip install petisco[sqlalchemy]
-pip install petisco[redis]
-pip install petisco[rabbitmq]
-pip install petisco[fastapi,sqlalchemy,redis,rabbitmq]
+pip install petisco[fastapi,sqlalchemy,elastic,rabbitmq,slack,redis]
 ```
 
 ## Getting Started :chart_with_upwards_trend:	
@@ -33,7 +29,7 @@ Imagine you have a domain where your business logic is to manage a task system, 
 
 #### UUID
 
-Use `Uuid` to generate new identificators
+Use `Uuid` to generate new identifiers.
 
 ```python
 from petisco import Uuid

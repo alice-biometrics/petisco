@@ -3,8 +3,8 @@ from typing import List, Type
 
 from meiga import BoolResult
 
-from petisco.base.domain.message.message_subscriber import MessageSubscriber
 from petisco.base.domain.message.domain_event import DomainEvent
+from petisco.base.domain.message.message_subscriber import MessageSubscriber
 
 
 class DomainEventSubscriber(MessageSubscriber):

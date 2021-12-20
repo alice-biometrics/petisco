@@ -1,7 +1,7 @@
 import pytest
 
 from petisco import Persistence
-from petisco.extra.sqlalchemy import SqliteConnection, SqliteDatabase, SqlExecutor
+from petisco.extra.sqlalchemy import SqlExecutor, SqliteConnection, SqliteDatabase
 from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
     ModelFilenameMother,
 )

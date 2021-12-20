@@ -1,7 +1,7 @@
 import os
 import random
 from time import sleep
-from typing import Optional, Dict, List
+from typing import Dict, List, Optional
 
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic

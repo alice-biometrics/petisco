@@ -114,15 +114,15 @@ class RabbitMqMessageConsumer(MessageConsumer):
                     )
 
     def add_subscriber_on_dead_letter(self, subscriber: Type[MessageSubscriber]):
-        subscriber: MessageSubscriber = subscriber()
-        for subscriber_info in subscriber.get_message_subscribers_info():
+        instance_subscriber: MessageSubscriber = subscriber()
+        for subscriber_info in instance_subscriber.get_message_subscribers_info():
 
             queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
                 subscriber_info, exchange_name=self.exchange_name
             )
             self._add_subscriber_instance_on_queue(
-                queue_name=f"{queue_name}.{subscriber.get_subscriber_name()}",
-                subscriber=subscriber,
+                queue_name=f"{queue_name}.{instance_subscriber.get_subscriber_name()}",
+                subscriber=instance_subscriber,
                 message_type_expected=subscriber_info.message_type,
             )
 

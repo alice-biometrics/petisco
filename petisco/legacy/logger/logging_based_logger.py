@@ -2,17 +2,17 @@ import logging
 import os
 from typing import Callable
 
-from petisco.legacy.logger.log_message import LogMessage
 from petisco.legacy.logger.interface_logger import (
-    ILogger,
-    INFO,
+    CRITICAL,
+    DEBUG,
     ERROR,
+    FATAL,
+    INFO,
     WARN,
     WARNING,
-    DEBUG,
-    CRITICAL,
-    FATAL,
+    ILogger,
 )
+from petisco.legacy.logger.log_message import LogMessage
 
 CORRESPONDENCES_LOGGING_LEVEL = {
     "DEBUG": logging.DEBUG,

@@ -1,5 +1,5 @@
-from abc import abstractmethod, ABC
-from typing import List, Dict
+from abc import ABC, abstractmethod
+from typing import Dict, List
 
 
 class Database(ABC):

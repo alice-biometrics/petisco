@@ -2,7 +2,7 @@ import importlib
 import os
 import sys
 import traceback
-from typing import Dict, Any
+from typing import Any, Dict
 
 import yaml
 from yaml.parser import ParserError, ScannerError
