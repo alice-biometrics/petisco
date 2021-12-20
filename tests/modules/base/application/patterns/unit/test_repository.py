@@ -35,26 +35,3 @@ def test_repository_should_overwrite_info_method():
     repository = NoInfoRepository()
 
     assert repository.info() is None
-
-
-@pytest.mark.unit
-def test_repository_should_configure_one_object_with_info_id():
-    repository = TestRepository()
-
-    assert not hasattr(repository, "info_id")
-
-    repository_with_info_id = repository.with_info_id(InfoIdMother.any())
-
-    assert hasattr(repository_with_info_id, "info_id")
-    assert repository_with_info_id is not repository
-
-
-@pytest.mark.unit
-def test_repository_should_raise_an_exeception_when_getting_info_id_without_configuring_it():
-    repository = TestRepository()
-    with pytest.raises(AttributeError) as excinfo:
-        _ = repository.get_info_id()
-    assert (
-        "TestRepository needs info_id configuration. Please, use TestRepository.info_id() to get a valid object with info_id"
-        in str(excinfo.value)
-    )
