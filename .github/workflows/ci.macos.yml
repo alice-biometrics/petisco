@@ -27,28 +27,23 @@ jobs:
     runs-on: ${{matrix.os}}
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - uses: actions/cache@v1
-      if: startsWith(runner.os, 'macOS')
-      with:
-        path: ~/Library/Caches/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/dev.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    - name: Install dependencies
-      run: |
-        pip install lume
-        lume -install
-    - name: Lint - Code checker
-      run: |
-        lume -lint
-    - name: Test
-      env:
-        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN_STAGING }}
-        SLACK_TESTS_CHANNEL: 'testing'
-      run: |
-        lume -build -test -test-command-line
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/cache@v2
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+      - name: Install dependencies
+        run: |
+          pip install lume
+          lume -install
+      - name: Lint - Code checker
+        run: lume -lint
+      - name: Test
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN_STAGING }}
+          SLACK_TESTS_CHANNEL: 'testing'
+        run: lume -build -test -test-command-line

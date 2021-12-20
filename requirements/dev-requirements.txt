@@ -12,5 +12,4 @@ requests-mock==1.8.0
 pre-commit==2.15.0
 mypy==0.910
 safety==1.10.3
-twine==1.13.0
 fakeredis==1.7.0
