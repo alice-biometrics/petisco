@@ -1,28 +1,6 @@
 from meiga import Error
 
 from petisco import Uuid
-from petisco.base.domain.ids.client_id import ClientId
-from petisco.base.domain.ids.user_id import UserId
-
-
-class ClientNotFoundError(Error):
-    def __init__(self, client_id: ClientId):
-        self.message = f"{self.__class__.__name__} [client_id: {client_id.value}]"
-
-
-class ClientAlreadyExistError(Error):
-    def __init__(self, client_id: ClientId):
-        self.message = f"{self.__class__.__name__} [client_id: {client_id.value}]"
-
-
-class UserNotFoundError(Error):
-    def __init__(self, user_id: UserId):
-        self.message = f"{self.__class__.__name__} [user_id: {user_id.value}]"
-
-
-class UserAlreadyExistError(Error):
-    def __init__(self, user_id: UserId):
-        self.message = f"{self.__class__.__name__} [user_id: {user_id.value}]"
 
 
 class EntityAlreadyExistError(Error):

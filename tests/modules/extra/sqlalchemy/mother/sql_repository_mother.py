@@ -4,26 +4,37 @@ from typing import List
 from attr import dataclass
 from meiga import BoolResult, Error, Result, Success, isSuccess
 
-from petisco.base.domain.ids.client_id import ClientId
-from petisco.base.domain.ids.user_id import UserId
+from petisco import Uuid, ValueObject
 from petisco.base.domain.persistence.persistence import Persistence
-from petisco.extra.sqlalchemy.sql.sql_repository import SqlRepository
-from tests.modules.base.mothers.info_id_mother import InfoIdMother
+from petisco.extra.sqlalchemy.sql.base_sql_repository import BaseSqlRepository
 
 BASE_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../ymls/"
+
+
+class UserId(Uuid):
+    pass
+
+
+class ClientId(ValueObject):
+    pass
 
 
 @dataclass
 class User:
     user_id: UserId
     name: str
+    client_id: ClientId
 
     @staticmethod
     def random():
-        return User(UserId.v4(), "MyName")
+        return User(UserId.v4(), "MyName", ClientId("Client1"))
 
     def to_dict(self):
-        return {"user_id": self.user_id.value, "name": self.name}
+        return {
+            "user_id": self.user_id.value,
+            "name": self.name,
+            "client_id": self.client_id.value,
+        }
 
     def __eq__(self, other):
         if issubclass(other.__class__, self.__class__) or issubclass(
@@ -35,7 +46,11 @@ class User:
 
     @staticmethod
     def from_dict(kdict: dict):
-        return User(UserId(kdict.get("user_id")), kdict.get("name"))
+        return User(
+            UserId(kdict.get("user_id")),
+            kdict.get("name"),
+            ClientId(kdict.get("client_id")),
+        )
 
 
 @dataclass
@@ -63,7 +78,7 @@ class Client:
         return Client(ClientId(kdict.get("client_id")), kdict.get("name"))
 
 
-class MyUserSqlRepository(SqlRepository):
+class MyUserSqlRepository(BaseSqlRepository):
     def __init__(self, database_name: str):
         self.session_scope = Persistence.get_session_scope(database_name)
         self.UserModel = Persistence.get_model(database_name, "user")
@@ -71,57 +86,59 @@ class MyUserSqlRepository(SqlRepository):
 
     def save(self, user: User) -> BoolResult:
         with self.session_scope() as session:
-            client_internal_id = self.get_sql_internal_client_id(
-                session, self.ClientModel
+            client_model = (
+                session.query(self.ClientModel)
+                .filter(self.ClientModel.client_id == user.client_id.value)
+                .first()
+            )
+            self.fail_if_entity_not_found(
+                client_model, user.client_id
             ).unwrap_or_return()
+
             user_model = (
                 session.query(self.UserModel)
                 .filter(self.UserModel.user_id == user.user_id.value)
-                .filter(self.UserModel.client_id == client_internal_id)
+                .filter(self.UserModel.client_id == client_model.id)
                 .first()
             )
             self.fail_if_entity_already_exist(
                 user_model, user.user_id
             ).unwrap_or_return()
             user_model = self.UserModel(**user.to_dict())
-            user_model.client_id = client_internal_id
             session.add(user_model)
         return isSuccess
 
     def retrieve(self, user_id: UserId) -> Result[User, Error]:
         with self.session_scope() as session:
-            client_internal_id = self.get_sql_internal_client_id(
-                session, self.ClientModel
-            ).unwrap_or_return()
             user_model = (
                 session.query(self.UserModel)
                 .filter(self.UserModel.user_id == user_id.value)
-                .filter(self.UserModel.client_id == client_internal_id)
                 .first()
             )
             self.fail_if_entity_not_found(user_model, user_id).unwrap_or_return()
             user = User.from_dict(user_model.__dict__)
             return Success(user)
 
-    def retrieve_all(self) -> Result[List[User], Error]:
+    def retrieve_all(self, client_id: ClientId) -> Result[List[User], Error]:
         with self.session_scope() as session:
-            client_internal_id = self.get_sql_internal_client_id(
-                session, self.ClientModel
-            ).unwrap_or_return()
+            client_model = (
+                session.query(self.ClientModel)
+                .filter(self.ClientModel.client_id == client_id.value)
+                .first()
+            )
+            self.fail_if_entity_not_found(client_model, client_id).unwrap_or_return()
+
             user_models = (
                 session.query(self.UserModel)
-                .filter(self.UserModel.client_id == client_internal_id)
+                .filter(self.UserModel.client_id == client_model.id)
                 .all()
             )
             self.fail_if_entities_not_found(user_models).unwrap_or_return()
             users = [User.from_dict(user_model.__dict__) for user_model in user_models]
             return Success(users)
 
-    def remove(self, Any) -> BoolResult:
-        pass
 
-
-class MyClientSqlRepository(SqlRepository):
+class MyClientSqlRepository(BaseSqlRepository):
     def __init__(self, database_name: str):
         self.session_scope = Persistence.get_session_scope(database_name)
         self.ClientModel = Persistence.get_model(database_name, "client")
@@ -147,19 +164,15 @@ class MyClientSqlRepository(SqlRepository):
                 .filter(self.ClientModel.client_id == client_id.value)
                 .first()
             )
-            self.fail_if_entity_not_exist(client_model, client_id).unwrap_or_return()
+            self.fail_if_entity_not_found(client_model, client_id).unwrap_or_return()
             client = Client.from_dict(client_model.__dict__)
             return Success(client)
-
-    def retrieve_all(self, Any) -> Result[List[User], Error]:
-        pass
-
-    def remove(self, Any) -> BoolResult:
-        pass
 
 
 class SqlRepositoryMother:
     @staticmethod
-    def user(database_name: str):
-        MyClientSqlRepository(database_name).save(Client.random())
-        return MyUserSqlRepository(database_name).with_info_id(InfoIdMother.any())
+    def with_client(
+        database_name: str = "sqlite_test", client: Client = Client.random()
+    ):
+        MyClientSqlRepository(database_name).save(client)
+        return MyUserSqlRepository(database_name)

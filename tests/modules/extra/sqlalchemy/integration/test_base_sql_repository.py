@@ -6,8 +6,10 @@ from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
     ModelFilenameMother,
 )
 from tests.modules.extra.sqlalchemy.mother.sql_repository_mother import (
+    Client,
     SqlRepositoryMother,
     User,
+    UserId,
 )
 
 
@@ -25,9 +27,10 @@ def test_should_save_a_model_using_a_sql_repository_implementation():
     persistence.add(database)
     persistence.create()
 
-    repository = SqlRepositoryMother.user("sqlite_test")
+    client = Client.random()
+    repository = SqlRepositoryMother.with_client("sqlite_test", client)
 
-    user = User.random()
+    user = User(user_id=UserId.v4(), name="user1", client_id=client.client_id)
     repository.save(user)
 
     retrieved_user = repository.retrieve(user.user_id).unwrap()
