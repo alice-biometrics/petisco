@@ -3,6 +3,7 @@ from typing import List
 
 from attr import dataclass
 from meiga import BoolResult, Error, Result, Success, isSuccess
+from meiga.decorators import meiga
 
 from petisco import Uuid, ValueObject
 from petisco.base.domain.persistence.persistence import Persistence
@@ -84,6 +85,7 @@ class MyUserSqlRepository(BaseSqlRepository):
         self.UserModel = Persistence.get_model(database_name, "user")
         self.ClientModel = Persistence.get_model(database_name, "client")
 
+    @meiga
     def save(self, user: User) -> BoolResult:
         with self.session_scope() as session:
             client_model = (
@@ -98,7 +100,7 @@ class MyUserSqlRepository(BaseSqlRepository):
             user_model = (
                 session.query(self.UserModel)
                 .filter(self.UserModel.user_id == user.user_id.value)
-                .filter(self.UserModel.client_id == client_model.id)
+                .filter(self.UserModel.client_id == client_model.client_id)
                 .first()
             )
             self.fail_if_entity_already_exist(
@@ -108,6 +110,7 @@ class MyUserSqlRepository(BaseSqlRepository):
             session.add(user_model)
         return isSuccess
 
+    @meiga
     def retrieve(self, user_id: UserId) -> Result[User, Error]:
         with self.session_scope() as session:
             user_model = (
@@ -119,6 +122,7 @@ class MyUserSqlRepository(BaseSqlRepository):
             user = User.from_dict(user_model.__dict__)
             return Success(user)
 
+    @meiga
     def retrieve_all(self, client_id: ClientId) -> Result[List[User], Error]:
         with self.session_scope() as session:
             client_model = (
@@ -143,6 +147,7 @@ class MyClientSqlRepository(BaseSqlRepository):
         self.session_scope = Persistence.get_session_scope(database_name)
         self.ClientModel = Persistence.get_model(database_name, "client")
 
+    @meiga
     def save(self, client: Client) -> BoolResult:
         with self.session_scope() as session:
             client_model = (
@@ -157,6 +162,7 @@ class MyClientSqlRepository(BaseSqlRepository):
             session.add(client_model)
         return isSuccess
 
+    @meiga
     def retrieve(self, client_id: ClientId) -> Result[Client, Error]:
         with self.session_scope() as session:
             client_model = (
@@ -176,3 +182,14 @@ class SqlRepositoryMother:
     ):
         MyClientSqlRepository(database_name).save(client)
         return MyUserSqlRepository(database_name)
+
+    @staticmethod
+    def with_user(
+        user: User,
+        database_name: str = "sqlite_test",
+        client: Client = Client.random(),
+    ):
+        MyClientSqlRepository(database_name).save(client)
+        user_repository = MyUserSqlRepository(database_name)
+        user_repository.save(user)
+        return user_repository

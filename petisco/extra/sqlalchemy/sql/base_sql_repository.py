@@ -2,10 +2,12 @@ from meiga import BoolResult, Error, Failure, isSuccess
 
 from petisco import Uuid
 from petisco.base.application.patterns.repository import Repository
-from petisco.extra.sqlalchemy.sql.errors import (
-    EntitiesNotFoundError,
-    EntityAlreadyExistError,
-    EntityNotFoundError,
+from petisco.base.domain.errors.defaults.already_exists import (
+    AggregateAlreadyExistError,
+)
+from petisco.base.domain.errors.defaults.not_found import (
+    AggregateNotFoundError,
+    AggregatesNotFoundError,
 )
 
 
@@ -16,7 +18,7 @@ class BaseSqlRepository(Repository):
     ) -> BoolResult:
         if model:
             error = (
-                EntityAlreadyExistError(cls.__name__, model.__tablename__, entity_id)
+                AggregateAlreadyExistError(cls.__name__, model.__tablename__, entity_id)
                 if not result_error
                 else result_error
             )
@@ -29,7 +31,7 @@ class BaseSqlRepository(Repository):
     ) -> BoolResult:
         if not model:
             error = (
-                EntityNotFoundError(cls.__name__, entity_id)
+                AggregateNotFoundError(cls.__name__, entity_id)
                 if not result_error
                 else result_error
             )
@@ -42,7 +44,7 @@ class BaseSqlRepository(Repository):
     ) -> BoolResult:
         if not model:
             error = (
-                EntitiesNotFoundError(cls.__name__)
+                AggregatesNotFoundError(cls.__name__)
                 if not result_error
                 else result_error
             )
