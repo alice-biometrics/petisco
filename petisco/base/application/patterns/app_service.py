@@ -2,10 +2,10 @@ from abc import abstractmethod
 
 from meiga import NotImplementedMethodError, Result
 
-from petisco.base.application.patterns.base_pattern import BasePattern
+from petisco.base.misc.interface import Interface
 
 
-class AppService(BasePattern):
+class AppService(Interface):
     @abstractmethod
     def execute(self, *args, **kwargs) -> Result:
         return NotImplementedMethodError
