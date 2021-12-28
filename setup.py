@@ -36,11 +36,11 @@ setup(
     zip_safe=False,
     extras_require={
         "sqlalchemy": [
-            "sqlalchemy==1.4.28",
-            "sqlalchemy_utils==0.37.9",
+            "sqlalchemy==1.4.29",
+            "sqlalchemy_utils==0.38.1",
             "PyMySQL==1.0.2",
         ],
-        "redis": ["redis==4.0.2"],
+        "redis": ["redis==4.1.0"],
         "rabbitmq": ["pika==1.2.0"],
         "slack": ["slack_sdk==3.13.0"],
         "elastic": ["elasticsearch<8.0.0,>=7.13.1"],
