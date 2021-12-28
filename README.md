@@ -49,6 +49,8 @@ task_id = TaskId.v4()
 
 #### Domain Event
 
+Use `DomainEvent` to explicitly implement side effects of changes within your domain.
+
 ```python
 from petisco import DomainEvent, Uuid
 
@@ -58,7 +60,6 @@ class TaskId(Uuid):
 class TaskCreated(DomainEvent):
     task_id: TaskId
 
-
 class TaskRemoved(DomainEvent):
     task_id: TaskId
 
@@ -66,6 +67,40 @@ class TaskRetrieved(DomainEvent):
     task_id: TaskId
 ```
 
+`DomainEvent` inherits from `Message` that have available `dict` and `json` method to encode the info.
+
+```python
+my_domain_event = TaskCreated(task_id=TaskId.v4())
+
+print(my_domain_event.json())
+```
+
+The result should be something like the following:
+```json
+{"data": {"id": "3a4d78aa-6870-41cb-aa14-964831511d86", "type": "task.created", "type_message": "domain_event", "version": 1, "occurred_on": "2021-12-28 14:11:47.845618", "attributes": {"task_id": "a7f8b62a-c9e5-4f3c-a451-47cd1965958f"}, "meta": {}}}
+```
+
+If you use CQRS you can use also the `Command` class.
+
+```python
+from petisco import Command, Uuid
+
+class TaskId(Uuid):
+    pass
+
+class UpdateTask(Command):
+    task_id: TaskId
+
+my_command = UpdateTask(task_id=TaskId.v4())
+
+print(my_command.json())
+```
+
+The result:
+
+```json
+{"data": {"id": "1f35e414-0636-4983-987e-13d522749709", "type": "update.task", "type_message": "command", "version": 1, "occurred_on": "2021-12-28 14:19:09.149651", "attributes": {"task_id": "db0970be-f6b6-478b-976a-f83e85112b90"}, "meta": {}}}
+```
 
 #### Domain Error
 
