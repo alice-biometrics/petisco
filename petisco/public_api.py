@@ -8,8 +8,11 @@ from petisco.base.application.application import Application
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.controller.controller import Controller
 from petisco.base.application.controller.http_error import HttpError
+from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.dependency_injection.dependency import Dependency
-from petisco.base.application.dependency_injection.injector import Injector
+from petisco.base.application.dependency_injection.injector import (  # deprecated
+    Injector,
+)
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
@@ -104,7 +107,7 @@ base = [
     "NotAllowed",
     "InvalidUuid",
     "Dependency",
-    "Injector",
+    "Container",
     "Message",
     "DomainEvent",
     "Command",
@@ -135,6 +138,8 @@ base = [
     "ApplicationConfigurer",
     "Builder",
 ]
+
+deprecated = ["Injector"]
 modules: List[str] = []
 
-__all__ = base + modules
+__all__ = base + deprecated + modules

@@ -4,8 +4,8 @@ from typing import Callable, List, Optional
 from pydantic import BaseSettings, Field
 
 from petisco.base.application.application_configurer import ApplicationConfigurer
+from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.dependency_injection.dependency import Dependency
-from petisco.base.application.dependency_injection.injector import Injector
 from petisco.base.application.notifier.notifier import Notifier
 from petisco.base.application.notifier.notifier_message import NotifierMessage
 from petisco.base.domain.message.domain_event import DomainEvent
@@ -33,7 +33,7 @@ class Application(BaseSettings):
         for configurer in before_dependecies_configurers:
             configurer.execute(testing)
 
-        Injector.set_dependencies(self.get_dependencies())
+        Container.set_dependencies(self.get_dependencies())
 
         after_dependencies_configurers = [
             configurer
@@ -58,7 +58,7 @@ class Application(BaseSettings):
         return list(merged_dependecies.values())
 
     def clear(self):
-        Injector.clear()
+        Container.clear()
 
     def info(self):
         info = self.dict()
@@ -80,7 +80,7 @@ class Application(BaseSettings):
 
     def publish_domain_event(self, domain_event: DomainEvent):
         try:
-            domain_event_bus: DomainEventBus = Injector.get("domain_event_bus")
+            domain_event_bus: DomainEventBus = Container.get("domain_event_bus")
             domain_event_bus.publish(domain_event)
         except:  # noqa
             raise TypeError(
@@ -89,7 +89,7 @@ class Application(BaseSettings):
 
     def notify(self, message: NotifierMessage):
         try:
-            notifier: Notifier = Injector.get("notifier")
+            notifier: Notifier = Container.get("notifier")
             notifier.publish(message)
         except:  # noqa
             raise TypeError(

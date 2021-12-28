@@ -1,7 +1,7 @@
 from meiga import Result
 
 from petisco import __version__
-from petisco.base.application.dependency_injection.injector import Injector
+from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.notifier.notifier_exception_message import (
     NotifierExceptionMessage,
@@ -12,7 +12,7 @@ from petisco.base.domain.errors.unknown_error import UnknownError
 class NotifierMiddleware(Middleware):
     def __init__(self, wrapped_class_name, wrapped_class_input_arguments):
         super().__init__(wrapped_class_name, wrapped_class_input_arguments)
-        self.notifier = Injector.get("notifier")
+        self.notifier = Container.get("notifier")
 
     def before(self):
         pass

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from petisco import Injector
+from petisco import Container
 
 
 class Repo(ABC):
@@ -18,7 +18,7 @@ class MyRepo(Repo):
 class MyRepoWithBuilderAndDependency(Repo):
     @staticmethod
     def build():
-        return MyRepoWithBuilderAndDependency(Injector.get("repo"))
+        return MyRepoWithBuilderAndDependency(Container.get("repo"))
 
     def __init__(self, repository: Repo):
         self.repository = repository
@@ -32,9 +32,9 @@ class MyRepoWithBuilderAndSeveralDependency(Repo):
     def build():
         return MyRepoWithBuilderAndSeveralDependency(
             [
-                Injector.get("repo-with-dependency"),
-                Injector.get("repo"),
-                Injector.get("other-repo"),
+                Container.get("repo-with-dependency"),
+                Container.get("repo"),
+                Container.get("other-repo"),
             ]
         )
 
