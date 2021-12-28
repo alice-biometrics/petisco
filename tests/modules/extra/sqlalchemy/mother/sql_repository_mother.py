@@ -93,7 +93,7 @@ class MyUserSqlRepository(BaseSqlRepository):
                 .filter(self.ClientModel.client_id == user.client_id.value)
                 .first()
             )
-            self.fail_if_entity_not_found(
+            self.fail_if_aggregate_not_found(
                 client_model, user.client_id
             ).unwrap_or_return()
 
@@ -103,7 +103,7 @@ class MyUserSqlRepository(BaseSqlRepository):
                 .filter(self.UserModel.client_id == client_model.client_id)
                 .first()
             )
-            self.fail_if_entity_already_exist(
+            self.fail_if_aggregate_already_exist(
                 user_model, user.user_id
             ).unwrap_or_return()
             user_model = self.UserModel(**user.to_dict())
@@ -118,7 +118,7 @@ class MyUserSqlRepository(BaseSqlRepository):
                 .filter(self.UserModel.user_id == user_id.value)
                 .first()
             )
-            self.fail_if_entity_not_found(user_model, user_id).unwrap_or_return()
+            self.fail_if_aggregate_not_found(user_model, user_id).unwrap_or_return()
             user = User.from_dict(user_model.__dict__)
             return Success(user)
 
@@ -130,14 +130,14 @@ class MyUserSqlRepository(BaseSqlRepository):
                 .filter(self.ClientModel.client_id == client_id.value)
                 .first()
             )
-            self.fail_if_entity_not_found(client_model, client_id).unwrap_or_return()
+            self.fail_if_aggregate_not_found(client_model, client_id).unwrap_or_return()
 
             user_models = (
                 session.query(self.UserModel)
                 .filter(self.UserModel.client_id == client_model.id)
                 .all()
             )
-            self.fail_if_entities_not_found(user_models).unwrap_or_return()
+            self.fail_if_aggregates_not_found(user_models).unwrap_or_return()
             users = [User.from_dict(user_model.__dict__) for user_model in user_models]
             return Success(users)
 
@@ -155,7 +155,7 @@ class MyClientSqlRepository(BaseSqlRepository):
                 .filter(self.ClientModel.client_id == client.client_id.value)
                 .first()
             )
-            self.fail_if_entity_already_exist(
+            self.fail_if_aggregate_already_exist(
                 client_model, client.client_id
             ).unwrap_or_return()
             client_model = self.ClientModel(**client.to_dict())
@@ -170,7 +170,7 @@ class MyClientSqlRepository(BaseSqlRepository):
                 .filter(self.ClientModel.client_id == client_id.value)
                 .first()
             )
-            self.fail_if_entity_not_found(client_model, client_id).unwrap_or_return()
+            self.fail_if_aggregate_not_found(client_model, client_id).unwrap_or_return()
             client = Client.from_dict(client_model.__dict__)
             return Success(client)
 

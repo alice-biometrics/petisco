@@ -13,12 +13,14 @@ from petisco.base.domain.errors.defaults.not_found import (
 
 class BaseSqlRepository(Repository):
     @classmethod
-    def fail_if_entity_already_exist(
-        cls, model, entity_id: Uuid, result_error: Error = None
+    def fail_if_aggregate_already_exist(
+        cls, model, aggregate_id: Uuid, result_error: Error = None
     ) -> BoolResult:
         if model:
             error = (
-                AggregateAlreadyExistError(cls.__name__, model.__tablename__, entity_id)
+                AggregateAlreadyExistError(
+                    cls.__name__, model.__tablename__, aggregate_id
+                )
                 if not result_error
                 else result_error
             )
@@ -26,12 +28,12 @@ class BaseSqlRepository(Repository):
         return isSuccess
 
     @classmethod
-    def fail_if_entity_not_found(
-        cls, model, entity_id: Uuid, result_error: Error = None
+    def fail_if_aggregate_not_found(
+        cls, model, aggregate_id: Uuid, result_error: Error = None
     ) -> BoolResult:
         if not model:
             error = (
-                AggregateNotFoundError(cls.__name__, entity_id)
+                AggregateNotFoundError(cls.__name__, aggregate_id)
                 if not result_error
                 else result_error
             )
@@ -39,7 +41,7 @@ class BaseSqlRepository(Repository):
         return isSuccess
 
     @classmethod
-    def fail_if_entities_not_found(
+    def fail_if_aggregates_not_found(
         cls, model, result_error: Error = None
     ) -> BoolResult:
         if not model:

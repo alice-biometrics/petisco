@@ -18,13 +18,13 @@ class UserNotFound(DomainError):
 
 
 class AggregateNotFoundError(DomainError):
-    def __init__(self, repository_name: str = None, entity_id: Uuid = None):
-        entity_id_str = f" ({entity_id.value})" if entity_id else ""
+    def __init__(self, repository_name: str = None, aggregate_id: Uuid = None):
+        aggregate_id_str = f" ({aggregate_id.value})" if aggregate_id else ""
         repository_str = f" (repository: {repository_name})" if repository_name else ""
-        message = f"Entity{entity_id_str} not found{repository_str}"
+        message = f"Aggregate{aggregate_id_str} not found{repository_str}"
 
         super().__init__(
-            uuid_value=entity_id.value, additional_info={"message": message}
+            uuid_value=aggregate_id.value, additional_info={"message": message}
         )
 
     def get_specify_detail(self) -> str:
@@ -34,7 +34,7 @@ class AggregateNotFoundError(DomainError):
 class AggregatesNotFoundError(DomainError):
     def __init__(self, repository_name: str = None):
         repository_str = f" (repository: {repository_name})" if repository_name else ""
-        message = f"Entities not found{repository_str}]"
+        message = f"Aggregates not found{repository_str}]"
         super().__init__(additional_info={"message": message})
 
     def get_specify_detail(self) -> str:
