@@ -44,7 +44,7 @@ def test_domain_error_should_success_constructor_inherit_object():
 
     domain_error = MyDomainError()
 
-    assert domain_error.detail() == "DomainError"
+    assert domain_error.detail() == "MyDomainError"
 
 
 @pytest.mark.unit

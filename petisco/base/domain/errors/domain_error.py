@@ -1,10 +1,9 @@
-from abc import ABC, abstractmethod
 from typing import Dict
 
 from meiga import Error
 
 
-class DomainError(ABC, Error):
+class DomainError(Error):
     def __init__(self, uuid_value: str = None, additional_info: Dict[str, str] = None):
         self.uuid_value = uuid_value
         self.additional_info = additional_info
@@ -19,9 +18,9 @@ class DomainError(ABC, Error):
         if self.additional_info:
             self._additional_detail += f" [{self.additional_info}]"
 
-    @abstractmethod
-    def get_specify_detail(self):
-        return "DomainError"
+    @classmethod
+    def get_specify_detail(cls):
+        return cls.__name__
 
     def detail(self) -> str:
         return f"{self.get_specify_detail()}{self._additional_detail}"
