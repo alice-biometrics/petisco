@@ -1,6 +1,6 @@
 # petisco 🍪  [![version](https://img.shields.io/github/release/alice-biometrics/petisco/all.svg)](https://github.com/alice-biometrics/petisco/releases) [![ci](https://github.com/alice-biometrics/petisco/workflows/ci/badge.svg)](https://github.com/alice-biometrics/petisco/actions) [![pypi](https://img.shields.io/pypi/dm/petisco)](https://pypi.org/project/petisco/)
 
-<img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png" width=auto>
+<img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png?raw=true" width=auto>
 
 Petisco is a framework for helping Python developers to build clean Applications in Python.
 
@@ -8,7 +8,7 @@ Petisco is a framework for helping Python developers to build clean Applications
 Find deprecated version (v0) in `legacy` branch.
 
 
-## Installation :computer:
+## Installation 💻
 
 ```console
 pip install petisco
@@ -20,7 +20,7 @@ Installation with Extras
 pip install petisco[fastapi,sqlalchemy,elastic,rabbitmq,slack,redis]
 ```
 
-## Getting Started :chart_with_upwards_trend:	
+## Getting Started 📈
     
 ### Model your Domain
 
@@ -250,6 +250,6 @@ lume -install -all
 ```
 
 
-## Contact :mailbox_with_mail:
+## Contact 📬
 
 support@alicebiometrics.com

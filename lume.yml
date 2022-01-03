@@ -5,6 +5,9 @@ install:
     - pip install -U -r requirements/dev-requirements.txt -r requirements/requirements.txt
     - lume -build
 
+envs:
+  PACKAGE_NAME: petisco
+
 steps:
   clean:
     run:
@@ -15,12 +18,12 @@ steps:
   lint:
     run:
       - black --check .
-      - flake8 petisco
+      - flake8 $PACKAGE_NAME
       - isort .
   check-requirements:
     run: safety check -r requirements/requirements.txt
   static-analysis:
-    run: mypy --namespace-packages --install-types petisco
+    run: mypy $PACKAGE_NAME
   coverage:
     run: pytest -c pytest.coverage.ini
   test:
@@ -40,6 +43,11 @@ steps:
       - docker stop petisco-elasticsearch
   test-command-line:
     run: petisco --version
+  check-no-binary-installation:
+    run: |
+      pip install wheel
+      python setup.py sdist
+      pip wheel --no-binary $PACKAGE_NAME -w /tmp/ext dist/$PACKAGE_NAME-*.tar.gz
 
 
 
