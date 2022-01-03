@@ -1,5 +1,5 @@
-meiga==1.2.12
-pydantic==1.8.2
+meiga==1.2.13
+pydantic==1.9.0
 requests==2.26.0
 pyjwt[crypto]==2.3.0
 validators==0.18.2
