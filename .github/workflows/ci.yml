@@ -22,7 +22,7 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.8]
+        python-version: [3.8, 3.9]
     runs-on: ${{matrix.os}}
 
     steps:
@@ -47,7 +47,4 @@ jobs:
           SLACK_TESTS_CHANNEL: 'testing'
         run: lume -build -test-with-rabbitmq-mysql-and-elastic -test-command-line
       - name: Check Installation (--no-binary)
-        run: |
-          pip install wheel
-          python setup.py sdist
-          pip wheel --no-binary lume -w /tmp/ext dist/petisco-*.tar.gz
+        run: lume -check-no-binary-installation
