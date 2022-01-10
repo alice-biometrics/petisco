@@ -28,7 +28,7 @@ notifier = SlackNotifier(
     converter=BlocksSlackNotifierMessageConverter(slack_accessory=gke_accessory),
     exception_converter=ExceptionBlocksSlackNotifierMessageConverter(
         slack_accessory=gke_accessory,
-        repository_url="https://github.com/alice-biometrics/petisco/blob/master",
+        repository_url="https://github.com/alice-biometrics/petisco/blob/main",
         repository_name_button="Github :github:",
     ),
 )

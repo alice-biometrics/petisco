@@ -1,0 +1,34 @@
+name: coverage
+
+on:
+  push:
+    paths-ignore:
+      - '*.md'
+      - 'VERSION'
+    branches:
+      - main
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - uses: actions/cache@v2
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+    - name: Install dependencies
+      run: |
+        pip install lume
+        lume -install
+    - name: Coverage
+      run: lume -coverage
+    - uses: codecov/codecov-action@v2
+      with:
+        files: output/coverage/cobertura_coverage.xml
+        name: petisco
+        fail_ci_if_error: true

@@ -19,7 +19,7 @@ steps:
     run:
       - black --check .
       - flake8 $PACKAGE_NAME
-      - isort .
+      - isort --check .
   check-requirements:
     run: safety check -r requirements/requirements.txt
   static-analysis:
