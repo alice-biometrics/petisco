@@ -4,7 +4,9 @@ on:
   push:
     paths-ignore:
       - '*.md'
-      - 'VERSION'
+      - 'petisco/VERSION'
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/ci.macos.yml'
     branches:
       - main
 
