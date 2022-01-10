@@ -7,20 +7,12 @@ on:
       - 'petisco/VERSION'
     branches: 
       - v1
-      - master
-  push:
-    paths-ignore:
-      - '*.md'
-      - 'petisco/VERSION'
-    branches:
-      - v1
-      - master
+      - main
 
 jobs:
   ci-macos:
 
     strategy:
-      max-parallel: 4
       matrix:
         os: [macOS-latest]
         python-version: [3.8]
