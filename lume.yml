@@ -1,12 +1,17 @@
 name: petisco
 
+envs:
+  PACKAGE_NAME: petisco
+
 install:
   run:
     - pip install -U -r requirements/dev-requirements.txt -r requirements/requirements.txt
     - lume -build
 
-envs:
-  PACKAGE_NAME: petisco
+uninstall:
+  run:
+    - pip uninstall petisco -y
+    - pip freeze | xargs pip uninstall -y
 
 steps:
   clean:
