@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import List
+from typing import Generic, List, TypeVar
 
 from meiga import (
     BoolResult,
@@ -11,7 +11,8 @@ from meiga import (
     isSuccess,
 )
 from meiga.decorators import meiga
-from sqlmodel import Session, SQLModel, create_engine, select
+from sqlalchemy import create_engine
+from sqlmodel import Session, SQLModel, select
 
 from petisco import Uuid
 from petisco.base.application.patterns.crud_repository import (
@@ -26,78 +27,100 @@ from petisco.base.domain.errors.defaults.not_found import AggregateNotFoundError
 engine = create_engine("sqlite:///database.db", echo=True)
 SQLModel.metadata.create_all(engine)
 
+SQLModelType = TypeVar("SQLModelType", bound=SQLModel)
 
-class SQLModelCrudRepository(CrudRepository[AggregateRootType]):
+
+class SQLModelCrudRepository(
+    Generic[SQLModelType, AggregateRootType], CrudRepository[AggregateRootType]
+):
     @abstractmethod
-    def get_aggregate_root(self, sql_model: SQLModel) -> AggregateRootType:
+    def get_aggregate_root(
+        self, sql_model: SQLModel
+    ) -> Result[AggregateRootType, Error]:
         return NotImplementedMethodError
 
     @abstractmethod
-    def get_sql_model(self, aggregate_root: AggregateRootType) -> SQLModel:
+    def get_sql_model(
+        self, aggregate_root: AggregateRootType
+    ) -> Result[SQLModel, Error]:
+        return NotImplementedMethodError
+
+    @abstractmethod
+    def get_sql_model_type(self) -> SQLModelType:
         return NotImplementedMethodError
 
     @meiga
     def save(self, aggregate_root: AggregateRootType) -> BoolResult:
+
         with Session(engine) as session:
-            Model = self.transformer.InfrastructureModel
-            statement = select(Model).where(
-                Model.aggregate_id == aggregate_root.aggregate_id
+            model = self.get_sql_model_type()
+            statement = select(model).where(
+                model.aggregate_id == aggregate_root.aggregate_id.value
             )
-            infrastructure_model = session.exec(statement).first()
-            if infrastructure_model:
+            sql_model = session.exec(statement).first()
+            if sql_model:
                 return Failure(AggregateAlreadyExistError(aggregate_root.aggregate_id))
 
-            infrastructure_model = self.transformer.get_infrastructure_model(
-                aggregate_root
-            ).unwrap_or_return()
+            sql_model = self.get_sql_model(aggregate_root).unwrap_or_return()
 
-            session.add(infrastructure_model)
+            session.add(sql_model)
             session.commit()
 
-        # if aggregate_root.aggregate_id in self._data:
-        #     return Failure(
-        #         AggregateAlreadyExistError(aggregate_root.aggregate_id)
-        #     )  # TODO: should we use AlreadyExist
-        # infrastructure_model = self.transformer.get_infrastructure_model(
-        #     aggregate_root
-        # ).unwrap_or_return()
-        # self._data[aggregate_root.aggregate_id] = infrastructure_model
-        return isSuccess
+            return isSuccess
 
     @meiga
     def retrieve(self, aggregate_id: Uuid) -> Result[AggregateRootType, Error]:
-        infrastructure_model = self._data.get(aggregate_id)
-        if infrastructure_model is None:
-            return Failure(
-                AggregateNotFoundError(aggregate_id)
-            )  # TODO: should we use NotFound
-        aggregate_root = self.transformer.get_domain_model(
-            infrastructure_model
-        ).unwrap_or_return()
-        return Success(aggregate_root)
+        with Session(engine) as session:
+            model = self.get_sql_model_type()
+            statement = select(model).where(model.aggregate_id == aggregate_id.value)
+            sql_model = session.exec(statement).first()
+            if sql_model is None:
+                return Failure(
+                    AggregateNotFoundError(aggregate_id)
+                )  # TODO: should we use NotFound
+            aggregate_root = self.get_aggregate_root(sql_model).unwrap_or_return()
+            return Success(aggregate_root)
 
     def update(self, aggregate_root: AggregateRootType) -> BoolResult:
-        if aggregate_root.aggregate_id not in self._data:
-            return Failure(
-                AggregateNotFoundError(aggregate_root.aggregate_id)
-            )  # TODO: should we use NotFound
-        infrastructure_model = self.transformer.get_infrastructure_model(
-            aggregate_root
-        ).unwrap_or_return()
-        self._data[aggregate_root.aggregate_id] = infrastructure_model
-        return isSuccess
+        with Session(engine) as session:
+            model = self.get_sql_model_type()
+            statement = select(model).where(
+                model.aggregate_id == aggregate_root.aggregate_id.value
+            )
+            sql_model = session.exec(statement).first()
+            if sql_model is None:
+                return Failure(
+                    AggregateNotFoundError(aggregate_root.aggregate_id)
+                )  # TODO: should we use NotFound
+
+            sql_model = self.get_sql_model(aggregate_root)
+            session.add(sql_model)
+            session.commit()
+            return isSuccess
 
     def remove(self, aggregate_id: Uuid) -> BoolResult:
-        if aggregate_id not in self._data:
-            return Failure(
-                AggregateNotFoundError(aggregate_id)
-            )  # TODO: should we use NotFound
-        self._data.pop(aggregate_id)
-        return isSuccess
+        with Session(engine) as session:
+            model = self.get_sql_model_type()
+            statement = select(model).where(model.aggregate_id == aggregate_id.value)
+            sql_model = session.exec(statement).first()
+            if sql_model is None:
+                return Failure(
+                    AggregateNotFoundError(aggregate_id)
+                )  # TODO: should we use NotFound
+
+            session.delete(sql_model)
+            session.commit()
+
+            return isSuccess
 
     def retrieve_all(self) -> Result[List[AggregateRootType], Error]:
-        all = [
-            self.transformer.get_domain_model(infrastructure_model).unwrap_or_return()
-            for infrastructure_model in self._data.values()
-        ]
-        return Success(all)
+        with Session(engine) as session:
+            model = self.get_sql_model_type()
+            statement = select(model)
+            sql_models = session.exec(statement)
+
+            all = [
+                self.get_aggregate_root(sql_model).unwrap_or_return()
+                for sql_model in sql_models
+            ]
+            return Success(all)
