@@ -9,7 +9,7 @@ def executable_func(value: str) -> str:
 
 @pytest.mark.integration
 class TestPoolExecutor:
-    def __init__(self):
+    def setup(self):
         self.executables = [
             Executable(executable_func, ("executable 1",)),
             Executable(executable_func, ("executable 2",)),
