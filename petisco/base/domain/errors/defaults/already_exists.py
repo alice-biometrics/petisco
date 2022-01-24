@@ -1,3 +1,5 @@
+from typing import Optional
+
 from petisco.base.domain.errors.domain_error import DomainError
 from petisco.base.domain.model.uuid import Uuid
 
@@ -20,9 +22,9 @@ class UserAlreadyExists(DomainError):
 class AggregateAlreadyExistError(DomainError):
     def __init__(
         self,
-        repository_name: str = None,
-        table_name: str = None,
-        aggregate_id: Uuid = None,
+        aggregate_id: Uuid,
+        repository_name: Optional[str] = None,
+        table_name: Optional[str] = None,
     ):
         aggregate_id_str = f" ({aggregate_id.value})" if aggregate_id else ""
         repository_str = f" (repository: {repository_name})" if repository_name else ""

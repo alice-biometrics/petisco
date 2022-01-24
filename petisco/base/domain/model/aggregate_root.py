@@ -1,16 +1,26 @@
 from abc import ABC
 from typing import List
 
-from pydantic import BaseModel, PrivateAttr
+from pydantic import BaseModel, NonNegativeInt, PrivateAttr, validator
 
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.model.uuid import Uuid
 
+DEFAULT_VERSION = 1
+
 
 class AggregateRoot(ABC, BaseModel):
-    aggregate_id: Uuid
-    aggregate_version: int = 1
-    _domain_events = PrivateAttr([])
+    aggregate_id: Uuid = None
+    aggregate_version: NonNegativeInt = None
+    _domain_events = PrivateAttr(default=[])
+
+    @validator("aggregate_id", pre=True, always=True)
+    def set_aggregate_id(cls, v):
+        return v or Uuid.v4()
+
+    @validator("aggregate_version", pre=True, always=True)
+    def set_aggregate_version(cls, v):
+        return v or DEFAULT_VERSION
 
     def record(self, domain_event: DomainEvent):
         self._domain_events.append(domain_event)
