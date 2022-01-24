@@ -75,9 +75,7 @@ class SQLModelCrudRepository(
             statement = select(model).where(model.aggregate_id == aggregate_id.value)
             sql_model = session.exec(statement).first()
             if sql_model is None:
-                return Failure(
-                    AggregateNotFoundError(aggregate_id)
-                )  # TODO: should we use NotFound
+                return Failure(AggregateNotFoundError(aggregate_id))
             aggregate_root = self.get_aggregate_root(sql_model).unwrap_or_return()
             return Success(aggregate_root)
 
@@ -89,9 +87,7 @@ class SQLModelCrudRepository(
             )
             sql_model = session.exec(statement).first()
             if sql_model is None:
-                return Failure(
-                    AggregateNotFoundError(aggregate_root.aggregate_id)
-                )  # TODO: should we use NotFound
+                return Failure(AggregateNotFoundError(aggregate_root.aggregate_id))
 
             sql_model = self.get_sql_model(aggregate_root)
             session.add(sql_model)
@@ -104,9 +100,7 @@ class SQLModelCrudRepository(
             statement = select(model).where(model.aggregate_id == aggregate_id.value)
             sql_model = session.exec(statement).first()
             if sql_model is None:
-                return Failure(
-                    AggregateNotFoundError(aggregate_id)
-                )  # TODO: should we use NotFound
+                return Failure(AggregateNotFoundError(aggregate_id))
 
             session.delete(sql_model)
             session.commit()

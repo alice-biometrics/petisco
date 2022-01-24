@@ -25,6 +25,10 @@ from petisco.base.application.notifier.notifier_exception_message import (
 )
 from petisco.base.application.notifier.notifier_message import NotifierMessage
 from petisco.base.application.patterns.app_service import AppService
+from petisco.base.application.patterns.crud_repository import CrudRepository
+from petisco.base.application.patterns.inmemory_crud_repository import (
+    InmemoryCrudRepository,
+)
 from petisco.base.application.patterns.repository import Repository
 from petisco.base.application.use_case.use_case import UseCase
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
@@ -32,6 +36,7 @@ from petisco.base.application.use_case.use_case_uncontrolled_error import (
 )
 from petisco.base.domain.errors.default_http_error_map import DEFAULT_HTTP_ERROR_MAP
 from petisco.base.domain.errors.defaults.already_exists import (
+    AggregateAlreadyExistError,
     AlreadyExists,
     ClientAlreadyExists,
     UserAlreadyExists,
@@ -40,6 +45,7 @@ from petisco.base.domain.errors.defaults.invalid_uuid import InvalidUuid
 from petisco.base.domain.errors.defaults.invalid_value_object import InvalidValueObject
 from petisco.base.domain.errors.defaults.not_allowed import NotAllowed
 from petisco.base.domain.errors.defaults.not_found import (
+    AggregateNotFoundError,
     ClientNotFound,
     NotFound,
     UserNotFound,
@@ -98,6 +104,8 @@ base = [
     "assert_http",
     "DomainError",
     "UnknownError",
+    "AggregateAlreadyExistError",
+    "AggregateNotFoundError",
     "NotFound",
     "AlreadyExists",
     "ClientNotFound",
@@ -133,6 +141,8 @@ base = [
     "PersistenceModels",
     "InvalidValueObject",
     "Repository",
+    "CrudRepository",
+    "InmemoryCrudRepository",
     "AppService",
     "Application",
     "ApplicationConfigurer",
