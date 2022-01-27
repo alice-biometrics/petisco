@@ -179,6 +179,45 @@ class Task(AggregateRoot):
 
 ⚠️ TODO: How we can take advantage of aggregate root (pull_domain_events, record)
 
+#### Controller
+
+Use `Controller` class to define and configure inputs and outputs or your entry point.
+
+You can use a simpler and default configuration
+```python
+from petisco Controller
+import random
+
+class MyController(Controller):
+    def execute(self) -> bool:
+        return random.choice([True, False])
+```
+
+Or define some configurations using the inner class `Config`
+
+
+```python
+from petisco DomainError, Controller, PrintMiddleware
+import random
+
+class MyError(DomainError): ...
+
+class MyController(Controller):
+    class Config:
+        middlewares = [PrintMiddleware]
+        success_handler = lambda result: {"message": f"MyController set {result}"} 
+        error_map = {MyError: {"message": "something wrong happens"}}
+
+    def execute(self) -> bool:
+        return random.choice([True, False])
+```
+
+If you want to set a default middleware for every Controller, you can use the envvar `PETISCO_DEFAULT_MIDDLEWARES`:
+  * `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware`: to configure PrintMiddleware
+  * `PETISCO_DEFAULT_MIDDLEWARES=NotifierMiddleware`: to configure NotifierMiddleware
+  * `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware,NotifierMiddleware`: to configure several middlewares
+  
+
 #### Messages 
 ⚠️ TODO: How we use the Message Manager!
 
