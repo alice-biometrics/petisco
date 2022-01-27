@@ -10,10 +10,6 @@ app = FastAPI(title="test-app")
 
 
 class MyController(FastAPIController):
-
-    # class Config:
-    #    middlewares = [NotifierMiddleware]
-
     def execute(self, num: int) -> Result[int, Error]:
         result = num / 0
         return Success(result)

@@ -82,6 +82,57 @@ def test_controller_should_return_success_result_with_middlewares(
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
+    "configured_middlewares",
+    ["", "PrintMiddleware", "PrintMiddleware,PrintMiddleware"],
+)
+def test_controller_should_return_success_result_with_middlewares_defined_by_envar(
+    configured_middlewares, monkeypatch
+):
+    monkeypatch.setenv("PETISCO_DEFAULT_MIDDLEWARES", configured_middlewares)
+
+    class MyController(Controller):
+        def execute(self) -> BoolResult:
+            return isSuccess
+
+    result = MyController().execute()
+    assert_success(result)
+
+    monkeypatch.undo()
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "configured_middlewares",
+    [
+        "NotAvailable",
+        "NotAvailable,PrintMiddleware",
+        "NotAvailable,NotAvailable",
+        ",",
+        ",,",
+        "None",
+    ],
+)
+def test_controller_should_raise_an_error_with_unavailable_middlewares_defined_by_envar(
+    configured_middlewares, monkeypatch
+):
+    monkeypatch.setenv("PETISCO_DEFAULT_MIDDLEWARES", configured_middlewares)
+
+    class MyController(Controller):
+        def execute(self) -> BoolResult:
+            return isSuccess
+
+    with pytest.raises(TypeError) as excinfo:
+        MyController().execute()
+
+    assert " in PETISCO_DEFAULT_MIDDLEWARES is not valid. Please, use" in str(
+        excinfo.value
+    )
+
+    monkeypatch.undo()
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
     "simulate_result, expected_result",
     [(isSuccess, {"message", "ok"}), (Failure(MyError()), {"message", "not ok"})],
 )
