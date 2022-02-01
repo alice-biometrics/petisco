@@ -19,7 +19,7 @@ class MessageBus(ABC):
 
     def with_meta(self, meta: Dict):
         if not isinstance(meta, Dict):
-            raise TypeError("MessageBus.update_meta() expect a dict")
+            raise TypeError("MessageBus.with_meta() expect a dict")
         event_bus = copy.copy(self)
         event_bus._set_additional_meta(meta)
         return event_bus
