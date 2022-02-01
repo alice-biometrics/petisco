@@ -169,11 +169,11 @@ def test_fastapi_controller_should_success_with_all_configurations_when_success_
     [
         (isFailure, HTTPException(500, detail="Unknown Error")),
         (Failure(NotFound()), HTTPException(404, detail="Task not Found")),
-        (Failure(AlreadyExists()), HTTPException(409, detail="Already Exists")),
+        (Failure(AlreadyExists()), HTTPException(409, detail="AlreadyExists")),
         (
             Failure(AlreadyExists(uuid_value="76f5994d-b16f-45b0-b3e4-e531f784f801")),
             HTTPException(
-                409, detail="Already Exists (76f5994d-b16f-45b0-b3e4-e531f784f801)"
+                409, detail="AlreadyExists (76f5994d-b16f-45b0-b3e4-e531f784f801)"
             ),
         ),
         (
@@ -185,7 +185,7 @@ def test_fastapi_controller_should_success_with_all_configurations_when_success_
             ),
             HTTPException(
                 409,
-                detail="Already Exists (76f5994d-b16f-45b0-b3e4-e531f784f801) [{'patterns': 'Products', 'table': 'UserProduct'}]",
+                detail="AlreadyExists (76f5994d-b16f-45b0-b3e4-e531f784f801) [{'patterns': 'Products', 'table': 'UserProduct'}]",
             ),
         ),
         (
@@ -196,7 +196,7 @@ def test_fastapi_controller_should_success_with_all_configurations_when_success_
             ),
             HTTPException(
                 409,
-                detail="Already Exists [{'patterns': 'Products', 'table': 'UserProduct'}]",
+                detail="AlreadyExists [{'patterns': 'Products', 'table': 'UserProduct'}]",
             ),
         ),
     ],

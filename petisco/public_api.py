@@ -32,6 +32,7 @@ from petisco.base.application.use_case.use_case_uncontrolled_error import (
 )
 from petisco.base.domain.errors.default_http_error_map import DEFAULT_HTTP_ERROR_MAP
 from petisco.base.domain.errors.defaults.already_exists import (
+    AggregateAlreadyExistError,
     AlreadyExists,
     ClientAlreadyExists,
     UserAlreadyExists,
@@ -40,6 +41,8 @@ from petisco.base.domain.errors.defaults.invalid_uuid import InvalidUuid
 from petisco.base.domain.errors.defaults.invalid_value_object import InvalidValueObject
 from petisco.base.domain.errors.defaults.not_allowed import NotAllowed
 from petisco.base.domain.errors.defaults.not_found import (
+    AggregateNotFoundError,
+    AggregatesNotFoundError,
     ClientNotFound,
     NotFound,
     UserNotFound,
@@ -94,18 +97,7 @@ base = [
     "PrintMiddleware",
     "UseCase",
     "UseCaseUncontrolledError",
-    "DEFAULT_HTTP_ERROR_MAP",
     "assert_http",
-    "DomainError",
-    "UnknownError",
-    "NotFound",
-    "AlreadyExists",
-    "ClientNotFound",
-    "ClientAlreadyExists",
-    "UserNotFound",
-    "UserAlreadyExists",
-    "NotAllowed",
-    "InvalidUuid",
     "Dependency",
     "Container",
     "Message",
@@ -124,14 +116,12 @@ base = [
     "AggregateRoot",
     "ValueObject",
     "Uuid",
-    "HttpError",
     "Interface",
     "DomainEventSubscriber",
     "CommandSubscriber",
     "AllMessageSubscriber",
     "Persistence",
     "PersistenceModels",
-    "InvalidValueObject",
     "Repository",
     "AppService",
     "Application",
@@ -139,7 +129,27 @@ base = [
     "Builder",
 ]
 
+errors = [
+    "DEFAULT_HTTP_ERROR_MAP",
+    "DomainError",
+    "NotFound",
+    "AlreadyExists",
+    "AggregateNotFoundError",
+    "AggregatesNotFoundError",
+    "AggregateAlreadyExistError",
+    "UnknownError",
+    "ClientNotFound",
+    "ClientAlreadyExists",
+    "UserNotFound",
+    "UserAlreadyExists",
+    "NotAllowed",
+    "InvalidUuid",
+    "InvalidValueObject",
+    "HttpError",
+]
+
+
 deprecated = ["Injector"]
 modules: List[str] = []
 
-__all__ = base + deprecated + modules
+__all__ = base + errors + deprecated + modules
