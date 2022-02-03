@@ -8,6 +8,7 @@ from petisco.base.misc.singleton import Singleton
 class Container(metaclass=Singleton):
     def __init__(self):
         self.dependencies = defaultdict()
+        self.instances = defaultdict()
 
     @staticmethod
     def get(name: str):
@@ -17,7 +18,12 @@ class Container(metaclass=Singleton):
             raise IndexError(
                 f"Invalid dependency. {name} is not found within available dependencies [{container.get_available_dependencies()}]"
             )
+
+        if name in container.instances:
+            return container.instances.get(name)
+
         instance = dependency.get_instance()
+        container.instances[name] = instance
         return instance
 
     @staticmethod
