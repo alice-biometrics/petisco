@@ -11,6 +11,19 @@ from tests.modules.base.application.dependency_injection.unit.dummy_repositories
 
 
 @pytest.mark.unit
+def test_container_should_reuse_object_dependencies_already_instantiated():
+    dependencies = [Dependency(name="repo", default_builder=Builder(MyRepo))]
+
+    Container.set_dependencies(dependencies)
+
+    assert isinstance(Container().get("repo"), MyRepo)
+
+    assert Container().get("repo") == Container().get("repo")
+
+    Container.clear()
+
+
+@pytest.mark.unit
 def test_container_should_success_when_access_one_dynamic_attr_representing_a_dependency():
     dependencies = [Dependency(name="repo", default_builder=Builder(MyRepo))]
 
