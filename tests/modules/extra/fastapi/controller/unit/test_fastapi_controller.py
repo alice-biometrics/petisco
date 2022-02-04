@@ -54,7 +54,6 @@ def test_fastapi_controller_should_logging_error_with_traceback_and_inject_in_ap
     apm_internal_error_message = apm_set_custom_context_mock.call_args[0][0][
         "internal_error_message"
     ]
-
     assert "test_error" in caplog.text and "test_error" in apm_internal_error_message
     assert __name__ in caplog.text and __name__ in apm_internal_error_message
 
@@ -101,7 +100,6 @@ def test_fastapi_controller_should_raise_fastapi_http_exception_mapped_and_injec
     assert apm_set_custom_context_arg["http_response"] == str(http_error)
 
 
-@pytest.mark.unit
 @pytest.mark.unit
 @patch.object(elasticapm, "set_custom_context")
 def test_fastapi_controller_should_logging_error_message_and_inject_it_in_apm_with_non_mapped_error(

@@ -5,15 +5,21 @@ from fastapi import FastAPI, Header
 from fastapi.testclient import TestClient
 from meiga import BoolResult, Failure, isFailure, isSuccess
 
-from petisco import NotFound, assert_http
+from petisco import DomainError, NotFound, assert_http
 from petisco.extra.fastapi import FastAPIController
 
 app = FastAPI(title="test-app")
+
+
+class OtherError(DomainError):
+    ...
+
 
 result_from_expected_behavior = {
     "success": isSuccess,
     "failure_generic": isFailure,
     "failure_not_found": Failure(NotFound()),
+    "failure_other_error": Failure(OtherError()),
 }
 
 
@@ -30,7 +36,12 @@ def entry_point(x_behavior: Optional[str] = Header("success")):
 @pytest.mark.unit
 @pytest.mark.parametrize(
     "behavior,expected_status_code",
-    [("success", 200), ("failure_generic", 500), ("failure_not_found", 404)],
+    [
+        ("success", 200),
+        ("failure_generic", 500),
+        ("failure_not_found", 404),
+        ("failure_other_error", 500),
+    ],
 )
 def test_fastapi_app_with_controller_should_return_expected_values(
     behavior, expected_status_code

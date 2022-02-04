@@ -14,19 +14,16 @@ LONG_TEXT = "long_text" * 1000
 )
 @pytest.mark.integration
 class TestSlackNotifier:
-    @staticmethod
-    def get_slack_notifier():
+    def setup(self):
         slack_token = os.getenv("SLACK_TOKEN")
         slack_tests_channel = os.getenv("SLACK_TESTS_CHANNEL")
-        return SlackNotifier(token=slack_token, channel=slack_tests_channel)
+        self.notifier = SlackNotifier(token=slack_token, channel=slack_tests_channel)
 
-    def test_publish_should_send_notification(self):
-        notifier = self.get_slack_notifier()
+    def should_success_when_publish_notification(self):
         notifier_message = NotifierMessage(title="Test title", message="test message")
-        notifier.publish(notifier_message=notifier_message)
+        self.notifier.publish(notifier_message=notifier_message)
 
-    def test_publish_exception_should_send_notification(self):
-        notifier = self.get_slack_notifier()
+    def should_success_when_publish_exception_notification(self):
         try:
             raise Exception(LONG_TEXT)
         except Exception as exception:
@@ -37,6 +34,6 @@ class TestSlackNotifier:
                 unknown_error=error, title="Test title error"
             )
             notifier_exception_message.traceback += LONG_TEXT
-            notifier.publish_exception(
+            self.notifier.publish_exception(
                 notifier_exception_message=notifier_exception_message
             )
