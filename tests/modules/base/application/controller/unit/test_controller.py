@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 from meiga import BoolResult, Error, Failure, Success, isFailure, isSuccess
 from meiga.assertions import assert_failure, assert_success
@@ -101,6 +103,51 @@ def test_controller_should_return_success_result_with_middlewares_defined_by_env
 
 
 @pytest.mark.unit
+@pytest.mark.parametrize("controller_result", [isSuccess, isFailure])
+def test_controller_should_execute_middleware_defined_in_controller(controller_result):
+    class MyController(Controller):
+        class Config:
+            middlewares = [PrintMiddleware]
+
+        def execute(self) -> BoolResult:
+            return controller_result
+
+    with patch.object(
+        PrintMiddleware, "before", return_value=isSuccess
+    ) as mock_middleware_before:
+        with patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            result = MyController().execute()
+
+    assert result == controller_result
+    mock_middleware_before.assert_called()
+    mock_middleware_after.assert_called()
+
+
+@pytest.mark.unit
+def test_controller_should_execute_middleware_when_controller_raise_an_unexpected_exception():
+    class MyController(Controller):
+        class Config:
+            middlewares = [PrintMiddleware]
+
+        def execute(self) -> BoolResult:
+            raise Exception()
+
+    with patch.object(
+        PrintMiddleware, "before", return_value=isSuccess
+    ) as mock_middleware_before:
+        with patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            result = MyController().execute()
+
+    assert result.is_failure
+    mock_middleware_before.assert_called()
+    mock_middleware_after.assert_called()
+
+
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "configured_middlewares",
     [
@@ -127,6 +174,29 @@ def test_controller_should_raise_an_error_with_unavailable_middlewares_defined_b
     assert " in PETISCO_DEFAULT_MIDDLEWARES is not valid. Please, use" in str(
         excinfo.value
     )
+
+    monkeypatch.undo()
+
+
+@pytest.mark.unit
+def test_controller_should_execute_middleware_defined_by_envar(monkeypatch):
+    monkeypatch.setenv("PETISCO_DEFAULT_MIDDLEWARES", "PrintMiddleware")
+
+    class MyController(Controller):
+        def execute(self) -> BoolResult:
+            return isSuccess
+
+    with patch.object(
+        PrintMiddleware, "before", return_value=isSuccess
+    ) as mock_middleware_before:
+        with patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            result = MyController().execute()
+
+    assert result.is_success
+    mock_middleware_before.assert_called()
+    mock_middleware_after.assert_called()
 
     monkeypatch.undo()
 
