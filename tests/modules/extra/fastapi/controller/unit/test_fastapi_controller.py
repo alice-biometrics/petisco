@@ -154,6 +154,28 @@ def test_fastapi_controller_should_return_success_result_with_middlewares(
 
 
 @pytest.mark.unit
+def test_fastapi_controller_should_execute_middleware_when_controller_raise_an_unexpected_exception():
+    class MyController(FastAPIController):
+        class Config:
+            middlewares = [PrintMiddleware]
+
+        def execute(self) -> BoolResult:
+            raise Exception()
+
+    with patch.object(
+        PrintMiddleware, "before", return_value=isSuccess
+    ) as mock_middleware_before:
+        with patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            with pytest.raises(HTTPException):
+                MyController().execute()
+
+    mock_middleware_before.assert_called()
+    mock_middleware_after.assert_called()
+
+
+@pytest.mark.unit
 def test_fastapi_controller_should_success_with_all_configurations_when_success_result():
     class MyController(FastAPIController):
         class Config:
