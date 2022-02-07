@@ -1,18 +1,17 @@
-import logging
 from typing import Dict
 
 import elasticapm
 from fastapi import HTTPException
+from loguru import logger
 from meiga import Result
 
+from petisco import DEFAULT_HTTP_ERROR_MAP
 from petisco.base.application.controller.http_error import (
     DEFAULT_HTTP_ERROR_DETAIL,
     HttpError,
 )
 from petisco.base.domain.errors.domain_error import DomainError
 from petisco.base.domain.errors.unknown_error import UnknownError
-
-logger = logging.getLogger()
 
 
 def fastapi_failure_handler(result: Result, error_map: Dict[type, HttpError]):
@@ -43,6 +42,15 @@ def fastapi_failure_handler(result: Result, error_map: Dict[type, HttpError]):
             if http_error.detail != DEFAULT_HTTP_ERROR_DETAIL
             else domain_error.detail()
         )
-    raise HTTPException(
+    http_exception = HTTPException(
         status_code=http_error.status_code, detail=detail, headers=http_error.headers
     )
+
+    if (
+        isinstance(domain_error, DomainError)
+        and type(domain_error) not in DEFAULT_HTTP_ERROR_MAP.keys()
+    ):
+        logger.error(f"DomainError:  {domain_error.__repr__()}")
+        logger.error(f"HTTPException: {http_exception.__repr__()}")
+
+    raise http_exception
