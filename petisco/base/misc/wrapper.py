@@ -63,10 +63,12 @@ def wrapper(execute_func, wrapped_class_name, config, mapper):
             )
             result = Failure(unknown_error)
 
-        mapped_result = mapper.map(result)
         for middleware in middlewares:
             if result:
                 middleware.after(result)
+
+        mapped_result = mapper.map(result)
+
         return mapped_result
 
     return wrapped
