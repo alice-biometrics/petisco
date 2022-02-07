@@ -163,7 +163,7 @@ def test_fastapi_controller_should_execute_middleware_when_controller_raise_an_u
         with patch.object(
             PrintMiddleware, "after", return_value=isSuccess
         ) as mock_middleware_after:
-            with pytest.raises(Exception):
+            with pytest.raises(HTTPException):
                 MyController().execute()
 
     mock_middleware_before.assert_called()
