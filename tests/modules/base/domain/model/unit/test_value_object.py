@@ -38,7 +38,7 @@ def test_value_object_should_equal_when_values_are_equals(expected_value):
 def test_value_object_with_value_none_should_raise_invalid_value_object_error():
     with pytest.raises(InvalidValueObject) as excinfo:
         ValueObject(value=None)
-    assert "Invalid ValueObject" in str(excinfo.value)
+    assert "InvalidValueObject" in str(excinfo.value)
 
 
 @pytest.mark.unit

@@ -1,11 +1,8 @@
 import pytest
+from meiga import Error, Result
 from meiga.assertions import assert_failure, assert_success
 
-from petisco import (
-    AggregateAlreadyExistError,
-    AggregateNotFoundError,
-    InmemoryCrudRepository,
-)
+from petisco import AggregateAlreadyExistError, AggregateNotFoundError
 from petisco.extra.sqlmodel.sqlmodel_crud_repository import SQLModelCrudRepository
 from tests.modules.base.mothers.my_aggregate_mother import (
     MyAggregateRoot,
@@ -14,14 +11,31 @@ from tests.modules.base.mothers.my_aggregate_mother import (
 from tests.modules.extra.sqlmodel.mother.infrastructure_model import InfrastructureModel
 
 
+class MySQLModelCrudRepository(
+    SQLModelCrudRepository[InfrastructureModel, MyAggregateRoot]
+):
+    def get_aggregate_root(
+        self, sql_model: InfrastructureModel
+    ) -> Result[MyAggregateRoot, Error]:
+        return MyAggregateRoot()
+
+    def get_sql_model(
+        self, aggregate_root: MyAggregateRoot
+    ) -> Result[InfrastructureModel, Error]:
+        return InfrastructureModel()
+
+    def get_sql_model_type(self):
+        return InfrastructureModel
+
+
 @pytest.mark.unit
 @pytest.mark.skip
 class TestSQLModelCrudRepository:
-    repository: InmemoryCrudRepository
+    repository: MySQLModelCrudRepository
     aggregate_root: MyAggregateRoot
 
     def setup(self):
-        self.repository = SQLModelCrudRepository[InfrastructureModel, MyAggregateRoot]()
+        self.repository = MySQLModelCrudRepository()
         self.aggregate_root = MyAggregateRootMother.any()
 
     def _repository_with_aggregate_root(self):
