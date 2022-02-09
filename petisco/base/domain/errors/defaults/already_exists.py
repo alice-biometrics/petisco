@@ -5,18 +5,15 @@ from petisco.base.domain.model.uuid import Uuid
 
 
 class AlreadyExists(DomainError):
-    def get_specify_detail(self) -> str:
-        return "Already Exists"
+    ...
 
 
 class ClientAlreadyExists(DomainError):
-    def get_specify_detail(self) -> str:
-        return "Client Already Exists"
+    ...
 
 
 class UserAlreadyExists(DomainError):
-    def get_specify_detail(self) -> str:
-        return "User Already Exists"
+    ...
 
 
 class AggregateAlreadyExistError(DomainError):
@@ -32,9 +29,5 @@ class AggregateAlreadyExistError(DomainError):
         message = (
             f"Aggregate{aggregate_id_str} already exist{repository_str}{table_str}"
         )
-        super().__init__(
-            uuid_value=aggregate_id.value, additional_info={"message": message}
-        )
-
-    def get_specify_detail(self) -> str:
-        return "Aggregate already exist error"
+        uuid_value = aggregate_id.value if aggregate_id else None
+        super().__init__(uuid_value=uuid_value, additional_info={"message": message})

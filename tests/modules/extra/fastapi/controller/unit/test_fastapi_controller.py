@@ -1,9 +1,9 @@
-import logging
 from unittest.mock import patch
 
 import elasticapm
 import pytest
 from fastapi import HTTPException
+from loguru import logger
 from meiga import BoolResult, Failure, Result, Success, isFailure, isSuccess
 
 from petisco import AlreadyExists, DomainError, HttpError, NotFound, PrintMiddleware
@@ -38,25 +38,29 @@ def test_fastapi_controller_should_raise_http_exception_when_failure_result():
 
 
 @pytest.mark.unit
+@patch.object(logger, "error")
 @patch.object(elasticapm, "set_custom_context")
 def test_fastapi_controller_should_logging_error_with_traceback_and_inject_in_apm(
-    apm_set_custom_context_mock, caplog
+    apm_set_custom_context_mock, logger_error_mock
 ):
     class MyController(FastAPIController):
         def execute(self) -> BoolResult:
             raise TypeError("test_error")
 
-    with caplog.at_level(logging.ERROR):
-        with pytest.raises(HTTPException):
-            MyController().execute()
+    with pytest.raises(HTTPException):
+        MyController().execute()
 
     apm_set_custom_context_mock.assert_called()
     apm_internal_error_message = apm_set_custom_context_mock.call_args[0][0][
         "internal_error_message"
     ]
-
-    assert "test_error" in caplog.text and "test_error" in apm_internal_error_message
-    assert __name__ in caplog.text and __name__ in apm_internal_error_message
+    logger_error_mock.assert_called()
+    logger_error_message = logger_error_mock.call_args[0][0]
+    assert (
+        "test_error" in logger_error_message
+        and "test_error" in apm_internal_error_message
+    )
+    assert __name__ in logger_error_message and __name__ in apm_internal_error_message
 
 
 @pytest.mark.unit
@@ -102,26 +106,27 @@ def test_fastapi_controller_should_raise_fastapi_http_exception_mapped_and_injec
 
 
 @pytest.mark.unit
-@pytest.mark.unit
+@patch.object(logger, "error")
 @patch.object(elasticapm, "set_custom_context")
 def test_fastapi_controller_should_logging_error_message_and_inject_it_in_apm_with_non_mapped_error(
-    apm_set_custom_context_mock, caplog
+    apm_set_custom_context_mock, logger_error_mock
 ):
     class MyError(DomainError):
-        def get_specify_detail(self) -> str:
-            return "My Error"
+        pass
 
     class MyController(FastAPIController):
         def execute(self) -> BoolResult:
             return Failure(MyError())
 
-    with caplog.at_level(logging.ERROR):
-        with pytest.raises(HTTPException) as excinfo:
-            MyController().execute()
+    with pytest.raises(HTTPException) as excinfo:
+        MyController().execute()
 
     assert excinfo.value.status_code == 500
     error_message = "Error 'MyError' is not mapped in controller"
-    assert error_message in caplog.text
+
+    logger_error_mock.assert_called()
+    logger_error_message = logger_error_mock.call_args_list[0][0]
+    assert error_message in logger_error_message
 
     apm_set_custom_context_mock.assert_called()
     apm_set_custom_context_arg = apm_set_custom_context_mock.call_args[0][0]
@@ -149,6 +154,28 @@ def test_fastapi_controller_should_return_success_result_with_middlewares(
 
 
 @pytest.mark.unit
+def test_fastapi_controller_should_execute_middleware_when_controller_raise_an_unexpected_exception():
+    class MyController(FastAPIController):
+        class Config:
+            middlewares = [PrintMiddleware]
+
+        def execute(self) -> BoolResult:
+            raise Exception()
+
+    with patch.object(
+        PrintMiddleware, "before", return_value=isSuccess
+    ) as mock_middleware_before:
+        with patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            with pytest.raises(HTTPException):
+                MyController().execute()
+
+    mock_middleware_before.assert_called()
+    mock_middleware_after.assert_called()
+
+
+@pytest.mark.unit
 def test_fastapi_controller_should_success_with_all_configurations_when_success_result():
     class MyController(FastAPIController):
         class Config:
@@ -169,11 +196,11 @@ def test_fastapi_controller_should_success_with_all_configurations_when_success_
     [
         (isFailure, HTTPException(500, detail="Unknown Error")),
         (Failure(NotFound()), HTTPException(404, detail="Task not Found")),
-        (Failure(AlreadyExists()), HTTPException(409, detail="Already Exists")),
+        (Failure(AlreadyExists()), HTTPException(409, detail="AlreadyExists")),
         (
             Failure(AlreadyExists(uuid_value="76f5994d-b16f-45b0-b3e4-e531f784f801")),
             HTTPException(
-                409, detail="Already Exists (76f5994d-b16f-45b0-b3e4-e531f784f801)"
+                409, detail="AlreadyExists (76f5994d-b16f-45b0-b3e4-e531f784f801)"
             ),
         ),
         (
@@ -185,7 +212,7 @@ def test_fastapi_controller_should_success_with_all_configurations_when_success_
             ),
             HTTPException(
                 409,
-                detail="Already Exists (76f5994d-b16f-45b0-b3e4-e531f784f801) [{'patterns': 'Products', 'table': 'UserProduct'}]",
+                detail="AlreadyExists (76f5994d-b16f-45b0-b3e4-e531f784f801) [{'patterns': 'Products', 'table': 'UserProduct'}]",
             ),
         ),
         (
@@ -196,7 +223,7 @@ def test_fastapi_controller_should_success_with_all_configurations_when_success_
             ),
             HTTPException(
                 409,
-                detail="Already Exists [{'patterns': 'Products', 'table': 'UserProduct'}]",
+                detail="AlreadyExists [{'patterns': 'Products', 'table': 'UserProduct'}]",
             ),
         ),
     ],

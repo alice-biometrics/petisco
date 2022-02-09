@@ -46,6 +46,7 @@ from petisco.base.domain.errors.defaults.invalid_value_object import InvalidValu
 from petisco.base.domain.errors.defaults.not_allowed import NotAllowed
 from petisco.base.domain.errors.defaults.not_found import (
     AggregateNotFoundError,
+    AggregatesNotFoundError,
     ClientNotFound,
     NotFound,
     UserNotFound,
@@ -100,20 +101,7 @@ base = [
     "PrintMiddleware",
     "UseCase",
     "UseCaseUncontrolledError",
-    "DEFAULT_HTTP_ERROR_MAP",
     "assert_http",
-    "DomainError",
-    "UnknownError",
-    "AggregateAlreadyExistError",
-    "AggregateNotFoundError",
-    "NotFound",
-    "AlreadyExists",
-    "ClientNotFound",
-    "ClientAlreadyExists",
-    "UserNotFound",
-    "UserAlreadyExists",
-    "NotAllowed",
-    "InvalidUuid",
     "Dependency",
     "Container",
     "Message",
@@ -132,14 +120,12 @@ base = [
     "AggregateRoot",
     "ValueObject",
     "Uuid",
-    "HttpError",
     "Interface",
     "DomainEventSubscriber",
     "CommandSubscriber",
     "AllMessageSubscriber",
     "Persistence",
     "PersistenceModels",
-    "InvalidValueObject",
     "Repository",
     "CrudRepository",
     "InmemoryCrudRepository",
@@ -149,7 +135,27 @@ base = [
     "Builder",
 ]
 
+errors = [
+    "DEFAULT_HTTP_ERROR_MAP",
+    "DomainError",
+    "NotFound",
+    "AlreadyExists",
+    "AggregateNotFoundError",
+    "AggregatesNotFoundError",
+    "AggregateAlreadyExistError",
+    "UnknownError",
+    "ClientNotFound",
+    "ClientAlreadyExists",
+    "UserNotFound",
+    "UserAlreadyExists",
+    "NotAllowed",
+    "InvalidUuid",
+    "InvalidValueObject",
+    "HttpError",
+]
+
+
 deprecated = ["Injector"]
 modules: List[str] = []
 
-__all__ = base + deprecated + modules
+__all__ = base + errors + deprecated + modules
