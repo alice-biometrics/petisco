@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from petisco import AggregateRoot, DomainEvent, Uuid
@@ -49,3 +51,17 @@ def test_aggregate_root_should_record_pull_and_clear_domain_events():
         name="name",
     )
     assert len(aggregate_root.pull_domain_events()) == 0
+
+
+@pytest.mark.unit
+def test_aggregate_root_should_encode_and_decode_complex_values():
+    class MyAggregateRoot(AggregateRoot):
+        name: str
+
+    aggregate_root = MyAggregateRoot(name="my-name")
+    filename = ".tmp.json"
+    path = Path(filename)
+    path.write_text(aggregate_root.json())
+    aggregate_root_parsed = AggregateRoot.parse_file(filename)
+    assert aggregate_root == aggregate_root_parsed
+    path.unlink()

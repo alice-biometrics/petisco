@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from petisco import InvalidValueObject, ValueObject
@@ -46,3 +48,15 @@ def test_value_object_is_hashable():
     value_object = ValueObject(value=1)
     hash_value_object = hash(value_object)
     assert hash_value_object == 1
+
+
+@pytest.mark.unit
+def test_value_object_encoder_decoder():
+    value_object = ValueObject(value=1)
+
+    filename = ".tmp.json"
+    path = Path(filename)
+    path.write_text(value_object.json())
+    value_object_parsed = ValueObject.parse_file(filename)
+    assert value_object == value_object_parsed
+    path.unlink()
