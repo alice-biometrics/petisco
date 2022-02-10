@@ -19,7 +19,7 @@ class BaseSqlRepository(Repository):
         if model:
             error = (
                 AggregateAlreadyExistError(
-                    cls.__name__, model.__tablename__, aggregate_id
+                    aggregate_id, cls.__name__, model.__tablename__
                 )
                 if not result_error
                 else result_error
@@ -33,7 +33,7 @@ class BaseSqlRepository(Repository):
     ) -> BoolResult:
         if not model:
             error = (
-                AggregateNotFoundError(cls.__name__, aggregate_id)
+                AggregateNotFoundError(aggregate_id, cls.__name__)
                 if not result_error
                 else result_error
             )

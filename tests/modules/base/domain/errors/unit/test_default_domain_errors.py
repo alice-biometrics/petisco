@@ -45,15 +45,19 @@ class TestDefaultDomainErrors:
     def should_success_aggregate_not_found_error_constructor(
         self, repository_name, aggregate_id
     ):
-        domain_error = AggregateNotFoundError(repository_name, aggregate_id)
+        domain_error = AggregateNotFoundError(
+            aggregate_id=aggregate_id, repository_name=repository_name
+        )
         assert "AggregateNotFoundError" in domain_error.detail()
 
     @pytest.mark.parametrize("repository_name", [None, "my-repository"])
     def should_success_aggregates_not_found_error_constructor(self, repository_name):
-        domain_error = AggregatesNotFoundError(repository_name)
+        domain_error = AggregatesNotFoundError(repository_name=repository_name)
         assert "AggregatesNotFoundError" in domain_error.detail()
 
     @pytest.mark.parametrize("repository_name", [None, "my-repository"])
     def should_success_aggregate_already_exist_error_constructor(self, repository_name):
-        domain_error = AggregateAlreadyExistError(repository_name)
+        domain_error = AggregateAlreadyExistError(
+            aggregate_id=Uuid.v4(), repository_name=repository_name
+        )
         assert "AggregateAlreadyExistError" in domain_error.detail()

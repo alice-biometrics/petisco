@@ -14,6 +14,7 @@ exclude =
     petisco/extra/rabbitmq/__init__.py,
     petisco/extra/elastic/__init__.py,
     petisco/extra/sqlalchemy/__init__.py,
+    petisco/extra/sqlmodel/__init__.py,
     petisco/legacy/__init__.py,
     petisco/frameworks/flask/application/__init__.py
 
