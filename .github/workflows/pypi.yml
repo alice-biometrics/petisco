@@ -26,7 +26,7 @@ jobs:
       - name: Update VERSION file
         run: echo -ne ${{ needs.get-version.outputs.version }} > ${PACKAGE_NAME}/VERSION
       - name: Install dependencies
-        run: pip install setuptools wheel twine==1.13.0
+        run: pip install setuptools wheel twine
       - name: Build and publish
         run: |
           python setup.py sdist bdist_wheel
