@@ -25,6 +25,10 @@ from petisco.base.application.notifier.notifier_exception_message import (
 )
 from petisco.base.application.notifier.notifier_message import NotifierMessage
 from petisco.base.application.patterns.app_service import AppService
+from petisco.base.application.patterns.crud_repository import CrudRepository
+from petisco.base.application.patterns.inmemory_crud_repository import (
+    InmemoryCrudRepository,
+)
 from petisco.base.application.patterns.repository import Repository
 from petisco.base.application.use_case.use_case import UseCase
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
@@ -123,6 +127,8 @@ base = [
     "Persistence",
     "PersistenceModels",
     "Repository",
+    "CrudRepository",
+    "InmemoryCrudRepository",
     "AppService",
     "Application",
     "ApplicationConfigurer",

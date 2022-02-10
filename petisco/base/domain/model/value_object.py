@@ -18,6 +18,9 @@ class ValueObject(BaseModel):
     def __setattr__(self, name, value):
         raise TypeError("ValueObject objects are immutable")
 
+    def __hash__(self):
+        return hash(self.value)
+
     @classmethod
     def from_value(cls, value):
         return cls(value=value)

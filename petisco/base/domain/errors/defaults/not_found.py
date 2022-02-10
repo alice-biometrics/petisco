@@ -1,3 +1,5 @@
+from typing import Optional
+
 from petisco.base.domain.errors.domain_error import DomainError
 from petisco.base.domain.model.uuid import Uuid
 
@@ -15,7 +17,7 @@ class UserNotFound(DomainError):
 
 
 class AggregateNotFoundError(DomainError):
-    def __init__(self, repository_name: str = None, aggregate_id: Uuid = None):
+    def __init__(self, aggregate_id: Uuid, repository_name: Optional[str] = None):
         aggregate_id_str = f" ({aggregate_id.value})" if aggregate_id else ""
         repository_str = f" (repository: {repository_name})" if repository_name else ""
         message = f"Aggregate{aggregate_id_str} not found{repository_str}"

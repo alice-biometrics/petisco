@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from petisco import __version__
+from petisco import Uuid, __version__
 
 
 def has_args(args):
@@ -46,6 +46,7 @@ def main():
     parser.add_argument(
         "-v", "--version", action="store_true", help="show petisco version number."
     )
+    parser.add_argument("-uuid", "--uuid", action="store_true", help="show an UUID v4.")
     parser.add_argument(
         "-rt",
         "--rename-template",
@@ -70,6 +71,10 @@ def main():
     else:
         if args.version:
             print(f"petisco 🍪 => {__version__}")
+            return
+
+        if args.uuid:
+            print(f"{Uuid.v4().value}")
             return
 
         if args.rename_template_replacement:

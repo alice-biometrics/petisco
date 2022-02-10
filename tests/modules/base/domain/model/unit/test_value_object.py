@@ -39,3 +39,10 @@ def test_value_object_with_value_none_should_raise_invalid_value_object_error():
     with pytest.raises(InvalidValueObject) as excinfo:
         ValueObject(value=None)
     assert "InvalidValueObject" in str(excinfo.value)
+
+
+@pytest.mark.unit
+def test_value_object_is_hashable():
+    value_object = ValueObject(value=1)
+    hash_value_object = hash(value_object)
+    assert hash_value_object == 1

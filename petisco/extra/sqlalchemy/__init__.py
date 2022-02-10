@@ -1,6 +1,5 @@
 from petisco.extra.sqlalchemy.is_sqlalchemy_available import is_sqlalchemy_available
 
-sqlalchemy = []
 if is_sqlalchemy_available():
     from petisco.extra.sqlalchemy.sql.mysql.mysql_connection import MySqlConnection
     from petisco.extra.sqlalchemy.sql.mysql.mysql_database import MySqlDatabase
