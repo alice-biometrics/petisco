@@ -20,7 +20,7 @@ metrics/
 docs/build
 docs/source/resources/
 upload_to_pypi.sh
-
+.tmp.json
 
 # Distribution / packaging
 .Python
