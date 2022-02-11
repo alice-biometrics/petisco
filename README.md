@@ -43,8 +43,7 @@ Additionally, you can extend it:
 ```python
 from petisco import Uuid
 
-class TaskId(Uuid):
-    pass
+class TaskId(Uuid): ...
 
 task_id = TaskId.v4()
 ```
@@ -56,8 +55,7 @@ Use `DomainEvent` to explicitly implement side effects of changes within your do
 ```python
 from petisco import DomainEvent, Uuid
 
-class TaskId(Uuid):
-    pass
+class TaskId(Uuid): ...
 
 class TaskCreated(DomainEvent):
     task_id: TaskId
@@ -87,8 +85,7 @@ If you use CQRS you can use also the `Command` class.
 ```python
 from petisco import Command, Uuid
 
-class TaskId(Uuid):
-    pass
+class TaskId(Uuid): ...
 
 class UpdateTask(Command):
     task_id: TaskId
@@ -109,16 +106,21 @@ The result:
 ```python
 from petisco import DomainError
 
-
-class TaskAlreadyExistError(DomainError):
-    pass
-
-
-class TaskNotFoundError(DomainError):
-    pass
+class TaskAlreadyExistError(DomainError): ...
+class TaskNotFoundError(DomainError): ...
 ```
 
-⚠️ TODO: Add documentation on how to specify the message
+You can add additional information to `DomainError` objects with:
+
+```python
+domain_error = TaskNotFoundError(additional_info={"error": "detail"})
+```
+
+or also you can add releated uuid with 
+
+```python
+domain_error = TaskNotFoundError(uuid_value=task_id.value, additional_info={"error": "detail"})
+```
 
 #### Value Objects
 
@@ -177,8 +179,6 @@ class Task(AggregateRoot):
         return task
 ```
 
-⚠️ TODO: How we can take advantage of aggregate root (pull_domain_events, record)
-
 #### Controller
 
 Use `Controller` class to define and configure inputs and outputs or your entry point.
@@ -218,7 +218,7 @@ If you want to set a default middleware for every Controller, you can use the en
   * `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware,NotifierMiddleware`: to configure several middlewares
   
 
-#### Messages 
+#### Messages (on construction)
 ⚠️ TODO: How we use the Message Manager!
 
 ### Testing :white_check_mark:
