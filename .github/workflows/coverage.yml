@@ -35,4 +35,4 @@ jobs:
         directory: output/coverage/
         name: petisco
         fail_ci_if_error: true
-        functionalities: network # TODO: review problem updating .mysqldata volume
+        # functionalities: network # TODO: review problem updating .mysqldata volume
