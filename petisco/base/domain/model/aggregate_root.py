@@ -16,6 +16,7 @@ class AggregateRoot(ABC, BaseModel):
 
     @validator("aggregate_id", pre=True, always=True)
     def set_aggregate_id(cls, v):
+        v = Uuid(v) if isinstance(v, str) else v
         return v or Uuid.v4()
 
     @validator("aggregate_version", pre=True, always=True)

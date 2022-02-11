@@ -62,6 +62,6 @@ def test_aggregate_root_should_encode_and_decode_complex_values():
     filename = ".tmp.json"
     path = Path(filename)
     path.write_text(aggregate_root.json())
-    aggregate_root_parsed = AggregateRoot.parse_file(filename)
+    aggregate_root_parsed = MyAggregateRoot.parse_file(filename)
     assert aggregate_root == aggregate_root_parsed
     path.unlink()

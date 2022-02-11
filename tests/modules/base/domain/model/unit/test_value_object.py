@@ -51,7 +51,7 @@ def test_value_object_is_hashable():
 
 
 @pytest.mark.unit
-def test_value_object_encoder_decoder():
+def test_value_object_encode_decode():
     value_object = ValueObject(value=1)
 
     filename = ".tmp.json"
