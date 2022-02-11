@@ -37,7 +37,7 @@ steps:
         - docker run -d --rm --platform linux/x86_64 -v "$PWD/.mysqldata":/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root --name petisco-mysql -p 3307:3306 mysql:5.7
         - docker run -d --rm --name petisco-elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.1
     wait_http_200: http://localhost:15672
-    run: pytest -c pytest.coverage.ini -m unit
+    run: pytest -c pytest.coverage.ini
     teardown:
       - docker stop petisco-rabbitmq
       - docker stop petisco-mysql

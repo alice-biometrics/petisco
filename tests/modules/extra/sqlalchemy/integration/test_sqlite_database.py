@@ -85,3 +85,34 @@ def test_should_add_a_product_with_sqlite_database_with_session_scope():
     persistence.clear_data()
     persistence.delete()
     Persistence.clear()
+
+
+@pytest.mark.integration
+def test_should_raise_a_connection_error_exception():
+    filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
+
+    with pytest.raises(ConnectionError):
+        SqliteDatabase(name="sqlite_test", connection=None, model_filename=filename)
+
+
+@pytest.mark.integration
+def test_should_create_persistence_with_sqlite_database_without_filename():
+    connection = SqliteConnection.create(
+        server_name="sqlite", database_name="petisco.db"
+    )
+    database = SqliteDatabase(
+        name="sqlite_test", connection=connection, model_filename=None
+    )
+
+    persistence = Persistence()
+    persistence.add(database)
+    persistence.create()
+
+    assert database.info() == {
+        "name": "sqlite_test",
+        "models": {},
+    }
+    assert Persistence.is_available()
+
+    persistence.delete()
+    Persistence.clear()

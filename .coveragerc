@@ -1,5 +1,5 @@
 [run]
-omit = ./venv/*,*tests*,*__init__.py,./examples/*,./petisco/cli/*,./petisco/legacy/*,./.mysqldata/*
+omit = ./venv/*,*tests*,*__init__.py,./examples/*,./petisco/cli/*,./petisco/legacy/*,./petisco/extra/sqlmodel/*,./.mysqldata/*
 
 [report]
-exclude_lines = raise NotImplementedError NotImplementedMethodError
+exclude_lines = raise NotImplementedError, raise NotImplementedMethodError
