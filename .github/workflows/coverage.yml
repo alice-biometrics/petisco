@@ -31,7 +31,7 @@ jobs:
       run: lume -coverage
     - uses: codecov/codecov-action@v2
       with:
-        files: output/coverage/cobertura_coverage.xml
+        files: cobertura_coverage.xml
         directory: output/coverage/
         name: petisco
         fail_ci_if_error: true
