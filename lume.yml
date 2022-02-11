@@ -42,6 +42,7 @@ steps:
       - docker stop petisco-rabbitmq
       - docker stop petisco-mysql
       - docker stop petisco-elasticsearch
+      - docker volume rm "$PWD/mysqldata"
       - rm -rf mysqldata
   test:
     run: pytest
