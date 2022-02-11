@@ -34,3 +34,4 @@ jobs:
         files: output/coverage/cobertura_coverage.xml
         name: petisco
         fail_ci_if_error: true
+        dry_run: true
