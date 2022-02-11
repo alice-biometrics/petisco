@@ -108,10 +108,7 @@ def test_should_create_persistence_with_sqlite_database_without_filename():
     persistence.add(database)
     persistence.create()
 
-    assert database.info() == {
-        "name": "sqlite_test",
-        "models": {},
-    }
+    assert database.info() == {"name": "sqlite_test"}
     assert Persistence.is_available()
 
     persistence.delete()
