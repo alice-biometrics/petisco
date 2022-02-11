@@ -41,7 +41,7 @@ jobs:
       - name: Push changes
         uses: alice-biometrics/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          github_token: ${{ secrets.PUBLIC_GITHUB_ACCESS_TOKEN }}
           branch: master
       - name: Check pip installation
         run: |
