@@ -1,5 +1,6 @@
 import argparse
 import os
+from datetime import datetime
 
 from petisco import Uuid, __version__
 
@@ -48,6 +49,9 @@ def main():
     )
     parser.add_argument("-uuid", "--uuid", action="store_true", help="show an UUID v4.")
     parser.add_argument(
+        "-utcnow", "--utcnow", action="store_true", help="show a utc now datetime"
+    )
+    parser.add_argument(
         "-rt",
         "--rename-template",
         action="store",
@@ -74,7 +78,11 @@ def main():
             return
 
         if args.uuid:
-            print(f"{Uuid.v4().value}")
+            print(Uuid.v4().value)
+            return
+
+        if args.utcnow:
+            print(datetime.utcnow())
             return
 
         if args.rename_template_replacement:

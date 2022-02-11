@@ -45,6 +45,6 @@ jobs:
           branch: main
       - name: Check pip installation
         run: |
-          pip install petisco==${RELEASE_VERSION} || true
-          pip install petisco==${RELEASE_VERSION}
+          pip install petisco==${{ needs.get-version.outputs.version }} || true
+          pip install petisco==${{ needs.get-version.outputs.version }}
 
