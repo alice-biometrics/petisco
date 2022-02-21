@@ -1,6 +1,7 @@
 from meiga import Result
 
 from petisco import __version__
+from petisco.base.application.application_info import ApplicationInfo
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.notifier.notifier_exception_message import (
@@ -26,5 +27,10 @@ class NotifierMiddleware(Middleware):
                         error, title="Uncontrolled Exception"
                     )
                 )
-                notifier_exception_message.meta["petisco"] = __version__
+                notifier_exception_message.meta = {
+                    **notifier_exception_message.meta,
+                    "petisco": __version__,
+                    "application_name": ApplicationInfo().name,
+                    "application_version": ApplicationInfo().version,
+                }
                 self.notifier.publish_exception(notifier_exception_message)
