@@ -4,6 +4,7 @@ from typing import Callable, List, Optional
 from pydantic import BaseSettings, Field
 
 from petisco.base.application.application_configurer import ApplicationConfigurer
+from petisco.base.application.application_info import ApplicationInfo
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.application.notifier.notifier import Notifier
@@ -22,6 +23,15 @@ class Application(BaseSettings):
     environment: str = Field("local", env="ENVIRONMENT")
     dependencies_provider: Optional[Callable[..., List[Dependency]]] = lambda: []
     configurers: Optional[List[ApplicationConfigurer]] = []
+
+    def __init__(self, **data) -> None:
+        ApplicationInfo(
+            name=data["name"],
+            organization=data["organization"],
+            version=data["version"],
+            deployed_at=data.get("deployed_at"),
+        )
+        super().__init__(**data)
 
     def configure(self, testing: bool = False):
 

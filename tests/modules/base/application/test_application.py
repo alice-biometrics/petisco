@@ -12,6 +12,7 @@ from petisco import (
     DomainEvent,
     NotifierMessage,
 )
+from petisco.base.application.application_info import ApplicationInfo
 from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 
@@ -72,6 +73,19 @@ def test_application_should_construct_and_configure_with_testing_variable():
     )
 
     assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
+
+
+@pytest.mark.unit
+@testing_with_empty_container
+def test_application_should_construct_and_instantiate_application_info_singleton():
+
+    Application(name="service", version="1.0.0", organization="acme")
+
+    assert ApplicationInfo().name == "service"
+    assert ApplicationInfo().version == "1.0.0"
+    assert ApplicationInfo().organization == "acme"
+
+    ApplicationInfo.clear()
 
 
 @pytest.mark.unit

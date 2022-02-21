@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 
 from meiga import Result
 
@@ -36,3 +36,7 @@ class DependencyMother:
         return Dependency(
             name="domain_event_bus", default_builder=Builder(NotImplementedMessageBus)
         )
+
+    @staticmethod
+    def create(name: str, builder: Any) -> Dependency:
+        return Dependency(name=name, default_builder=builder)
