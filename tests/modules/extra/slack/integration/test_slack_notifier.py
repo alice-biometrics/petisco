@@ -14,6 +14,8 @@ LONG_TEXT = "long_text" * 1000
 )
 @pytest.mark.integration
 class TestSlackNotifier:
+    notifier: SlackNotifier
+
     def setup(self):
         slack_token = os.getenv("SLACK_TOKEN")
         slack_tests_channel = os.getenv("SLACK_TESTS_CHANNEL")
