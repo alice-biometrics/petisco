@@ -2,6 +2,7 @@ from unittest.mock import patch
 
 from meiga import Failure, isSuccess
 
+from petisco import CriticalError
 from petisco.base.application.application_info import ApplicationInfo
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
@@ -56,6 +57,18 @@ class TestNotifierMiddleware:
         self.notifier_middleware.after(
             result=Failure(UnknownError(exception=TypeError()))
         )
+
+        mock_notifier.assert_called()
+        exception_message = mock_notifier.call_args[0][0]
+        assert exception_message.meta["application_name"] == "app_name"
+        assert exception_message.meta["application_version"] == "app_version"
+
+    @patch.object(NotImplementedNotifier, "publish")
+    def should_notify_critical_error_failure_results_with_meta_information(
+        self, mock_notifier
+    ):
+        ApplicationInfo(name="app_name", version="app_version")
+        self.notifier_middleware.after(result=Failure(CriticalError()))
 
         mock_notifier.assert_called()
         exception_message = mock_notifier.call_args[0][0]
