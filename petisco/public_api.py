@@ -34,6 +34,7 @@ from petisco.base.application.use_case.use_case import UseCase
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
     UseCaseUncontrolledError,
 )
+from petisco.base.domain.errors.critical_error import CriticalError
 from petisco.base.domain.errors.default_http_error_map import DEFAULT_HTTP_ERROR_MAP
 from petisco.base.domain.errors.defaults.already_exists import (
     AggregateAlreadyExistError,
@@ -138,6 +139,7 @@ base = [
 errors = [
     "DEFAULT_HTTP_ERROR_MAP",
     "DomainError",
+    "CriticalError",
     "NotFound",
     "AlreadyExists",
     "AggregateNotFoundError",

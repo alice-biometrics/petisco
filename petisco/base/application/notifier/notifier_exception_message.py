@@ -31,6 +31,9 @@ class NotifierExceptionMessage:
         self.input_parameters = input_parameters
         self.meta = meta
 
+    def update_meta(self, meta: dict):
+        self.meta = {**self.meta, **meta}
+
     @staticmethod
     def from_unknown_error(unknown_error: UnknownError, title: str):
         return NotifierExceptionMessage(
