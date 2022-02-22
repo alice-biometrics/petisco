@@ -2,6 +2,7 @@ import os
 from functools import wraps
 from inspect import signature
 
+import elasticapm
 from meiga import Error, Failure
 from meiga.on_failure_exception import OnFailureException
 
@@ -62,6 +63,9 @@ def wrapper(execute_func, wrapped_class_name, config, mapper):
                 class_name=wrapped_class_name,
             )
             result = Failure(unknown_error)
+            client = elasticapm.get_client()
+            if client:
+                client.capture_exception()
 
         for middleware in middlewares:
             if result:
