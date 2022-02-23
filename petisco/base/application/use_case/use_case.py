@@ -3,6 +3,7 @@ from functools import wraps
 from types import FunctionType
 from typing import Any
 
+import elasticapm
 from meiga import Error, Failure, NotImplementedMethodError, Result
 from meiga.on_failure_exception import OnFailureException
 
@@ -25,6 +26,10 @@ def wrapper(method):
                 exception=exception,
                 arguments=args,
             )
+            client = elasticapm.get_client()
+            if client:
+                client.capture_exception()
+
             return Failure(uncontrolled_error)
 
     return wrapped
