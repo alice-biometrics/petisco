@@ -12,7 +12,7 @@ from petisco.base.application.use_case.use_case_uncontrolled_error import (
 )
 
 
-def wrapper(method):
+def wrapper(method, wrapped_class_name):
     @wraps(method)
     def wrapped(*args, **kwargs):
         try:
@@ -23,8 +23,7 @@ def wrapper(method):
             return Failure(error)
         except Exception as exception:
             uncontrolled_error = UseCaseUncontrolledError.from_exception(
-                exception=exception,
-                arguments=args,
+                exception=exception, arguments=args, class_name=wrapped_class_name
             )
             client = elasticapm.get_client()
             if client:
@@ -45,7 +44,7 @@ class MetaUseCase(type, ABC):
 
         for attributeName, attribute in namespace.items():
             if isinstance(attribute, FunctionType) and attribute.__name__ == "execute":
-                attribute = wrapper(attribute)
+                attribute = wrapper(attribute, name)
             new_class_dict[attributeName] = attribute
         return type.__new__(mcs, name, bases, new_class_dict)
 
