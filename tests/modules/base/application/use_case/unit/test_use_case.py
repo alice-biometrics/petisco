@@ -61,7 +61,7 @@ def test_use_case_should_return_failure_result_when_raise_an_uncontrolled_error_
     )
     assert __name__ in result.value.traceback
     assert "whatever" in result.value.traceback
-    assert MyUseCase.__name__ in result.value.executor
+    assert MyUseCase.__name__ == result.value.executor
 
 
 @pytest.mark.unit
