@@ -44,7 +44,7 @@ def test_use_case_should_return_failure_result_when_raise_on_failure_exception_f
 
 
 @pytest.mark.unit
-def test_use_case_should_return_failure_result_when_raise_an_uncontrolled_error_with_traceback():
+def test_use_case_should_return_failure_result_when_raise_an_uncontrolled_error_with_executor_and_traceback():
 
     expected_exception = TypeError("whatever")
 
@@ -61,6 +61,7 @@ def test_use_case_should_return_failure_result_when_raise_an_uncontrolled_error_
     )
     assert __name__ in result.value.traceback
     assert "whatever" in result.value.traceback
+    assert MyUseCase.__name__ in result.value.executor
 
 
 @pytest.mark.unit
