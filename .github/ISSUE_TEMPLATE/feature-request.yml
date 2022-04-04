@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         The `petisco 🍪` community is glad to see you here. Your help is greatly appreciated.
-        
+
         Please follow these instructions, fill every question, and do every step. 🙏
         
         This will help `petisco 🍪` community to add new features, fix bug, review pull requests, etc.
@@ -102,7 +102,7 @@ body:
             dependencies_provider=dependencies_provider,
             fastapi_configurer=fastapi_configurer,
         )
-
+        
       render: python
     validations:
       required: true
