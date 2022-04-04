@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - '*.md'
       - 'petisco/VERSION'
+      - '.github/ISSUE_TEMPLATE'
       - '.github/workflows/coverage.yml'
     branches: 
       - v1

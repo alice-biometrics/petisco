@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - '*.md'
       - 'petisco/VERSION'
+      - '.github/ISSUE_TEMPLATE'
       - '.github/workflows/ci.yml'
       - '.github/workflows/ci.macos.yml'
     branches:
