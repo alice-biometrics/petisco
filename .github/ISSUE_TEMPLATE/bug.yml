@@ -1,12 +1,12 @@
-name: Feature Request
-description: Suggest an idea or ask for a feature that you would like to have in FastAPI
-labels: [enhancement]
+name: Bug
+description: Ask about a problem
+labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
         The `petisco 🍪` community is glad to see you here. Your help is greatly appreciated.
-
+        
         Please follow these instructions, fill every question, and do every step. 🙏
         
         This will help `petisco 🍪` community to add new features, fix bug, review pull requests, etc.
@@ -57,6 +57,8 @@ body:
             dependencies_provider=dependencies_provider,
             fastapi_configurer=fastapi_configurer,
         )
+        
+        application.configure()
 
       render: python
     validations:
@@ -66,54 +68,16 @@ body:
     attributes:
       label: Description
       description: |
-        What is your feature request?
+        What is the problem, question, or error?
 
-        Write a short description telling me what you are trying to solve and what you are currently doing.
+        Write a short description telling me what you are doing, what you expect to happen, and what is currently happening.
       placeholder: |
-        * Using `FastApiApplication` class
-        * I would like it to have an extra parameter to configure the mantainer team.
-        * This could be useful to monitoring the service and alerting to the right team.
+        * Intanciate `FastApiApplication` object
+        * Use `configure` method
+        * I expected to run the application.
+        * But it only configures parameters and FastAPI is the one that will run the application.
     validations:
       required: true
-  - type: textarea
-    id: wanted-solution
-    attributes:
-      label: Wanted Solution
-      description: |
-        Tell me what's the solution you would like.
-      placeholder: |
-        I would like it to have a `maintainer` parameter that defaults to `None`, and can be set to a `str` (`<MY-TEAM-NAME>`).
-    validations:
-      required: true
-  - type: textarea
-    id: wanted-code
-    attributes:
-      label: Wanted Code
-      description: Show me an example of how you would want the code to look like.
-      placeholder: |
-        from petisco.extra.fastapi import FastApiApplication
-
-        application = FastApiApplication(
-            name=APPLICATION_NAME,
-            version=APPLICATION_VERSION,
-            organization=ORGANIZATION,
-            deployed_at=APPLICATION_LATEST_DEPLOY,
-            maintainer="<MY-TEAM-NAME>"
-            dependencies_provider=dependencies_provider,
-            fastapi_configurer=fastapi_configurer,
-        )
-        
-      render: python
-    validations:
-      required: true
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: Alternatives
-      description: |
-        Tell me about alternatives you've considered.
-      placeholder: |
-        Define the `maintainer` with an environment variable (`PETISCO_APPLICATION_MAINTAINER`)
   - type: dropdown
     id: os
     attributes:
