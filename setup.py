@@ -40,7 +40,7 @@ setup(
             "sqlalchemy_utils==0.38.2",
             "PyMySQL==1.0.2",
         ],
-        "redis": ["redis==4.1.1"],
+        "redis": ["redis==4.2.2"],
         "rabbitmq": ["pika==1.2.0"],
         "slack": ["slack_sdk==3.15.2"],
         "elastic": ["elasticsearch<8.0.0,>=7.13.1", "elastic-apm==6.9.1"],
