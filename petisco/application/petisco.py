@@ -31,7 +31,7 @@ from petisco.event.shared.infrastructure.configure_events_infrastructure import 
     configure_events_infrastructure,
 )
 from petisco.frameworks.interface_application import IApplication
-from petisco.logger.interface_logger import INFO, ILogger
+from petisco.logger.interface_logger import INFO, ILogger, ERROR
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
 from petisco.notifier.infrastructure.not_implemented_notifier import (
@@ -323,8 +323,17 @@ class Petisco(metaclass=Singleton):
         self.event_consumer.start()
         self._schedule_tasks()
         self._log_status()
-        self._publish_deploy_event()
-        self._notify_restart()
+        self._announce()
+
+    def _announce(self):
+        try:
+            self._publish_deploy_event()
+            self._notify_restart()
+        except Exception as exc:
+            log_message = LogMessage(layer="petisco")
+            log_message.set_message(f"Error announcing alice-petisco application {str(exc)}")
+            self._logger.log(ERROR, log_message)
+
 
     def load_services_and_repositories(self):
         self._set_services_and_repositories_from_providers()
