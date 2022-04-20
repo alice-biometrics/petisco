@@ -1,5 +1,6 @@
 import argparse
 import logging
+from time import sleep
 from typing import List, Type
 
 from meiga import BoolResult, isFailure, isSuccess
@@ -45,13 +46,6 @@ class UnackMessage(MessageSubscriber):
     def handle(self, message: Message) -> BoolResult:
         print(f"> It will unack the message: {message.dict()}\n")
         return isFailure
-
-
-class RequeueOnMessage(AllMessageSubscriber):
-    def handle(self, message: Message) -> BoolResult:
-        print(f"> Requeue {message.dict()}\n")
-        self.domain_event_bus.publish(message)
-        return isSuccess
 
 
 def get_args():
@@ -101,6 +95,14 @@ def get_args():
         default=RETRY_TTL,
         help="Retry TTL",
     )
+    parser.add_argument(
+        "-wtr",
+        "--wait-to-requeue",
+        action="store",
+        dest="wait_to_requeue",
+        default=None,
+        help="Wait to Requeue (seconds)",
+    )
 
     args = parser.parse_args()
 
@@ -134,6 +136,14 @@ def main():
         print(f"🍪 ORGANIZATION {args.organization}")
         print(f"🍪 SERVICE {args.service}")
         print(f"🍪 MAX_RETRIES {args.max_retries}")
+        print(f"🍪 WAIT_TO_REQUEUE {args.wait_to_requeue} seconds")
+
+        class RequeueOnMessage(AllMessageSubscriber):
+            def handle(self, message: Message) -> BoolResult:
+                if args.wait_to_requeue:
+                    sleep(args.wait_sec)
+                self.domain_event_bus.publish(message)
+                return isSuccess
 
         connector = RabbitMqConnector()
         consumer = RabbitMqMessageConsumer(
@@ -143,7 +153,6 @@ def main():
             connector,
             logger=get_logger(),
         )
-
         for queue_name in consuming_queues:
             consumer.add_subscriber_on_queue(
                 queue_name=queue_name,
