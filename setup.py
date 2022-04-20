@@ -25,7 +25,12 @@ setup(
     author_email="support@alicebiometrics.com",
     license="MIT",
     install_requires=required,
-    entry_points={"console_scripts": ["petisco = petisco.cli.petisco:main"]},
+    entry_points={
+        "console_scripts": [
+            "petisco = petisco.cli.petisco:main",
+            "petisco-rabbitmq = petisco.cli.petisco_rabbitmq:main",
+        ]
+    },
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
