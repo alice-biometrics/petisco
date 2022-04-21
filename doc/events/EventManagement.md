@@ -99,6 +99,53 @@ or dispatch commands
 python examples/rabbitmq/dispatch_commands.py
 ```
 
+## Available CLI 
+
+Since version `v1.7.0`, petisco have available the cli command `petisco-rabbitmq` to consume domain events and requeue them.
+
+Imagine you have some events in a dead letter queue. To reproduce, you can configure your rabbitmq and publish some 
+events without launching a consumer. 
+
+```console
+python examples/rabbitmq/configure.py
+python examples/rabbitmq/publish_domain_events.py
+```
+
+To requeue event from queues, just use the `petisco-rabbitmq`
+
+```console
+>> petisco-rabbitmq --help                                                                                                                                
+usage: petisco-rabbitmq 🍪 [-h] [-rq] [-cq CONSUMING_QUEUES] [-o ORGANIZATION] [-s SERVICE] [-mr MAX_RETRIES] [-rttl RETRY_TTL] [-wtr WAIT_TO_REQUEUE]
+
+petisco-rabbitmq helps us on rabbitmq iteration
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -rq, --requeue        requeue
+  -cq CONSUMING_QUEUES, --consuming-queues CONSUMING_QUEUES
+                        List of queues to consume split by commas (my-queue-1,my-queue-2)
+  -o ORGANIZATION, --organization ORGANIZATION
+                        Name of the organization
+  -s SERVICE, --service SERVICE
+                        Name of the service
+  -mr MAX_RETRIES, --max-retries MAX_RETRIES
+                        Max Retries
+  -rttl RETRY_TTL, --retry-ttl RETRY_TTL
+                        Retry TTL
+  -wtr WAIT_TO_REQUEUE, --wait-to-requeue WAIT_TO_REQUEUE
+                        Wait to Requeue (seconds)
+
+```
+
+Example:
+```console
+petisco-rabbitmq --requeue \
+    --organization acme \
+    --service registration \
+    --consuming-queues dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed,dead_letter.acme.registration.1.event.user_created.send_mail_on_user_created
+```
+
+
 ## Let's code
 
 *"Show me the code:exclamation:"* :raised_hand:
