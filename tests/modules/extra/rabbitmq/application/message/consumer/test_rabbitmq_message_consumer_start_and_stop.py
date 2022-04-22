@@ -126,6 +126,7 @@ def test_message_consumer_should_unsubscribe_and_resume_handler_on_store_queue()
     bus.publish(second_event)
     sleep(3.0)
     consumer.stop()
+
     configurer.clear()
 
     spy.assert_number_unique_messages(2)

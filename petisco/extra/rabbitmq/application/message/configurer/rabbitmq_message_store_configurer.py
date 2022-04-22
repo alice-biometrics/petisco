@@ -70,7 +70,7 @@ class RabbitMqMessageStoreConfigurer:
         self.rabbitmq.declare_queue(
             queue_name="store",
             dead_letter_exchange=self._common_dead_letter_exchange_name,
-            dead_letter_routing_key="dead_letter",
+            dead_letter_routing_key="dead_letter.store",
             message_ttl=self.queue_config.get_main_ttl("store"),
         )
         self.rabbitmq.declare_queue(
@@ -118,7 +118,7 @@ class RabbitMqMessageStoreConfigurer:
         self.rabbitmq.bind_queue(
             exchange_name=self._common_dead_letter_exchange_name,
             queue_name="dead_letter.store",
-            routing_key="dead_letter",
+            routing_key="dead_letter.store",
         )
         self.rabbitmq.bind_queue(
             exchange_name=dead_letter_exchange_name,
