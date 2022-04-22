@@ -61,7 +61,7 @@ def get_args():
         action="store",
         dest="consuming_queues",
         default=None,
-        help="List of queues to consume",
+        help="List of queues to consume split by commas (my-queue-1,my-queue-2)",
     )
     parser.add_argument(
         "-o",
