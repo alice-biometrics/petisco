@@ -24,6 +24,12 @@ class RabbitMqEventSubcribersConfigurer:
     ):
         self._connector = connector
         self._exchange_name = f"{organization}.{service}"
+        self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(
+            self._exchange_name
+        )
+        self._dead_letter_exchange_name = RabbitMqExchangeNameFormatter.dead_letter(
+            self._exchange_name
+        )
         self.rabbitmq = RabbitMqDeclarer(
             connector=self._connector, channel_name=self._exchange_name
         )
@@ -45,12 +51,6 @@ class RabbitMqEventSubcribersConfigurer:
         self._delete_queues()
 
     def _configure_exchanges(self):
-        self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(
-            self._exchange_name
-        )
-        self._dead_letter_exchange_name = RabbitMqExchangeNameFormatter.dead_letter(
-            self._exchange_name
-        )
         self.rabbitmq.declare_exchange(self._exchange_name)
         self.rabbitmq.declare_exchange(self._retry_exchange_name)
         self.rabbitmq.declare_exchange(self._dead_letter_exchange_name)
@@ -119,7 +119,7 @@ class RabbitMqEventSubcribersConfigurer:
                 self.rabbitmq.declare_queue(
                     queue_name=queue_name,
                     dead_letter_exchange=f"dead_letter.{exchange_name}",
-                    dead_letter_routing_key="dead_letter",
+                    dead_letter_routing_key=f"dead_letter.{queue_name}",
                     message_ttl=main_ttl,
                 )
                 self.rabbitmq.declare_queue(
@@ -149,9 +149,4 @@ class RabbitMqEventSubcribersConfigurer:
                     exchange_name=dead_letter_exchange_name,
                     queue_name=dead_letter_queue_name,
                     routing_key=f"dead_letter.{queue_name}",
-                )
-                self.rabbitmq.bind_queue(
-                    exchange_name=dead_letter_exchange_name,
-                    queue_name=dead_letter_queue_name,
-                    routing_key="dead_letter",
                 )
