@@ -17,7 +17,12 @@ class IEventConfigurer:
         return {"name": cls.__name__}
 
     @abstractmethod
-    def configure_subscribers(self, subscribers: List[EventSubscriber], clear_before: bool = False):
+    def configure_subscribers(
+        self,
+        subscribers: List[EventSubscriber],
+        clear_subscriber_before: bool = False,
+        clear_store_before: bool = False,
+    ):
         raise NotImplementedError
 
     @abstractmethod

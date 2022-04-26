@@ -17,12 +17,12 @@ from petisco.event.shared.infrastructure.rabbitmq.rabbitmq_connector import (
 
 class RabbitMqEventConfigurer(IEventConfigurer):
     def __init__(
-            self,
-            connector: RabbitMqConnector,
-            organization: str,
-            service: str,
-            queue_config: QueueConfig = QueueConfig.default(),
-            use_store_queues: bool = True,
+        self,
+        connector: RabbitMqConnector,
+        organization: str,
+        service: str,
+        queue_config: QueueConfig = QueueConfig.default(),
+        use_store_queues: bool = True,
     ):
         self._use_store_queues = use_store_queues
         self.event_subscribers_configurer = RabbitMqEventSubcribersConfigurer(
@@ -46,9 +46,12 @@ class RabbitMqEventConfigurer(IEventConfigurer):
             ]
         )
 
-    def configure_subscribers(self, subscribers: List[EventSubscriber],
-                              clear_subscriber_before: bool = False,
-                              clear_store_before: bool = False):
+    def configure_subscribers(
+        self,
+        subscribers: List[EventSubscriber],
+        clear_subscriber_before: bool = False,
+        clear_store_before: bool = False,
+    ):
         if subscribers is None:
             subscribers = []
 

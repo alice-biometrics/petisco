@@ -70,7 +70,9 @@ class RabbitMqEventSubcribersConfigurer:
             if not isinstance(subscribers, list):
                 subscribers = [subscribers]
             for subscriber in subscribers:
-                queue_name = RabbitMqEventSubscriberQueueNameFormatter.format(subscriber, exchange_name=self._exchange_name)
+                queue_name = RabbitMqEventSubscriberQueueNameFormatter.format(
+                    subscriber, exchange_name=self._exchange_name
+                )
                 retry_queue_name = (
                     RabbitMqEventSubscriberQueueNameFormatter.format_retry(
                         subscriber, exchange_name=self._exchange_name
