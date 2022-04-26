@@ -3,7 +3,7 @@ from meiga import isSuccess, BoolResult
 from petisco import Event, UserId, EventSubscriber
 
 # Configuration
-ORGANIZATION = "alice"
+ORGANIZATION = "acme"
 SERVICE = "petisco"
 RETRY_TTL = 5000  # default
 MAX_RETRIES = 5  # default
