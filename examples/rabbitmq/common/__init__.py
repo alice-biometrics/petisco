@@ -4,7 +4,7 @@ from petisco import Event, UserId, EventSubscriber
 
 # Configuration
 ORGANIZATION = "acme"
-SERVICE = "petisco"
+SERVICE = "legacy"
 RETRY_TTL = 5000  # default
 MAX_RETRIES = 5  # default
 

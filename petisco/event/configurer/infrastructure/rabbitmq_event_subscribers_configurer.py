@@ -46,6 +46,10 @@ class RabbitMqEventSubcribersConfigurer:
         )
         self._configured_subscribers.append(subscribers)
 
+    def clear_subscribers(self, subscribers):
+        self._configured_subscribers += subscribers
+        self.clear()
+
     def clear(self):
         self._delete_exchange()
         self._delete_queues()
@@ -61,28 +65,27 @@ class RabbitMqEventSubcribersConfigurer:
         self.rabbitmq.delete_exchange(self._dead_letter_exchange_name)
 
     def _delete_queues(self):
-        for subscribers in self._configured_subscribers:
-            for subscriber in subscribers:
-                queue_name = RabbitMqEventSubscriberQueueNameFormatter.format(
+        for subscriber in self._configured_subscribers:
+            queue_name = RabbitMqEventSubscriberQueueNameFormatter.format(
+                subscriber, exchange_name=self._exchange_name
+            )
+            retry_queue_name = (
+                RabbitMqEventSubscriberQueueNameFormatter.format_retry(
                     subscriber, exchange_name=self._exchange_name
                 )
-                retry_queue_name = (
-                    RabbitMqEventSubscriberQueueNameFormatter.format_retry(
-                        subscriber, exchange_name=self._exchange_name
-                    )
+            )
+            dead_letter_queue_name = (
+                RabbitMqEventSubscriberQueueNameFormatter.format_dead_letter(
+                    subscriber, exchange_name=self._exchange_name
                 )
-                dead_letter_queue_name = (
-                    RabbitMqEventSubscriberQueueNameFormatter.format_dead_letter(
-                        subscriber, exchange_name=self._exchange_name
-                    )
-                )
-                for suffix in subscriber.get_handlers_names():
-                    name = f"{queue_name}.{suffix}"
-                    retry_name = f"{retry_queue_name}.{suffix}"
-                    dead_letter_name = f"{dead_letter_queue_name}.{suffix}"
-                    self.rabbitmq.delete_queue(name)
-                    self.rabbitmq.delete_queue(retry_name)
-                    self.rabbitmq.delete_queue(dead_letter_name)
+            )
+            for suffix in subscriber.get_handlers_names():
+                name = f"{queue_name}.{suffix}"
+                retry_name = f"{retry_queue_name}.{suffix}"
+                dead_letter_name = f"{dead_letter_queue_name}.{suffix}"
+                self.rabbitmq.delete_queue(name)
+                self.rabbitmq.delete_queue(retry_name)
+                self.rabbitmq.delete_queue(dead_letter_name)
 
     def _declare_queues(
         self,

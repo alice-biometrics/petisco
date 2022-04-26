@@ -2,6 +2,7 @@ import inspect
 import os
 import time
 from datetime import datetime
+from distutils.util import strtobool
 from os import environ
 from typing import Callable, Dict, Any
 
@@ -151,7 +152,14 @@ class Petisco(metaclass=Singleton):
         ) = configure_events_infrastructure(config_events, self._logger)
 
         if config_events.event_subscribers:
-            self.event_configurer.configure_subscribers(config_events.event_subscribers)
+            clear_subscriber_before = strtobool(os.getenv("PETISCO_LEGACY_RABBITMQ_CONFIGURER_CLEAR_SUBSCRIBER_BEFORE", "false"))
+            clear_store_before = strtobool(os.getenv("PETISCO_LEGACY_RABBITMQ_CONFIGURER_CLEAR_STORE_BEFORE", "false"))
+
+            self.event_configurer.configure_subscribers(
+                config_events.event_subscribers,
+                clear_subscriber_before=clear_subscriber_before,
+                clear_store_before=clear_store_before
+            )
             self.event_consumer.add_subscribers(config_events.event_subscribers)
         else:
             self.event_configurer.configure()
