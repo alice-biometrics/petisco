@@ -8,7 +8,10 @@ from petisco.base.misc.interface import Interface
 class MessageConfigurer(Interface):
     @abstractmethod
     def configure_subscribers(
-        self, subscribers: List[MessageSubscriber], clear_before: bool = False
+        self,
+        subscribers: List[MessageSubscriber],
+        clear_subscriber_before: bool = False,
+        clear_store_before: bool = False,
     ):
         raise NotImplementedError
 
