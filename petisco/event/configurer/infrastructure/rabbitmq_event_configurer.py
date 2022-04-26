@@ -46,9 +46,19 @@ class RabbitMqEventConfigurer(IEventConfigurer):
             ]
         )
 
-    def configure_subscribers(self, subscribers: List[EventSubscriber]):
+    def configure_subscribers(
+        self,
+        subscribers: List[EventSubscriber],
+        clear_subscriber_before: bool = False,
+        clear_store_before: bool = False,
+    ):
         if subscribers is None:
             subscribers = []
+
+        if clear_subscriber_before:
+            self.event_subscribers_configurer.clear_subscribers(subscribers)
+        if clear_store_before and self._use_store_queues:
+            self.event_store_configurer.clear()
 
         self.event_subscribers_configurer.execute(subscribers)
         if self._use_store_queues:

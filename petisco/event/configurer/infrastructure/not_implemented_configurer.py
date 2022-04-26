@@ -20,7 +20,12 @@ class NotImplementedEventConfigurer(IEventConfigurer):
             ]
         )
 
-    def configure_subscribers(self, subscribers: List[EventSubscriber]):
+    def configure_subscribers(
+        self,
+        subscribers: List[EventSubscriber],
+        clear_subscriber_before: bool = False,
+        clear_store_before: bool = False,
+    ):
         pass
 
     def clear(self):

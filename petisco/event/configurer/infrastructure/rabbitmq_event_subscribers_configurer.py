@@ -46,6 +46,10 @@ class RabbitMqEventSubcribersConfigurer:
         )
         self._configured_subscribers.append(subscribers)
 
+    def clear_subscribers(self, subscribers):
+        self._configured_subscribers += subscribers
+        self.clear()
+
     def clear(self):
         self._delete_exchange()
         self._delete_queues()
@@ -62,6 +66,9 @@ class RabbitMqEventSubcribersConfigurer:
 
     def _delete_queues(self):
         for subscribers in self._configured_subscribers:
+            # Patch to be compatible with old versions
+            if not isinstance(subscribers, list):
+                subscribers = [subscribers]
             for subscriber in subscribers:
                 queue_name = RabbitMqEventSubscriberQueueNameFormatter.format(
                     subscriber, exchange_name=self._exchange_name

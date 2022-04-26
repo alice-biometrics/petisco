@@ -20,7 +20,12 @@ class RabbitMqEventStoreConfigurer:
         self._exchange_name = f"{organization}.{service}"
         self._common_retry_exchange_name = f"retry.{organization}.store"
         self._common_dead_letter_exchange_name = f"dead_letter.{organization}.store"
-
+        self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(
+            self._exchange_name
+        )
+        self._dead_letter_exchange_name = RabbitMqExchangeNameFormatter.dead_letter(
+            self._exchange_name
+        )
         self.rabbitmq = RabbitMqDeclarer(
             connector=self._connector, channel_name=self._exchange_name
         )
@@ -39,12 +44,6 @@ class RabbitMqEventStoreConfigurer:
         self._delete_queues()
 
     def _configure_exchanges(self):
-        self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(
-            self._exchange_name
-        )
-        self._dead_letter_exchange_name = RabbitMqExchangeNameFormatter.dead_letter(
-            self._exchange_name
-        )
         self.rabbitmq.declare_exchange(self._exchange_name)
         self.rabbitmq.declare_exchange(self._retry_exchange_name)
         self.rabbitmq.declare_exchange(self._dead_letter_exchange_name)
