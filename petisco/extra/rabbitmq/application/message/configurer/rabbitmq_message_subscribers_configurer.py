@@ -44,6 +44,10 @@ class RabbitMqMessageSubcribersConfigurer:
         )
         self._configured_subscribers += subscribers
 
+    def clear_subscribers(self, subscribers):
+        self._configured_subscribers += subscribers
+        self.clear()
+
     def clear(self):
         self._delete_exchange()
         self._delete_queues()
