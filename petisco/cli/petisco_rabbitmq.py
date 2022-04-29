@@ -56,14 +56,6 @@ def get_args():
     )
     parser.add_argument("-rq", "--requeue", action="store_true", help="requeue")
     parser.add_argument(
-        "-cq",
-        "--consuming-queues",
-        action="store",
-        dest="consuming_queues",
-        default=None,
-        help="List of queues to consume split by commas (my-queue-1,my-queue-2)",
-    )
-    parser.add_argument(
         "-o",
         "--organization",
         action="store",
@@ -78,6 +70,30 @@ def get_args():
         dest="service",
         default=None,
         help="Name of the service",
+    )
+    parser.add_argument(
+        "-cq",
+        "--consuming-queue",
+        action="store",
+        dest="consuming_queue",
+        default=None,
+        help="Queue to consume",
+    )
+    parser.add_argument(
+        "-rrk",
+        "--retry-routing-key",
+        action="store",
+        dest="retry_routing_key",
+        default=None,
+        help="Routing key to republish the message to specific retry queue",
+    )
+    parser.add_argument(
+        "-ren",
+        "--retry-exchange-name",
+        action="store",
+        dest="retry_exchange_name",
+        default=None,
+        help="Exchange name to republish the message to specific exchange",
     )
     parser.add_argument(
         "-mr",
@@ -121,29 +137,27 @@ def main():
 
     if args.requeue:
 
-        if not args.consuming_queues:
-            print(" ➜ Not consuming queues given")
+        if not args.consuming_queue:
+            print(" ➜ Not consuming queue given")
             return
 
-        consuming_queues = args.consuming_queues.split(",")
+        if not args.retry_routing_key:
+            print(" ➜ Not retry routing_key given")
+            return
 
         if not args.service:
             print(" ➜  Not service provided")
             return
 
         print(f"petisco-rabbitmq ({__version__}) 🍪 ")
-        print(f"🍪 Requeuing events from {consuming_queues}")
+        print(f"🍪 Requeuing events from: {args.consuming_queue}")
+        print(f"🍪 With the following routing_key: {args.retry_routing_key}")
+        if args.retry_exchange_name:
+            print(f"🍪 With retry exchange name: {args.retry_exchange_name}")
         print(f"🍪 ORGANIZATION {args.organization}")
         print(f"🍪 SERVICE {args.service}")
         print(f"🍪 MAX_RETRIES {args.max_retries}")
         print(f"🍪 WAIT_TO_REQUEUE {args.wait_to_requeue} seconds")
-
-        class RequeueOnMessage(AllMessageSubscriber):
-            def handle(self, message: Message) -> BoolResult:
-                if args.wait_to_requeue:
-                    sleep(args.wait_sec)
-                self.domain_event_bus.publish(message)
-                return isSuccess
 
         connector = RabbitMqConnector()
         consumer = RabbitMqMessageConsumer(
@@ -153,11 +167,22 @@ def main():
             connector,
             logger=get_logger(),
         )
-        for queue_name in consuming_queues:
-            consumer.add_subscriber_on_queue(
-                queue_name=queue_name,
-                subscriber=RequeueOnMessage,
-                message_type_expected="domain_event",
-            )
+
+        class RequeueOnMessage(AllMessageSubscriber):
+            def handle(self, message: Message) -> BoolResult:
+                if args.wait_to_requeue:
+                    sleep(args.wait_sec)
+
+                self.domain_event_bus.retry_publish(
+                    message, args.retry_routing_key, args.retry_exchange_name
+                )
+
+                return isSuccess
+
+        consumer.add_subscriber_on_queue(
+            queue_name=args.consuming_queue,
+            subscriber=RequeueOnMessage,
+            message_type_expected="domain_event",
+        )
 
         consumer.start()
