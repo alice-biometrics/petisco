@@ -130,6 +130,8 @@ optional arguments:
                         Queue to consume
   -rrk RETRY_ROUTING_KEY, --retry-routing-key RETRY_ROUTING_KEY
                         Routing key to republish the message to specific retry queue
+  -ren RETRY_EXCHANGE_NAME, --retry-exchange-name RETRY_EXCHANGE_NAME
+                        Exchange name to republish the message to specific exchange
   -mr MAX_RETRIES, --max-retries MAX_RETRIES
                         Max Retries
   -rttl RETRY_TTL, --retry-ttl RETRY_TTL
