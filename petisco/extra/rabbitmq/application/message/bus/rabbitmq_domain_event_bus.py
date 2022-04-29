@@ -62,5 +62,33 @@ class RabbitMqDomainEventBus(DomainEventBus):
             properties=self.properties,
         )
 
+    def retry_publish(
+        self,
+        domain_event: DomainEvent,
+        retry_routing_key: str,
+        retry_exchange_name: str = None,
+    ):
+        self._check_is_domain_event(domain_event)
+        meta = self.get_configured_meta()
+        domain_event = domain_event.update_meta(meta)
+        try:
+            channel = self.connector.get_channel(self.rabbitmq_key)
+            channel.confirm_delivery()
+
+            retry_exchange = (
+                retry_exchange_name
+                if retry_exchange_name
+                else f"retry.{self.exchange_name}"
+            )
+
+            channel.basic_publish(
+                exchange=retry_exchange,
+                routing_key=retry_routing_key,
+                body=domain_event.json(),
+                properties=self.properties,
+            )
+        except ChannelClosedByBroker:
+            self._retry(domain_event)
+
     def close(self):
         self.connector.close(self.rabbitmq_key)

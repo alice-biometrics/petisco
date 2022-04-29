@@ -122,12 +122,14 @@ petisco-rabbitmq helps us on rabbitmq iteration
 optional arguments:
   -h, --help            show this help message and exit
   -rq, --requeue        requeue
-  -cq CONSUMING_QUEUES, --consuming-queues CONSUMING_QUEUES
-                        List of queues to consume split by commas (my-queue-1,my-queue-2)
   -o ORGANIZATION, --organization ORGANIZATION
                         Name of the organization
   -s SERVICE, --service SERVICE
                         Name of the service
+  -cq CONSUMING_QUEUE, --consuming-queue CONSUMING_QUEUE
+                        Queue to consume
+  -rrk RETRY_ROUTING_KEY, --retry-routing-key RETRY_ROUTING_KEY
+                        Routing key to republish the message to specific retry queue
   -mr MAX_RETRIES, --max-retries MAX_RETRIES
                         Max Retries
   -rttl RETRY_TTL, --retry-ttl RETRY_TTL
@@ -135,14 +137,38 @@ optional arguments:
   -wtr WAIT_TO_REQUEUE, --wait-to-requeue WAIT_TO_REQUEUE
                         Wait to Requeue (seconds)
 
+
 ```
 
-Example:
+Example 1 (requeue events from `dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed`):
+
 ```console
 petisco-rabbitmq --requeue \
     --organization acme \
     --service registration \
-    --consuming-queues dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed,dead_letter.acme.registration.1.event.user_created.send_mail_on_user_created
+    --consuming-queue dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed \
+    --retry-routing-key retry.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed
+```
+
+Example 2 (requeue events from `dead_letter.acme.registration.1.event.user_created.send_mail_on_user_created`):
+
+```console
+petisco-rabbitmq --requeue \
+    --organization acme \
+    --service registration \
+    --consuming-queue dead_letter.acme.registration.1.event.user_created.send_mail_on_user_created \
+    --retry-routing-key retry.acme.registration.1.event.user_created.send_mail_on_user_created
+```
+
+Example 3 (requeue events from `dead_letter.store`):
+
+```console
+petisco-rabbitmq --requeue \
+    --organization acme \
+    --service registration \
+    --consuming-queue dead_letter.store \
+    --retry-routing-key retry.store	\
+    --retry-exchange-name retry.acme.store
 ```
 
 
