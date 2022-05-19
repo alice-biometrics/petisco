@@ -214,7 +214,7 @@ class _ControllerHandler:
 
                 self.event_bus.publish(request_responded)
 
-            if self.inject_apm_metadata:
+            if self.inject_apm_metadata and info_id:
                 elasticapm.label(
                     client_id=info_id.to_dict()["client_id"],
                     user_id=info_id.to_dict()["user_id"],
