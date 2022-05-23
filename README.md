@@ -222,7 +222,7 @@ If you want to set a default middleware for every Controller, you can use the en
 
 petisco 🍪 provides several classes to help on the construction of Message publishers and consumers using a message broker.
 
-Please, find more information in [doc/message_broker/MessageBroker](doc/message_broker/MessageBroker).
+Please, find more information in [doc/message_broker/MessageBroker.md](doc/message_broker/MessageBroker.md).
 
 ## Development
 
