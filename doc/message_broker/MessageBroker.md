@@ -17,12 +17,12 @@ petisco provides a RabbitMQ implementation on top of [pika](https://github.com/p
 
 This glossary joins domain ubiquitous language with the specific implementation using RabbitMQ.
 
-| Name                              | Description                                                |     |
+| Name                              | Description                                                |  More Info |
 |-----------------------------------|------------------------------------------------------------|----|
-| `Publisher` | Application (or application instance) that publishes messages (e.g domain events and commands). Also called producer. | More info in: [https://www.rabbitmq.com/publishers.html](https://www.rabbitmq.com/publishers.html)    |
+| `Publisher` | Application (or application instance) that publishes messages (e.g domain events and commands). Also called producer. | [https://www.rabbitmq.com/publishers.html](https://www.rabbitmq.com/publishers.html)    |
 | `Message Broker` | Intermediary application that translates a message from the formal messaging protocol of the sender (publisher/producer) to the formal messaging protocol of the receiver (subscriber/consumer). | - |
-| `Exchange` | "Messages are not published directly to a queue. Instead, the producer sends messages to an exchange. Exchanges are message routing agents, defined by the virtual host within RabbitMQ. An exchange is responsible for routing the messages to different queues with the help of header attributes, bindings, and routing keys." | More info in: [https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html] |
-| `Queue` | "A queue is a sequential data structure with two primary operations: an item can be enqueued (added) at the tail and dequeued (consumed) from the head. Queues play a prominent role in the messaging technology space: many messaging protocols and tools assume that publishers and consumers communicate using a queue-like storage mechanism." |  More info in: [https://www.rabbitmq.com/queues.html](https://www.rabbitmq.com/queues.html) |
+| `Exchange` | "Messages are not published directly to a queue. Instead, the producer sends messages to an exchange. Exchanges are message routing agents, defined by the virtual host within RabbitMQ. An exchange is responsible for routing the messages to different queues with the help of header attributes, bindings, and routing keys." | [https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html](https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html) |
+| `Queue` | "A queue is a sequential data structure with two primary operations: an item can be enqueued (added) at the tail and dequeued (consumed) from the head. Queues play a prominent role in the messaging technology space: many messaging protocols and tools assume that publishers and consumers communicate using a queue-like storage mechanism." |  [https://www.rabbitmq.com/queues.html](https://www.rabbitmq.com/queues.html) |
 | `Subscriber` | Application (or application instance) that consumes messages (e.g domain events and commands) from a queue and handles a derived action. Also called consumer or handler. | - |
 
 Find several RabbitMQ tutorials in [https://www.rabbitmq.com/getstarted.html](https://www.rabbitmq.com/getstarted.html).
@@ -188,8 +188,56 @@ petisco-rabbitmq --requeue \
 Base code is available in [petisco/domain/message](../../petisco/domain/message) and specific implementation in 
 [petisco/extra/rabbitmq](../../petisco/extra/rabbitmq).
 
-Some definition of key classes:
+Some definition of base classes:
+| Name                              | Description                                                |
+|-----------------------------------|------------------------------------------------------------|
+| [Message](../../petisco/extra/shared/rabbitmq_connector.py) | Define a basic Message using a base metaclass (`MetaMessage`) |
+| [DomainEvent](../../petisco/extra/shared/rabbitmq_connector.py) | Defines a Domain Event inheriting from `Message`. You can define new attributes to add to the resultant encoded message. |
+| [Command](../../petisco/extra/shared/rabbitmq_connector.py) | Defines a Command inheriting from `Message`. You can define new attributes to add to the resultant encoded message. |
+| [MessageBus](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of a message bus to publish messages |
+| [DomainEventBus](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of domain event bus to publish `DomainEvent`. It inherits from `MessageBus` |
+| [CommandBus](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of command bus to dispatch `Command`. It inherits from `MessageBus` |
+| [MessageSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) |  |
+| [DomainEventSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) |  |
+| [CommandSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) |  |
+| [AllMessageSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) |  |
 
+
+Some RabbitMQ implementations:
+| Name                              | Description                                                |
+|-----------------------------------|------------------------------------------------------------|
+| [RabbitMqConnector](../../petisco/extra/shared/rabbitmq_connector.py) |  |
+| [RabbitMqMessageConfigurer](../../petisco/extra/shared/rabbitmq_connector.py) |  |
+| [RabbitMqDomainEventBus](../../petisco/extra/shared/rabbitmq_connector.py) |  |
+| [RabbitMqCommandBus](../../petisco/extra/shared/rabbitmq_connector.py) |  |
+
+
+```mermaid
+classDiagram
+    class Message
+    Message : +Uuid message_id
+    Message : +str name
+    Message : +int version
+    Message : +datatime oscurred_on
+    Message : +dict attributes (ready to compose) 
+    Message : +dict meta (ready to add info id, e.g correlation_id, client_id)
+    Message: +str type
+   
+    class MessageBus
+    MessageBus : +publish()
+
+    DomainEvent --|> Message 
+    Command --|> Message 
+   
+    DomainEventBus --|> MessageBus 
+    CommandBus --|> MessageBus 
+   
+    DomainEventBus --* DomainEvent 
+    CommandBus --* Command 
+    
+    RabbitMqDomainEventBus --|> DomainEventBus 
+    RabbitMqCommandBus --|> CommandBus 
+```
 
 ### Testing ✅
 
