@@ -5,9 +5,10 @@
 This page is an overview of how petisco helps us on Message Broker development. 
 
 
-## Getting Started
+## 1. Getting Started
 
-> Hands-on examples to get you started with Petisco and RabbitMQ
+> **Note**
+>  Hands-on examples to get you started with Petisco and RabbitMQ
 
 Currently,
 petisco provides a RabbitMQ implementation on top of [pika](https://github.com/pika/pika) framework.
@@ -16,17 +17,13 @@ petisco provides a RabbitMQ implementation on top of [pika](https://github.com/p
 
 This glossary joins domain ubiquitous language with the specific implementation using RabbitMQ.
 
-* **Publisher:** Application (or application instance) that publishes messages (e.g domain events and commands). 
-  Also called producer.
-  * More info in: [https://www.rabbitmq.com/publishers.html](https://www.rabbitmq.com/publishers.html)
-* **Message Broker:** Intermediary application that translates a message from the formal messaging protocol of the 
-  sender (publisher/producer) to the formal messaging protocol of the receiver (subscriber/consumer). 
-  * *Exchange:* "Messages are not published directly to a queue. Instead, the producer sends messages to an exchange. Exchanges are message routing agents, defined by the virtual host within RabbitMQ. An exchange is responsible for routing the messages to different queues with the help of header attributes, bindings, and routing keys."
-    * More info in: [https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html](https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html)
-  * *Queue:* "A queue is a sequential data structure with two primary operations: an item can be enqueued (added) at the tail and dequeued (consumed) from the head. Queues play a prominent role in the messaging technology space: many messaging protocols and tools assume that publishers and consumers communicate using a queue-like storage mechanism."
-    * More info in: [https://www.rabbitmq.com/queues.html](https://www.rabbitmq.com/queues.html)
-* **Subscriber:** Application (or application instance) that consumes messages (e.g domain events and commands) from a 
-  queue and handles a derived action. Also called consumer or handler.
+| Name                              | Description                                                |     |
+|-----------------------------------|------------------------------------------------------------|----|
+| `Publisher` | Application (or application instance) that publishes messages (e.g domain events and commands). Also called producer. | More info in: [https://www.rabbitmq.com/publishers.html](https://www.rabbitmq.com/publishers.html)    |
+| `Message Broker` | Intermediary application that translates a message from the formal messaging protocol of the sender (publisher/producer) to the formal messaging protocol of the receiver (subscriber/consumer). | - |
+| `Exchange` | "Messages are not published directly to a queue. Instead, the producer sends messages to an exchange. Exchanges are message routing agents, defined by the virtual host within RabbitMQ. An exchange is responsible for routing the messages to different queues with the help of header attributes, bindings, and routing keys." | More info in: [https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html] |
+| `Queue` | "A queue is a sequential data structure with two primary operations: an item can be enqueued (added) at the tail and dequeued (consumed) from the head. Queues play a prominent role in the messaging technology space: many messaging protocols and tools assume that publishers and consumers communicate using a queue-like storage mechanism." |  More info in: [https://www.rabbitmq.com/queues.html](https://www.rabbitmq.com/queues.html) |
+| `Subscriber` | Application (or application instance) that consumes messages (e.g domain events and commands) from a queue and handles a derived action. Also called consumer or handler. | - |
 
 Find several RabbitMQ tutorials in [https://www.rabbitmq.com/getstarted.html](https://www.rabbitmq.com/getstarted.html).
 
@@ -108,8 +105,9 @@ environment variables.
 * `RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY`: (default: 1)
 * `RABBITMQ_MESSAGE_TTL`: (default 1000 ms) If a queue is already created it will generate a precodition failure.
 
-## Available CLI 💻 
+## 2. Available CLI 💻 
 
+> **Note**
 > Since version `v1.7.0`, petisco have available the cli command `petisco-rabbitmq` to consume domain events and requeue them.
 
 Imagine you have some events in a dead letter queue. To reproduce, you can configure your rabbitmq and publish some 
@@ -182,8 +180,9 @@ petisco-rabbitmq --requeue \
     --retry-exchange-name retry.acme.store
 ```
 
-## Code 
+## 3. Code 
 
+> **Note**
 > "Show me the code!" ✋
 
 Base code is available in [petisco/domain/message](../../petisco/domain/message) and specific implementation in 
@@ -279,8 +278,9 @@ lume -test-with-rabbitmq-mysql-and-elastic
     bus.publish(domain_event)
     ```
 
-## Advanced 
+## 4. Advanced 
 
+> **Note**
 > Let's go deeper...
 
 Happy path of a message broker is shown in the following diagram. 
@@ -294,15 +294,16 @@ sequenceDiagram
     participant Exchange
     participant Queue
     participant Subscriber
+    Note over Publisher, Subscriber: Registration Example
+
+	autonumber
 		
-	autonumber		
-    Publisher->>Exchange: UserCreated
-    Exchange->>Queue: UserCreated
+  Publisher->>Exchange: UserCreated
+  Exchange->>Queue: UserCreated
 	Subscriber->>Queue: Read Message
 	Subscriber->>Subscriber: Send SMS to user
-    Subscriber-->>Queue: ack
+  Subscriber-->>Queue: ack
 	Note over Queue: Remove message
-	Note over Publisher, Subscriber: Registration Example
 ```
 
 However, when something is not correct on the subscriber, petisco/rabbitmq infrastructure performs some actions to 
