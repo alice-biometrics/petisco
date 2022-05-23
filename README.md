@@ -218,63 +218,11 @@ If you want to set a default middleware for every Controller, you can use the en
   * `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware,NotifierMiddleware`: to configure several middlewares
   
 
-#### Messages (on construction)
-⚠️ TODO: How we use the Message Manager!
+#### Message Broker 
 
-### Testing :white_check_mark:
+petisco 🍪 provides several classes to help on the construction of Message publishers and consumers using a message broker.
 
-#### Extras
-
-###### RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
-
-To test how petisco can help you on rabbitmq queues management you need to run locally a RabbitMQ application, otherwise related test will be skipped.
-Please, check the official doc here: https://www.rabbitmq.com/download.html.
-
-Run RabbitMQ with docker
-
-```console
-docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
-```
-
-You can check the RabbitMQ status on [http://localhost:15672/#/](http://localhost:15672/#/) (guest:guest).
-
-Find [here](examples/rabbitmq) some petisco examples.
-
-**Configure the rabbitmq**
-
-```console
-python examples/rabbitmq/configure.py
-```
-
-**Start consuming messages**
-
-```console
-python examples/rabbitmq/consume.py
-```
-
-**Publish some Domain Events**
-
-```console
-python examples/rabbitmq/publish_domain_events.py
-```
-
-**Dispatch a Command**
-
-```console
-python examples/rabbitmq/dispatch_commands.py
-```
-
-##### Configurations
-
-* `RABBITMQ_HEARTBEAT`: (default: 60 s)
-* `RABBITMQ_USER`: (default: guest)
-* `RABBITMQ_PASSWORD`: (default: guest)
-* `RABBITMQ_HOST`: (default: localhost)
-* `RABBITMQ_HOST`: (default: 5672)
-* `RABBITMQ_CONNECTION_NUM_MAX_RETRIES`: (default: 15)
-* `RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY`: (default: 1)
-* `RABBITMQ_MESSAGE_TTL`: (default 1000 ms) If a queue is already created it will generate a precodition failure.
-
+Please, find more information in [doc/message_broker/MessageBroker](doc/message_broker/MessageBroker).
 
 ## Development
 
