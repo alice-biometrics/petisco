@@ -197,23 +197,52 @@ Some definition of base classes:
 | [MessageBus](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of a message bus to publish messages |
 | [DomainEventBus](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of domain event bus to publish `DomainEvent`. It inherits from `MessageBus` |
 | [CommandBus](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of command bus to dispatch `Command`. It inherits from `MessageBus` |
-| [MessageSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) |  |
-| [DomainEventSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) |  |
-| [CommandSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) |  |
-| [AllMessageSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) |  |
+| [MessageSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of a subscriber using a base metaclass (`MetaMessageSubscriber`) |
+| [DomainEventSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of `DomainEvent` hanlders. It inherits from `MessageSubscriber` |
+| [CommandSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of `Command` hanlders. It inherits from `MessageSubscriber` |
+| [AllMessageSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of every message (e.g `DomainEvent` and `Command`) hanlders. It inherits from `MessageSubscriber` |
+| [MessageConfigurer](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of message configurer |
+| [MessageConsumer](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of message consumers |
 
 
 Some RabbitMQ implementations:
 | Name                              | Description                                                |
 |-----------------------------------|------------------------------------------------------------|
-| [RabbitMqConnector](../../petisco/extra/shared/rabbitmq_connector.py) |  |
-| [RabbitMqMessageConfigurer](../../petisco/extra/shared/rabbitmq_connector.py) |  |
-| [RabbitMqDomainEventBus](../../petisco/extra/shared/rabbitmq_connector.py) |  |
-| [RabbitMqCommandBus](../../petisco/extra/shared/rabbitmq_connector.py) |  |
+| [RabbitMqConnector](../../petisco/extra/shared/rabbitmq_connector.py) | Singleton class to define RabbitMQ connector and set its configurations. |
+| [RabbitMqDomainEventBus](../../petisco/extra/shared/rabbitmq_connector.py) | RabbitMQ implementation of `DomainEventBus` to publish `DomainEvents`. |
+| [RabbitMqCommandBus](../../petisco/extra/shared/rabbitmq_connector.py) | RabbitMQ implementation of `CommandBus` to dispatch `Commands`. |
+| [RabbitMqMessageConfigurer](../../petisco/extra/shared/rabbitmq_connector.py) | RabbitMQ implementation of `MessageConfigurer`, which configures exchanges, queue bindings and routing keys from defined `MessageSubscribers` |
+| [RabbitMqMessageConsumer](../../petisco/extra/shared/rabbitmq_connector.py) | RabbitMQ implementation of `MessageConsumer` to add subscribers, and start a thread to consume message from defined subscribers|
 
 
 ```mermaid
 classDiagram
+		class RabbitMqConnector
+		RabbitMqConnector: +close()
+		RabbitMqConnector: +get_connection()
+		RabbitMqConnector: +get_channel()
+
+		class MessageConfigurer
+		MessageConfigurer: +configure_subscribers()
+		MessageConfigurer: +clear()
+
+		class MessageConsumer
+		MessageConsumer: +add_subscribers()
+		MessageConsumer: +add_subscriber_on_dead_letter()
+		MessageConsumer: +add_subscriber_on_queue()
+		MessageConsumer: +unsubscribe_subscriber_on_queue()
+		MessageConsumer: +resume_subscriber_on_queue()
+		MessageConsumer: +start()
+		MessageConsumer: +stop()
+
+		class MessageSubscriber
+		MessageSubscriber: +subscribed_to()
+		MessageSubscriber: +handle()
+		MessageSubscriber: +set_domain_event_bus()
+		MessageSubscriber: +set_command_bus()
+		MessageSubscriber: -get_subscriber_name()
+		MessageSubscriber: -get_message_subscribers_info()
+
     class Message
     Message : +Uuid message_id
     Message : +str name
@@ -226,6 +255,12 @@ classDiagram
     class MessageBus
     MessageBus : +publish()
 
+		class DomainEventBus
+    DomainEventBus : +publish()
+
+		class CommandBus
+    CommandBus : +dispatch()
+
     DomainEvent --|> Message 
     Command --|> Message 
    
@@ -234,9 +269,17 @@ classDiagram
    
     DomainEventBus --* DomainEvent 
     CommandBus --* Command 
-    
+    MessageConsumer --* MessageSubscriber 
+  
+		RabbitMqMessageConfigurer --|> MessageConfigurer
+    RabbitMqMessageConsumer --|> MessageConsumer
     RabbitMqDomainEventBus --|> DomainEventBus 
-    RabbitMqCommandBus --|> CommandBus 
+    RabbitMqCommandBus --|> CommandBus
+
+		RabbitMqMessageConfigurer --* RabbitMqConnector 
+    RabbitMqMessageConsumer --* RabbitMqConnector 
+    RabbitMqDomainEventBus --* RabbitMqConnector 
+    RabbitMqCommandBus --* RabbitMqConnector 
 ```
 
 ### Testing ✅
