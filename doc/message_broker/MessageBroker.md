@@ -46,7 +46,7 @@ sequenceDiagram
 
 ### Try Petisco Message Broker examples using RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="18">
 
-In [examples/rabbitmq](examples/rabbitmq) you can find several scripts to interact with RabbitMQ.
+In [examples/rabbitmq](../../examples/rabbitmq) you can find several scripts to interact with RabbitMQ.
 To test how petisco can help you on message management you need to run locally a RabbitMQ application. 
 
 1. **Run RabbitMQ with docker**.
@@ -149,70 +149,67 @@ optional arguments:
 
 ```
 
-Example 1 (requeue events from `dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed`):
+Examples:
+* Example 1 (requeue events from `dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed`):
+	```console
+	petisco-rabbitmq --requeue \
+	    --organization acme \
+	    --service registration \
+	    --consuming-queue dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed \
+	    --retry-routing-key retry.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed
+	```
+* Example 2 (requeue events from `dead_letter.acme.registration.1.event.user_created.send_mail_on_user_created`):
+	```console
+	petisco-rabbitmq --requeue \
+	    --organization acme \
+	    --service registration \
+	    --consuming-queue dead_letter.acme.registration.1.event.user_created.send_mail_on_user_created \
+	    --retry-routing-key retry.acme.registration.1.event.user_created.send_mail_on_user_created
+	```
 
-```console
-petisco-rabbitmq --requeue \
-    --organization acme \
-    --service registration \
-    --consuming-queue dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed \
-    --retry-routing-key retry.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed
-```
-
-Example 2 (requeue events from `dead_letter.acme.registration.1.event.user_created.send_mail_on_user_created`):
-
-```console
-petisco-rabbitmq --requeue \
-    --organization acme \
-    --service registration \
-    --consuming-queue dead_letter.acme.registration.1.event.user_created.send_mail_on_user_created \
-    --retry-routing-key retry.acme.registration.1.event.user_created.send_mail_on_user_created
-```
-
-Example 3 (requeue events from `dead_letter.store`):
-
-```console
-petisco-rabbitmq --requeue \
-    --organization acme \
-    --service registration \
-    --consuming-queue dead_letter.store \
-    --retry-routing-key retry.store	\
-    --retry-exchange-name retry.acme.store
-```
+* Example 3 (requeue events from `dead_letter.store`):
+	```console
+	petisco-rabbitmq --requeue \
+	    --organization acme \
+	    --service registration \
+	    --consuming-queue dead_letter.store \
+	    --retry-routing-key retry.store	\
+	    --retry-exchange-name retry.acme.store
+	```
 
 ## 3. Code 
 
 > **Note**
 > "Show me the code!" ✋
 
-Base code is available in [petisco/domain/message](../../petisco/domain/message) and specific implementation in 
+Base code is available in [petisco/domain/message](../../petisco/base/domain/message) and specific implementation in 
 [petisco/extra/rabbitmq](../../petisco/extra/rabbitmq).
 
-Some definition of base classes:
+Some definition of [domain base classes](../../petisco/base/domain/message):
 | Name                              | Description                                                |
 |-----------------------------------|------------------------------------------------------------|
-| [Message](../../petisco/extra/shared/rabbitmq_connector.py) | Define a basic Message using a base metaclass (`MetaMessage`) |
-| [DomainEvent](../../petisco/extra/shared/rabbitmq_connector.py) | Defines a Domain Event inheriting from `Message`. You can define new attributes to add to the resultant encoded message. |
-| [Command](../../petisco/extra/shared/rabbitmq_connector.py) | Defines a Command inheriting from `Message`. You can define new attributes to add to the resultant encoded message. |
-| [MessageBus](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of a message bus to publish messages |
-| [DomainEventBus](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of domain event bus to publish `DomainEvent`. It inherits from `MessageBus` |
-| [CommandBus](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of command bus to dispatch `Command`. It inherits from `MessageBus` |
-| [MessageSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of a subscriber using a base metaclass (`MetaMessageSubscriber`) |
-| [DomainEventSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of `DomainEvent` hanlders. It inherits from `MessageSubscriber` |
-| [CommandSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of `Command` hanlders. It inherits from `MessageSubscriber` |
-| [AllMessageSubscriber](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of every message (e.g `DomainEvent` and `Command`) hanlders. It inherits from `MessageSubscriber` |
-| [MessageConfigurer](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of message configurer |
-| [MessageConsumer](../../petisco/extra/shared/rabbitmq_connector.py) | Interface which defines the contract of message consumers |
+| [Message](../../petisco/base/domain/message/message.py) | Define a basic Message using a base metaclass (`MetaMessage`) |
+| [DomainEvent](../../petisco/base/domain/message/domain_event.py) | Defines a Domain Event inheriting from `Message`. You can define new attributes to add to the resultant encoded message. |
+| [Command](../../petisco/base/domain/message/command.py) | Defines a Command inheriting from `Message`. You can define new attributes to add to the resultant encoded message. |
+| [MessageBus](../../petisco/base/domain/message/message_bus.py) | Interface which defines the contract of a message bus to publish messages |
+| [DomainEventBus](../../petisco/base/domain/message/domain_event_bus.py) | Interface which defines the contract of domain event bus to publish `DomainEvent`. It inherits from `MessageBus` |
+| [CommandBus](../../petisco/base/domain/message/command_bus.py) | Interface which defines the contract of command bus to dispatch `Command`. It inherits from `MessageBus` |
+| [MessageSubscriber](../../petisco/base/domain/message/message_subscriber.py) | Interface which defines the contract of a subscriber using a base metaclass (`MetaMessageSubscriber`) |
+| [DomainEventSubscriber](../../petisco/base/domain/message/domain_event_subscriber.py) | Interface which defines the contract of `DomainEvent` hanlders. It inherits from `MessageSubscriber` |
+| [CommandSubscriber](../../petisco/base/domain/message/command_subscriber.py) | Interface which defines the contract of `Command` hanlders. It inherits from `MessageSubscriber` |
+| [AllMessageSubscriber](../../petisco/base/domain/message/all_message_subscriber.py) | Interface which defines the contract of every message (e.g `DomainEvent` and `Command`) hanlders. It inherits from `MessageSubscriber` |
+| [MessageConfigurer](../../petisco/base/domain/message/message_configurer.py) | Interface which defines the contract of message configurer |
+| [MessageConsumer](../../petisco/base/domain/message/message_consumer.py) | Interface which defines the contract of message consumers |
 
 
-Some RabbitMQ implementations:
+Some [RabbitMQ implementations](../../petisco/extra/rabbitmq):
 | Name                              | Description                                                |
 |-----------------------------------|------------------------------------------------------------|
-| [RabbitMqConnector](../../petisco/extra/shared/rabbitmq_connector.py) | Singleton class to define RabbitMQ connector and set its configurations. |
-| [RabbitMqDomainEventBus](../../petisco/extra/shared/rabbitmq_connector.py) | RabbitMQ implementation of `DomainEventBus` to publish `DomainEvents`. |
-| [RabbitMqCommandBus](../../petisco/extra/shared/rabbitmq_connector.py) | RabbitMQ implementation of `CommandBus` to dispatch `Commands`. |
-| [RabbitMqMessageConfigurer](../../petisco/extra/shared/rabbitmq_connector.py) | RabbitMQ implementation of `MessageConfigurer`, which configures exchanges, queue bindings and routing keys from defined `MessageSubscribers` |
-| [RabbitMqMessageConsumer](../../petisco/extra/shared/rabbitmq_connector.py) | RabbitMQ implementation of `MessageConsumer` to add subscribers, and start a thread to consume message from defined subscribers|
+| [RabbitMqConnector](../../petisco/extra/rabbitmq/shared/rabbitmq_connector.py) | Singleton class to define RabbitMQ connector and set its configurations. |
+| [RabbitMqDomainEventBus](../../petisco/extra/rabbitmq/application/message/bus/rabbitmq_domain_event_bus.py) | RabbitMQ implementation of `DomainEventBus` to publish `DomainEvents`. |
+| [RabbitMqCommandBus](../../petisco/extra/rabbitmq/application/message/bus/rabbitmq_command_bus.py/) | RabbitMQ implementation of `CommandBus` to dispatch `Commands`. |
+| [RabbitMqMessageConfigurer](../../petisco/extra/rabbitmq/application/message/configurer/rabbitmq_message_configurer.py) | RabbitMQ implementation of `MessageConfigurer`, which configures exchanges, queue bindings and routing keys from defined `MessageSubscribers` |
+| [RabbitMqMessageConsumer](../../petisco/extra/rabbitmq/application/message/configurer/rabbitmq_message_consumer.py) | RabbitMQ implementation of `MessageConsumer` to add subscribers, and start a thread to consume message from defined subscribers|
 
 
 ```mermaid
