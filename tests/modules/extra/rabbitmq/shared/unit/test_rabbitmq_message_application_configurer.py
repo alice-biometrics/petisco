@@ -1,11 +1,11 @@
 import pytest
 
 from petisco import Builder, Container, Dependency, NotImplementedMessageConfigurer
-from petisco.extra.rabbitmq import ApplicationRabbitMqMessageConfigurer
+from petisco.extra.rabbitmq import RabbitMqMessageApplicationConfigurer
 
 
-@pytest.mark.integration
-class TestApplicationRabbitMqMessageConfigurer:
+@pytest.mark.unit
+class TestRabbitMqMessageApplicationConfigurer:
     def setup(self):
         Container.set_dependencies(
             [
@@ -23,12 +23,12 @@ class TestApplicationRabbitMqMessageConfigurer:
 
     @pytest.mark.parametrize("testing", [True, False])
     def should_execute(self, testing):
-        configurer = ApplicationRabbitMqMessageConfigurer()
+        configurer = RabbitMqMessageApplicationConfigurer()
         configurer.execute(testing=testing)
 
     def should_fail_when_message_configurer_do_not_exist_in_container(self):
         Container.clear()
-        configurer = ApplicationRabbitMqMessageConfigurer()
+        configurer = RabbitMqMessageApplicationConfigurer()
         with pytest.raises(IndexError) as excinfo:
             configurer.execute()
         assert (

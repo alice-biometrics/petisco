@@ -16,10 +16,10 @@ CLEAR_STORE_BEFORE = strtobool(
 )
 
 
-class ApplicationRabbitMqMessageConfigurer(ApplicationConfigurer):
+class RabbitMqMessageApplicationConfigurer(ApplicationConfigurer):
     def __init__(
         self,
-        execute_after_dependencies: bool = False,
+        execute_after_dependencies: bool = True,
         subscribers: List[MessageSubscriber] = None,
     ):
         self.execute_after_dependencies = execute_after_dependencies
