@@ -58,25 +58,25 @@ To test how petisco can help you on message management you need to run locally a
     ```console
     git clone git@github.com:alice-biometrics/petisco.git && cd petisco
     ```
-4. Create a python environment and install petisco
+3. Create a python environment and install petisco
     ```console
     > python3 -m venv venv
     > source venv/bin/activate
     (venv) > pip install petisco[rabbitmq]
     ```
-5. **Configure the exchanges and queues**. This script will configure common queues and specific queues to support subscriptions (domain event and command consumers/handlers).
+4. **Configure the exchanges and queues**. This script will configure common queues and specific queues to support subscriptions (domain event and command consumers/handlers).
     ```console
     python3 -m examples.rabbitmq.configure
     ```
-6. **Start consuming messages from Queues**. This script will execute a continuous process to consume every message on subscribed queues. 
+5. **Start consuming messages from Queues**. This script will execute a continuous process to consume every message on subscribed queues. 
     ```console
     python3 -m examples.rabbitmq.consume
     ```
-7. **Publish domain events**.
+6. **Publish domain events**.
     ```console
     python3 -m examples.rabbitmq.publish_domain_events
     ```
-8. **Dispatch commands**.
+7. **Dispatch commands**.
     ```console
     python3 -m examples.rabbitmq.dispatch_commands
     ```
