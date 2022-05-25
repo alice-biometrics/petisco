@@ -55,27 +55,31 @@ To test how petisco can help you on message management you need to run locally a
     ```
     You can check the RabbitMQ status on [http://localhost:15672/#/](http://localhost:15672/#/) (guest:guest). Please, 
     check the official doc [here](https://www.rabbitmq.com/download.html).
-2. Create a python environment and install petisco
+2. Clone the project
+    ```console
+    git clone git@github.com:alice-biometrics/petisco.git && cd petisco
+    ```
+4. Create a python environment and install petisco
     ```console
     > python3 -m venv venv
     > source venv/bin/activate
     (venv) > pip install petisco[rabbitmq]
     ```
-3. **Configure the exchanges and queues**. This script will configure common queues and specific queues to support subscriptions (domain event and command consumers/handlers).
+5. **Configure the exchanges and queues**. This script will configure common queues and specific queues to support subscriptions (domain event and command consumers/handlers).
     ```console
-    python examples/rabbitmq/configure.py
+    python3 -m examples.rabbitmq.configure
     ```
-4. **Start consuming messages from Queues**. This script will execute a continuous process to consume every message on subscribed queues. 
+6. **Start consuming messages from Queues**. This script will execute a continuous process to consume every message on subscribed queues. 
     ```console
-    python examples/rabbitmq/consume.py
+    python3 -m examples.rabbitmq.consume
     ```
-5. **Publish domain events**.
+7. **Publish domain events**.
     ```console
-    python examples/rabbitmq/publish_domain_events.py
+    python3 -m examples.rabbitmq.publish_domain_events
     ```
-6. **Dispatch commands**.
+8. **Dispatch commands**.
     ```console
-    python examples/rabbitmq/dispatch_commands.py
+    python3 -m examples.rabbitmq.dispatch_commands
     ```
 
 These examples can help you to start playing with rabbitmq and to understand how it works in petisco. It is strongly 
@@ -114,8 +118,8 @@ Imagine you have some events in a dead letter queue. To reproduce, you can confi
 events without launching a consumer. 
 
 ```console
-python examples/rabbitmq/configure.py
-python examples/rabbitmq/publish_domain_events.py
+python3 -m examples.rabbitmq.configure
+python3 -m examples.rabbitmq.publish_domain_events
 ```
 
 To requeue event from queues, just use the `petisco-rabbitmq`
