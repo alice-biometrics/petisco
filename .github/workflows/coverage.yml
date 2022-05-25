@@ -3,7 +3,7 @@ name: coverage
 on:
   push:
     paths-ignore:
-      - '*.md'
+      - '**.md'
       - 'petisco/VERSION'
       - '.github/ISSUE_TEMPLATE'
       - '.github/workflows/ci.yml'
