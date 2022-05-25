@@ -4,7 +4,6 @@
 
 This page is an overview of how petisco helps us on Message Broker development. 
 
-
 ## 1. Getting Started
 
 > **Note**

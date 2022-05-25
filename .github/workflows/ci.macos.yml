@@ -3,7 +3,7 @@ name: ci-macos
 on:
   pull_request:
     paths-ignore:
-      - '*.md'
+      - '**.md'
       - 'petisco/VERSION'
       - '.github/ISSUE_TEMPLATE'
       - '.github/workflows/coverage.yml'
