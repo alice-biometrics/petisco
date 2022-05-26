@@ -62,23 +62,24 @@ To test how petisco can help you on message management you need to run locally a
     ```console
     > python3 -m venv venv
     > source venv/bin/activate
-    (venv) > pip install petisco[rabbitmq]
+    (venv) > pip install lume
+    (venv) > lume -install
     ```
 4. **Configure the exchanges and queues**. This script will configure common queues and specific queues to support subscriptions (domain event and command consumers/handlers).
     ```console
-    python3 -m examples.rabbitmq.configure
+    python3 examples/rabbitmq/configure.py
     ```
 5. **Start consuming messages from Queues**. This script will execute a continuous process to consume every message on subscribed queues. 
     ```console
-    python3 -m examples.rabbitmq.consume
+    python3 examples/rabbitmq/consume.py
     ```
 6. **Publish domain events**.
     ```console
-    python3 -m examples.rabbitmq.publish_domain_events
+    python3 examples/rabbitmq/publish_domain_events.py
     ```
 7. **Dispatch commands**.
     ```console
-    python3 -m examples.rabbitmq.dispatch_commands
+    python3 examples/rabbitmq/dispatch_commands.py
     ```
 
 These examples can help you to start playing with rabbitmq and to understand how it works in petisco. It is strongly 
@@ -117,8 +118,8 @@ Imagine you have some events in a dead letter queue. To reproduce, you can confi
 events without launching a consumer. 
 
 ```console
-python3 -m examples.rabbitmq.configure
-python3 -m examples.rabbitmq.publish_domain_events
+python3 examples/rabbitmq/configure.py
+python3 examples/rabbitmq/publish_domain_events.py
 ```
 
 To requeue event from queues, just use the `petisco-rabbitmq`
