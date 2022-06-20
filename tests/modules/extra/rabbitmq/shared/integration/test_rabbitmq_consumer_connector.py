@@ -9,6 +9,7 @@ from tests.modules.extra.testing_decorators import testing_with_rabbitmq
 
 
 @pytest.mark.integration
+@pytest.mark.filterwarnings("ignore::pytest.PytestUnraisableExceptionWarning")
 class TestRabbitMqConsumerConnector:
     channel: BlockingChannel
 
