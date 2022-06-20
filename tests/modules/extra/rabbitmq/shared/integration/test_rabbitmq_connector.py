@@ -19,6 +19,7 @@ from tests.modules.extra.testing_decorators import testing_with_rabbitmq
 
 
 @pytest.mark.integration
+@pytest.mark.filterwarnings("ignore::pytest.PytestUnraisableExceptionWarning")
 class TestRabbitMqConnector:
     @testing_with_rabbitmq
     def should_get_an_open_connection(self):
