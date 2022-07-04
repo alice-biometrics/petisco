@@ -1,11 +1,10 @@
-from typing import Dict
-
 import elasticapm
 from fastapi import HTTPException
 from loguru import logger
 from meiga import Result
 
 from petisco import DEFAULT_HTTP_ERROR_MAP
+from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.controller.http_error import (
     DEFAULT_HTTP_ERROR_DETAIL,
     HttpError,
@@ -14,7 +13,7 @@ from petisco.base.domain.errors.domain_error import DomainError
 from petisco.base.domain.errors.unknown_error import UnknownError
 
 
-def fastapi_failure_handler(result: Result, error_map: Dict[type, HttpError]):
+def fastapi_failure_handler(result: Result, error_map: ErrorMap):
     domain_error = result.value
     error_type = type(domain_error)
     http_error = error_map.get(error_type, HttpError())
@@ -35,13 +34,19 @@ def fastapi_failure_handler(result: Result, error_map: Dict[type, HttpError]):
             {"internal_error_message": internal_error_message}
         )
 
-    detail = "Unknown Error"
+    detail = http_error.detail
     if isinstance(domain_error, DomainError):
         detail = (
             http_error.detail
             if http_error.detail != DEFAULT_HTTP_ERROR_DETAIL
             else domain_error.detail()
         )
+    else:
+        logger.warning(
+            f"fastapi_failure_handler: {domain_error.__class__.__name__} is not a DomainError (warning "
+            f"mapping error)"
+        )
+
     http_exception = HTTPException(
         status_code=http_error.status_code, detail=detail, headers=http_error.headers
     )
