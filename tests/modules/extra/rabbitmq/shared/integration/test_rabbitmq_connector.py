@@ -34,7 +34,7 @@ class TestRabbitMqConnector:
 
         connector.close("test")
 
-        assert connector.open_connections == dict()
+        assert "test" not in connector.open_connections
 
     @testing_with_rabbitmq
     def should_raise_a_connection_error_exception_when_input_envvars_are_not_valid(
