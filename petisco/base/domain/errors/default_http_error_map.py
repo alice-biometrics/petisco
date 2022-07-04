@@ -1,3 +1,4 @@
+from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.controller.http_error import HttpError
 from petisco.base.domain.errors.defaults.already_exists import (
     AggregateAlreadyExistError,
@@ -16,7 +17,7 @@ from petisco.base.domain.errors.defaults.not_found import (
 )
 from petisco.base.domain.errors.domain_error import DomainError
 
-DEFAULT_HTTP_ERROR_MAP = {
+DEFAULT_HTTP_ERROR_MAP: ErrorMap = {
     DomainError: HttpError(status_code=500),
     NotFound: HttpError(status_code=404),
     AlreadyExists: HttpError(status_code=409),
