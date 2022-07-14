@@ -66,3 +66,13 @@ def test_uuid_should_fail_when_input_is_not_a_valid_uuid_with_classmethod():
         Uuid.from_value("non-uuid")
 
     assert "InvalidUuid (non-uuid)" in str(excinfo.value)
+
+
+@pytest.mark.unit
+def test_uuid_v4_should_return_an_object_of_inherited_class():
+    class UserId(Uuid):
+        pass
+
+    user_id = UserId.v4()
+
+    assert isinstance(user_id, UserId)
