@@ -69,7 +69,7 @@ def test_uuid_should_fail_when_input_is_not_a_valid_uuid_with_classmethod():
 
 
 @pytest.mark.unit
-def test_uuid_v4_should_return_an_object_of_inherited_class():
+def test_uuid_v4_should_return_an_object_of_a_child_class():
     class UserId(Uuid):
         pass
 
