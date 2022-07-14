@@ -27,6 +27,7 @@ def test_uuid_should_success_when_generate_a_v4_version():
 
     uuid = Uuid.v4()
 
+    assert isinstance(uuid, Uuid)
     assert validators.uuid(uuid.value)
 
 
