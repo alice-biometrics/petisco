@@ -32,6 +32,10 @@ class TestRabbitMqConnector:
 
         connection.close()
 
+        connector.close("test")
+
+        assert "test" not in connector.open_connections
+
     @testing_with_rabbitmq
     def should_raise_a_connection_error_exception_when_input_envvars_are_not_valid(
         self,
@@ -109,3 +113,16 @@ class TestRabbitMqConnector:
         connector.wait_seconds_retry = original_wait_seconds_retry
 
         configurer.clear()
+
+    @testing_with_rabbitmq
+    def should_close_all_connections(self):
+
+        connector = RabbitMqConnector()
+
+        for key_connection in ["key1", "key2", "key3"]:
+            connection = connector.get_connection(key_connection)
+            assert connection.is_open
+
+        connector.close_all()
+
+        assert connector.open_connections == dict()
