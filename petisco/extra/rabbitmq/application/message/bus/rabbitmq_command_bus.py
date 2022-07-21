@@ -1,3 +1,5 @@
+from typing import Union
+
 from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
@@ -5,6 +7,9 @@ from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.command_bus import CommandBus
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
     RabbitMqMessageConfigurer,
+)
+from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import (
+    RabbitMqConsumerConnector,
 )
 from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_queue_name_formatter import (
     RabbitMqMessageQueueNameFormatter,
@@ -17,7 +22,9 @@ class RabbitMqCommandBus(CommandBus):
         self,
         organization: str,
         service: str,
-        connector: RabbitMqConnector = RabbitMqConnector(),
+        connector: Union[
+            RabbitMqConnector, RabbitMqConsumerConnector
+        ] = RabbitMqConnector(),
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
@@ -41,6 +48,10 @@ class RabbitMqCommandBus(CommandBus):
                 body=command.json(),
                 properties=self.properties,
             )
+            if channel.is_open and not isinstance(
+                self.connector, RabbitMqConsumerConnector
+            ):
+                channel.close()
         except ChannelClosedByBroker:
             # If domain event queue is not configured, it will be configured and then try to publish again.
             self.configurer.configure()

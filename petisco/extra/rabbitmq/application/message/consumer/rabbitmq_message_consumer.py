@@ -188,7 +188,6 @@ class RabbitMqMessageConsumer(MessageConsumer):
                     subscriber.handle,
                     log_activity="received_message",
                 )
-
             try:
                 if message_type_expected == "domain_event":
                     message = DomainEvent.from_json(body)
@@ -220,7 +219,6 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 )
                 subscriber.set_domain_event_bus(domain_event_bus)
                 subscriber.set_command_bus(command_bus)
-
                 result = subscriber.handle(message)
 
             self.printer.print_context(subscriber.handle, result)
@@ -229,6 +227,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 raise MessageHandlerReturnsNoneError(subscriber.handle)
 
             derived_action = ConsumerDerivedAction()
+
             if result.is_failure:
                 if not properties.headers:
                     properties.headers = {

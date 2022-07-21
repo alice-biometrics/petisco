@@ -1,3 +1,5 @@
+from typing import List, Union
+
 from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
@@ -5,6 +7,9 @@ from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
     RabbitMqMessageConfigurer,
+)
+from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import (
+    RabbitMqConsumerConnector,
 )
 from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_queue_name_formatter import (
     RabbitMqMessageQueueNameFormatter,
@@ -17,7 +22,9 @@ class RabbitMqDomainEventBus(DomainEventBus):
         self,
         organization: str,
         service: str,
-        connector: RabbitMqConnector = RabbitMqConnector(),
+        connector: Union[
+            RabbitMqConnector, RabbitMqConsumerConnector
+        ] = RabbitMqConnector(),
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
@@ -41,13 +48,50 @@ class RabbitMqDomainEventBus(DomainEventBus):
                 body=domain_event.json(),
                 properties=self.properties,
             )
+            if channel.is_open and not isinstance(
+                self.connector, RabbitMqConsumerConnector
+            ):
+                channel.close()
+
         except ChannelClosedByBroker:
             self._retry(domain_event)
+
+    def publish_list(self, domain_events: List[DomainEvent]):
+        meta = self.get_configured_meta()
+        unpublished_domain_events = domain_events
+        try:
+            channel = self.connector.get_channel(self.rabbitmq_key)
+
+            for i, domain_event in enumerate(domain_events):
+                self._check_is_domain_event(domain_event)
+                domain_event = domain_event.update_meta(meta)
+                routing_key = RabbitMqMessageQueueNameFormatter.format(
+                    domain_event, exchange_name=self.exchange_name
+                )
+                channel.confirm_delivery()
+                channel.basic_publish(
+                    exchange=self.exchange_name,
+                    routing_key=routing_key,
+                    body=domain_event.json(),
+                    properties=self.properties,
+                )
+                unpublished_domain_events.pop(i)
+            if channel.is_open and not isinstance(
+                self.connector, RabbitMqConsumerConnector
+            ):
+                channel.close()
+        except ChannelClosedByBroker:
+            self._retry_publish_list(unpublished_domain_events)
 
     def _retry(self, domain_event: DomainEvent):
         # If domain event queue is not configured, it will be configured and then try to publish again.
         self.configurer.configure()
         self.publish(domain_event)
+
+    def _retry_publish_list(self, domain_events: List[DomainEvent]):
+        # If domain event queue is not configured, it will be configured and then try to publish again.
+        self.configurer.configure()
+        self.publish_list(domain_events)
 
     def retry_publish_only_on_store_queue(self, domain_event: DomainEvent):
         self._check_is_domain_event(domain_event)

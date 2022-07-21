@@ -47,12 +47,8 @@ def test_message_consumer_should_publish_a_domain_event_and_a_command_on_consume
         assert isinstance(self.domain_event_bus, RabbitMqDomainEventBus)
         assert isinstance(self.command_bus, RabbitMqCommandBus)
 
-        derived_domain_event = DomainEventUserUpdatedMother.random()
-        command = CommandPersistUserMother.random()
-
-        self.domain_event_bus.publish(derived_domain_event)
-        self.command_bus.dispatch(command)
-
+        self.domain_event_bus.publish(DomainEventUserUpdatedMother.random())
+        self.command_bus.dispatch(CommandPersistUserMother.random())
         return isSuccess
 
     def assert_consumer_derived_domain_event(domain_event: DomainEvent) -> BoolResult:
