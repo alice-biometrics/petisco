@@ -80,6 +80,7 @@ setup(
     zip_safe=False,
     extras_require={
         "flask": [
+            "flask<=2.1.3",
             "connexion==2.6.0",
             "swagger-ui-bundle>=0.0.2",
             "Flask-Cors==3.0.7",
