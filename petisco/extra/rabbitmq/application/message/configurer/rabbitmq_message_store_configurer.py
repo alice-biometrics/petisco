@@ -13,7 +13,7 @@ class RabbitMqMessageStoreConfigurer:
         service: str,
         connector: RabbitMqConnector,
         queue_config: QueueConfig,
-    ):
+    ) -> None:
         self._connector = connector
         self._exchange_name = f"{organization}.{service}"
         self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(
@@ -30,7 +30,7 @@ class RabbitMqMessageStoreConfigurer:
         )
         self.queue_config = queue_config
 
-    def execute(self):
+    def execute(self) -> None:
         self._configure_exchanges()
         self._declare_queues(
             self._exchange_name,
@@ -38,25 +38,25 @@ class RabbitMqMessageStoreConfigurer:
             self._dead_letter_exchange_name,
         )
 
-    def clear(self):
+    def clear(self) -> None:
         self._delete_exchange()
         self._delete_queues()
 
-    def _configure_exchanges(self):
+    def _configure_exchanges(self) -> None:
         self.rabbitmq.declare_exchange(self._exchange_name)
         self.rabbitmq.declare_exchange(self._retry_exchange_name)
         self.rabbitmq.declare_exchange(self._dead_letter_exchange_name)
         self.rabbitmq.declare_exchange(self._common_retry_exchange_name)
         self.rabbitmq.declare_exchange(self._common_dead_letter_exchange_name)
 
-    def _delete_exchange(self):
+    def _delete_exchange(self) -> None:
         self.rabbitmq.delete_exchange(self._exchange_name)
         self.rabbitmq.delete_exchange(self._retry_exchange_name)
         self.rabbitmq.delete_exchange(self._dead_letter_exchange_name)
         self.rabbitmq.delete_exchange(self._common_retry_exchange_name)
         self.rabbitmq.delete_exchange(self._common_dead_letter_exchange_name)
 
-    def _delete_queues(self):
+    def _delete_queues(self) -> None:
         self.rabbitmq.delete_queue("store")
         self.rabbitmq.delete_queue("retry.store")
         self.rabbitmq.delete_queue("dead_letter.store")
@@ -66,7 +66,7 @@ class RabbitMqMessageStoreConfigurer:
         exchange_name: str,
         retry_exchange_name: str,
         dead_letter_exchange_name: str,
-    ):
+    ) -> None:
         self.rabbitmq.declare_queue(
             queue_name="store",
             dead_letter_exchange=self._common_dead_letter_exchange_name,

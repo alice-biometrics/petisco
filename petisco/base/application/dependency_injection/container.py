@@ -6,7 +6,7 @@ from petisco.base.misc.singleton import Singleton
 
 
 class Container(metaclass=Singleton):
-    def __init__(self):
+    def __init__(self) -> None:
         self.dependencies = defaultdict()
 
     @staticmethod
@@ -21,7 +21,7 @@ class Container(metaclass=Singleton):
         return instance
 
     @staticmethod
-    def set_dependencies(dependencies: List[Dependency] = None):
+    def set_dependencies(dependencies: List[Dependency] = None) -> None:
         if dependencies is None:
             dependencies = []
         Container()._set_dependencies(dependencies)
@@ -30,7 +30,7 @@ class Container(metaclass=Singleton):
     def get_available_dependencies() -> List[str]:
         return list(Container().dependencies.keys())
 
-    def _set_dependencies(self, input_dependencies: List[Dependency]):
+    def _set_dependencies(self, input_dependencies: List[Dependency]) -> None:
         for dependency in input_dependencies:
             if dependency.name not in self.dependencies:
                 self.dependencies[dependency.name] = dependency

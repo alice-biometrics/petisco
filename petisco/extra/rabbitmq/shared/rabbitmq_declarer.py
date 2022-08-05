@@ -1,3 +1,5 @@
+from typing import Optional
+
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 
@@ -6,7 +8,9 @@ class RabbitMqDeclarer:
         self._connector = connector
         self._channel_name = channel_name
 
-    def declare_exchange(self, exchange_name: str, exchange_type: str = "topic"):
+    def declare_exchange(
+        self, exchange_name: str, exchange_type: str = "topic"
+    ) -> None:
         channel = self._connector.get_channel(self._channel_name)
         try:
             channel.exchange_declare(
@@ -18,7 +22,7 @@ class RabbitMqDeclarer:
             )
         channel.close()
 
-    def delete_exchange(self, exchange_name: str):
+    def delete_exchange(self, exchange_name: str) -> None:
         channel = self._connector.get_channel(self._channel_name)
         channel.exchange_delete(exchange_name)
         channel.close()
@@ -26,10 +30,10 @@ class RabbitMqDeclarer:
     def declare_queue(
         self,
         queue_name: str,
-        dead_letter_exchange: str = None,
-        dead_letter_routing_key: str = None,
-        message_ttl: int = None,
-    ):
+        dead_letter_exchange: Optional[str] = None,
+        dead_letter_routing_key: Optional[str] = None,
+        message_ttl: Optional[int] = None,
+    ) -> str:
         channel = self._connector.get_channel(self._channel_name)
 
         queue_arguments = {}
@@ -49,7 +53,7 @@ class RabbitMqDeclarer:
 
         return result.method.queue
 
-    def bind_queue(self, exchange_name: str, queue_name: str, routing_key: str):
+    def bind_queue(self, exchange_name: str, queue_name: str, routing_key: str) -> None:
         channel = self._connector.get_channel(self._channel_name)
 
         channel.queue_bind(
@@ -57,7 +61,7 @@ class RabbitMqDeclarer:
         )
         channel.close()
 
-    def delete_queue(self, queue_name: str):
+    def delete_queue(self, queue_name: str) -> None:
         channel = self._connector.get_channel(self._channel_name)
         channel.queue_delete(queue_name)
         channel.close()

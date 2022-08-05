@@ -1,7 +1,7 @@
 import os
 import random
 from time import sleep
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
@@ -44,14 +44,18 @@ class RabbitMqMessageChaos(MessageChaos):
         self._set_percentage_simulate_failures(percentage_simulate_failures)
         self._set_protected_routing_keys(protected_routing_keys)
 
-    def _set_percentage_simulate_nack(self, percentage_simulate_nack):
+    def _set_percentage_simulate_nack(
+        self, percentage_simulate_nack: Optional[Union[float, str]]
+    ) -> None:
         if percentage_simulate_nack is None:
             percentage_simulate_nack = os.environ.get(
                 MESSAGE_CHAOS_PERCENTAGE_SIMULATE_NACK_KEY
             )
         self.percentage_simulate_nack = self._float(percentage_simulate_nack)
 
-    def _set_delay_before_even_handler_second(self, delay_before_even_handler_second):
+    def _set_delay_before_even_handler_second(
+        self, delay_before_even_handler_second: Optional[Union[float, str]]
+    ) -> None:
         if delay_before_even_handler_second is None:
             delay_before_even_handler_second = os.environ.get(
                 MESSAGE_CHAOS_DELAY_BEFORE_EVENT_HANDLER_SECONDS_KEY
@@ -60,24 +64,28 @@ class RabbitMqMessageChaos(MessageChaos):
             delay_before_even_handler_second
         )
 
-    def _set_percentage_simulate_failures(self, percentage_simulate_failures):
+    def _set_percentage_simulate_failures(
+        self, percentage_simulate_failures: Optional[Union[float, str]]
+    ) -> None:
         if percentage_simulate_failures is None:
             percentage_simulate_failures = os.environ.get(
                 MESSAGE_CHAOS_PERCENTAGE_SIMULATE_FAILURES_KEY
             )
         self.percentage_simulate_failures = self._float(percentage_simulate_failures)
 
-    def _set_protected_routing_keys(self, protected_routing_keys):
+    def _set_protected_routing_keys(
+        self, protected_routing_keys: Optional[Union[List[str], str]]
+    ) -> None:
         if protected_routing_keys is None:
             protected_routing_keys = os.environ.get(
                 MESSAGE_CHAOS_PROTECTED_ROUTING_KEYS_KEY
             )
         self.protected_routing_keys = self._list(protected_routing_keys)
 
-    def _float(self, value):
+    def _float(self, value: Optional[Union[float, str]]) -> Union[float, None]:
         return float(value) if value is not None else None
 
-    def _list(self, value):
+    def _list(self, value: Optional[Union[List[str], str]]) -> Union[List[str], None]:
         if value is None:
             return None
 
@@ -85,10 +93,10 @@ class RabbitMqMessageChaos(MessageChaos):
             value = list(value.split(","))
         return value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"RabbitMqEventChaos: {self.info()}"
 
-    def info(self) -> Dict:
+    def info(self) -> Dict[str, Any]:
         return {
             MESSAGE_CHAOS_PERCENTAGE_SIMULATE_NACK_KEY: self.percentage_simulate_nack,
             MESSAGE_CHAOS_DELAY_BEFORE_EVENT_HANDLER_SECONDS_KEY: self.delay_before_even_handler_second,
@@ -128,7 +136,7 @@ class RabbitMqMessageChaos(MessageChaos):
                 else False
             )
 
-    def delay(self):
+    def delay(self) -> None:
         if self.delay_before_even_handler_second is None:
             pass
         else:

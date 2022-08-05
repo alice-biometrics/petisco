@@ -89,6 +89,7 @@ from petisco.base.domain.persistence.persistence_models import PersistenceModels
 from petisco.base.misc.builder import Builder
 from petisco.base.misc.interface import Interface
 from petisco.base.misc.result_mapper import ResultMapper
+from petisco.base.misc.singleton import Singleton
 from petisco.base.testing.assert_http import assert_http
 
 base = [
@@ -135,6 +136,7 @@ base = [
     "Application",
     "ApplicationConfigurer",
     "Builder",
+    "Singleton",
 ]
 
 errors = [
