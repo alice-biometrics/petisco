@@ -1,14 +1,18 @@
-from typing import Any
+from typing import Any, TypeVar, cast
+
+ClassType = TypeVar("ClassType", bound=Any)
 
 
 class Builder:
-    def __init__(self, klass: Any, is_builder: bool = False, *args, **kwargs):
+    def __init__(
+        self, klass: ClassType, is_builder: bool = False, *args: Any, **kwargs: Any
+    ) -> None:
         self.klass = klass
         self.args = args
         self.kwargs = kwargs
         self.is_builder = is_builder
 
-    def build(self):
+    def build(self) -> ClassType:
         try:
             if self.is_builder:
                 instance = self.klass.build(*self.args, **self.kwargs)
@@ -19,4 +23,4 @@ class Builder:
                 f"Error instantiating {self.klass.__name__}\n{repr(exc)}"
             )
 
-        return instance
+        return cast(ClassType, instance)

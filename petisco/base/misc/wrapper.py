@@ -1,18 +1,20 @@
 import os
 from functools import wraps
 from inspect import signature
+from typing import Any, Callable, List, Type, Union
 
 import elasticapm
 from meiga import Error, Failure
 from meiga.on_failure_exception import OnFailureException
 
+from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
 from petisco.base.domain.errors.unknown_error import UnknownError
 
 
-def get_middleware_classes(config):
-    def gettype(name):
+def get_middleware_classes(config) -> List[Middleware]:
+    def gettype(name: str) -> Type[Middleware]:
         lookup_table = {
             "NotifierMiddleware": NotifierMiddleware,
             "PrintMiddleware": PrintMiddleware,
@@ -26,18 +28,23 @@ def get_middleware_classes(config):
 
     middlewares_classes = getattr(config, "middlewares", [])
     if not middlewares_classes:
-        default_middlewares_names = os.getenv("PETISCO_DEFAULT_MIDDLEWARES", [])
-        if default_middlewares_names:
-            default_middlewares_names = default_middlewares_names.split(",")
-            middlewares_classes = [
-                gettype(middleware_name)
-                for middleware_name in default_middlewares_names
-            ]
+        default_middlewares_names: Union[str, None] = os.getenv(
+            "PETISCO_DEFAULT_MIDDLEWARES"
+        )
+        if not default_middlewares_names:
+            return []
+        default_middlewares_names_list = default_middlewares_names.split(",")
+        middlewares_classes = [
+            gettype(middleware_name)
+            for middleware_name in default_middlewares_names_list
+        ]
 
     return middlewares_classes
 
 
-def wrapper(execute_func, wrapped_class_name, config, mapper):
+def wrapper(
+    execute_func: Callable[..., Any], wrapped_class_name: str, config, mapper
+) -> Callable[..., Any]:
     @wraps(execute_func)
     def wrapped(*args, **kwargs):
         middleware_classes = get_middleware_classes(config)

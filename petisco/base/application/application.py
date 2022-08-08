@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Callable, List, Optional
+from typing import Any, Callable, List, Optional
 
 from pydantic import BaseSettings, Field
 
@@ -21,10 +21,10 @@ class Application(BaseSettings):
     organization: str
     deployed_at: Optional[datetime]
     environment: str = Field("local", env="ENVIRONMENT")
-    dependencies_provider: Optional[Callable[..., List[Dependency]]] = lambda: []
-    configurers: Optional[List[ApplicationConfigurer]] = []
+    dependencies_provider: Callable[..., List[Dependency]] = lambda: []
+    configurers: List[ApplicationConfigurer] = []
 
-    def __init__(self, **data) -> None:
+    def __init__(self, **data: Any) -> None:
         ApplicationInfo(
             name=data["name"],
             organization=data["organization"],
@@ -33,7 +33,7 @@ class Application(BaseSettings):
         )
         super().__init__(**data)
 
-    def configure(self, testing: bool = False):
+    def configure(self, testing: bool = False) -> None:
 
         before_dependecies_configurers = [
             configurer
@@ -67,7 +67,7 @@ class Application(BaseSettings):
         merged_dependecies = {**default_dependencies_dict, **given_dependencies_dict}
         return list(merged_dependecies.values())
 
-    def clear(self):
+    def clear(self) -> None:
         Container.clear()
 
     def info(self):

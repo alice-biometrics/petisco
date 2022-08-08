@@ -5,11 +5,12 @@ from typing import Any, Dict, List, Tuple, cast
 from meiga import Error, NotImplementedMethodError, Result
 
 from petisco.base.application.controller.error_map import ErrorMap
+from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.misc.result_mapper import ResultMapper, default_failure_handler
 from petisco.base.misc.wrapper import wrapper
 
 
-def get_mapper(bases, config):
+def get_mapper(bases, config) -> ResultMapper:
     mapper = ResultMapper()
     if config:
         for base in bases:
@@ -27,9 +28,9 @@ def get_mapper(bases, config):
 
 
 class MetaController(type, ABC):
-    middlewares: List = {}
+    middlewares: List[Middleware] = []
 
-    def __new__(mcs, name, bases, namespace):
+    def __new__(mcs, name, bases, namespace) -> "Controller":
         config = namespace.get("Config")
 
         mapper = get_mapper(bases, config)

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from petisco.base.domain.errors.domain_error import DomainError
 from petisco.base.domain.model.uuid import Uuid
@@ -26,7 +26,7 @@ class AggregateNotFoundError(DomainError):
 
 
 class AggregatesNotFoundError(DomainError):
-    def __init__(self, repository_name: str = None):
+    def __init__(self, repository_name: Union[str, None] = None):
         repository_str = f" (repository: {repository_name})" if repository_name else ""
         message = f"Aggregates not found{repository_str}]"
         super().__init__(additional_info={"message": message})

@@ -1,7 +1,7 @@
 import json
 import re
 from datetime import datetime
-from typing import Dict
+from typing import Any, Dict, cast
 
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
@@ -23,7 +23,7 @@ def get_message_name(namespace) -> str:
 
 
 class MetaMessage(type):
-    def __new__(mcs, name, bases, namespace):
+    def __new__(mcs, name, bases, namespace) -> "MetaMessage":
         config = namespace.get("Config")
 
         namespace["version"] = get_version(config)
@@ -39,42 +39,42 @@ class Message(metaclass=MetaMessage):
     name: str
     version: int
     occurred_on: datetime
-    attributes: Dict
-    meta: Dict
+    attributes: Dict[str, Any]
+    meta: Dict[str, Any]
     type: str = "message"
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self._set_data(**kwargs)
 
-    def _set_data(self, **kwargs):
+    def _set_data(self, **kwargs: Any) -> None:
         if kwargs:
             self.message_id = (
                 Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
             )
-            self.name = kwargs.get("type")
-            self.version = kwargs.get("version")
+            self.name = str(kwargs.get("type"))
+            self.version = cast(int, (kwargs.get("version")))
             self.occurred_on = (
-                datetime.strptime(kwargs.get("occurred_on"), TIME_FORMAT)
+                datetime.strptime(str(kwargs.get("occurred_on")), TIME_FORMAT)
                 if kwargs.get("occurred_on")
                 else datetime.now()
             )
-            self.attributes = kwargs.get("attributes")
-            self.meta = kwargs.get("meta")
-            self.type = kwargs.get("type_message", "message")
+            self.attributes = cast(Dict[str, Any], kwargs.get("attributes"))
+            self.meta = cast(Dict[str, Any], kwargs.get("meta"))
+            self.type = str(kwargs.get("type_message", "message"))
         else:
             self.message_id = Uuid.v4()
             self.occurred_on = datetime.utcnow()
 
-    def _set_attributes(self, **kwargs):
+    def _set_attributes(self, **kwargs: Any) -> None:
         if self.attributes is None:
             self.attributes = {}
         for k in kwargs:
             self.attributes[k] = kwargs[k]
 
-    def add_meta(self, meta: Dict):
+    def add_meta(self, meta: Dict[str, Any]) -> None:
         self.meta = meta
 
-    def update_meta(self, meta: Dict):
+    def update_meta(self, meta: Dict[str, Any]) -> "Message":
         if not meta:
             return self
 
@@ -87,16 +87,16 @@ class Message(metaclass=MetaMessage):
         return self
 
     @staticmethod
-    def from_dict(message_data: Dict):
-        data = message_data.get("data")
+    def from_dict(message_data: Dict[str, Any]) -> "Message":
+        data = cast(Dict[str, Any], message_data.get("data"))
         return Message(**data)
 
     @staticmethod
-    def from_json(message_json: str):
+    def from_json(message_json: str) -> "Message":
         event_dict = json.loads(message_json)
         return Message.from_dict(event_dict)
 
-    def _get_serialized_attributes(self) -> Dict:
+    def _get_serialized_attributes(self) -> Dict[str, Any]:
         attributes = {}
         for key, attribute in self.attributes.items():
             serialized_value = attribute
@@ -107,7 +107,7 @@ class Message(metaclass=MetaMessage):
             attributes[key] = serialized_value
         return attributes
 
-    def dict(self) -> Dict:
+    def dict(self) -> Dict[str, Dict[str, Any]]:
         data = {
             "data": {
                 "id": self.message_id.value,
@@ -121,17 +121,19 @@ class Message(metaclass=MetaMessage):
         }
         return data
 
-    def to_str(self, class_name="Message", type: str = "message"):
+    def to_str(self, class_name: str = "Message", type: str = "message") -> str:
         return f"{class_name} [{self.message_id.value} ({type}), {self.name} (v{self.version}), {self.occurred_on}, attributes={self.attributes}]"
 
-    def json(self):
+    def json(self) -> str:
         return json.dumps(self.dict())
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Message):
+            return False
         return self.dict() == other.dict()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.__repr__()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.to_str()
