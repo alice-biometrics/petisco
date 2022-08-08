@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from types import FunctionType
-from typing import Any, List
+from typing import Any, Dict, List, Tuple, cast
 
 from meiga import Error, NotImplementedMethodError, Result
 
+from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.misc.result_mapper import ResultMapper, default_failure_handler
 from petisco.base.misc.wrapper import wrapper
 
@@ -59,11 +60,13 @@ class Controller(metaclass=MetaController):
     @staticmethod
     def get_config_mapper(config):
         return ResultMapper(
-            error_map=getattr(config, "error_map", None),
+            error_map=cast(ErrorMap, getattr(config, "error_map", None)),
             success_handler=getattr(config, "success_handler", lambda result: result),
             failure_handler=default_failure_handler,
         )
 
     @abstractmethod
-    def execute(self, *args, **kwargs) -> Result[Any, Error]:
+    def execute(
+        self, *args: Tuple[str, ...], **kwargs: Dict[str, Any]
+    ) -> Result[Any, Error]:
         return NotImplementedMethodError

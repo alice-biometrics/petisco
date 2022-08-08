@@ -1,12 +1,13 @@
 from abc import ABC
-from typing import Callable, Dict
+from typing import Any, Callable, Optional
 
-from meiga import Result
+from meiga import Error, Result
 
 from petisco.base.application.controller.error_map import ErrorMap
+from petisco.base.domain.errors.domain_error import DomainError
 
 
-def default_failure_handler(result: Result, error_map: Dict):
+def default_failure_handler(result: Result, error_map: ErrorMap):
     error_type = type(result.value)
     mapped_result = error_map.get(error_type, result)
     return mapped_result
@@ -15,9 +16,11 @@ def default_failure_handler(result: Result, error_map: Dict):
 class ResultMapper(ABC):
     def __init__(
         self,
-        error_map: ErrorMap = None,
-        success_handler: Callable = lambda result: result,
-        failure_handler: Callable = default_failure_handler,
+        error_map: Optional[ErrorMap] = None,
+        success_handler: Callable[[Result[Any, Error]], Any] = lambda result: result,
+        failure_handler: Callable[
+            [Result[DomainError, Error], ErrorMap], Any
+        ] = default_failure_handler,
     ):
         self.error_map = error_map if error_map is not None else dict()
         self.success_handler = success_handler
