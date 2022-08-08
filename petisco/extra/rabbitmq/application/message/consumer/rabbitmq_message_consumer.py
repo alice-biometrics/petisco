@@ -92,7 +92,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
     def _start(self):
         self._channel.start_consuming()
 
-    def add_subscribers(self, subscribers: List[Type[MessageSubscriber]]):
+    def add_subscribers(self, subscribers: List[Type[MessageSubscriber]]) -> None:
         for SubscriberClass in subscribers:
 
             subscriber: MessageSubscriber = SubscriberClass()
@@ -113,7 +113,9 @@ class RabbitMqMessageConsumer(MessageConsumer):
                         message_type_expected=subscriber_info.message_type,
                     )
 
-    def add_subscriber_on_dead_letter(self, subscriber: Type[MessageSubscriber]):
+    def add_subscriber_on_dead_letter(
+        self, subscriber: Type[MessageSubscriber]
+    ) -> None:
         instance_subscriber: MessageSubscriber = subscriber()
         for subscriber_info in instance_subscriber.get_message_subscribers_info():
 
@@ -125,9 +127,6 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 subscriber=instance_subscriber,
                 message_type_expected=subscriber_info.message_type,
             )
-
-    # def add_handler_on_store(self, handler: Callable):
-    #     self.add_handler_on_queue("store", handler, is_store=True)
 
     def _add_subscriber_instance_on_queue(
         self,
@@ -152,9 +151,9 @@ class RabbitMqMessageConsumer(MessageConsumer):
         subscriber: Type[MessageSubscriber],
         is_store: bool = False,
         message_type_expected: str = "message",
-    ):
+    ) -> None:
         subscriber: MessageSubscriber = subscriber()
-        return self._add_subscriber_instance_on_queue(
+        self._add_subscriber_instance_on_queue(
             queue_name=queue_name,
             subscriber=subscriber,
             is_store=is_store,
@@ -365,7 +364,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
         return properties.headers
 
-    def stop(self):
+    def stop(self) -> None:
         def _log_stop_exception(e: Exception):
             from petisco.legacy import ERROR, LogMessage, Petisco
 
@@ -401,7 +400,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
         _await_for_stop_consuming_consumer_channel()
 
-    def unsubscribe_subscriber_on_queue(self, queue_name: str):
+    def unsubscribe_subscriber_on_queue(self, queue_name: str) -> None:
         subscriber_item: SubscriberItem = self.subscribers.get(queue_name)
         if subscriber_item is None:
             raise IndexError(
@@ -413,7 +412,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
         self._do_it_in_consumer_thread(_unsubscribe_handler_on_queue)
 
-    def resume_subscriber_on_queue(self, queue_name: str):
+    def resume_subscriber_on_queue(self, queue_name: str) -> None:
         subscriber_item: SubscriberItem = self.subscribers.get(queue_name)
         if subscriber_item is None:
             raise IndexError(

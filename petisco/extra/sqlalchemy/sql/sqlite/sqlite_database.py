@@ -1,5 +1,5 @@
 import os
-from typing import Callable, List
+from typing import Any, Callable, List
 
 from sqlalchemy.orm import scoped_session
 
@@ -84,7 +84,7 @@ class SqliteDatabase(Database):
     def get_base(self):
         return self.base
 
-    def get_model(self, model_name: str):
+    def get_model(self, model_name: str) -> Any:
         model = self.persistence_models.get_imported_models().get(model_name)
         if not model:
             raise IndexError(

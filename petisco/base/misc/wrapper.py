@@ -46,7 +46,7 @@ def wrapper(
     execute_func: Callable[..., Any], wrapped_class_name: str, config, mapper
 ) -> Callable[..., Any]:
     @wraps(execute_func)
-    def wrapped(*args, **kwargs):
+    def wrapped(*args: Any, **kwargs: Any):
         middleware_classes = get_middleware_classes(config)
         arguments = signature(execute_func).bind(*args, **kwargs).arguments
         arguments.pop("self")

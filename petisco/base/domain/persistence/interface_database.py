@@ -26,7 +26,7 @@ class Database(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_model(self, model_name: str):
+    def get_model(self, model_name: str) -> Any:
         raise NotImplementedError
 
     @abstractmethod

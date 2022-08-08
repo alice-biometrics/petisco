@@ -32,7 +32,7 @@ class RabbitMqCommandBus(CommandBus):
         self.configurer = RabbitMqMessageConfigurer(organization, service, connector)
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
 
-    def dispatch(self, command: Command):
+    def dispatch(self, command: Command) -> None:
         self._check_is_command(command)
         meta = self.get_configured_meta()
         command = command.update_meta(meta)
@@ -57,5 +57,5 @@ class RabbitMqCommandBus(CommandBus):
             self.configurer.configure()
             self.publish(command)
 
-    def close(self):
+    def close(self) -> None:
         self.connector.close(self.rabbitmq_key)

@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Dict, List
 
 from pydantic import BaseSettings, Field
 
@@ -19,7 +19,7 @@ class Application(BaseSettings):
     name: str
     version: str
     organization: str
-    deployed_at: Optional[datetime]
+    deployed_at: datetime
     environment: str = Field("local", env="ENVIRONMENT")
     dependencies_provider: Callable[..., List[Dependency]] = lambda: []
     configurers: List[ApplicationConfigurer] = []
@@ -70,13 +70,10 @@ class Application(BaseSettings):
     def clear(self) -> None:
         Container.clear()
 
-    def info(self):
+    def info(self) -> Dict[str, Any]:
         info = self.dict()
-        info["deployed_at"] = (
-            self.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
-            if self.deployed_at
-            else None
-        )
+        info["deployed_at"] = self.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
+
         info["dependencies"] = {
             dependency.name: dependency.get_instance().info()
             for dependency in self.get_dependencies()
@@ -85,10 +82,10 @@ class Application(BaseSettings):
         del info["configurers"]
         return info
 
-    def was_deploy_few_minutes_ago(self, minutes: int = 25):
+    def was_deploy_few_minutes_ago(self, minutes: int = 25) -> bool:
         return datetime.utcnow() < self.deployed_at + timedelta(minutes=minutes)
 
-    def publish_domain_event(self, domain_event: DomainEvent):
+    def publish_domain_event(self, domain_event: DomainEvent) -> None:
         try:
             domain_event_bus: DomainEventBus = Container.get("domain_event_bus")
             domain_event_bus.publish(domain_event)
@@ -97,7 +94,7 @@ class Application(BaseSettings):
                 'To publish an event to the domain event bus, please add a dependency with name "domain_event_bus" on Application dependencies'
             )
 
-    def notify(self, message: NotifierMessage):
+    def notify(self, message: NotifierMessage) -> None:
         try:
             notifier: Notifier = Container.get("notifier")
             notifier.publish(message)

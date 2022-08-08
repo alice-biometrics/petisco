@@ -30,7 +30,7 @@ def get_mapper(bases, config) -> ResultMapper:
 class MetaController(type, ABC):
     middlewares: List[Middleware] = []
 
-    def __new__(mcs, name, bases, namespace) -> "Controller":
+    def __new__(mcs, name, bases, namespace) -> "MetaController":
         config = namespace.get("Config")
 
         mapper = get_mapper(bases, config)
@@ -49,7 +49,7 @@ class MetaController(type, ABC):
         return super().__new__(mcs, name, bases, new_namespace)
 
     @abstractmethod
-    def execute(self, *args, **kwargs) -> Result[Any, Error]:
+    def execute(self, *args: Any, **kwargs: Any) -> Result[Any, Error]:
         return NotImplementedMethodError
 
 
@@ -59,7 +59,7 @@ class Controller(metaclass=MetaController):
         return ResultMapper()
 
     @staticmethod
-    def get_config_mapper(config):
+    def get_config_mapper(config) -> ResultMapper:
         return ResultMapper(
             error_map=cast(ErrorMap, getattr(config, "error_map", None)),
             success_handler=getattr(config, "success_handler", lambda result: result),

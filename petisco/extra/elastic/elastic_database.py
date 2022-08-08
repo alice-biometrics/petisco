@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import Any, Callable, List
 
 from petisco.base.domain.persistence.interface_database import Database
 from petisco.extra.elastic.elastic_connection import ElasticConnection
@@ -42,7 +42,7 @@ class ElasticDatabase(Database):
     def get_base(self):
         return None
 
-    def get_model(self, model_name: str):
+    def get_model(self, model_name: str) -> Any:
         return None
 
     def get_model_names(self) -> List[str]:

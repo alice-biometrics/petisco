@@ -13,5 +13,5 @@ class MessageChaos(Interface):
         raise NotImplementedError
 
     @abstractmethod
-    def delay(self):
+    def delay(self) -> None:
         raise NotImplementedError

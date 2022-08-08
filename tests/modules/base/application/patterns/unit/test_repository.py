@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 import pytest
 from meiga import Result
 
@@ -28,9 +30,9 @@ def test_repository_should_construct_an_object():
 @pytest.mark.unit
 def test_repository_should_overwrite_info_method():
     class NoInfoRepository(TestRepository):
-        def info(self):
-            return None
+        def info(self) -> Dict[str, Any]:
+            return {"message": "ok"}
 
     repository = NoInfoRepository()
 
-    assert repository.info() is None
+    assert repository.info() == {"message": "ok"}

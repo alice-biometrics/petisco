@@ -3,6 +3,5 @@ from typing import Any, Dict
 
 
 class Interface(ABC):
-    @classmethod
-    def info(cls) -> Dict[str, Any]:
-        return {"name": cls.__name__}
+    def info(self) -> Dict[str, Any]:
+        return {"name": type(self).__name__}

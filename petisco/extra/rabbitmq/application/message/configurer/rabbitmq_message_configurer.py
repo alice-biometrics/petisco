@@ -37,7 +37,7 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         subscribers: List[MessageSubscriber],
         clear_subscriber_before: bool = False,
         clear_store_before: bool = False,
-    ):
+    ) -> None:
         if subscribers is None:
             subscribers = []
 
@@ -58,7 +58,7 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         if self._use_store_queues:
             self.store_configurer.clear()
 
-    def clear(self):
+    def clear(self) -> None:
         self.subscribers_configurer.clear()
         if self._use_store_queues:
             self.store_configurer.clear()

@@ -1,8 +1,12 @@
 from typing import Callable
 
+from meiga import BoolResult
+
+from petisco.base.domain.message.message import Message
+
 
 class MessageHandlerReturnsNoneError(ValueError):
-    def __init__(self, handler: Callable):
+    def __init__(self, handler: Callable[[Message], BoolResult]):
         handler_name = getattr(handler, "__name__", repr(handler))
         handler_module = getattr(handler, "__module__") + "."
         message = f"Subscribers (event handlers) must return a Result object. Please check {handler_module}{handler_name}"

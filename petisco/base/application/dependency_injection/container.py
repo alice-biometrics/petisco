@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import List
+from typing import Any, Dict, List, Union
 
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.misc.singleton import Singleton
@@ -7,10 +7,10 @@ from petisco.base.misc.singleton import Singleton
 
 class Container(metaclass=Singleton):
     def __init__(self) -> None:
-        self.dependencies = defaultdict()
+        self.dependencies: Dict[str, Dependency] = defaultdict()
 
     @staticmethod
-    def get(name: str):
+    def get(name: str) -> Any:
         container = Container()
         dependency = container.dependencies.get(name)
         if dependency is None:
@@ -21,7 +21,7 @@ class Container(metaclass=Singleton):
         return instance
 
     @staticmethod
-    def set_dependencies(dependencies: List[Dependency] = None) -> None:
+    def set_dependencies(dependencies: Union[List[Dependency], None] = None) -> None:
         if dependencies is None:
             dependencies = []
         Container()._set_dependencies(dependencies)

@@ -93,7 +93,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         self.configurer.configure()
         self.publish_list(domain_events)
 
-    def retry_publish_only_on_store_queue(self, domain_event: DomainEvent):
+    def retry_publish_only_on_store_queue(self, domain_event: DomainEvent) -> None:
         self._check_is_domain_event(domain_event)
         meta = self.get_configured_meta()
         domain_event = domain_event.update_meta(meta)
