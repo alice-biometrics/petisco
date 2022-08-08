@@ -2,7 +2,6 @@
 # Copyright (C) 2021+ Alice, Vigo, Spain
 
 """Public API of Alice Petisco Framework"""
-from typing import List, Type
 
 from petisco.base.application.application import Application
 from petisco.base.application.application_configurer import ApplicationConfigurer
@@ -92,7 +91,8 @@ from petisco.base.misc.result_mapper import ResultMapper
 from petisco.base.misc.singleton import Singleton
 from petisco.base.testing.assert_http import assert_http
 
-base = [
+__all__ = [
+    # base
     "Controller",
     "ResultMapper",
     "Middleware",
@@ -137,9 +137,7 @@ base = [
     "ApplicationConfigurer",
     "Builder",
     "Singleton",
-]
-
-errors = [
+    # error
     "DEFAULT_HTTP_ERROR_MAP",
     "DomainError",
     "CriticalError",
@@ -158,10 +156,6 @@ errors = [
     "InvalidValueObject",
     "HttpError",
     "ErrorMap",
+    # deprecated
+    "Injector",
 ]
-
-
-deprecated = ["Injector"]
-modules: List[str] = []
-
-__all__ = base + errors + deprecated + modules

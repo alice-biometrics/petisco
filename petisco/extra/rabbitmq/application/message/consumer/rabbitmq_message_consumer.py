@@ -2,7 +2,7 @@ import threading
 import traceback
 from dataclasses import dataclass
 from time import sleep
-from typing import Callable, List, Optional, Type
+from typing import Callable, List, NoReturn, Optional, Type
 
 from meiga import Failure
 from pika import BasicProperties
@@ -81,7 +81,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self.chaos = chaos
         self.subscribers = {}
 
-    def start(self):
+    def start(self) -> NoReturn:
         if not self._channel:
             raise RuntimeError(
                 "RabbitMqMessageConsumer: cannot start consuming event without any subscriber defined."
