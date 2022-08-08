@@ -1,18 +1,20 @@
 import argparse
 import os
 from datetime import datetime
+from typing import Any
 
-from petisco import Uuid, __version__
+from petisco import __version__
+from petisco.base.domain.model.uuid import Uuid
 
 
-def has_args(args):
+def has_args(args: Any) -> bool:
     is_active = False
     for arg in vars(args):
         is_active = is_active or getattr(args, arg)
     return is_active
 
 
-def rename_template(original_name: str, replacement: str):
+def rename_template(original_name: str, replacement: str) -> None:
 
     for dname, _, _ in os.walk("."):
         if original_name in dname:
@@ -38,7 +40,7 @@ def rename_template(original_name: str, replacement: str):
                 pass
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         prog="petisco 🍪",
         description="petisco is a framework for helping Python developers to build clean Applications",
