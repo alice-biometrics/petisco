@@ -7,6 +7,7 @@ install:
   run:
     - pip install -U -r requirements/dev-requirements.txt -r requirements/requirements.txt
     - lume -build
+    - pre-commit install
 
 uninstall:
   run:
