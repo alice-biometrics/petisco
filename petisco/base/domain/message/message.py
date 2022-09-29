@@ -39,11 +39,11 @@ class Message(metaclass=MetaMessage):
     name: str
     version: int
     occurred_on: datetime
-    attributes: Dict
-    meta: Dict
     type: str = "message"
 
     def __init__(self, **kwargs):
+        self.attributes: Dict = {}
+        self.meta: Dict = {}
         self._set_data(**kwargs)
 
     def _set_data(self, **kwargs):

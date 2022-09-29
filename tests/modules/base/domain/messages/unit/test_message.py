@@ -42,3 +42,15 @@ def test_message_should_create_random_message_ids():
 
     assert message_1.message_id != message_2.message_id
     assert message_1.occurred_on != message_2.occurred_on
+
+
+@pytest.mark.unit
+def test_message_should_not_share_attributes_between_instances():
+    message_1 = MyMessage()
+    message_1._set_attributes(foo="hola", bar="mundo")
+
+    message_2 = MyMessage()
+    message_2._set_attributes(foo="hola2", bar="mundo2")
+
+    assert message_1.attributes["foo"] != message_2.attributes["foo"]
+    assert message_1.attributes["bar"] != message_2.attributes["bar"]
