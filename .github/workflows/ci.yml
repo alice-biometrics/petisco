@@ -30,6 +30,8 @@ jobs:
         run: |
           pip install lume
           lume -install
+      - name: Check requirements
+        run: lume -check-requirements
       - name: Lint
         run: lume -lint
       - name: Test
