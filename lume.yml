@@ -66,6 +66,3 @@ steps:
       pip install wheel
       python setup.py sdist
       pip wheel --no-binary $PACKAGE_NAME -w /tmp/ext dist/$PACKAGE_NAME-*.tar.gz
-
-
-
