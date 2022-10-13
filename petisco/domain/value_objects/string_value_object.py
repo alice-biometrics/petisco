@@ -45,7 +45,7 @@ class StringValueObject(ValueObject):
         self, raise_cls=InvalidStringValueObjectError, allow_utf8mb4: bool = True
     ):
         if not isinstance(self.value, str) or not re.search(
-            r"^[\w\s\-,.]*$", self.value
+            r"^[\w\s\-,.']*$", self.value
         ):
             self._raise_error(raise_cls)
         if not allow_utf8mb4:
