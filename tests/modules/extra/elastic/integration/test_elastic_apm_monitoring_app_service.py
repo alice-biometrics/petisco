@@ -10,7 +10,7 @@ from tests.modules.extra.decorators import testing_with_elastic
 @pytest.mark.integration
 @testing_with_elastic
 class TestElasticApmMonitoringAppService:
-    def setup(self):
+    def setup_method(self):
         class MyAppService(ElasticApmMonitoringAppService):
             def execute(self, *args, **kwargs) -> Result:
                 return isSuccess

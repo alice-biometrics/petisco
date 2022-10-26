@@ -18,7 +18,7 @@ from tests.modules.base.mothers.dependency_mother import DependencyMother
 class TestNotifierMiddleware:
     notifier_middleware: NotifierMiddleware
 
-    def setup(self):
+    def setup_method(self):
         notifier_dependency = DependencyMother.create(
             name="notifier", builder=Builder(NotImplementedNotifier)
         )
@@ -28,7 +28,7 @@ class TestNotifierMiddleware:
             wrapped_class_name="class_name", wrapped_class_input_arguments=()
         )
 
-    def teardown(self):
+    def teardown_method(self):
         Container.clear()
         ApplicationInfo.clear()
 

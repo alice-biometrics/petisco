@@ -6,7 +6,7 @@ from petisco.extra.rabbitmq import RabbitMqMessageApplicationConfigurer
 
 @pytest.mark.unit
 class TestRabbitMqMessageApplicationConfigurer:
-    def setup(self):
+    def setup_method(self):
         Container.set_dependencies(
             [
                 Dependency(
@@ -18,7 +18,7 @@ class TestRabbitMqMessageApplicationConfigurer:
             ]
         )
 
-    def teardown(self):
+    def teardown_method(self):
         Container.clear()
 
     @pytest.mark.parametrize("testing", [True, False])

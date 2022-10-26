@@ -17,7 +17,7 @@ class TestInmemoryCrudRepository:
     repository: InmemoryCrudRepository
     aggregate_root: MyAggregateRoot
 
-    def setup(self):
+    def setup_method(self):
         self.repository = InmemoryCrudRepository[MyAggregateRoot]()
         self.aggregate_root = MyAggregateRootMother.any()
 

@@ -41,7 +41,7 @@ class TestRabbitMqMessageConfigurer:
     assert_dead_letter_1: Callable
     assert_dead_letter_2: Callable
 
-    def setup(self):
+    def setup_method(self):
         self.spy_consumer_1 = SpyMessages()
         self.spy_consumer_2 = SpyMessages()
         self.spy_dead_letter_1 = SpyMessages()

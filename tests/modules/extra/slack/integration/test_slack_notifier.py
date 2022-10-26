@@ -16,7 +16,7 @@ LONG_TEXT = "long_text" * 1000
 class TestSlackNotifier:
     notifier: SlackNotifier
 
-    def setup(self):
+    def setup_method(self):
         slack_token = os.getenv("SLACK_TOKEN")
         slack_tests_channel = os.getenv("SLACK_TESTS_CHANNEL")
         self.notifier = SlackNotifier(token=slack_token, channel=slack_tests_channel)

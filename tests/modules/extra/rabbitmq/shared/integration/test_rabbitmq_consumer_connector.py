@@ -13,7 +13,7 @@ from tests.modules.extra.testing_decorators import testing_with_rabbitmq
 class TestRabbitMqConsumerConnector:
     channel: BlockingChannel
 
-    def setup(self):
+    def setup_method(self):
         base_connector = RabbitMqConnector()
         self.channel = base_connector.get_channel("test-channel")
 
