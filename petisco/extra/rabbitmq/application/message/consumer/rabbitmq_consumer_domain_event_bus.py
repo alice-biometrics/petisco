@@ -3,9 +3,9 @@
 #
 # from petisco.base.domain.message.domain_event import DomainEvent
 # from petisco.base.domain.message.message_bus import MessageBus
-# from petisco.extra.rabbitmq import RabbitMqMessageConfigurer
-# from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import RabbitMqConsumerConnector
-# from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_queue_name_formatter import \
+# from petisco.css.rabbitmq import RabbitMqMessageConfigurer
+# from petisco.css.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import RabbitMqConsumerConnector
+# from petisco.css.rabbitmq.application.message.formatter.rabbitmq_message_queue_name_formatter import \
 #     RabbitMqMessageQueueNameFormatter
 #
 #
