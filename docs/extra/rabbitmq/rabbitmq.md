@@ -1,18 +1,15 @@
-# petisco 🍪 | Message Broker 🚎
+<div class="termy">
+```console
+$ pip install petisco[rabbitmq]
+---> 100%
+Successfully installed petisco
+```
+</div>
 
-<img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png" width=auto>
+This page is an overview of how petisco helps us on Message Broker development using RabbitMQ as message broker.
+Currently, petisco provides a RabbitMQ implementation on top of [pika](https://github.com/pika/pika) framework.
 
-This page is an overview of how petisco helps us on Message Broker development. 
-
-## 1. Getting Started
-
-> **Note**
->  Hands-on examples to get you started with Petisco and RabbitMQ
-
-Currently,
-petisco provides a RabbitMQ implementation on top of [pika](https://github.com/pika/pika) framework.
-
-### Terminology
+## 1. Terminology
 
 This glossary joins domain ubiquitous language with the specific implementation using RabbitMQ.
 
@@ -43,9 +40,9 @@ sequenceDiagram
 	Note over Queue: Remove message
 ```
 
-### Try Petisco Message Broker examples using RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="18">
+## 2. Example
 
-In [examples/rabbitmq](../../examples/rabbitmq) you can find several scripts to interact with RabbitMQ.
+In [examples/rabbitmq](https://github.com/alice-biometrics/petisco/tree/main/examples/rabbitmq) you can find several scripts to interact with RabbitMQ.
 To test how petisco can help you on message management you need to run locally a RabbitMQ application. 
 
 1. **Run RabbitMQ with docker**.
@@ -95,7 +92,7 @@ If you want to go deeper into how messages are queued in rabbitmq, you can revie
 
 ![RabbitMQ Bindings Overview](rabbitmq_bindings_overview.jpeg)
 
-### RabbitMQ Configurations
+## 3. Configurations
 
 Some configurations are managed by the classes and examples seen above, others can be configured with the following 
 environment variables.
@@ -109,10 +106,10 @@ environment variables.
 * `RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY`: (default: 1)
 * `RABBITMQ_MESSAGE_TTL`: (default 1000 ms) If a queue is already created it will generate a precodition failure.
 
-## 2. Available CLI 💻 
+## 4. CLI Tools 
 
-> **Note**
-> Since version `v1.7.0`, petisco have available the cli command `petisco-rabbitmq` to consume domain events and requeue them.
+!!! note
+    Since version `v1.7.0`, petisco have available the cli command `petisco-rabbitmq` to consume domain events and requeue them.
 
 Imagine you have some events in a dead letter queue. To reproduce, you can configure your rabbitmq and publish some 
 events without launching a consumer. 
@@ -149,8 +146,6 @@ optional arguments:
                         Retry TTL
   -wtr WAIT_TO_REQUEUE, --wait-to-requeue WAIT_TO_REQUEUE
                         Wait to Requeue (seconds)
-
-
 ```
 
 Examples:
@@ -181,39 +176,39 @@ Examples:
 	    --retry-exchange-name retry.acme.store
 	```
 
-## 3. Code 
+## 5. Code
 
-> **Note**
-> "Show me the code!" ✋
+!!! note
+    Base code is available in [petisco/domain/message](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message) 
+    and specific implementation in [petisco/extra/rabbitmq](https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq).
 
-Base code is available in [petisco/domain/message](../../petisco/base/domain/message) and specific implementation in 
-[petisco/extra/rabbitmq](../../petisco/extra/rabbitmq).
+Some definition of [domain base classes](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message):
 
-Some definition of [domain base classes](../../petisco/base/domain/message):
 | Name                              | Description                                                |
 |-----------------------------------|------------------------------------------------------------|
-| [Message](../../petisco/base/domain/message/message.py) | Define a basic Message using a base metaclass (`MetaMessage`) |
-| [DomainEvent](../../petisco/base/domain/message/domain_event.py) | Defines a Domain Event inheriting from `Message`. You can define new attributes to add to the resultant encoded message. |
-| [Command](../../petisco/base/domain/message/command.py) | Defines a Command inheriting from `Message`. You can define new attributes to add to the resultant encoded message. |
-| [MessageBus](../../petisco/base/domain/message/message_bus.py) | Interface which defines the contract of a message bus to publish messages |
-| [DomainEventBus](../../petisco/base/domain/message/domain_event_bus.py) | Interface which defines the contract of domain event bus to publish `DomainEvent`. It inherits from `MessageBus` |
-| [CommandBus](../../petisco/base/domain/message/command_bus.py) | Interface which defines the contract of command bus to dispatch `Command`. It inherits from `MessageBus` |
-| [MessageSubscriber](../../petisco/base/domain/message/message_subscriber.py) | Interface which defines the contract of a subscriber using a base metaclass (`MetaMessageSubscriber`) |
-| [DomainEventSubscriber](../../petisco/base/domain/message/domain_event_subscriber.py) | Interface which defines the contract of `DomainEvent` hanlders. It inherits from `MessageSubscriber` |
-| [CommandSubscriber](../../petisco/base/domain/message/command_subscriber.py) | Interface which defines the contract of `Command` hanlders. It inherits from `MessageSubscriber` |
-| [AllMessageSubscriber](../../petisco/base/domain/message/all_message_subscriber.py) | Interface which defines the contract of every message (e.g `DomainEvent` and `Command`) hanlders. It inherits from `MessageSubscriber` |
-| [MessageConfigurer](../../petisco/base/domain/message/message_configurer.py) | Interface which defines the contract of message configurer |
-| [MessageConsumer](../../petisco/base/domain/message/message_consumer.py) | Interface which defines the contract of message consumers |
+| [Message](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/message.py) | Define a basic Message using a base metaclass (`MetaMessage`) |
+| [DomainEvent](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/domain_event.py) | Defines a Domain Event inheriting from `Message`. You can define new attributes to add to the resultant encoded message. |
+| [Command](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/command.py) | Defines a Command inheriting from `Message`. You can define new attributes to add to the resultant encoded message. |
+| [MessageBus](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/message_bus.py) | Interface which defines the contract of a message bus to publish messages |
+| [DomainEventBus](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/domain_event_bus.py) | Interface which defines the contract of domain event bus to publish `DomainEvent`. It inherits from `MessageBus` |
+| [CommandBus](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/command_bus.py) | Interface which defines the contract of command bus to dispatch `Command`. It inherits from `MessageBus` |
+| [MessageSubscriber](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/message_subscriber.py) | Interface which defines the contract of a subscriber using a base metaclass (`MetaMessageSubscriber`) |
+| [DomainEventSubscriber](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/domain_event_subscriber.py) | Interface which defines the contract of `DomainEvent` hanlders. It inherits from `MessageSubscriber` |
+| [CommandSubscriber](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/command_subscriber.py) | Interface which defines the contract of `Command` hanlders. It inherits from `MessageSubscriber` |
+| [AllMessageSubscriber](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/all_message_subscriber.py) | Interface which defines the contract of every message (e.g `DomainEvent` and `Command`) hanlders. It inherits from `MessageSubscriber` |
+| [MessageConfigurer](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/message_configurer.py) | Interface which defines the contract of message configurer |
+| [MessageConsumer](https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/message_consumer.py) | Interface which defines the contract of message consumers |
 
 
-Some [RabbitMQ implementations](../../petisco/extra/rabbitmq):
+Some [RabbitMQ implementations](https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq):
+
 | Name                              | Description                                                |
 |-----------------------------------|------------------------------------------------------------|
-| [RabbitMqConnector](../../petisco/extra/rabbitmq/shared/rabbitmq_connector.py) | Singleton class to define RabbitMQ connector and set its configurations. |
-| [RabbitMqDomainEventBus](../../petisco/extra/rabbitmq/application/message/bus/rabbitmq_domain_event_bus.py) | RabbitMQ implementation of `DomainEventBus` to publish `DomainEvents`. |
-| [RabbitMqCommandBus](../../petisco/extra/rabbitmq/application/message/bus/rabbitmq_command_bus.py/) | RabbitMQ implementation of `CommandBus` to dispatch `Commands`. |
-| [RabbitMqMessageConfigurer](../../petisco/extra/rabbitmq/application/message/configurer/rabbitmq_message_configurer.py) | RabbitMQ implementation of `MessageConfigurer`, which configures exchanges, queue bindings and routing keys from defined `MessageSubscribers` |
-| [RabbitMqMessageConsumer](../../petisco/extra/rabbitmq/application/message/configurer/rabbitmq_message_consumer.py) | RabbitMQ implementation of `MessageConsumer` to add subscribers, and start a thread to consume message from defined subscribers|
+| [RabbitMqConnector](https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq/shared/rabbitmq_connector.py) | Singleton class to define RabbitMQ connector and set its configurations. |
+| [RabbitMqDomainEventBus](https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq/application/message/bus/rabbitmq_domain_event_bus.py) | RabbitMQ implementation of `DomainEventBus` to publish `DomainEvents`. |
+| [RabbitMqCommandBus](https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq/application/message/bus/rabbitmq_command_bus.py/) | RabbitMQ implementation of `CommandBus` to dispatch `Commands`. |
+| [RabbitMqMessageConfigurer](https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq/application/message/configurer/rabbitmq_message_configurer.py) | RabbitMQ implementation of `MessageConfigurer`, which configures exchanges, queue bindings and routing keys from defined `MessageSubscribers` |
+| [RabbitMqMessageConsumer](https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq/application/message/configurer/rabbitmq_message_consumer.py) | RabbitMQ implementation of `MessageConsumer` to add subscribers, and start a thread to consume message from defined subscribers|
 
 
 ```mermaid
@@ -283,7 +278,7 @@ classDiagram
     RabbitMqCommandBus --* RabbitMqConnector 
 ```
 
-### Testing ✅
+### Testing 
 
 Best way to learn how to use petisco to manage messages is with the [examples](../../examples/rabbitmq) defined above 
 and reviewing the petisco test suite (check these folders: [messages](../../tests/modules/base/domain/messages) and +
@@ -294,9 +289,8 @@ You can run this tests using:
 lume -test-with-rabbitmq-mysql-and-elastic
 ```
 
-> **Warning**
-> Tests checks rabbitmq availability. If a local rabbitmq is not available, some tests will be skipped.  
-
+!!! warning
+    Tests checks rabbitmq availability. If a local rabbitmq is not available, some tests will be skipped.  
 
 ### Code explained
 
@@ -310,8 +304,8 @@ lume -test-with-rabbitmq-mysql-and-elastic
     
     domain_event = UserCreated(user_id=Uuid.v4())
     ```
-* Configure RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">.
-  Now, you need to configure subscribers on RabbitMQ. For example, we can use the `send_mail_handler` subscriber from the example below.
+* Configure RabbitMQ. 
+  Now, you can configure a subscriber, for example, we can use the `send_mail_handler` subscriber from the example below.
     
   ```python
     from petisco import DomainEvent, MessageSubscriber
@@ -332,30 +326,31 @@ lume -test-with-rabbitmq-mysql-and-elastic
     service = "registration"
     configurer = RabbitMqMessageConfigurer(connector, organization, service)
     configurer.configure_subscribers(subscribers)
-    ```
-* Start Consuming DomainEvents from RabbitMQ <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/rabbitmq.png" width="16">
-    ```python
-    from petisco import MessageSubscriber
-    from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqMessageConsumer
-    from meiga import Result, Error, isSuccess, isFailure
+  ```
+  
+* Start Consuming DomainEvents from RabbitMQ.
+  ```python
+  from petisco import MessageSubscriber, DomainEvent
+  from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqMessageConsumer
+  from meiga import Result, Error, isSuccess, isFailure
     
-    def send_mail_handler(event: Event) -> Result[bool, Error]:
-      # Do your stuff here
-      return isSuccess # if fails, returns isFailure
+  def send_mail_handler(event: DomainEvent) -> Result[bool, Error]:
+    # Do your stuff here
+    return isSuccess # if fails, returns isFailure
     
-    # Define Subscribers
-    domain_event = UserCreated(user_id=Uuid.v4())
-    subscribers = [MessageSubscriber.from_message(domain_event, [send_mail_handler])]  
+  # Define Subscribers
+  domain_event = UserCreated(user_id=Uuid.v4())
+  subscribers = [MessageSubscriber.from_message(domain_event, [send_mail_handler])]  
     
-    # Define RabbitMQ Consumer and start
-    organization = "alice"
-    service = "petisco"
-    max_retries = 5
-    connector = RabbitMqConnector()
-    consumer = RabbitMqMessageConsumer(connector, organization, service, max_retries)
-    consumer.add_subscribers(subscribers)
-    consumer.start()
-    ```
+  # Define RabbitMQ Consumer and start
+  organization = "alice"
+  service = "petisco"
+  max_retries = 5
+  connector = RabbitMqConnector()
+  consumer = RabbitMqMessageConsumer(connector, organization, service, max_retries)
+  consumer.add_subscribers(subscribers)
+  consumer.start()
+  ```
 * Publish DomainEvents with the DomainEventBus
     ```python
     from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqDomainEventBus
@@ -370,10 +365,7 @@ lume -test-with-rabbitmq-mysql-and-elastic
     bus.publish(domain_event)
     ```
 
-## 4. Advanced 
-
-> **Note**
-> Let's go deeper...
+## 6. Advanced
 
 Happy path of a message broker is shown in the following diagram. 
 Let's imagine a new service (`registration`) which produces domain events and some actions are derived from them 
@@ -400,8 +392,8 @@ sequenceDiagram
 
 However, when something is not correct on the subscriber, petisco/rabbitmq infrastructure performs some actions to 
 retry the execution. This will be the steps:
-1. Subscriber read the message from queue (e.g UserCreated)
-2. Subscriber perform derived fails (e.g send sms message when user is created)
+1. Subscriber read the message from queue (e.g. UserCreated)
+2. Subscriber perform derived fails (e.g. send sms message when user is created)
 3. As this derived action fails, subscriber returns a `nack` to the queue.
 4. Now, the message is requeued to the `retry` queue.
    * This waits a specific time (ttl) and message will be requeued n times (also configurable).
@@ -443,6 +435,7 @@ The queues naming uses the following convention:
 `<organization>.<service>.<version>.<type>.<event_name>.<action_handler>`
   
 where:
+
 * **organization** is used for represent your company/team/project
 * **service** is used for represent your service/application
 * **version** is used for represent the version of the source event/command
@@ -485,7 +478,7 @@ What is happening here?
    * x-dead-letter-routing-key: `acme.registration.1.event.user.created.send_mail_handler`
 7. Then, the process will return to 2, however in this case, only will be requed to `acme.registration.1.event.user.created.send_mail_handler` thanks to the additional binding key `retry.acme.registration.1.event.user.created.send_mail_handler`.
 
-## Event Chaos (It is not migrated yet)
+### Event Chaos (It is not migrated yet)
 
 You can add a `IEventChaos` object as collaborator on a `RabbitMqConsumer`.
 As example, petisco provides the `RabbitMqEventChaos` implementation, where configurable parameters are the following:
@@ -499,8 +492,3 @@ As example, petisco provides the `RabbitMqEventChaos` implementation, where conf
 * protected_routing_keys: Routing keys where chaos will not be applied  
     - Configurable with `EVENT_CHAOS_PROTECTED_ROUTING_KEYS` envvar (e.g `"dead_letter.store,dl-legacy"`).  
     
-
-# Acknowledgments 👌
-
-* Thanks to [Dani](https://github.com/dgarcoe) for helping us with RabbitMQ and Queue Management. 👌 🤘
-* Thanks to [CodelyTv](https://github.com/codelytv) for guiding us with such a good examples in their repositories. 🚀

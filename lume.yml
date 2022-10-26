@@ -61,6 +61,10 @@ steps:
       - docker stop petisco-elasticsearch
   test-command-line:
     run: petisco --version
+  docs:
+    run: |
+      pip install -r requirements/docs-requirements.txt
+      mkdocs build
   check-no-binary-installation:
     run: |
       pip install wheel
