@@ -3,7 +3,7 @@ name: coverage
 on:
   push:
     paths-ignore:
-      - '*.md'
+      - '**.md'
       - 'petisco/VERSION'
       - '.github/ISSUE_TEMPLATE'
       - '.github/workflows/ci.yml'
@@ -15,22 +15,19 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
-        python-version: 3.9
-    - uses: actions/cache@v2
-      with:
-        path: ${{ env.pythonLocation }}
-        key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+        python-version: '3.10'
+        cache: pip
+        cache-dependency-path: '**/*requirements.txt'
     - name: Install dependencies
       run: |
         pip install lume
         lume -install
     - name: Coverage
       run: lume -coverage
-    - uses: codecov/codecov-action@v2
+    - uses: codecov/codecov-action@v3
       with:
         files: cobertura_coverage.xml
         directory: output/coverage/

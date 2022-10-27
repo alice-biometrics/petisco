@@ -32,13 +32,31 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
     def configure(self):
         self.configure_subscribers([])
 
-    def configure_subscribers(self, subscribers: List[MessageSubscriber]):
+    def configure_subscribers(
+        self,
+        subscribers: List[MessageSubscriber],
+        clear_subscriber_before: bool = False,
+        clear_store_before: bool = False,
+    ):
         if subscribers is None:
             subscribers = []
+
+        if clear_subscriber_before:
+            self.subscribers_configurer.clear_subscribers(subscribers)
+        if clear_store_before and self._use_store_queues:
+            self.store_configurer.clear()
 
         self.subscribers_configurer.execute(subscribers)
         if self._use_store_queues:
             self.store_configurer.execute()
+
+    def clear_subscribers(self, subscribers: List[MessageSubscriber]):
+        if subscribers is None:
+            subscribers = []
+
+        self.subscribers_configurer.clear_subscribers(subscribers)
+        if self._use_store_queues:
+            self.store_configurer.clear()
 
     def clear(self):
         self.subscribers_configurer.clear()

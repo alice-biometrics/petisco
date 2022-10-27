@@ -19,95 +19,110 @@ from tests.modules.extra.testing_decorators import testing_with_rabbitmq
 
 
 @pytest.mark.integration
-@testing_with_rabbitmq
-def test_rabbitmq_connector_should_get_an_open_connection():
+@pytest.mark.filterwarnings("ignore::pytest.PytestUnraisableExceptionWarning")
+class TestRabbitMqConnector:
+    @testing_with_rabbitmq
+    def should_get_an_open_connection(self):
 
-    connector = RabbitMqConnector()
+        connector = RabbitMqConnector()
 
-    connection = connector.get_connection("test")
+        connection = connector.get_connection("test")
 
-    assert connection.is_open
+        assert connection.is_open
 
-    connection.close()
+        connection.close()
 
+        connector.close("test")
 
-@pytest.mark.integration
-@testing_with_rabbitmq
-def test_rabbitmq_connector_should_raise__a_connection_error_exception_when_input_envvars_are_not_valid():
+        assert "test" not in connector.open_connections
 
-    connector = RabbitMqConnector()
-    original_host = connector.host
-    connector.host = "invalid"
-
-    with pytest.raises(
-        ConnectionError, match="RabbitMQConnector: Impossible to connect to host*"
+    @testing_with_rabbitmq
+    def should_raise_a_connection_error_exception_when_input_envvars_are_not_valid(
+        self,
     ):
-        connector.get_connection("test")
 
-    connector.host = original_host
+        connector = RabbitMqConnector()
+        original_host = connector.host
+        connector.host = "invalid"
 
-
-@pytest.mark.integration
-@testing_with_rabbitmq
-def test_rabbitmq_connector_should_raise_a_connection_error_exception_when_retries_and_is_not_possible_to_obtain_an_open_connection():
-
-    connector = RabbitMqConnector()
-    original_wait_seconds_retry = connector.wait_seconds_retry
-    connector.wait_seconds_retry = 0.1
-
-    connection = connector.get_connection("test")
-    connection.close()
-
-    with mock.patch.object(
-        BlockingConnection, "is_open", new_callable=PropertyMock
-    ) as mocker_is_open:
-        mocker_is_open.return_value = False
         with pytest.raises(
-            ConnectionError,
-            match="RabbitMQConnector: Impossible to obtain a open connection with host*",
+            ConnectionError, match="RabbitMQConnector: Impossible to connect to host*"
         ):
             connector.get_connection("test")
 
-    connector.wait_seconds_retry = original_wait_seconds_retry
+        connector.host = original_host
 
+    @testing_with_rabbitmq
+    def should_raise_a_connection_error_exception_when_retries_and_is_not_possible_to_obtain_an_open_connection(
+        self,
+    ):
 
-@pytest.mark.integration
-@testing_with_rabbitmq
-def test_rabbitmq_connector_should_recover_from_connection_closed():
+        connector = RabbitMqConnector()
+        original_wait_seconds_retry = connector.wait_seconds_retry
+        connector.wait_seconds_retry = 0.1
 
-    connector = RabbitMqConnector()
+        connection = connector.get_connection("test")
+        connection.close()
 
-    connection = connector.get_connection("test")
-    connection.close()
+        with mock.patch.object(
+            BlockingConnection, "is_open", new_callable=PropertyMock
+        ) as mocker_is_open:
+            mocker_is_open.return_value = False
+            with pytest.raises(
+                ConnectionError,
+                match="RabbitMQConnector: Impossible to obtain a open connection with host*",
+            ):
+                connector.get_connection("test")
 
-    connection = connector.get_connection("test")
+        connector.wait_seconds_retry = original_wait_seconds_retry
 
-    assert connection.is_open
+    @testing_with_rabbitmq
+    def should_recover_from_connection_closed(self):
 
-    connection.close()
+        connector = RabbitMqConnector()
 
+        connection = connector.get_connection("test")
+        connection.close()
 
-@pytest.mark.integration
-@testing_with_rabbitmq
-def test_rabbitmq_connector_should_recover_from_connection_error_when_publish_an_event():
-    connector = RabbitMqConnector()
-    original_wait_seconds_retry = connector.wait_seconds_retry
-    connector.wait_seconds_retry = 0.1
+        connection = connector.get_connection("test")
 
-    configurer = RabbitMqMessageConfigurerMother.default(connector)
+        assert connection.is_open
 
-    domain_event = DomainEventUserCreatedMother.random()
+        connection.close()
 
-    configurer.configure()
+    @testing_with_rabbitmq
+    def should_recover_from_connection_error_when_publish_an_event(self):
+        connector = RabbitMqConnector()
+        original_wait_seconds_retry = connector.wait_seconds_retry
+        connector.wait_seconds_retry = 0.1
 
-    bus = RabbitMqDomainEventBusMother.default(connector)
+        configurer = RabbitMqMessageConfigurerMother.default(connector)
 
-    connection = connector.get_connection(DEFAULT_EXCHANGE_NAME)
+        domain_event = DomainEventUserCreatedMother.random()
 
-    connection.close()
+        configurer.configure()
 
-    bus.publish(domain_event)
+        bus = RabbitMqDomainEventBusMother.default(connector)
 
-    connector.wait_seconds_retry = original_wait_seconds_retry
+        connection = connector.get_connection(DEFAULT_EXCHANGE_NAME)
 
-    configurer.clear()
+        connection.close()
+
+        bus.publish(domain_event)
+
+        connector.wait_seconds_retry = original_wait_seconds_retry
+
+        configurer.clear()
+
+    @testing_with_rabbitmq
+    def should_close_all_connections(self):
+
+        connector = RabbitMqConnector()
+
+        for key_connection in ["key1", "key2", "key3"]:
+            connection = connector.get_connection(key_connection)
+            assert connection.is_open
+
+        connector.close_all()
+
+        assert connector.open_connections == dict()

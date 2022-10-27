@@ -14,6 +14,6 @@ class Uuid(ValueObject):
             raise InvalidUuid(uuid_value=value)
         return value
 
-    @staticmethod
-    def v4():
-        return Uuid(value=str(uuid4()))
+    @classmethod
+    def v4(cls):
+        return cls(value=str(uuid4()))

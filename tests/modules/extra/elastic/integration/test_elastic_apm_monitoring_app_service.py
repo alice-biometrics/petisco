@@ -3,14 +3,14 @@ from elasticapm.traces import execution_context
 from meiga import Result, isSuccess
 from meiga.assertions import assert_success
 
-from petisco.extra.elastic import ElasticApmMonitoringAppService
+from petisco.extra.elastic_apm import ElasticApmMonitoringAppService
 from tests.modules.extra.decorators import testing_with_elastic
 
 
 @pytest.mark.integration
 @testing_with_elastic
 class TestElasticApmMonitoringAppService:
-    def setup(self):
+    def setup_method(self):
         class MyAppService(ElasticApmMonitoringAppService):
             def execute(self, *args, **kwargs) -> Result:
                 return isSuccess

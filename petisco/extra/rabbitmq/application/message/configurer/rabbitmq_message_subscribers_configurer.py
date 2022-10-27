@@ -44,6 +44,10 @@ class RabbitMqMessageSubcribersConfigurer:
         )
         self._configured_subscribers += subscribers
 
+    def clear_subscribers(self, subscribers):
+        self._configured_subscribers += subscribers
+        self.clear()
+
     def clear(self):
         self._delete_exchange()
         self._delete_queues()
@@ -101,7 +105,6 @@ class RabbitMqMessageSubcribersConfigurer:
         for SubscriberClass in subscribers:
             subscriber = SubscriberClass()
             for subscriber_info in subscriber.get_message_subscribers_info():
-
                 if subscriber_info.message_type == "message":
                     # if subscriber_info is subscribed to message it will be consuming from store queue
                     break
@@ -132,7 +135,7 @@ class RabbitMqMessageSubcribersConfigurer:
                 self.rabbitmq.declare_queue(
                     queue_name=queue_name,
                     dead_letter_exchange=f"dead_letter.{exchange_name}",
-                    dead_letter_routing_key="dead_letter",
+                    dead_letter_routing_key=f"dead_letter.{queue_name}",
                     message_ttl=main_ttl,
                 )
                 self.rabbitmq.declare_queue(
@@ -162,9 +165,4 @@ class RabbitMqMessageSubcribersConfigurer:
                     exchange_name=dead_letter_exchange_name,
                     queue_name=dead_letter_queue_name,
                     routing_key=f"dead_letter.{queue_name}",
-                )
-                self.rabbitmq.bind_queue(
-                    exchange_name=dead_letter_exchange_name,
-                    queue_name=dead_letter_queue_name,
-                    routing_key="dead_letter",
                 )

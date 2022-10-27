@@ -6,7 +6,7 @@ from petisco.base.domain.message.message import Message
 
 class DomainEvent(Message):
     def __init__(self, **kwargs):
-        self._set_data()
+        super(DomainEvent, self).__init__()
         self._set_attributes(**kwargs)
         self.type = "domain_event"
 

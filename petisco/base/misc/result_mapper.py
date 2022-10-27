@@ -1,7 +1,9 @@
 from abc import ABC
-from typing import Any, Callable, Dict
+from typing import Callable, Dict
 
 from meiga import Result
+
+from petisco.base.application.controller.error_map import ErrorMap
 
 
 def default_failure_handler(result: Result, error_map: Dict):
@@ -13,7 +15,7 @@ def default_failure_handler(result: Result, error_map: Dict):
 class ResultMapper(ABC):
     def __init__(
         self,
-        error_map: Dict[type, Any] = None,
+        error_map: ErrorMap = None,
         success_handler: Callable = lambda result: result,
         failure_handler: Callable = default_failure_handler,
     ):

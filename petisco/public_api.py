@@ -7,6 +7,7 @@ from typing import List, Type
 from petisco.base.application.application import Application
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.controller.controller import Controller
+from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.controller.http_error import HttpError
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.dependency_injection.dependency import Dependency
@@ -154,6 +155,7 @@ errors = [
     "InvalidUuid",
     "InvalidValueObject",
     "HttpError",
+    "ErrorMap",
 ]
 
 

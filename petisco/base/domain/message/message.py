@@ -35,15 +35,14 @@ class MetaMessage(type):
 
 
 class Message(metaclass=MetaMessage):
-    message_id: Uuid
-    name: str
-    version: int
-    occurred_on: datetime
-    attributes: Dict
-    meta: Dict
-    type: str = "message"
-
     def __init__(self, **kwargs):
+        self.message_id: Uuid
+        self.name: str
+        self.version: int
+        self.occurred_on: datetime
+        self.attributes: Dict = {}
+        self.meta: Dict = {}
+        self.type: str = "message"
         self._set_data(**kwargs)
 
     def _set_data(self, **kwargs):

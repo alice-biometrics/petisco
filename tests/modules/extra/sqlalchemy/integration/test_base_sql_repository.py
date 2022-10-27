@@ -27,7 +27,7 @@ class TestBaseSqlRepository:
     persistence: Persistence
     database_name = "sqlite_test"
 
-    def setup(self):
+    def setup_method(self):
         self._configure_db()
         self.client = Client.random()
 
@@ -44,7 +44,7 @@ class TestBaseSqlRepository:
         persistence.add(database)
         persistence.create()
 
-    def teardown(self) -> None:
+    def teardown_method(self) -> None:
         Persistence.get_instance().remove(self.database_name)
         Persistence.clear()
 

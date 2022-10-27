@@ -3,7 +3,7 @@ name: ci-macos
 on:
   pull_request:
     paths-ignore:
-      - '*.md'
+      - '**.md'
       - 'petisco/VERSION'
       - '.github/ISSUE_TEMPLATE'
       - '.github/workflows/coverage.yml'
@@ -17,23 +17,22 @@ jobs:
     strategy:
       matrix:
         os: [macOS-latest]
-        python-version: [3.8]
+        python-version: ['3.10']
     runs-on: ${{matrix.os}}
 
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
+      - uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: actions/cache@v2
-        with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+          cache: pip
+          cache-dependency-path: '**/*requirements.txt'
       - name: Install dependencies
         run: |
           pip install lume
           lume -install
+      - name: Check requirements
+        run: lume -check-requirements
       - name: Lint - Code checker
         run: lume -lint
       - name: Test

@@ -76,3 +76,11 @@ def test_domain_event_should_create_domain_event_input_and_output_with_complex_a
         "user_id": "64Eb274A-2906-4670-B479-9751281F5407",
         "created_at": "2021-06-14 18:15:05.329569",
     }
+
+
+@pytest.mark.unit
+def test_domain_event_should_not_share_attributes_between_instances():
+    domain_event1 = MyDomainEvent(name="whatever", foo="hola", bar="mundo")
+    domain_event2 = MyDomainEvent(name="youwant", foo="hola2", bar="mundo2")
+    assert domain_event1.attributes["foo"] != domain_event2.attributes["foo"]
+    assert domain_event1.attributes["bar"] != domain_event2.attributes["bar"]
