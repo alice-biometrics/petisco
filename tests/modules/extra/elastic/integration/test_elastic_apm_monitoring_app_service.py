@@ -3,7 +3,7 @@ from elasticapm.traces import execution_context
 from meiga import Result, isSuccess
 from meiga.assertions import assert_success
 
-from petisco.extra.elastic import ElasticApmMonitoringAppService
+from petisco.extra.elastic_apm import ElasticApmMonitoringAppService
 from tests.modules.extra.decorators import testing_with_elastic
 
 

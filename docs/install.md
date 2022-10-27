@@ -20,9 +20,6 @@ This will install the latest version of petisco package ✌️ [![version](https
 * [pyyaml](https://pyyaml.org/): A full-featured YAML framework for the Python programming language.
 * [loguru](https://loguru.readthedocs.io/en/stable/index.html): Loguru is a library which aims to bring enjoyable logging in Python.
 
-Additionally:
-
-* elastic-apm: should be moved to extras in next versions.
 
 ## Extras
 
@@ -30,7 +27,7 @@ To install extras:
 
 <div class="termy">
 ```console
-$ pip install petisco[sqlalchemy, redis, rabbitmq, slack, elastic, fastapi]
+$ pip install petisco[sqlalchemy, redis, rabbitmq, slack, elastic, elastic-apm, fastapi]
 ---> 100%
 Successfully installed petisco
 ```
