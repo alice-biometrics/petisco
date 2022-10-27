@@ -149,6 +149,7 @@ optional arguments:
 ```
 
 Examples:
+
 * Example 1 (requeue events from `dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed`):
 	```console
 	petisco-rabbitmq --requeue \
