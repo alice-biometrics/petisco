@@ -77,6 +77,7 @@ def test_should_raise_given_name_is_not_valid_when_value_is_a_string_with_4_byte
         "öêãàõâôñ",
         "แมว",  # not working with thai marks ม้
         "Tōkairin",
+        "O'Connor",
     ],
 )
 def test_should_declare_a_valid_name_parametrizable(input_name):
