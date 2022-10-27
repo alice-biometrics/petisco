@@ -52,10 +52,10 @@ setup(
             "PyMySQL==1.0.2",
         ],
         "redis": ["redis==4.1.1"],
-        "rabbitmq": ["pika==1.3.0"],
-        "slack": ["slack_sdk==3.15.2"],
+        "rabbitmq": ["pika==1.3.1"],
+        "slack": ["slack_sdk==3.19.1"],
         "elastic": ["elasticsearch<8.0.0,>=7.13.1", "elastic-apm==6.13.0"],
         "elastic-apm": ["elastic-apm==6.13.0"],
-        "fastapi": ["fastapi==0.78.0"],
+        "fastapi": ["fastapi==0.85.1"],
     },
 )
