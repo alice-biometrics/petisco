@@ -55,6 +55,6 @@ setup(
         "rabbitmq": ["pika==1.3.0"],
         "slack": ["slack_sdk==3.15.2"],
         "elastic": ["elasticsearch<8.0.0,>=7.13.1"],
-        "fastapi": ["fastapi==0.78.0"],
+        "fastapi": ["fastapi==0.85.1"],
     },
 )
