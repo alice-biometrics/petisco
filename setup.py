@@ -53,7 +53,7 @@ setup(
         ],
         "redis": ["redis==4.1.1"],
         "rabbitmq": ["pika==1.3.0"],
-        "slack": ["slack_sdk==3.15.2"],
+        "slack": ["slack_sdk==3.19.1"],
         "elastic": ["elasticsearch<8.0.0,>=7.13.1"],
         "fastapi": ["fastapi==0.85.1"],
     },
