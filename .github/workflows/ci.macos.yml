@@ -7,8 +7,7 @@ on:
       - 'petisco/VERSION'
       - '.github/ISSUE_TEMPLATE'
       - '.github/workflows/coverage.yml'
-    branches: 
-      - v1
+    branches:
       - main
 
 jobs:
@@ -17,7 +16,7 @@ jobs:
     strategy:
       matrix:
         os: [macOS-latest]
-        python-version: ['3.8']
+        python-version: ['3.10']
     runs-on: ${{matrix.os}}
 
     steps:
@@ -31,6 +30,8 @@ jobs:
         run: |
           pip install lume
           lume -install
+      - name: Check requirements
+        run: lume -check-requirements
       - name: Lint - Code checker
         run: lume -lint
       - name: Test

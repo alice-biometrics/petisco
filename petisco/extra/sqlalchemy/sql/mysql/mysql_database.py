@@ -12,7 +12,7 @@ from petisco.extra.sqlalchemy.sql.sql_session_scope_provider import (
 
 class MySqlDatabase(Database):
     @staticmethod
-    def local_connection_checker():
+    def local_connection_checker() -> "MySqlDatabase":
         return MySqlDatabase(
             name="test", connection=MySqlConnection.create_local("test")
         )
@@ -42,12 +42,12 @@ class MySqlDatabase(Database):
         super().__init__(name, self.persistence_models.models)
         self._init()
 
-    def _init(self):
+    def _init(self) -> None:
         from sqlalchemy.ext.declarative import declarative_base
 
         self.base = declarative_base()
 
-    def create(self):
+    def create(self) -> None:
         self.persistence_models.import_models()
         from sqlalchemy import create_engine
         from sqlalchemy.orm import sessionmaker
@@ -68,17 +68,17 @@ class MySqlDatabase(Database):
 
         self.session_maker = sessionmaker(bind=engine, future=self.use_future)
 
-    def delete(self):
+    def delete(self) -> None:
         pass
         # os.remove(self.connection.database_name)
 
-    def clear_data(self):
+    def clear_data(self) -> None:
         # Not available yet to avoid production problems.
         # This, needs to be well documented.
         # self.base.metadata.drop_all(self.engine)
         pass
 
-    def is_available(self):
+    def is_available(self) -> bool:
         try:
             session_scope = self.get_session_scope()
             with session_scope() as session:

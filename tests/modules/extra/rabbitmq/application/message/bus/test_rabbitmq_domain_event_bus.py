@@ -1,7 +1,9 @@
 from time import sleep
+from unittest import mock
 
 import pytest
 from meiga import BoolResult, isSuccess
+from pika.adapters.blocking_connection import BlockingChannel
 
 from petisco import DomainEvent
 from tests.modules.extra.rabbitmq.mother.domain_event_user_created_mother import (
@@ -54,6 +56,26 @@ def test_rabbitmq_domain_event_bus_should_publish_event_with_previous_rabbitmq_c
 
     bus = RabbitMqDomainEventBusMother.with_info_id()
     bus.publish(domain_event)
+
+    configurer.clear()
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
+def test_rabbitmq_domain_event_bus_should_publish_a_list_of_events():
+    events_number = 5
+    domain_event_list = [
+        DomainEventUserCreatedMother.random() for _ in range(events_number)
+    ]
+
+    configurer = RabbitMqMessageConfigurerMother.default()
+    configurer.configure()
+
+    bus = RabbitMqDomainEventBusMother.with_info_id()
+    with mock.patch.object(BlockingChannel, "basic_publish") as mock_channel_publish:
+        bus.publish_list(domain_event_list)
+
+    assert mock_channel_publish.call_count == events_number
 
     configurer.clear()
 

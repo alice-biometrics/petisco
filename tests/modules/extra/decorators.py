@@ -1,4 +1,5 @@
 import functools
+from typing import Any
 
 import pytest
 
@@ -12,8 +13,8 @@ from petisco.extra.sqlalchemy.sql.mysql_is_running_locally import (
 #         not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
 #     )
 #     @functools.wraps(func)
-#     def wrapper(*args, **kwargs):
-#         return func(*args, **kwargs)
+#     def wrapper(*args: Any, **kwargs: Any):
+#         return func(*args: Any, **kwargs: Any)
 #
 #     return wrapper
 
@@ -23,7 +24,7 @@ def testing_with_mysql(func):
         not mysql_is_running_locally(), reason="MySQL is not running locally"
     )
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any):
         return func(*args, **kwargs)
 
     return wrapper
@@ -34,7 +35,7 @@ def testing_with_elastic(func):
         not elastic_is_running_locally(), reason="Elastic is not running locally"
     )
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any):
         return func(*args, **kwargs)
 
     return wrapper

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from meiga import Error, Result
+from meiga import AnyResult
 
 
 class Middleware(ABC):
@@ -16,5 +16,5 @@ class Middleware(ABC):
         pass
 
     @abstractmethod
-    def after(self, result: Result[Any, Error]) -> None:
+    def after(self, result: AnyResult) -> None:
         pass

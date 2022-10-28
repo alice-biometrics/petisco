@@ -1,6 +1,6 @@
 import functools
 from datetime import datetime
-from typing import List, NoReturn
+from typing import Any, List, NoReturn
 
 import pytest
 
@@ -18,7 +18,7 @@ from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 def testing_with_empty_container(func):
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any):
         Container.clear()
         result = func(*args, **kwargs)
         Container.clear()

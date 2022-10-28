@@ -1,13 +1,12 @@
 import copy
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, TypeVar
+from typing import Any, Dict, Generic, List
 
 from petisco.base.domain.message.message import Message
+from petisco.base.domain.message.types_message import TypeMessage
 
-TypeMessage = TypeVar("TypeMessage", bound=Message)
 
-
-class MessageBus(ABC):
+class MessageBus(ABC, Generic[TypeMessage]):
     @classmethod
     def __repr__(cls) -> str:
         return cls.__name__
@@ -19,7 +18,7 @@ class MessageBus(ABC):
     def _set_additional_meta(self, meta: Dict[str, Any]) -> None:
         self.additional_meta = meta
 
-    def with_meta(self, meta: Dict[str, Any]) -> "MessageBus":
+    def with_meta(self, meta: Dict[str, Any]) -> "MessageBus[TypeMessage]":
         if not isinstance(meta, Dict):
             raise TypeError("MessageBus.with_meta() expect a dict")
         event_bus = copy.copy(self)

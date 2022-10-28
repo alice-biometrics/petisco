@@ -1,7 +1,7 @@
-from typing import Dict, List
+from typing import Any, Dict, Union
 
 
-def create_text_meta(meta: Dict) -> List[Dict]:
+def create_text_meta(meta: Dict[str, Any]) -> Union[str, None]:
     text = None
     if meta:
         text = ""

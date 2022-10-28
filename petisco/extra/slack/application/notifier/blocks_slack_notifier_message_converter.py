@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict, List
 
 from petisco.base.application.notifier.notifier_message import NotifierMessage
 from petisco.extra.slack.application.notifier.create_text_meta import create_text_meta
@@ -8,16 +8,16 @@ from petisco.extra.slack.application.notifier.slack_notifier_message_converter i
 
 
 class BlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter):
-    def __init__(self, slack_accessory: Dict = None):
+    def __init__(self, slack_accessory: Dict = None) -> None:
         self.slack_accessory = slack_accessory
 
-    def convert(self, notifier_message: NotifierMessage):
+    def convert(self, notifier_message: NotifierMessage) -> List[Dict[str, Any]]:
         header_block = self._create_header_block(notifier_message.title)
         message_block = self._create_message_block(notifier_message)
         divider_block = {"type": "divider"}
         return [header_block, message_block, divider_block]
 
-    def _create_header_block(self, title: str):
+    def _create_header_block(self, title: str) -> Dict[str, Any]:
         return {
             "type": "header",
             "text": {
@@ -27,7 +27,9 @@ class BlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter):
             },
         }
 
-    def _create_message_block(self, notifier_message: NotifierMessage):
+    def _create_message_block(
+        self, notifier_message: NotifierMessage
+    ) -> Dict[str, Any]:
         text_message = ""
         if notifier_message.message:
             text_message += f"{notifier_message.message}"

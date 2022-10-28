@@ -35,12 +35,12 @@ class Application(BaseSettings):
 
     def configure(self, testing: bool = False) -> None:
 
-        before_dependecies_configurers = [
+        before_dependencies_configurers = [
             configurer
             for configurer in self.configurers
             if configurer.execute_after_dependencies is False
         ]
-        for configurer in before_dependecies_configurers:
+        for configurer in before_dependencies_configurers:
             configurer.execute(testing)
 
         Container.set_dependencies(self.get_dependencies())
@@ -64,8 +64,8 @@ class Application(BaseSettings):
         given_dependencies_dict = {
             dependency.name: dependency for dependency in provided_dependencies
         }
-        merged_dependecies = {**default_dependencies_dict, **given_dependencies_dict}
-        return list(merged_dependecies.values())
+        merged_dependencies = {**default_dependencies_dict, **given_dependencies_dict}
+        return list(merged_dependencies.values())
 
     def clear(self) -> None:
         Container.clear()

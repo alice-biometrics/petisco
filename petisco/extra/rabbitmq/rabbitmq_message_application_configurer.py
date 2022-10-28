@@ -1,6 +1,6 @@
 import os
 from distutils.util import strtobool
-from typing import List, NoReturn
+from typing import List, Optional
 
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.dependency_injection.container import Container
@@ -20,13 +20,13 @@ class RabbitMqMessageApplicationConfigurer(ApplicationConfigurer):
     def __init__(
         self,
         execute_after_dependencies: bool = True,
-        subscribers: List[MessageSubscriber] = None,
+        subscribers: Optional[List[MessageSubscriber]] = None,
     ):
         self.execute_after_dependencies = execute_after_dependencies
         self.subscribers = subscribers
         super().__init__(execute_after_dependencies)
 
-    def execute(self, testing: bool = False) -> NoReturn:
+    def execute(self, testing: bool = False) -> None:
         configurer = Container.get("message_configurer")
         configurer.configure_subscribers(
             self.subscribers,

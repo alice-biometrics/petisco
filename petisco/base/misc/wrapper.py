@@ -1,7 +1,7 @@
 import os
 from functools import wraps
 from inspect import signature
-from typing import Any, Callable, List, Type, Union
+from typing import Any, Callable, Dict, List, Type, Union
 
 import elasticapm
 from meiga import Error, Failure
@@ -11,9 +11,10 @@ from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
 from petisco.base.domain.errors.unknown_error import UnknownError
+from petisco.base.misc.result_mapper import ResultMapper
 
 
-def get_middleware_classes(config) -> List[Middleware]:
+def get_middleware_classes(config: Dict[str, Any]) -> List[Middleware]:
     def gettype(name: str) -> Type[Middleware]:
         lookup_table = {
             "NotifierMiddleware": NotifierMiddleware,
@@ -43,10 +44,13 @@ def get_middleware_classes(config) -> List[Middleware]:
 
 
 def wrapper(
-    execute_func: Callable[..., Any], wrapped_class_name: str, config, mapper
+    execute_func: Callable[..., Any],
+    wrapped_class_name: str,
+    config: Any,
+    mapper: ResultMapper,
 ) -> Callable[..., Any]:
     @wraps(execute_func)
-    def wrapped(*args: Any, **kwargs: Any):
+    def wrapped(*args: Any, **kwargs: Any) -> Any:
         middleware_classes = get_middleware_classes(config)
         arguments = signature(execute_func).bind(*args, **kwargs).arguments
         arguments.pop("self")

@@ -1,7 +1,7 @@
 import json
 import re
 from datetime import datetime
-from typing import Any, Dict, cast
+from typing import Any, Dict, Tuple, Union, cast
 
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
@@ -9,12 +9,12 @@ from petisco.base.domain.model.value_object import ValueObject
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 
-def get_version(config) -> int:
+def get_version(config: Union[Dict[str, Any], None]) -> int:
     version = getattr(config, "version", 1) if config else 1
     return version
 
 
-def get_message_name(namespace) -> str:
+def get_message_name(namespace: Dict[str, Any]) -> str:
     return (
         re.sub(r"(?<!^)(?=[A-Z])", "_", namespace.get("__qualname__", "message"))
         .lower()
@@ -23,7 +23,9 @@ def get_message_name(namespace) -> str:
 
 
 class MetaMessage(type):
-    def __new__(mcs, name, bases, namespace) -> "MetaMessage":
+    def __new__(
+        mcs, name: str, bases: Tuple[Any], namespace: Dict[str, Any]
+    ) -> "MetaMessage":
         config = namespace.get("Config")
 
         namespace["version"] = get_version(config)
@@ -43,10 +45,17 @@ class Message(metaclass=MetaMessage):
     meta: Dict[str, Any]
     type: str = "message"
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Dict[str, Any]) -> None:
+        self.message_id: Uuid
+        self.name: str
+        self.version: int
+        self.occurred_on: datetime
+        self.attributes: Dict[str, Any] = {}
+        self.meta: Dict[str, Any] = {}
+        self.type: str = "message"
         self._set_data(**kwargs)
 
-    def _set_data(self, **kwargs: Any) -> None:
+    def _set_data(self, **kwargs: Union[Dict[str, Any], None]) -> None:
         if kwargs:
             self.message_id = (
                 Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()

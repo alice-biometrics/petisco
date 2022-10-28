@@ -17,7 +17,7 @@ class Command(Message):
         target_type = Command if target_type is None else target_type
         data = message_data.get("data")
         command = target_type()
-        command._set_data(**data)
+        command._set_data(**data)  # type: ignore
         return command
 
     @staticmethod

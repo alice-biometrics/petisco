@@ -1,3 +1,5 @@
+from typing import Any, Union
+
 from meiga import BoolResult, Error, Failure, isSuccess
 
 from petisco import Uuid
@@ -14,7 +16,7 @@ from petisco.base.domain.errors.defaults.not_found import (
 class BaseSqlRepository(Repository):
     @classmethod
     def fail_if_aggregate_already_exist(
-        cls, model, aggregate_id: Uuid, result_error: Error = None
+        cls, model: Any, aggregate_id: Uuid, result_error: Union[Error, None] = None
     ) -> BoolResult:
         if model:
             error = (
@@ -29,7 +31,7 @@ class BaseSqlRepository(Repository):
 
     @classmethod
     def fail_if_aggregate_not_found(
-        cls, model, aggregate_id: Uuid, result_error: Error = None
+        cls, model: Any, aggregate_id: Uuid, result_error: Union[Error, None] = None
     ) -> BoolResult:
         if not model:
             error = (
@@ -42,7 +44,7 @@ class BaseSqlRepository(Repository):
 
     @classmethod
     def fail_if_aggregates_not_found(
-        cls, model, result_error: Error = None
+        cls, model: Any, result_error: Union[Error, None] = None
     ) -> BoolResult:
         if not model:
             error = (

@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from petisco.base.domain.errors.default_http_error_map import DEFAULT_HTTP_ERROR_MAP
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.extra.fastapi.controller.fastapi_failure_handler import (
@@ -10,7 +12,7 @@ from petisco.extra.fastapi.controller.fastapi_success_handler import (
 
 class FastAPIResultMapper:
     @staticmethod
-    def default():
+    def default() -> ResultMapper:
         return ResultMapper(
             error_map=DEFAULT_HTTP_ERROR_MAP,
             success_handler=fastapi_success_handler,
@@ -18,7 +20,7 @@ class FastAPIResultMapper:
         )
 
     @staticmethod
-    def from_config(config):
+    def from_config(config: Dict[str, Any]) -> ResultMapper:
         error_map = getattr(config, "error_map", DEFAULT_HTTP_ERROR_MAP)
         error_map = {**DEFAULT_HTTP_ERROR_MAP, **error_map}
         return ResultMapper(

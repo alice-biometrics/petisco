@@ -39,7 +39,7 @@ class SlackNotifier(Notifier):
         self.exception_converter = exception_converter
         self.client = WebClient(token=token)
 
-    def publish(self, notifier_message: NotifierMessage):
+    def publish(self, notifier_message: NotifierMessage) -> None:
         try:
             self.client.chat_postMessage(
                 channel=self.channel,
@@ -49,7 +49,9 @@ class SlackNotifier(Notifier):
         except SlackApiError as e:
             raise SlackError(e.response["error"])
 
-    def publish_exception(self, notifier_exception_message: NotifierExceptionMessage):
+    def publish_exception(
+        self, notifier_exception_message: NotifierExceptionMessage
+    ) -> None:
         try:
             self.client.chat_postMessage(
                 channel=self.channel,

@@ -130,12 +130,12 @@ class _ControllerHandler:
             message = f"{result}"
         return message
 
-    def __call__(self, func, *args, **kwargs):
+    def __call__(self, func, *args: Any, **kwargs: Any):
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any):
             @timer
             @meiga
-            def run_controller(*args, **kwargs) -> Tuple[Result, float]:
+            def run_controller(*args: Any, **kwargs: Any) -> Tuple[Result, float]:
                 params = inspect.getfullargspec(func).args
                 kwargs = {k: v for k, v in kwargs.items() if k in params}
                 return func(*args, **kwargs)

@@ -5,7 +5,8 @@ import traceback
 from typing import Any, Dict
 
 import yaml
-from yaml.parser import ParserError, ScannerError
+from yaml.parser import ParserError
+from yaml.scanner import ScannerError
 
 
 class PersistenceModels:

@@ -13,5 +13,5 @@ class DomainEventSubscriber(MessageSubscriber):
         raise NotImplementedError()
 
     @abstractmethod
-    def handle(self, domain_event: DomainEvent) -> BoolResult:
+    def handle(self, domain_event: DomainEvent) -> BoolResult:  # type: ignore
         raise NotImplementedError()

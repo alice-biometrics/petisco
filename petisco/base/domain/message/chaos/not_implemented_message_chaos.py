@@ -11,10 +11,10 @@ class NotImplementedMessageChaos(MessageChaos):
             "EVENT_CHAOS_PERCENTAGE_SIMULATE_FAILURES": "NOT_IMPLEMENTED",
         }
 
-    def nack_simulation(self, *args, **kwargs) -> bool:
+    def nack_simulation(self, *args: Any, **kwargs: Any) -> bool:
         return False
 
-    def failure_simulation(self, *args, **kwargs) -> bool:
+    def failure_simulation(self, *args: Any, **kwargs: Any) -> bool:
         return False
 
     def delay(self) -> None:

@@ -1,0 +1,102 @@
+site_name: petisco
+site_description: 🍪 petisco is a framework for helping Python developers to build clean Applications in Python.
+strict: false # true
+site_url: https://github.com/alice-biometrics/petisco
+
+theme:
+  name: 'material'
+  custom_dir: 'docs/theme'
+  palette:
+  - media: "(prefers-color-scheme: light)"
+    scheme: default
+    primary: blue
+    accent: blue
+    toggle:
+      icon: material/lightbulb-outline
+      name: "Switch to dark mode"
+  - media: "(prefers-color-scheme: dark)"
+    scheme: slate
+    primary: blue
+    accent: blue
+    toggle:
+      icon: material/lightbulb
+      name: "Switch to light mode"
+  features:
+    - content.tabs.link
+  logo: 'logo-white.png'
+  favicon: 'favicon.png'
+
+repo_name: alice-biometrics/petisco
+repo_url: https://github.com/alice-biometrics/petisco
+edit_uri: edit/main/docs/
+
+extra_css:
+- 'css/terminal.css'
+- 'css/termynal.css'
+- 'css/tweaks.css'
+- 'css/custom.css'
+extra_javascript:
+- 'js/redirects.js'
+- 'js/termynal.js'
+- 'js/ad.js'
+- 'js/custom.js'
+
+nav:
+- Overview: index.md
+- install.md
+- getting_started.md
+- application.md
+- domain.md
+- Infrastructure [Extras]:
+  - FastAPI: extra/fastapi/fastapi.md
+  - RabbitMQ: extra/rabbitmq/rabbitmq.md
+  - Elastic: extra/elastic/elastic.md
+  - SQLAlchemy: extra/sqlalchemy/sqlalchemy.md
+  - Slack: extra/slack/slack.md
+- Contributing to petisco: contributing.md
+- changelog.md
+- acknowledgements.md
+
+markdown_extensions:
+- tables
+- markdown_include.include:
+    base_path: docs
+- toc:
+    permalink: true
+- admonition
+- pymdownx.highlight:
+    anchor_linenums: true
+- pymdownx.inlinehilite
+- pymdownx.details
+- pymdownx.snippets
+- pymdownx.superfences
+- mdx_truly_sane_lists
+- pymdownx.superfences:
+    custom_fences:
+      - name: mermaid
+        class: mermaid
+        format: !!python/name:pymdownx.superfences.fence_code_format
+
+plugins:
+  - search
+  - exclude:
+      glob:
+      - _build/*
+      - build/*
+      - requirements/*
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          rendering:
+            show_source: true
+
+extra:
+  social:
+  - icon: fontawesome/brands/github-alt
+    link: https://github.com/alice-biometrics/petisco
+  - icon: fontawesome/brands/twitter
+    link: https://twitter.com/alicebiometrics
+  - icon: fontawesome/brands/linkedin
+    link: https://www.linkedin.com/company/alicebiometrics
+

@@ -34,7 +34,7 @@
 #     repository: MySQLModelCrudRepository
 #     aggregate_root: MyAggregateRoot
 #
-#     def setup(self):
+#     def setup_method(self):
 #         self.repository = MySQLModelCrudRepository()
 #         self.aggregate_root = MyAggregateRootMother.any()
 #

@@ -1,6 +1,6 @@
 from typing import Any
 
-from meiga import Error, Result
+from meiga import AnyResult
 
 from petisco import __version__
 from petisco.base.application.application_info import ApplicationInfo
@@ -15,14 +15,16 @@ from petisco.base.domain.errors.unknown_error import UnknownError
 
 
 class NotifierMiddleware(Middleware):
-    def __init__(self, wrapped_class_name, wrapped_class_input_arguments) -> None:
+    def __init__(
+        self, wrapped_class_name: str, wrapped_class_input_arguments: Any
+    ) -> None:
         super().__init__(wrapped_class_name, wrapped_class_input_arguments)
         self.notifier = Container.get("notifier")
 
     def before(self) -> None:
         pass
 
-    def after(self, result: Result[Any, Error]) -> None:
+    def after(self, result: AnyResult) -> None:
         if result.is_failure:
             error = result.value
 

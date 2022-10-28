@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import Any, List, Type
 
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
 from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_subscriber_queue_name_formatter import (
@@ -19,7 +19,7 @@ class RabbitMqMessageSubcribersConfigurer:
         service: str,
         connector: RabbitMqConnector,
         queue_config: QueueConfig,
-    ):
+    ) -> None:
         self._connector = connector
         self._exchange_name = f"{organization}.{service}"
         self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(
@@ -31,10 +31,10 @@ class RabbitMqMessageSubcribersConfigurer:
         self.rabbitmq = RabbitMqDeclarer(
             connector=self._connector, channel_name=self._exchange_name
         )
-        self._configured_subscribers = []
+        self._configured_subscribers: List[Any] = []
         self.queue_config = queue_config
 
-    def execute(self, subscribers):
+    def execute(self, subscribers) -> None:
         self._configure_exchanges()
         self._declare_queues(
             self._exchange_name,
@@ -44,25 +44,25 @@ class RabbitMqMessageSubcribersConfigurer:
         )
         self._configured_subscribers += subscribers
 
-    def clear_subscribers(self, subscribers):
+    def clear_subscribers(self, subscribers) -> None:
         self._configured_subscribers += subscribers
         self.clear()
 
-    def clear(self):
+    def clear(self) -> None:
         self._delete_exchange()
         self._delete_queues()
 
-    def _configure_exchanges(self):
+    def _configure_exchanges(self) -> None:
         self.rabbitmq.declare_exchange(self._exchange_name)
         self.rabbitmq.declare_exchange(self._retry_exchange_name)
         self.rabbitmq.declare_exchange(self._dead_letter_exchange_name)
 
-    def _delete_exchange(self):
+    def _delete_exchange(self) -> None:
         self.rabbitmq.delete_exchange(self._exchange_name)
         self.rabbitmq.delete_exchange(self._retry_exchange_name)
         self.rabbitmq.delete_exchange(self._dead_letter_exchange_name)
 
-    def _delete_queues(self):
+    def _delete_queues(self) -> None:
         for SubscriberClass in self._configured_subscribers:
 
             subscriber = SubscriberClass()
@@ -100,7 +100,7 @@ class RabbitMqMessageSubcribersConfigurer:
         retry_exchange_name: str,
         dead_letter_exchange_name: str,
         subscribers: List[Type[MessageSubscriber]],
-    ):
+    ) -> None:
 
         for SubscriberClass in subscribers:
             subscriber = SubscriberClass()

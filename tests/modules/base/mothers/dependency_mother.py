@@ -6,16 +6,16 @@ from petisco import Builder, Dependency, NotImplementedMessageBus, Repository
 
 
 class MyRepo(Repository):
-    def save(self, *args, **kwargs) -> Result:
+    def save(self, *args: Any, **kwargs: Any) -> Result:
         pass
 
-    def retrieve(self, *args, **kwargs) -> Result:
+    def retrieve(self, *args: Any, **kwargs: Any) -> Result:
         pass
 
-    def retrieve_all(self, *args, **kwargs) -> Result:
+    def retrieve_all(self, *args: Any, **kwargs: Any) -> Result:
         pass
 
-    def remove(self, *args, **kwargs) -> Result:
+    def remove(self, *args: Any, **kwargs: Any) -> Result:
         pass
 
 

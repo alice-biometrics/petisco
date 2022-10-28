@@ -1,7 +1,7 @@
 import re
 from abc import abstractmethod
 from types import FunctionType
-from typing import List, Type
+from typing import Any, Dict, List, Tuple, Type
 
 from meiga import BoolResult
 
@@ -10,20 +10,26 @@ from petisco.base.domain.message.command_bus import CommandBus
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
 from petisco.base.domain.message.message import Message
 from petisco.base.domain.message.message_subscriber_info import MessageSubscriberInfo
-from petisco.base.domain.message.not_implemented_message_bus import (
-    NotImplementedMessageBus,
+from petisco.base.domain.message.not_implemented_command_bus import (
+    NotImplementedCommandBus,
 )
+from petisco.base.domain.message.not_implemented_domain_event_bus import (
+    NotImplementedDomainEventBus,
+)
+from petisco.base.domain.message.types_message import AnyMessage
 from petisco.base.misc.interface import Interface
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.base.misc.wrapper import wrapper
 
 
 class MetaMessageSubscriber(type, Interface):
-    domain_event_bus: DomainEventBus = NotImplementedMessageBus()
-    command_bus: CommandBus = NotImplementedMessageBus()
-    middlewares: List[Middleware] = {}
+    domain_event_bus: DomainEventBus = NotImplementedDomainEventBus()
+    command_bus: CommandBus = NotImplementedCommandBus()
+    middlewares: List[Middleware] = []
 
-    def __new__(mcs, name, bases, namespace) -> "MetaMessageSubscriber":
+    def __new__(
+        mcs, name: str, bases: Tuple[Any, ...], namespace: Dict[str, Any]
+    ) -> "MetaMessageSubscriber":
         config = namespace.get("Config")
 
         if "handle" not in namespace:
@@ -52,16 +58,16 @@ class MetaMessageSubscriber(type, Interface):
 
 class MessageSubscriber(metaclass=MetaMessageSubscriber):
     @abstractmethod
-    def subscribed_to(self) -> List[Type[Message]]:
+    def subscribed_to(self) -> Any:
         raise NotImplementedError()
 
     @abstractmethod
-    def handle(self, message: Message) -> BoolResult:
+    def handle(self, message: AnyMessage) -> BoolResult:
         raise NotImplementedError()
 
     @classmethod
     def __repr__(cls) -> str:
-        subscriptions = cls.subscribed_to(cls)
+        subscriptions = cls.subscribed_to(cls)  # type: ignore
         if not isinstance(subscriptions, list):
             subscriptions = [subscriptions]
         return f"{cls.__name__}: subscribed_to {[class_type.__name__ for class_type in subscriptions]}"

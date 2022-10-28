@@ -7,6 +7,7 @@ install:
   run:
     - pip install -U -r requirements/dev-requirements.txt -r requirements/requirements.txt
     - lume -build
+    - pre-commit install
 
 uninstall:
   run:
@@ -28,7 +29,7 @@ steps:
   check-requirements:
     run: safety check -r requirements/requirements.txt
   static-analysis:
-    run: mypy $PACKAGE_NAME
+    run: yes | mypy --install-types $PACKAGE_NAME --exclude '.*petisco.legacy.*' --exclude '.*petisco.extra.sqlmodel.*'
   coverage:
     envs:
       LUME_WAIT_HTTP_200_NUM_MAX_ATTEMPTS: 30
@@ -60,11 +61,12 @@ steps:
       - docker stop petisco-elasticsearch
   test-command-line:
     run: petisco --version
+  docs:
+    run: |
+      pip install -r requirements/docs-requirements.txt
+      mkdocs build
   check-no-binary-installation:
     run: |
       pip install wheel
       python setup.py sdist
       pip wheel --no-binary $PACKAGE_NAME -w /tmp/ext dist/$PACKAGE_NAME-*.tar.gz
-
-
-

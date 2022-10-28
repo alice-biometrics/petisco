@@ -58,11 +58,11 @@ class RabbitMqDomainEventBus(DomainEventBus):
 
     def publish_list(self, domain_events: List[DomainEvent]):
         meta = self.get_configured_meta()
-        unpublished_domain_events = domain_events
+        published_domain_event = []
         try:
             channel = self.connector.get_channel(self.rabbitmq_key)
 
-            for i, domain_event in enumerate(domain_events):
+            for domain_event in domain_events:
                 self._check_is_domain_event(domain_event)
                 domain_event = domain_event.update_meta(meta)
                 routing_key = RabbitMqMessageQueueNameFormatter.format(
@@ -75,12 +75,15 @@ class RabbitMqDomainEventBus(DomainEventBus):
                     body=domain_event.json(),
                     properties=self.properties,
                 )
-                unpublished_domain_events.pop(i)
+                published_domain_event.append(domain_event)
             if channel.is_open and not isinstance(
                 self.connector, RabbitMqConsumerConnector
             ):
                 channel.close()
         except ChannelClosedByBroker:
+            unpublished_domain_events = [
+                event for event in domain_events if event not in published_domain_event
+            ]
             self._retry_publish_list(unpublished_domain_events)
 
     def _retry(self, domain_event: DomainEvent):

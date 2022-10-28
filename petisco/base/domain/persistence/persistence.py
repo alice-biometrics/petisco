@@ -1,6 +1,6 @@
 import inspect
 from dataclasses import dataclass
-from typing import Callable, List
+from typing import Any, Callable, Dict, List, Union
 
 from loguru import logger
 
@@ -10,21 +10,21 @@ from petisco.base.misc.singleton import Singleton
 
 @dataclass
 class Persistence(metaclass=Singleton):
-    def __init__(self):
-        self._databases = {}
+    def __init__(self) -> None:
+        self._databases: Dict[str, Any] = {}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Persistence: {str(self.get_info())}"
 
-    def get_info(self):
+    def get_info(self) -> Dict[str, Any]:
         return {name: database.info() for name, database in self._databases.items()}
 
     @staticmethod
-    def info():
+    def info() -> Dict[str, Any]:
         return Persistence.get_instance().get_info()
 
     @staticmethod
-    def get_instance():
+    def get_instance() -> "Persistence":
         try:
             return Persistence()
         except Exception as e:  # noqa E722
@@ -38,7 +38,7 @@ class Persistence(metaclass=Singleton):
                 f"\tcode_context: {frame_info.code_context}\n\n"
             )
 
-    def add(self, database: Database, skip_if_exist: bool = False):
+    def add(self, database: Database, skip_if_exist: bool = False) -> None:
         if database.name in self._databases:
             if skip_if_exist is False:
                 raise NameError(
@@ -47,7 +47,7 @@ class Persistence(metaclass=Singleton):
         else:
             self._databases[database.name] = database
 
-    def remove(self, database_name: str, skip_if_not_exist: bool = False):
+    def remove(self, database_name: str, skip_if_not_exist: bool = False) -> None:
         if database_name in self._databases:
             self._databases[database_name].delete()
             del self._databases[database_name]
@@ -57,15 +57,15 @@ class Persistence(metaclass=Singleton):
                     f"Database cannot be removed. {database_name} not exists"
                 )
 
-    def create(self):
+    def create(self) -> None:
         for database in self._databases.values():
             database.create()
 
-    def delete(self):
+    def delete(self) -> None:
         for database in self._databases.values():
             database.delete()
 
-    def clear_data(self, database_name: str = None):
+    def clear_data(self, database_name: Union[str, None] = None) -> None:
         databases = self._databases
         if database_name is not None:
             if database_name not in self._databases:
@@ -77,7 +77,7 @@ class Persistence(metaclass=Singleton):
             database.clear_data()
 
     @staticmethod
-    def exist():
+    def exist() -> bool:
         databases = Persistence.get_instance()._databases
         if len(databases) < 1:
             return False
@@ -85,8 +85,8 @@ class Persistence(metaclass=Singleton):
             return True
 
     @staticmethod
-    def is_available(database_name: str = None):
-        def log_warning(message: str):
+    def is_available(database_name: Union[str, None] = None) -> bool:
+        def log_warning(message: str) -> None:
             logger.debug(message)
 
         databases = Persistence.get_instance()._databases
@@ -106,7 +106,7 @@ class Persistence(metaclass=Singleton):
         return True
 
     @staticmethod
-    def get_base(database_name: str) -> List[str]:
+    def get_base(database_name: str) -> Any:
         database = Persistence.get_instance()._databases.get(database_name)
         if not database:
             raise IndexError(f"Database name ({database_name}) not exists.")
@@ -133,14 +133,14 @@ class Persistence(metaclass=Singleton):
         return list(database.get_model_names())
 
     @staticmethod
-    def get_model(database_name: str, model_name: str):
+    def get_model(database_name: str, model_name: str) -> Any:
         database = Persistence.get_instance()._databases.get(database_name)
         if not database:
             raise IndexError(f"Database name ({database_name}) not exists.")
         return database.get_model(model_name)
 
     @staticmethod
-    def get_session(database_name: str):
+    def get_session(database_name: str) -> Any:
         database = Persistence.get_instance()._databases.get(database_name)
         if not database:
             raise IndexError(f"Database name ({database_name}) not exists.")

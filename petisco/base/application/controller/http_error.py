@@ -6,7 +6,7 @@ DEFAULT_HTTP_ERROR_DETAIL = "Unknown Error"
 
 
 class HttpError(BaseModel):
-    status_code: Optional[int] = 500
+    status_code: Union[int, None] = 500
     detail: Optional[str] = DEFAULT_HTTP_ERROR_DETAIL
     headers: Optional[Dict[str, Any]] = None
     type_error: Optional[str] = None

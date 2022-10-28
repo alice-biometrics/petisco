@@ -7,7 +7,7 @@ from petisco import AppService
 
 
 class TestAppService(AppService):
-    def execute(self, *args, **kwargs) -> Result:
+    def execute(self, *args: Any, **kwargs: Any) -> Result:
         pass
 
 

@@ -8,7 +8,6 @@ on:
       - '.github/ISSUE_TEMPLATE'
       - '.github/workflows/coverage.yml'
     branches: 
-      - v1
       - main
 
 jobs:
@@ -16,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10']
+        python-version: ['3.8', '3.9', '3.10', '3.11']
     runs-on: ${{matrix.os}}
 
     steps:
@@ -30,6 +29,8 @@ jobs:
         run: |
           pip install lume
           lume -install
+      - name: Check requirements
+        run: lume -check-requirements
       - name: Lint
         run: lume -lint
       - name: Test

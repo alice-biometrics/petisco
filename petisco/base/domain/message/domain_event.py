@@ -5,19 +5,20 @@ from petisco.base.domain.message.message import Message
 
 
 class DomainEvent(Message):
-    def __init__(self, **kwargs: Any) -> None:
-        self._set_data()
+    def __init__(self, **kwargs: Dict[str, Any]) -> None:
+        super(DomainEvent, self).__init__()
         self._set_attributes(**kwargs)
         self.type = "domain_event"
 
     @staticmethod
     def from_dict(
-        message_data: Dict[str, Any], target_type: Optional[Type["DomainEvent"]] = None
+        message_data: Dict[str, Any],
+        target_type: Union[Type["DomainEvent"], None] = None,
     ) -> "DomainEvent":
         target_type = DomainEvent if target_type is None else target_type
         data = message_data.get("data")
         domain_event = target_type()
-        domain_event._set_data(**data)
+        domain_event._set_data(**data)  # type: ignore
         return domain_event
 
     @staticmethod
