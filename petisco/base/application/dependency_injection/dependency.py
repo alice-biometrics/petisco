@@ -30,5 +30,9 @@ class Dependency:
         if not modifier or not self.builders or modifier not in self.builders:
             return self.default_builder.build()
         else:
-            instance = self.builders.get(modifier).build()
+            builder = self.builders.get(modifier)
+            assert isinstance(
+                builder, Builder
+            ), "Oh no! Dependency builder is corrupted!"
+            instance = builder.build()
             return instance

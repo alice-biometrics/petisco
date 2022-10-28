@@ -151,7 +151,7 @@ class Persistence(metaclass=Singleton):
         return database.get_session()
 
     @staticmethod
-    def get_session_scope(database_name: str) -> Callable:
+    def get_session_scope(database_name: str) -> Callable[..., Any]:
         database = Persistence.get_instance()._databases.get(database_name)
         if not database:
             raise IndexError(f"Database name ({database_name}) not exists.")

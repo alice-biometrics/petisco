@@ -1,6 +1,6 @@
-from typing import Any, TypeVar, cast
+from typing import Any, NewType, cast
 
-ClassType = TypeVar("ClassType", bound=Any)
+ClassType = NewType("ClassType", Any)
 
 
 class Builder:

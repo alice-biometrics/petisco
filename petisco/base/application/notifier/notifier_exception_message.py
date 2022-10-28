@@ -33,8 +33,8 @@ class NotifierExceptionMessage:
         self.input_parameters = input_parameters
         self.meta = meta
 
-    def update_meta(self, meta: dict) -> None:
-        self.meta = {**self.meta, **meta}
+    def update_meta(self, meta: Dict[str, Any]) -> None:
+        self.meta = {**self.meta, **meta}  # type: ignore
 
     @staticmethod
     def from_unknown_error(
