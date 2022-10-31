@@ -23,9 +23,10 @@ steps:
     run: pip install -e .[sqlalchemy,redis,rabbitmq,elastic,slack,fastapi]
   lint:
     run:
-      - black --check .
-      - flake8 $PACKAGE_NAME
-      - isort --check .
+      - black --check $PACKAGE_NAME tests
+      - flake8 $PACKAGE_NAME tests
+      - pyupgrade --py37-plus --exit-zero-even-if-changed `find $PACKAGE_NAME tests -name "*.py" -type f`
+      - isort $PACKAGE_NAME tests
   check-requirements:
     run: safety check -r requirements/requirements.txt
   static-analysis:

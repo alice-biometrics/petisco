@@ -19,5 +19,5 @@ class MyAggregateRootMother:
 
     @staticmethod
     def random() -> MyAggregateRoot:
-        name = "".join((random.choice("abcdxyzpqr") for i in range(5)))
+        name = "".join(random.choice("abcdxyzpqr") for i in range(5))
         return MyAggregateRoot(name=name, aggregate_id=UuidMother.random())

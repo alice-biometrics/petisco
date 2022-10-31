@@ -16,9 +16,9 @@ class RabbitMqEventConsumerPrinter:
             print(
                 "\n#####################################################################################################################"
             )
-            print(" [x] Received %r" % (body,))
-            print(" [x] Properties %r" % (properties,))
-            print(" [x] method %r" % (method,))
+            print(f" [x] Received {body!r}")
+            print(f" [x] Properties {properties!r}")
+            print(f" [x] method {method!r}")
 
     def print_separator(self) -> None:
         if self.verbose:

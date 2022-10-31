@@ -1,4 +1,3 @@
-# coding=utf-8
 # Legacy module of petisco version 0
 
 from petisco.legacy.logger.interface_logger import ILogger
