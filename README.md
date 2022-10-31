@@ -11,6 +11,11 @@
 
 <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png?raw=true" width=auto>
 
+> **Warning**
+> Disclaimer:
+> Current version now is v1 (not stable yet). 
+> v0 is now deprecated (legacy branch)
+
 ---
 
 **Documentation**: <a href="https://alice-biometrics.github.io/petisco/" target="_blank">https://alice-biometrics.github.io/petisco/</a>
@@ -19,12 +24,13 @@
 
 ---
 
-Petisco is a framework for helping Python developers to build clean Applications in Python.
+## What is petisco? 🍪
 
-> **Warning**
-> Disclaimer:
-> Current version now is v1 (not stable yet). 
-> v0 is now deprecated (legacy branc)
+petisco is a framework for helping Python developers to build clean Applications in Python.
+
+## How could petisco help me? 🍪
+
+petisco provides several handy classes to help you on defining your domain with hexagonal architecture, event streaming and CQRS.
 
 
 ## Installation 💻
@@ -36,35 +42,14 @@ pip install petisco
 Installation with Extras 
 
 ```console
-pip install petisco[fastapi,sqlalchemy,elastic,rabbitmq,slack,redis]
+pip install petisco[fastapi,sqlalchemy,elastic,elastic-apm,rabbitmq,slack,redis]
 ```
 
-## Getting Started 📈
-    
-### Model your Domain
+## Contribute 
 
-Doc  
+We'd love you to contribute to *petisco* 🥳🥳🥳🥳🥳🥳️️!
 
-#### Message Broker 
-
-petisco 🍪 provides several classes to help on the construction of Message publishers and consumers using a message broker.
-
-Please, find more information in [doc/message_broker/MessageBroker.md](doc/message_broker/rabbitmq.md).
-
-## Development
-
-### Using lume
-
-```console
-pip install lume
-```
-
-Then:
-
-```console 
-lume -install -all
-```
-
+For more information, check our [documentation](https://alice-biometrics.github.io/petisco/contributing/)
 
 ## Contact 📬
 
