@@ -10,8 +10,8 @@ class NotImplementedMessageConfigurer(MessageConfigurer):
         subscribers: List[MessageSubscriber],
         clear_subscriber_before: bool = False,
         clear_store_before: bool = False,
-    ):
+    ) -> None:
         pass
 
-    def clear(self):
+    def clear(self) -> None:
         pass

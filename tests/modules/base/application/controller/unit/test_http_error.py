@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 import pytest
 
 from petisco import HttpError
@@ -57,7 +59,7 @@ def test_http_error_should_success_when_construct_with_headers():
     class MyHttpError(HttpError):
         status_code = 401
         detail = "Unauthorized"
-        headers = {"WWW-Authenticate": 'authType="OTP"'}
+        headers: Optional[Dict[str, Any]] = {"WWW-Authenticate": 'authType="OTP"'}
 
     http_error = MyHttpError()
 

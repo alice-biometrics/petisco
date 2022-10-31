@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any, cast
 
 from petisco.base.misc.singleton import Singleton
 
@@ -9,8 +10,8 @@ class ApplicationInfo(metaclass=Singleton):
     version: str
     deployed_at: datetime
 
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name")
-        self.organization = kwargs.get("organization")
-        self.version = kwargs.get("version")
-        self.deployed_at = kwargs.get("deployed_at")
+    def __init__(self, **kwargs: Any) -> None:
+        self.name = str(kwargs.get("name"))
+        self.organization = str(kwargs.get("organization"))
+        self.version = str(kwargs.get("version"))
+        self.deployed_at = cast(datetime, kwargs.get("deployed_at"))

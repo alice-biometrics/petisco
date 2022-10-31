@@ -5,6 +5,6 @@ class SqliteConnection:
         self.url = url
 
     @staticmethod
-    def create(server_name: str, database_name: str):
+    def create(server_name: str, database_name: str) -> "SqliteConnection":
         url = f"{server_name}:///{database_name}"
         return SqliteConnection(server_name, database_name, url)

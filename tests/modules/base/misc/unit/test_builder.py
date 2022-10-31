@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from petisco import Builder
@@ -75,7 +77,7 @@ def test_builder_success_with_builder_class_with_arguments():
             self.arg2 = arg2
 
         @staticmethod
-        def build(*args, **kwargs):
+        def build(*args: Any, **kwargs: Any):
             return MyClass(*args, **kwargs)
 
     builder = Builder(MyClass, is_builder=True, arg1="arg1", arg2="arg2")

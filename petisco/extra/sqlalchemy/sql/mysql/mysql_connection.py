@@ -33,7 +33,7 @@ class MySqlConnection:
         host: str = "mysql",
         port: str = "3306",
         database_name: str = MYSQL_DATABASE_DEFAULT,
-    ):
+    ) -> "MySqlConnection":
         url = (
             f"{server_name}+{driver}://{user}:{password}@{host}:{port}/{database_name}"
         )
@@ -42,13 +42,13 @@ class MySqlConnection:
         )
 
     @staticmethod
-    def create_local(database_name: str = MYSQL_DATABASE_DEFAULT):
+    def create_local(database_name: str = MYSQL_DATABASE_DEFAULT) -> "MySqlConnection":
         return MySqlConnection.create(
             host="localhost", port="3307", database_name=database_name
         )
 
     @staticmethod
-    def from_environ():
+    def from_environ() -> "MySqlConnection":
         return MySqlConnection.create(
             "mysql",
             "pymysql",

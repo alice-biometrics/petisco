@@ -1,9 +1,12 @@
 from fnmatch import fnmatch
+from typing import Dict, Union
 
 
 class SpecificQueueConfig:
     @staticmethod
-    def from_dict(kdict: dict, default_retry_ttl: int, default_main_ttl: int):
+    def from_dict(
+        kdict: dict, default_retry_ttl: int, default_main_ttl: int
+    ) -> "SpecificQueueConfig":
         return SpecificQueueConfig(
             wildcard=kdict.get("when_queue_contains", None),
             specific_retry_ttl=kdict.get("use", {}).get("retry_ttl", default_retry_ttl),
@@ -15,12 +18,12 @@ class SpecificQueueConfig:
         wildcard: str,
         specific_retry_ttl: int = None,
         specific_main_ttl: int = None,
-    ):
+    ) -> None:
         self.wildcard = wildcard
         self.specific_retry_ttl = specific_retry_ttl
         self.specific_main_ttl = specific_main_ttl
 
-    def info(self):
+    def info(self) -> Dict[str, Union[str, int]]:
         return {
             "when_queue_contains": self.wildcard,
             "specific_retry_ttl": self.specific_retry_ttl,
@@ -30,8 +33,8 @@ class SpecificQueueConfig:
     def has_specific_config(self, queue_name: str) -> bool:
         return fnmatch(queue_name, self.wildcard)
 
-    def get_retry_ttl(self):
+    def get_retry_ttl(self) -> int:
         return self.specific_retry_ttl
 
-    def get_main_ttl(self):
+    def get_main_ttl(self) -> int:
         return self.specific_main_ttl

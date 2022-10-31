@@ -5,16 +5,17 @@ import traceback
 from typing import Any, Dict
 
 import yaml
-from yaml.parser import ParserError, ScannerError
+from yaml.parser import ParserError
+from yaml.scanner import ScannerError
 
 
 class PersistenceModels:
-    def __init__(self, models: Dict[str, Any]):
+    def __init__(self, models: Dict[str, Any]) -> None:
         self.models = models
-        self.imported_models = {}
+        self.imported_models: Dict[str, Any] = {}
 
     @staticmethod
-    def from_filename(filename: str):
+    def from_filename(filename: str) -> "PersistenceModels":
         if not os.path.isfile(filename):
             raise FileNotFoundError(f"PersistenceModels ({filename} not found)")
         try:
@@ -26,10 +27,10 @@ class PersistenceModels:
             message = f"Error loading {filename} file: {repr(e.__class__)} {e} | {traceback.format_exc()}"
             raise RuntimeError(message)
 
-    def get_models_names(self):
+    def get_models_names(self) -> Dict[str, Any]:
         return self.models
 
-    def import_models(self):
+    def import_models(self) -> None:
         self.imported_models = self.import_database_models()
 
         # self.imported_models = {}
@@ -38,14 +39,14 @@ class PersistenceModels:
         #     mod = importlib.import_module(mod_name)
         #     self.imported_models[name] = getattr(mod, model_name)
 
-    def import_database_models(self):
-        def _is_class_in_sqlalchemy_tables(class_model_name: str):
+    def import_database_models(self) -> Dict[str, Any]:
+        def _is_class_in_sqlalchemy_tables(class_model_name: str) -> bool:
             # We need this to filter deletion in case of Model dependencies.
             # For instance, ClientConfigModel imports ClientModel on class model definition
             # It throws the following error:
             #  sqlalchemy.exc.InvalidRequestError: Table 'ClientConfig' is already defined for this MetaData instance.
             #  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
-            # As a workaround, we only delete the module if it not exist in SQLAlchemy tables.
+            # As a workaround, we only delete the module if it not exists in SQLAlchemy tables.
 
             from petisco.base.domain.persistence.persistence import Persistence
 
@@ -61,7 +62,9 @@ class PersistenceModels:
                 )
             return is_in_tables
 
-        def _delete_module_if_already_imported(module_name: str, class_model_name: str):
+        def _delete_module_if_already_imported(
+            module_name: str, class_model_name: str
+        ) -> None:
             # Important. SqlAlchemy needs models to be imported
             # Base = Persistence.get_base("petisco")
             # If module is already imported and Base has not tables, Tables won't be imported.
@@ -73,7 +76,7 @@ class PersistenceModels:
             ):
                 del sys.modules[module_name]
 
-        def _import_database_models_func():
+        def _import_database_models_func() -> Dict[str, Any]:
             imported_models = {}
             for name, model_string in self.models.items():
                 module_name, class_model_name = model_string.rsplit(".", 1)
@@ -84,5 +87,5 @@ class PersistenceModels:
 
         return _import_database_models_func()
 
-    def get_imported_models(self):
+    def get_imported_models(self) -> Dict[str, Any]:
         return self.imported_models

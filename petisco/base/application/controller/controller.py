@@ -1,14 +1,16 @@
 from abc import ABC, abstractmethod
 from types import FunctionType
-from typing import Any, List
+from typing import Any, Dict, List, Optional, Tuple, cast
 
-from meiga import Error, NotImplementedMethodError, Result
+from meiga import AnyResult, NotImplementedMethodError
 
+from petisco.base.application.controller.error_map import ErrorMap
+from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.misc.result_mapper import ResultMapper, default_failure_handler
 from petisco.base.misc.wrapper import wrapper
 
 
-def get_mapper(bases, config):
+def get_mapper(bases: Tuple[Any], config: Optional[Dict[str, Any]]) -> ResultMapper:
     mapper = ResultMapper()
     if config:
         for base in bases:
@@ -26,9 +28,11 @@ def get_mapper(bases, config):
 
 
 class MetaController(type, ABC):
-    middlewares: List = {}
+    middlewares: List[Middleware] = []
 
-    def __new__(mcs, name, bases, namespace):
+    def __new__(
+        mcs, name: str, bases: Tuple[Any], namespace: Dict[str, Any]
+    ) -> "MetaController":
         config = namespace.get("Config")
 
         mapper = get_mapper(bases, config)
@@ -47,7 +51,7 @@ class MetaController(type, ABC):
         return super().__new__(mcs, name, bases, new_namespace)
 
     @abstractmethod
-    def execute(self, *args, **kwargs) -> Result[Any, Error]:
+    def execute(self, *args: Any, **kwargs: Any) -> AnyResult:
         return NotImplementedMethodError
 
 
@@ -57,13 +61,13 @@ class Controller(metaclass=MetaController):
         return ResultMapper()
 
     @staticmethod
-    def get_config_mapper(config):
+    def get_config_mapper(config: Dict[str, Any]) -> ResultMapper:
         return ResultMapper(
-            error_map=getattr(config, "error_map", None),
+            error_map=cast(ErrorMap, getattr(config, "error_map", None)),
             success_handler=getattr(config, "success_handler", lambda result: result),
             failure_handler=default_failure_handler,
         )
 
     @abstractmethod
-    def execute(self, *args, **kwargs) -> Result[Any, Error]:
+    def execute(self, *args: Tuple[str, ...], **kwargs: Dict[str, Any]) -> AnyResult:
         return NotImplementedMethodError

@@ -19,7 +19,7 @@ class CommandSubscriber(MessageSubscriber):
         raise NotImplementedError()
 
     @abstractmethod
-    def handle(self, command: Command) -> BoolResult:
+    def handle(self, command: Command) -> BoolResult:  # type: ignore
         raise NotImplementedError()
 
     def get_message_subscribers_info(self) -> List[MessageSubscriberInfo]:

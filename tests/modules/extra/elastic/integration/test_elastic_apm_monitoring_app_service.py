@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from elasticapm.traces import execution_context
 from meiga import Result, isSuccess
@@ -12,7 +14,7 @@ from tests.modules.extra.decorators import testing_with_elastic
 class TestElasticApmMonitoringAppService:
     def setup_method(self):
         class MyAppService(ElasticApmMonitoringAppService):
-            def execute(self, *args, **kwargs) -> Result:
+            def execute(self, *args: Any, **kwargs: Any) -> Result:
                 return isSuccess
 
         self.app_service = MyAppService()

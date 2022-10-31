@@ -2,7 +2,7 @@ import threading
 import traceback
 from dataclasses import dataclass
 from time import sleep
-from typing import Callable, List, Optional, Type
+from typing import Any, Callable, Dict, List, NoReturn, Optional, Type, Union
 
 from meiga import Failure
 from pika import BasicProperties
@@ -67,7 +67,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
         verbose: bool = False,
         chaos: MessageChaos = NotImplementedMessageChaos(),
         logger: Optional[ILogger] = NotImplementedLogger(),
-    ):
+    ) -> None:
         self.connector = connector
         self.organization = organization
         self.service = service
@@ -79,9 +79,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self.printer = RabbitMqEventConsumerPrinter(verbose)
         self.consumer_logger = RabbitMqMessageConsumerLogger(logger)
         self.chaos = chaos
-        self.subscribers = {}
+        self.subscribers: Dict[str, SubscriberItem] = {}
+        self._thread: Union[threading.Thread, None] = None
 
-    def start(self):
+    def start(self) -> NoReturn:
         if not self._channel:
             raise RuntimeError(
                 "RabbitMqMessageConsumer: cannot start consuming event without any subscriber defined."
@@ -89,10 +90,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self._thread = threading.Thread(target=self._start)
         self._thread.start()
 
-    def _start(self):
+    def _start(self) -> None:
         self._channel.start_consuming()
 
-    def add_subscribers(self, subscribers: List[Type[MessageSubscriber]]):
+    def add_subscribers(self, subscribers: List[Type[MessageSubscriber]]) -> None:
         for SubscriberClass in subscribers:
 
             subscriber: MessageSubscriber = SubscriberClass()
@@ -113,7 +114,9 @@ class RabbitMqMessageConsumer(MessageConsumer):
                         message_type_expected=subscriber_info.message_type,
                     )
 
-    def add_subscriber_on_dead_letter(self, subscriber: Type[MessageSubscriber]):
+    def add_subscriber_on_dead_letter(
+        self, subscriber: Type[MessageSubscriber]
+    ) -> None:
         instance_subscriber: MessageSubscriber = subscriber()
         for subscriber_info in instance_subscriber.get_message_subscribers_info():
 
@@ -126,16 +129,13 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 message_type_expected=subscriber_info.message_type,
             )
 
-    # def add_handler_on_store(self, handler: Callable):
-    #     self.add_handler_on_queue("store", handler, is_store=True)
-
     def _add_subscriber_instance_on_queue(
         self,
         queue_name: str,
         subscriber: MessageSubscriber,
         is_store: bool = False,
         message_type_expected: str = "message",
-    ):
+    ) -> None:
         consumer_tag = self._channel.basic_consume(
             queue=queue_name,
             on_message_callback=self.consumer(
@@ -152,9 +152,9 @@ class RabbitMqMessageConsumer(MessageConsumer):
         subscriber: Type[MessageSubscriber],
         is_store: bool = False,
         message_type_expected: str = "message",
-    ):
+    ) -> None:
         subscriber: MessageSubscriber = subscriber()
-        return self._add_subscriber_instance_on_queue(
+        self._add_subscriber_instance_on_queue(
             queue_name=queue_name,
             subscriber=subscriber,
             is_store=is_store,
@@ -172,7 +172,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
             method: Basic.Deliver,
             properties: BasicProperties,
             body: bytes,
-        ):
+        ) -> None:
             self.printer.print_received_message(method, properties, body)
 
             if self.chaos.nack_simulation(ch, method):
@@ -259,7 +259,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
         properties: BasicProperties,
         body: bytes,
         is_store: bool,
-    ):
+    ) -> ConsumerDerivedAction:
 
         if self.has_been_redelivered_too_much(properties):
             derived_action = self.send_to_dead_letter(ch, method, properties, body)
@@ -270,7 +270,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
         return derived_action
 
-    def has_been_redelivered_too_much(self, properties: BasicProperties):
+    def has_been_redelivered_too_much(self, properties: BasicProperties) -> bool:
         if not properties.headers or "redelivery_count" not in properties.headers:
             if self.max_retries < 1:
                 return True
@@ -278,7 +278,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
         else:
             return properties.headers.get("redelivery_count") >= self.max_retries
 
-    def _get_routing_key(self, routing_key: str, prefix: str):
+    def _get_routing_key(self, routing_key: str, prefix: str) -> str:
         if routing_key.startswith("retry."):
             routing_key = routing_key.replace("retry.", prefix, 1)
         elif routing_key.startswith("dead_letter."):
@@ -294,7 +294,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
         properties: BasicProperties,
         body: bytes,
         is_store: bool = False,
-    ):
+    ) -> ConsumerDerivedAction:
         self.printer.print_action("send_to_retry")
         exchange_name = RabbitMqExchangeNameFormatter.retry(self.exchange_name)
 
@@ -306,6 +306,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
             routing_key = "store"
             exchange_name = self._fallback_store_exchange_name
 
+        assert isinstance(routing_key, str)
         routing_key = self._get_routing_key(routing_key, "retry.")
 
         updated_headers = self.send_message_to(
@@ -324,9 +325,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
         method: Basic.Deliver,
         properties: BasicProperties,
         body: bytes,
-    ):
+    ) -> ConsumerDerivedAction:
         self.printer.print_action("send_to_dead_letter")
         exchange_name = RabbitMqExchangeNameFormatter.dead_letter(self.exchange_name)
+        assert isinstance(method.routing_key, str)
         routing_key = self._get_routing_key(method.routing_key, "dead_letter.")
         updated_headers = self.send_message_to(
             exchange_name, ch, routing_key, properties, body
@@ -345,7 +347,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
         routing_key: str,
         properties: BasicProperties,
         body: bytes,
-    ):
+    ) -> Dict[str, Any]:
         if properties.headers:
             redelivery_count = properties.headers.get("redelivery_count", 0)
             properties.headers["redelivery_count"] = redelivery_count + 1
@@ -353,7 +355,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
             properties.headers = {"redelivery_count": 1}
 
         self.printer.print_send_message_to(
-            exchange_name, routing_key, properties.headers
+            exchange_name, routing_key, dict(properties.headers)
         )
 
         ch.basic_publish(
@@ -363,10 +365,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
             properties=properties,
         )
 
-        return properties.headers
+        return dict(properties.headers)
 
-    def stop(self):
-        def _log_stop_exception(e: Exception):
+    def stop(self) -> None:
+        def _log_stop_exception(e: Exception) -> None:
             from petisco.legacy import ERROR, LogMessage, Petisco
 
             logger = Petisco.get_logger()
@@ -384,15 +386,15 @@ class RabbitMqMessageConsumer(MessageConsumer):
             except Exception as e:
                 _log_stop_exception(e)
 
-    def _unsubscribe_all(self):
-        def _stop_consuming_consumer_channel():
+    def _unsubscribe_all(self) -> None:
+        def _stop_consuming_consumer_channel() -> None:
             try:
                 self._channel.stop_consuming()
                 self._channel.cancel()
             except ValueError:
                 pass
 
-        def _await_for_stop_consuming_consumer_channel():
+        def _await_for_stop_consuming_consumer_channel() -> None:
             sleep(2.0)
 
         self.connector.get_connection(self.rabbitmq_key).call_later(
@@ -401,26 +403,28 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
         _await_for_stop_consuming_consumer_channel()
 
-    def unsubscribe_subscriber_on_queue(self, queue_name: str):
-        subscriber_item: SubscriberItem = self.subscribers.get(queue_name)
+    def unsubscribe_subscriber_on_queue(self, queue_name: str) -> None:
+        subscriber_item = self.subscribers.get(queue_name)
         if subscriber_item is None:
             raise IndexError(
                 f"Cannot unsubscribe an nonexistent queue ({queue_name}). Please, check configured consumers ({list(self.subscribers.keys())})"
             )
 
-        def _unsubscribe_handler_on_queue():
+        def _unsubscribe_handler_on_queue() -> None:
+            assert isinstance(subscriber_item, SubscriberItem)
             self._channel.basic_cancel(consumer_tag=subscriber_item.consumer_tag)
 
         self._do_it_in_consumer_thread(_unsubscribe_handler_on_queue)
 
-    def resume_subscriber_on_queue(self, queue_name: str):
-        subscriber_item: SubscriberItem = self.subscribers.get(queue_name)
+    def resume_subscriber_on_queue(self, queue_name: str) -> None:
+        subscriber_item = self.subscribers.get(queue_name)
         if subscriber_item is None:
             raise IndexError(
                 f"Cannot resume an nonexistent queue ({queue_name}). Please, check configured consumers ({list(self.subscribers.keys())})"
             )
 
-        def _resume_handler_on_queue():
+        def _resume_handler_on_queue() -> None:
+            assert isinstance(subscriber_item, SubscriberItem)
             subscriber_item.consumer_tag = self._channel.basic_consume(
                 queue=subscriber_item.queue_name,
                 on_message_callback=self.consumer(
@@ -430,14 +434,14 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
         self._do_it_in_consumer_thread(_resume_handler_on_queue)
 
-    def _do_it_in_consumer_thread(self, action: Callable):
-        def _execute_action():
+    def _do_it_in_consumer_thread(self, action: Callable[..., None]) -> None:
+        def _execute_action() -> None:
             try:
                 action()
             except ValueError:
                 pass
 
-        def _await_for_thread():
+        def _await_for_thread() -> None:
             sleep(2.0)
 
         self.connector.get_connection(self.rabbitmq_key).call_later(0, _execute_action)

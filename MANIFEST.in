@@ -1,3 +1,4 @@
 include petisco/VERSION
 include requirements/requirements.txt
+include petisco/py.typed
 include LICENSE

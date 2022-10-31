@@ -1,7 +1,7 @@
 import argparse
 import logging
 from time import sleep
-from typing import List, Type
+from typing import Any, List, Type, cast
 
 from meiga import BoolResult, isFailure, isSuccess
 
@@ -12,23 +12,27 @@ from petisco import (
     MessageSubscriber,
     __version__,
 )
-from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqMessageConsumer
-from petisco.legacy import LoggingBasedLogger
+from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_message_consumer import (
+    RabbitMqMessageConsumer,
+)
+from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
+from petisco.legacy.logger.interface_logger import ILogger
+from petisco.legacy.logger.logging_based_logger import LoggingBasedLogger
 
 ORGANIZATION = "alice"
 RETRY_TTL = 5000  # default
 MAX_RETRIES = 5  # default
 
 
-def has_args(args):
+def has_args(args: Any) -> bool:
     is_active = False
     for arg in vars(args):
         is_active = is_active or getattr(args, arg)
     return is_active
 
 
-def get_logger():
-    def logging_config():
+def get_logger() -> ILogger:
+    def logging_config() -> None:
         logging.getLogger("pika").setLevel(logging.WARNING)
 
     logger = LoggingBasedLogger("example", config=logging_config)
@@ -48,7 +52,7 @@ class UnackMessage(MessageSubscriber):
         return isFailure
 
 
-def get_args():
+def get_args() -> Any:
     parser = argparse.ArgumentParser(
         prog="petisco-rabbitmq 🍪",
         description="petisco-rabbitmq helps us on rabbitmq iteration",
@@ -129,7 +133,7 @@ def get_args():
     return args
 
 
-def main():
+def main() -> None:
     args = get_args()
 
     if not args:
@@ -172,6 +176,8 @@ def main():
             def handle(self, message: Message) -> BoolResult:
                 if args.wait_to_requeue:
                     sleep(args.wait_sec)
+
+                message = cast(DomainEvent, message)
 
                 self.domain_event_bus.retry_publish(
                     message, args.retry_routing_key, args.retry_exchange_name

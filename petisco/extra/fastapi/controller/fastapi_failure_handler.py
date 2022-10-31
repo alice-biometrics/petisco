@@ -1,7 +1,9 @@
+from typing import NoReturn
+
 import elasticapm
 from fastapi import HTTPException
 from loguru import logger
-from meiga import Result
+from meiga import AnyResult
 
 from petisco import DEFAULT_HTTP_ERROR_MAP
 from petisco.base.application.controller.error_map import ErrorMap
@@ -13,7 +15,7 @@ from petisco.base.domain.errors.domain_error import DomainError
 from petisco.base.domain.errors.unknown_error import UnknownError
 
 
-def fastapi_failure_handler(result: Result, error_map: ErrorMap):
+def fastapi_failure_handler(result: AnyResult, error_map: ErrorMap) -> NoReturn:
     domain_error = result.value
     error_type = type(domain_error)
     http_error = error_map.get(error_type, HttpError())
@@ -47,6 +49,7 @@ def fastapi_failure_handler(result: Result, error_map: ErrorMap):
             f"mapping error)"
         )
 
+    assert isinstance(http_error.status_code, int)
     http_exception = HTTPException(
         status_code=http_error.status_code, detail=detail, headers=http_error.headers
     )

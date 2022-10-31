@@ -20,7 +20,7 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         connector: RabbitMqConnector = RabbitMqConnector(),
         queue_config: QueueConfig = QueueConfig.default(),
         use_store_queues: bool = True,
-    ):
+    ) -> None:
         self._use_store_queues = use_store_queues
         self.subscribers_configurer = RabbitMqMessageSubcribersConfigurer(
             organization, service, connector, queue_config
@@ -29,7 +29,7 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
             organization, service, connector, queue_config
         )
 
-    def configure(self):
+    def configure(self) -> None:
         self.configure_subscribers([])
 
     def configure_subscribers(
@@ -37,7 +37,7 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         subscribers: List[MessageSubscriber],
         clear_subscriber_before: bool = False,
         clear_store_before: bool = False,
-    ):
+    ) -> None:
         if subscribers is None:
             subscribers = []
 
@@ -58,7 +58,7 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         if self._use_store_queues:
             self.store_configurer.clear()
 
-    def clear(self):
+    def clear(self) -> None:
         self.subscribers_configurer.clear()
         if self._use_store_queues:
             self.store_configurer.clear()

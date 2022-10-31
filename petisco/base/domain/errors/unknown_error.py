@@ -1,6 +1,6 @@
 import sys
 import traceback
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from meiga import Error
 
@@ -9,14 +9,14 @@ class UnknownError(Error):
     def __init__(
         self,
         exception: Exception,
-        input_parameters=None,
-        executor=None,
-        traceback=None,
-        filename=None,
-        lineno=None,
-        filter_parameters: List[str] = None,
-        meta: Dict = None,
-    ):
+        input_parameters: Any = None,
+        executor: Any = None,
+        traceback: Any = None,
+        filename: Any = None,
+        lineno: Any = None,
+        filter_parameters: Union[List[str], None] = None,
+        meta: Union[Dict[str, Any], None] = None,
+    ) -> None:
         self.message = f"{exception.__class__.__name__}: {str(exception)}"
         self.input_parameters = self._sanitize_input_params(input_parameters)
         self._filter_input_parameters(filter_parameters)
@@ -27,7 +27,7 @@ class UnknownError(Error):
         self.lineno = lineno
         self.meta = meta if meta else {}
 
-    def _sanitize_input_params(self, input_parameters):
+    def _sanitize_input_params(self, input_parameters: Any) -> Any:
         if isinstance(input_parameters, tuple):
             return {
                 f"param_{i + 1}": param if not isinstance(param, bytes) else "bytes"
@@ -41,7 +41,9 @@ class UnknownError(Error):
         else:
             return None
 
-    def _filter_input_parameters(self, filter_parameters: List[str] = None):
+    def _filter_input_parameters(
+        self, filter_parameters: Union[List[str], None] = None
+    ) -> None:
         if filter_parameters:
             self.input_parameters = {
                 k: v
@@ -49,7 +51,7 @@ class UnknownError(Error):
                 if k not in filter_parameters
             }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         executor_str = f" ({self.executor})" if self.executor else ""
         traceback_str = f"\n{self.traceback}" if self.traceback else ""
         input_parameters_str = (
@@ -67,11 +69,11 @@ class UnknownError(Error):
         exception: Exception,
         arguments: Any,
         class_name: Optional[str] = None,
-    ):
+    ) -> "UnknownError":
         _, _, tb = sys.exc_info()
-        tb = traceback.extract_tb(tb)[-1]
-        filename = tb.filename if tb and hasattr(tb, "filename") else None
-        lineno = tb.lineno if tb and hasattr(tb, "lineno") else None
+        tb = traceback.extract_tb(tb)[-1]  # type: ignore
+        filename = tb.filename if tb and hasattr(tb, "filename") else None  # type: ignore
+        lineno = tb.lineno if tb and hasattr(tb, "lineno") else None  # type: ignore
 
         unknown_error = cls(
             exception=exception,

@@ -1,6 +1,6 @@
 import functools
 from datetime import datetime
-from typing import List, NoReturn
+from typing import Any, List, NoReturn
 
 import pytest
 
@@ -18,7 +18,7 @@ from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 def testing_with_empty_container(func):
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any):
         Container.clear()
         result = func(*args, **kwargs)
         Container.clear()
@@ -68,9 +68,12 @@ def test_application_should_construct_from_required_variables():
 @testing_with_empty_container
 def test_application_should_construct_and_configure_with_testing_variable():
 
-    Application(name="service", version="1.0.0", organization="acme").configure(
-        testing=True
-    )
+    Application(
+        name="service",
+        version="1.0.0",
+        organization="acme",
+        deployed_at=datetime.utcnow(),
+    ).configure(testing=True)
 
     assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
 
@@ -79,7 +82,12 @@ def test_application_should_construct_and_configure_with_testing_variable():
 @testing_with_empty_container
 def test_application_should_construct_and_instantiate_application_info_singleton():
 
-    Application(name="service", version="1.0.0", organization="acme")
+    Application(
+        name="service",
+        version="1.0.0",
+        organization="acme",
+        deployed_at=datetime.utcnow(),
+    )
 
     assert ApplicationInfo().name == "service"
     assert ApplicationInfo().version == "1.0.0"
@@ -99,6 +107,7 @@ def test_application_should_construct_with_dependencies_provider():
         version="1.0.0",
         organization="acme",
         dependencies_provider=dependencies_provider,
+        deployed_at=datetime.utcnow(),
     ).configure()
 
     assert (
@@ -118,6 +127,7 @@ def test_application_should_construct_with_a_dependency_overwrite():
         version="1.0.0",
         organization="acme",
         dependencies_provider=dependencies_provider,
+        deployed_at=datetime.utcnow(),
     ).configure()
 
     assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
@@ -138,6 +148,7 @@ def test_application_should_construct_with_configurers():
             MyApplicationConfigurer(),
             MyApplicationConfigurer(execute_after_dependencies=True),
         ],
+        deployed_at=datetime.utcnow(),
     ).configure()
 
 
@@ -154,6 +165,7 @@ def test_application_should_raise_an_exception_when_configurer_with_an_exeption(
             version="1.0.0",
             organization="acme",
             configurers=[MyApplicationConfigurer()],
+            deployed_at=datetime.utcnow(),
         ).configure()
     assert "Our Error" in str(excinfo.value)
 
@@ -169,6 +181,7 @@ def test_application_should_publish_a_domain_event():
         version="1.0.0",
         organization="acme",
         dependencies_provider=dependencies_provider,
+        deployed_at=datetime.utcnow(),
     )
     application.configure()
 

@@ -671,7 +671,7 @@ def test_message_consumer_should_consumer_react_to_chaos_with_failure_simulation
 #     consumer_with_chaos = RabbitMqEventConsumerMother.with_chaos(
 #         chaos, max_retries_allowed, logger
 #     )
-#     consumer_with_chaos.add_handler_on_store(assert_consumer)
+#     consumer_with_chaos.add_handler_on_store(assert_consumer)  # removed
 #     consumer_with_chaos.start()
 #     sleep(1.0)
 #     consumer_with_chaos.stop()

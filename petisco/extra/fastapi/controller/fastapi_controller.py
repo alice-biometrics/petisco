@@ -1,21 +1,22 @@
 from abc import abstractmethod
-from typing import Any
+from typing import Any, Dict
 
-from meiga import Error, NotImplementedMethodError, Result
+from meiga import AnyResult, NotImplementedMethodError
 
 from petisco.base.application.controller.controller import Controller
+from petisco.base.misc.result_mapper import ResultMapper
 from petisco.extra.fastapi.controller.fastapi_result_mapper import FastAPIResultMapper
 
 
 class FastAPIController(Controller):
     @staticmethod
-    def get_default_mapper():
+    def get_default_mapper() -> ResultMapper:
         return FastAPIResultMapper.default()
 
     @staticmethod
-    def get_config_mapper(config):
+    def get_config_mapper(config: Dict[str, Any]) -> ResultMapper:
         return FastAPIResultMapper.from_config(config)
 
     @abstractmethod
-    def execute(self, *args, **kwargs) -> Result[Any, Error]:
+    def execute(self, *args: Any, **kwargs: Any) -> AnyResult:
         return NotImplementedMethodError

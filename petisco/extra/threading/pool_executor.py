@@ -1,19 +1,21 @@
 from multiprocessing.pool import ThreadPool
-from typing import Callable, List, Tuple
+from typing import Any, Callable, List, Tuple
 
 
 class Executable:
-    def __init__(self, func: Callable, args: Tuple):
+    def __init__(self, func: Callable[[Any], Any], args: Tuple[Any]) -> None:
         self.func = func
         self.args = args
 
 
 class PoolExecutor:
-    def __init__(self, executables: List[Executable], use_multi_threading: bool = True):
+    def __init__(
+        self, executables: List[Executable], use_multi_threading: bool = True
+    ) -> None:
         self.executables = executables
         self.use_multi_threading = use_multi_threading
 
-    def execute(self) -> List:
+    def execute(self) -> List[Any]:
         if len(self.executables) < 1:
             return []
 
@@ -29,9 +31,9 @@ class PoolExecutor:
                 func_results.append(self._coroutine(executable))
         return func_results
 
-    def _coroutine(self, executable: Executable):
+    def _coroutine(self, executable: Executable) -> Any:
         return executable.func(*executable.args)
 
-    def clear(self):
+    def clear(self) -> None:
         del self.executables
         self.executables = []

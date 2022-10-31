@@ -1,8 +1,7 @@
 from abc import ABC
-from typing import Dict
+from typing import Any, Dict
 
 
 class Interface(ABC):
-    @classmethod
-    def info(cls) -> Dict:
-        return {"name": cls.__name__}
+    def info(self) -> Dict[str, Any]:
+        return {"name": type(self).__name__}

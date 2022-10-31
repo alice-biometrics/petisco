@@ -6,8 +6,10 @@ from petisco.base.application.notifier.notifier_message import NotifierMessage
 
 
 class NotImplementedNotifier(Notifier):
-    def publish(self, message: NotifierMessage):
+    def publish(self, message: NotifierMessage) -> None:
         pass
 
-    def publish_exception(self, notifier_exception_message: NotifierExceptionMessage):
+    def publish_exception(
+        self, notifier_exception_message: NotifierExceptionMessage
+    ) -> None:
         pass

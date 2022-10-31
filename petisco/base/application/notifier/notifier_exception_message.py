@@ -1,3 +1,5 @@
+from typing import Any, Dict, Union
+
 from petisco.base.domain.errors.unknown_error import UnknownError
 
 
@@ -6,10 +8,10 @@ class NotifierExceptionMessage:
     executor: str
     exception: Exception
     traceback: str
-    filename: str = None
-    lineno: str = None
-    input_parameters: dict = None
-    meta: dict = None
+    filename: Union[str, None] = None
+    lineno: Union[str, None] = None
+    input_parameters: Union[Dict[str, Any], None] = None
+    meta: Union[Dict[str, Any], None] = None
 
     def __init__(
         self,
@@ -17,11 +19,11 @@ class NotifierExceptionMessage:
         executor: str,
         exception: Exception,
         traceback: str,
-        filename: str = None,
-        lineno: str = None,
-        input_parameters: dict = None,
-        meta: dict = None,
-    ):
+        filename: Union[str, None] = None,
+        lineno: Union[str, None] = None,
+        input_parameters: Union[Dict[str, Any], None] = None,
+        meta: Union[Dict[str, Any], None] = None,
+    ) -> None:
         self.title = title
         self.executor = executor
         self.exception = exception
@@ -31,11 +33,13 @@ class NotifierExceptionMessage:
         self.input_parameters = input_parameters
         self.meta = meta
 
-    def update_meta(self, meta: dict):
-        self.meta = {**self.meta, **meta}
+    def update_meta(self, meta: Dict[str, Any]) -> None:
+        self.meta = {**self.meta, **meta}  # type: ignore
 
     @staticmethod
-    def from_unknown_error(unknown_error: UnknownError, title: str):
+    def from_unknown_error(
+        unknown_error: UnknownError, title: str
+    ) -> "NotifierExceptionMessage":
         return NotifierExceptionMessage(
             title=title,
             executor=unknown_error.executor,

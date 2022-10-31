@@ -11,7 +11,7 @@ class MessageSubscriberInfo(BaseModel):
     message_type: str
 
     @staticmethod
-    def from_class_type(class_type: Type[Message]):
+    def from_class_type(class_type: Type[Message]) -> "MessageSubscriberInfo":
         message = class_type()
         return MessageSubscriberInfo(
             message_name=message.name,

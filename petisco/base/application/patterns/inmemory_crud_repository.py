@@ -15,7 +15,7 @@ from petisco.base.domain.model.uuid import Uuid
 
 
 class InmemoryCrudRepository(CrudRepository[AggregateRootType]):
-    def __init__(self):
+    def __init__(self) -> None:
         self._data: Dict[Uuid, Any] = dict()
 
     @meiga
