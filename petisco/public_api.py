@@ -1,8 +1,4 @@
-# coding=utf-8
-# Copyright (C) 2021+ Alice, Vigo, Spain
-
 """Public API of Alice Petisco Framework"""
-
 from petisco.base.application.application import Application
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.controller.controller import Controller
