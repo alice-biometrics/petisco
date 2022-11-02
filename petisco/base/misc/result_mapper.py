@@ -29,7 +29,7 @@ class ResultMapper(ABC):
         self.success_handler = success_handler
         self.failure_handler = failure_handler
 
-    def map(self, result: Result) -> Any:
+    def map(self, result: AnyResult) -> Any:
         if result.is_success:
             return self.success_handler(result)
         else:

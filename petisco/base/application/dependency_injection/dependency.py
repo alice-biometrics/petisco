@@ -1,28 +1,31 @@
 import os
-from typing import Any, Dict, Union
+from typing import Dict, Generic, TypeVar, Union
 
 from petisco.base.misc.builder import Builder
 
+TD = TypeVar("TD")
+TA = TypeVar("TA")
 
-class Dependency:
+
+class Dependency(Generic[TD, TA]):
     name: str
-    default_builder: Builder
+    default_builder: Builder[TD]
     envar_modifier: Union[str, None] = None
-    builders: Union[Dict[str, Builder], None] = None
+    builders: Union[Dict[str, Builder[TA]], None] = None
 
     def __init__(
         self,
         name: str,
-        default_builder: Builder,
+        default_builder: Builder[TD],
         envar_modifier: Union[str, None] = None,
-        builders: Union[Dict[str, Builder], None] = None,
+        builders: Union[Dict[str, Builder[TA]], None] = None,
     ):
         self.name = name
         self.default_builder = default_builder
         self.envar_modifier = envar_modifier
         self.builders = builders
 
-    def get_instance(self) -> Any:
+    def get_instance(self) -> Union[TD, TA]:
         if not self.envar_modifier:
             return self.default_builder.build()
 

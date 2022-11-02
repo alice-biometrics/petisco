@@ -45,7 +45,7 @@ class Message(metaclass=MetaMessage):
     meta: Dict[str, Any]
     type: str = "message"
 
-    def __init__(self, **kwargs: Dict[str, Any]) -> None:
+    def __init__(self, **data: Any) -> None:
         self.message_id: Uuid
         self.name: str
         self.version: int
@@ -53,7 +53,7 @@ class Message(metaclass=MetaMessage):
         self.attributes: Dict[str, Any] = {}
         self.meta: Dict[str, Any] = {}
         self.type: str = "message"
-        self._set_data(**kwargs)
+        self._set_data(**data)
 
     def _set_data(self, **kwargs: Union[Dict[str, Any], None]) -> None:
         if kwargs:
@@ -74,11 +74,11 @@ class Message(metaclass=MetaMessage):
             self.message_id = Uuid.v4()
             self.occurred_on = datetime.utcnow()
 
-    def _set_attributes(self, **kwargs: Any) -> None:
+    def _set_attributes(self, **data: Any) -> None:
         if self.attributes is None:
             self.attributes = {}
-        for k in kwargs:
-            self.attributes[k] = kwargs[k]
+        for k in data:
+            self.attributes[k] = data[k]
 
     def add_meta(self, meta: Dict[str, Any]) -> None:
         self.meta = meta

@@ -1,26 +1,35 @@
-from typing import Any, NewType, cast
+from typing import Any, Generic, Type, TypeVar
 
-ClassType = NewType("ClassType", Any)
+T = TypeVar("T")
 
 
-class Builder:
+class Builder(Generic[T]):
     def __init__(
-        self, klass: ClassType, is_builder: bool = False, *args: Any, **kwargs: Any
+        self,
+        klass: Type[T],
+        name_constructor: str = None,
+        is_builder: bool = False,
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
         self.klass = klass
         self.args = args
         self.kwargs = kwargs
+        self.name_constructor = name_constructor
         self.is_builder = is_builder
 
-    def build(self) -> ClassType:
+    def build(self) -> T:
         try:
-            if self.is_builder:
-                instance = self.klass.build(*self.args, **self.kwargs)
+            if self.name_constructor:
+                constructor = getattr(self.klass, self.name_constructor)
+                instance: T = constructor(*self.args, **self.kwargs)
+            elif self.is_builder:
+                instance: T = self.klass.build(*self.args, **self.kwargs)
             else:
-                instance = self.klass(*self.args, **self.kwargs)
+                instance: T = self.klass(*self.args, **self.kwargs)
         except Exception as exc:
             raise RuntimeError(
                 f"Error instantiating {self.klass.__name__}\n{repr(exc)}"
             )
 
-        return cast(ClassType, instance)
+        return instance
