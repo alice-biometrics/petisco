@@ -25,18 +25,26 @@ class RabbitMqConnector(metaclass=Singleton):
         )
         self.open_connections: Dict[str, BlockingConnection] = dict()
 
-    @logger.catch
     def close_all(self) -> None:
         for key_connection in list(self.open_connections.keys()):
             connection = self.open_connections.pop(key_connection)
             if connection and connection.is_open:
-                connection.close()
+                try:
+                    connection.close()
+                except StreamLostError as exc:
+                    logger.warning(f"close_all: {str(exc)}")
+                except Exception as exc:  # noqa
+                    logger.error(f"close_all: {str(exc)}")
 
-    @logger.catch
     def close(self, key_connection: str) -> None:
         connection = self.open_connections.pop(key_connection)
         if connection and connection.is_open:
-            connection.close()
+            try:
+                connection.close()
+            except StreamLostError as exc:
+                logger.warning(f"close: {str(exc)}")
+            except Exception as exc:  # noqa
+                logger.error(f"close_all: {str(exc)}")
 
     def get_connection(self, key_connection: str) -> BlockingConnection:
         connection = self.open_connections.get(key_connection)
