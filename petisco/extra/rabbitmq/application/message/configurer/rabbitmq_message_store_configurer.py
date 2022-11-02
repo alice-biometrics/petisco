@@ -1,3 +1,8 @@
+from typing import Union
+
+from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import (
+    RabbitMqConsumerConnector,
+)
 from petisco.extra.rabbitmq.shared.queue_config import QueueConfig
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 from petisco.extra.rabbitmq.shared.rabbitmq_declarer import RabbitMqDeclarer
@@ -11,7 +16,7 @@ class RabbitMqMessageStoreConfigurer:
         self,
         organization: str,
         service: str,
-        connector: RabbitMqConnector,
+        connector: Union[RabbitMqConnector, RabbitMqConsumerConnector],
         queue_config: QueueConfig,
     ) -> None:
         self._connector = connector

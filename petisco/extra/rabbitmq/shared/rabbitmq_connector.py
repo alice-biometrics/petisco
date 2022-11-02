@@ -2,6 +2,7 @@ import os
 import time
 from typing import Dict
 
+from loguru import logger
 from pika import BlockingConnection, ConnectionParameters, PlainCredentials
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.exceptions import StreamLostError
@@ -24,12 +25,14 @@ class RabbitMqConnector(metaclass=Singleton):
         )
         self.open_connections: Dict[str, BlockingConnection] = dict()
 
+    @logger.catch
     def close_all(self) -> None:
         for key_connection in list(self.open_connections.keys()):
             connection = self.open_connections.pop(key_connection)
             if connection and connection.is_open:
                 connection.close()
 
+    @logger.catch
     def close(self, key_connection: str) -> None:
         connection = self.open_connections.pop(key_connection)
         if connection and connection.is_open:

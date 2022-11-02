@@ -101,7 +101,7 @@ class Message(metaclass=MetaMessage):
         return Message(**data)
 
     @staticmethod
-    def from_json(message_json: str) -> "Message":
+    def from_json(message_json: Union[str, bytes]) -> "Message":
         event_dict = json.loads(message_json)
         return Message.from_dict(event_dict)
 

@@ -2,7 +2,7 @@ import pytest
 from pika.adapters.blocking_connection import BlockingChannel
 
 from petisco.extra.rabbitmq import RabbitMqConnector
-from petisco.extra.rabbitmq.shared.rabbitmq_consumer_connector import (
+from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import (
     RabbitMqConsumerConnector,
 )
 from tests.modules.extra.testing_decorators import testing_with_rabbitmq

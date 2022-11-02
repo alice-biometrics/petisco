@@ -1,6 +1,9 @@
 from typing import List
 
-from petisco.base.application.dependency_injection.dependency import Dependency
+from petisco.base.application.dependency_injection.dependency import (
+    AnyDependency,
+    Dependency,
+)
 from petisco.base.domain.message.not_implemented_command_bus import (
     NotImplementedCommandBus,
 )
@@ -16,7 +19,7 @@ from petisco.base.domain.message.not_implemented_message_configurer import (
 from petisco.base.misc.builder import Builder
 
 
-def get_default_message_dependencies() -> List[Dependency]:
+def get_default_message_dependencies() -> List[AnyDependency]:
 
     return [
         Dependency(
@@ -44,7 +47,7 @@ def get_default_message_dependencies() -> List[Dependency]:
 
 def get_rabbitmq_message_dependencies(
     organization: str, service: str, max_retries: int = 5
-) -> List[Dependency]:
+) -> List[AnyDependency]:
     from petisco.extra.rabbitmq.application.message.bus.rabbitmq_command_bus import (
         RabbitMqCommandBus,
     )

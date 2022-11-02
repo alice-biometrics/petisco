@@ -32,7 +32,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         self.configurer = RabbitMqMessageConfigurer(organization, service, connector)
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
 
-    def publish(self, domain_event: DomainEvent):
+    def publish(self, domain_event: DomainEvent) -> None:
         self._check_is_domain_event(domain_event)
         meta = self.get_configured_meta()
         domain_event = domain_event.update_meta(meta)
@@ -45,7 +45,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
             channel.basic_publish(
                 exchange=self.exchange_name,
                 routing_key=routing_key,
-                body=domain_event.json(),
+                body=domain_event.json().encode(),
                 properties=self.properties,
             )
             if channel.is_open and not isinstance(
@@ -56,7 +56,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         except ChannelClosedByBroker:
             self._retry(domain_event)
 
-    def publish_list(self, domain_events: List[DomainEvent]):
+    def publish_list(self, domain_events: List[DomainEvent]) -> None:
         meta = self.get_configured_meta()
         published_domain_event = []
         try:
@@ -86,12 +86,12 @@ class RabbitMqDomainEventBus(DomainEventBus):
             ]
             self._retry_publish_list(unpublished_domain_events)
 
-    def _retry(self, domain_event: DomainEvent):
+    def _retry(self, domain_event: DomainEvent) -> None:
         # If domain event queue is not configured, it will be configured and then try to publish again.
         self.configurer.configure()
         self.publish(domain_event)
 
-    def _retry_publish_list(self, domain_events: List[DomainEvent]):
+    def _retry_publish_list(self, domain_events: List[DomainEvent]) -> None:
         # If domain event queue is not configured, it will be configured and then try to publish again.
         self.configurer.configure()
         self.publish_list(domain_events)
@@ -105,7 +105,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         channel.basic_publish(
             exchange=self.exchange_name,
             routing_key="retry.store",
-            body=domain_event.json(),
+            body=domain_event.json().encode(),
             properties=self.properties,
         )
 
@@ -113,8 +113,8 @@ class RabbitMqDomainEventBus(DomainEventBus):
         self,
         domain_event: DomainEvent,
         retry_routing_key: str,
-        retry_exchange_name: str = None,
-    ):
+        retry_exchange_name: Union[str, None] = None,
+    ) -> None:
         self._check_is_domain_event(domain_event)
         meta = self.get_configured_meta()
         domain_event = domain_event.update_meta(meta)
@@ -137,5 +137,5 @@ class RabbitMqDomainEventBus(DomainEventBus):
         except ChannelClosedByBroker:
             self._retry(domain_event)
 
-    def close(self):
+    def close(self) -> None:
         self.connector.close(self.rabbitmq_key)

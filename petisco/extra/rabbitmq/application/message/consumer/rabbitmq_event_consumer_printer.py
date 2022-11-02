@@ -1,6 +1,6 @@
 from typing import Any, Callable, Dict
 
-from meiga import Result
+from meiga import AnyResult
 from pika import BasicProperties
 from pika.spec import Basic
 
@@ -26,7 +26,7 @@ class RabbitMqEventConsumerPrinter:
                 "#####################################################################################################################\n"
             )
 
-    def print_context(self, handler: Callable, result: Result) -> None:
+    def print_context(self, handler: Callable[..., Any], result: AnyResult) -> None:
         if self.verbose:
             handler_name = getattr(handler, "__name__", repr(handler))
             handler_module = getattr(handler, "__module__") + "."

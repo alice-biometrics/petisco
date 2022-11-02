@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 from petisco.legacy.logger.log_message import LogMessage
 
@@ -12,10 +12,7 @@ DEBUG = 10
 NOTSET = 0
 
 
-class ILogger:
-
-    __metaclass__ = ABCMeta
-
+class ILogger(ABC):
     @abstractmethod
     def log(self, logging_level: int, log_message: LogMessage):
         return NotImplementedError

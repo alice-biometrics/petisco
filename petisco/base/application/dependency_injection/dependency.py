@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Generic, TypeVar, Union
+from typing import Any, Dict, Generic, TypeVar, Union
 
 from petisco.base.misc.builder import Builder
 
@@ -39,3 +39,6 @@ class Dependency(Generic[TD, TA]):
             ), "Oh no! Dependency builder is corrupted!"
             instance = builder.build()
             return instance
+
+
+AnyDependency = Dependency[Any, Any]

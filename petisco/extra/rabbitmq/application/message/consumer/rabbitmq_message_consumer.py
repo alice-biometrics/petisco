@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from time import sleep
 from typing import Any, Callable, Dict, List, NoReturn, Optional, Type, Union
 
+from loguru import logger
 from meiga import Failure
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
@@ -153,10 +154,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
         is_store: bool = False,
         message_type_expected: str = "message",
     ) -> None:
-        subscriber: MessageSubscriber = subscriber()
+        subscriber_instance: MessageSubscriber = subscriber()
         self._add_subscriber_instance_on_queue(
             queue_name=queue_name,
-            subscriber=subscriber,
+            subscriber=subscriber_instance,
             is_store=is_store,
             message_type_expected=message_type_expected,
         )
@@ -166,7 +167,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
         subscriber: MessageSubscriber,
         is_store: bool = False,
         message_type_expected: str = "message",
-    ) -> Callable:
+    ) -> Callable[..., None]:
         def rabbitmq_consumer(
             ch: BlockingChannel,
             method: Basic.Deliver,
@@ -369,14 +370,8 @@ class RabbitMqMessageConsumer(MessageConsumer):
 
     def stop(self) -> None:
         def _log_stop_exception(e: Exception) -> None:
-            from petisco.legacy import ERROR, LogMessage, Petisco
-
-            logger = Petisco.get_logger()
-            log_message = LogMessage(
-                layer="petisco", operation="RabbitMQEventSubscriber"
-            )
-            message = f"Error stopping RabbitMQEventSubscriber: {repr(e.__class__)} {e} | {traceback.format_exc()}"
-            logger.log(ERROR, log_message.set_message(message))
+            message = f"Error stopping RabbitMQMessageConsumer: {repr(e.__class__)} {e} | {traceback.format_exc()}"
+            logger.error(message)
 
         if self._thread and self._thread.is_alive():
             self._unsubscribe_all()

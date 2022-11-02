@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from petisco.extra.rabbitmq.shared.specific_queue_config import SpecificQueueConfig
 
@@ -48,13 +48,13 @@ class QueueConfig:
             for name, specific_config in self.specific_queue_configs.items()
         }
 
-    def get_retry_ttl(self, queue_name: str) -> int:
+    def get_retry_ttl(self, queue_name: str) -> Union[int, None]:
         for queue_config in self.specific_queue_configs.values():
             if queue_config.has_specific_config(queue_name):
                 return queue_config.get_retry_ttl()
         return self.default_retry_ttl
 
-    def get_main_ttl(self, queue_name: str) -> int:
+    def get_main_ttl(self, queue_name: str) -> Union[int, None]:
         for queue_config in self.specific_queue_configs.values():
             if queue_config.has_specific_config(queue_name):
                 return queue_config.get_main_ttl()

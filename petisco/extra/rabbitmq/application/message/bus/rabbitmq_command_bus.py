@@ -45,7 +45,7 @@ class RabbitMqCommandBus(CommandBus):
             channel.basic_publish(
                 exchange=self.exchange_name,
                 routing_key=routing_key,
-                body=command.json(),
+                body=command.json().encode(),
                 properties=self.properties,
             )
             if channel.is_open and not isinstance(
