@@ -6,7 +6,6 @@ from typing import Any, Dict
 class LogMessage:
     layer: str = None
     operation: str = None
-    # info_id: InfoId = None
     data: Dict[str, Any] = None
 
     def to_dict(self):
@@ -15,9 +14,6 @@ class LogMessage:
             dict_log_message["meta"]["layer"] = self.layer
         if self.operation:
             dict_log_message["meta"]["operation"] = self.operation
-        # if self.info_id:
-        #    info_id: dict = self.info_id.to_dict()
-        #    dict_log_message["meta"]["info_id"] = info_id
 
         return dict_log_message
 

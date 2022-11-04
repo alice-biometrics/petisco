@@ -89,7 +89,7 @@ def test_container_should_return_several_available_dependencies(
         ],
     ],
 )
-def test_container_should_success_when_add_dependecies_which_depends_from_another_dependency(
+def test_container_should_success_when_add_dependencies_which_depends_from_another_dependency(
     dependencies,
 ):
     expected_dependencies_names = [dependency.name for dependency in dependencies]

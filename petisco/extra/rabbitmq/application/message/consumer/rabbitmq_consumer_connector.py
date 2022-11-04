@@ -5,10 +5,10 @@ class RabbitMqConsumerConnector:
     def __init__(self, channel: BlockingChannel):
         self.channel = channel
 
-    def get_connection(self, key_connection: str):
+    def get_connection(self, key_connection: str) -> None:
         raise RuntimeError("RabbitMqConsumerConnector works only with given channel.")
 
-    def close(self, key_connection: str):
+    def close(self, key_connection: str) -> None:
         pass
 
     def get_channel(self, key_connection: str) -> BlockingChannel:

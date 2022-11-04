@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from petisco.base.domain.message.message_configurer import MessageConfigurer
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
@@ -7,6 +7,9 @@ from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_stor
 )
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_subscribers_configurer import (
     RabbitMqMessageSubcribersConfigurer,
+)
+from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import (
+    RabbitMqConsumerConnector,
 )
 from petisco.extra.rabbitmq.shared.queue_config import QueueConfig
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
@@ -17,7 +20,9 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         self,
         organization: str,
         service: str,
-        connector: RabbitMqConnector = RabbitMqConnector(),
+        connector: Union[
+            RabbitMqConnector, RabbitMqConsumerConnector
+        ] = RabbitMqConnector(),
         queue_config: QueueConfig = QueueConfig.default(),
         use_store_queues: bool = True,
     ) -> None:
@@ -50,7 +55,7 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         if self._use_store_queues:
             self.store_configurer.execute()
 
-    def clear_subscribers(self, subscribers: List[MessageSubscriber]):
+    def clear_subscribers(self, subscribers: List[MessageSubscriber]) -> None:
         if subscribers is None:
             subscribers = []
 

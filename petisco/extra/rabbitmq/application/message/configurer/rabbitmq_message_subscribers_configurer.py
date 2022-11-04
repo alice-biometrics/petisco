@@ -1,6 +1,9 @@
-from typing import Any, List, Type
+from typing import Any, List, Type, Union
 
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
+from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import (
+    RabbitMqConsumerConnector,
+)
 from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_subscriber_queue_name_formatter import (
     RabbitMqMessageSubscriberQueueNameFormatter,
 )
@@ -17,7 +20,7 @@ class RabbitMqMessageSubcribersConfigurer:
         self,
         organization: str,
         service: str,
-        connector: RabbitMqConnector,
+        connector: Union[RabbitMqConnector, RabbitMqConsumerConnector],
         queue_config: QueueConfig,
     ) -> None:
         self._connector = connector

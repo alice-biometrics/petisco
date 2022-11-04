@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Dict, Union
 
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
@@ -30,13 +30,13 @@ class RabbitMqDeclarer:
     def declare_queue(
         self,
         queue_name: str,
-        dead_letter_exchange: Optional[str] = None,
-        dead_letter_routing_key: Optional[str] = None,
-        message_ttl: Optional[int] = None,
+        dead_letter_exchange: Union[str, None] = None,
+        dead_letter_routing_key: Union[str, None] = None,
+        message_ttl: Union[int, None] = None,
     ) -> str:
         channel = self._connector.get_channel(self._channel_name)
 
-        queue_arguments = {}
+        queue_arguments: Dict[str, Any] = {}
         if dead_letter_exchange:
             queue_arguments["x-dead-letter-exchange"] = dead_letter_exchange
 
@@ -51,7 +51,9 @@ class RabbitMqDeclarer:
         )
         channel.close()
 
-        return result.method.queue
+        queue_name: str = result.method.queue
+
+        return queue_name
 
     def bind_queue(self, exchange_name: str, queue_name: str, routing_key: str) -> None:
         channel = self._connector.get_channel(self._channel_name)

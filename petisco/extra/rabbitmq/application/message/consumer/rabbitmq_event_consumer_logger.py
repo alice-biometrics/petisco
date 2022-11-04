@@ -1,6 +1,6 @@
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
-from meiga import Result
+from meiga import AnyResult
 from pika import BasicProperties
 from pika.spec import Basic
 
@@ -11,15 +11,15 @@ from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
 
 
 class RabbitMqMessageConsumerLogger:
-    def __init__(self, logger: Optional[ILogger] = NotImplementedLogger()):
+    def __init__(self, logger: Optional[ILogger] = NotImplementedLogger()) -> None:
         self.logger = logger
 
-    def _get_base_message(self, handler: Callable):
+    def _get_base_message(self, handler: Callable[..., Any]) -> LogMessage:
         return LogMessage(
             layer="rabbitmq_message_consumer", operation=f"{handler.__name__}"
         )
 
-    def _get_event_handler_name(self, handler: Callable):
+    def _get_event_handler_name(self, handler: Callable[..., Any]) -> str:
         handler_name = getattr(handler, "__name__", repr(handler))
         handler_module = getattr(handler, "__module__") + "."
         return f"{handler_module}{handler_name}"
@@ -29,8 +29,8 @@ class RabbitMqMessageConsumerLogger:
         method: Basic.Deliver,
         properties: BasicProperties,
         body: bytes,
-        handler: Callable,
-    ):
+        handler: Callable[..., Any],
+    ) -> None:
         self._log_simulation(method, properties, body, handler, "nack simulated")
 
     def log_failure_simulation(
@@ -38,8 +38,8 @@ class RabbitMqMessageConsumerLogger:
         method: Basic.Deliver,
         properties: BasicProperties,
         body: bytes,
-        handler: Callable,
-    ):
+        handler: Callable[..., Any],
+    ) -> None:
         self._log_simulation(method, properties, body, handler, "failure simulated")
 
     def _log_simulation(
@@ -47,9 +47,9 @@ class RabbitMqMessageConsumerLogger:
         method: Basic.Deliver,
         properties: BasicProperties,
         body: bytes,
-        handler: Callable,
+        handler: Callable[..., Any],
         chaos_action: str,
-    ):
+    ) -> None:
         log_message = self._get_base_message(handler)
         event_handler_name = self._get_event_handler_name(handler)
         message = {
@@ -66,9 +66,9 @@ class RabbitMqMessageConsumerLogger:
         method: Basic.Deliver,
         properties: BasicProperties,
         body: bytes,
-        handler: Callable,
+        handler: Callable[..., Any],
         exception: Exception,
-    ):
+    ) -> None:
         log_message = self._get_base_message(handler)
         event_handler_name = self._get_event_handler_name(handler)
         message = {
@@ -85,11 +85,11 @@ class RabbitMqMessageConsumerLogger:
         method: Basic.Deliver,
         properties: BasicProperties,
         body: bytes,
-        handler: Callable,
+        handler: Callable[..., Any],
         log_activity: str = None,
-        result: Result = None,
+        result: AnyResult = None,
         derived_action: ConsumerDerivedAction() = None,
-    ):
+    ) -> None:
         log_message = self._get_base_message(handler)
         event_handler_name = self._get_event_handler_name(handler)
 
