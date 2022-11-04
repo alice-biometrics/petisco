@@ -1,31 +1,28 @@
 import os
-from typing import Any, Dict, Generic, TypeVar, Union
+from typing import Any, Dict, Union
 
 from petisco.base.misc.builder import Builder
 
-TD = TypeVar("TD")
-TA = TypeVar("TA")
 
-
-class Dependency(Generic[TD, TA]):
+class Dependency:
     name: str
-    default_builder: Builder[TD]
+    default_builder: Builder
     envar_modifier: Union[str, None] = None
-    builders: Union[Dict[str, Builder[TA]], None] = None
+    builders: Union[Dict[str, Builder], None] = None
 
     def __init__(
         self,
         name: str,
-        default_builder: Builder[TD],
+        default_builder: Builder,
         envar_modifier: Union[str, None] = None,
-        builders: Union[Dict[str, Builder[TA]], None] = None,
+        builders: Union[Dict[str, Builder], None] = None,
     ):
         self.name = name
         self.default_builder = default_builder
         self.envar_modifier = envar_modifier
         self.builders = builders
 
-    def get_instance(self) -> Union[TD, TA]:
+    def get_instance(self) -> Any:
         if not self.envar_modifier:
             return self.default_builder.build()
 
@@ -39,6 +36,3 @@ class Dependency(Generic[TD, TA]):
             ), "Oh no! Dependency builder is corrupted!"
             instance = builder.build()
             return instance
-
-
-AnyDependency = Dependency[Any, Any]
