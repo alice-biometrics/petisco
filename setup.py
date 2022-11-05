@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 PACKAGE_NAME = "petisco"
-VERSION = open("petisco/VERSION", "r").read().rstrip()
+VERSION = open("petisco/VERSION").read().rstrip()
 
 # The text of the README file
 with open(os.path.join(CURRENT_DIR, "README.md")) as fid:
@@ -57,5 +57,6 @@ setup(
         "elastic": ["elasticsearch<8.0.0,>=7.13.1", "elastic-apm==6.13.0"],
         "elastic-apm": ["elastic-apm==6.13.0"],
         "fastapi": ["fastapi==0.85.1"],
+        "asyncer": ["asyncer==0.0.2"],
     },
 )
