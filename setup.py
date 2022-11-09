@@ -83,7 +83,7 @@ setup(
             "flask<=2.1.3",
             "connexion==2.6.0",
             "swagger-ui-bundle>=0.0.2",
-            "Flask-Cors==3.0.7",
+            "Flask-Cors>=3.0.7,<4",
             "Flask-Bcrypt==0.7.1",
         ],
         "sqlalchemy": [
