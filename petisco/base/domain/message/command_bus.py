@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import List
 
 from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.message_bus import MessageBus
@@ -7,6 +8,10 @@ from petisco.base.domain.message.message_bus import MessageBus
 class CommandBus(MessageBus[Command]):
     @abstractmethod
     def dispatch(self, command: Command) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def dispatch_list(self, commands: List[Command]) -> None:
         raise NotImplementedError
 
     def publish(self, command: Command) -> None:

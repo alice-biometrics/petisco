@@ -1,4 +1,4 @@
-from typing import Union
+from typing import List, Union
 
 from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
@@ -56,6 +56,37 @@ class RabbitMqCommandBus(CommandBus):
             # If domain event queue is not configured, it will be configured and then try to publish again.
             self.configurer.configure()
             self.publish(command)
+
+    def dispatch_list(self, commands: List[Command]):
+        meta = self.get_configured_meta()
+        published_commands = []
+        try:
+            channel = self.connector.get_channel(self.rabbitmq_key)
+            for command in commands:
+                self._check_is_command(command)
+                command = command.update_meta(meta)
+                routing_key = RabbitMqMessageQueueNameFormatter.format(
+                    command, exchange_name=self.exchange_name
+                )
+                channel.confirm_delivery()
+                channel.basic_publish(
+                    exchange=self.exchange_name,
+                    routing_key=routing_key,
+                    body=command.json().encode(),
+                    properties=self.properties,
+                )
+                published_commands.append(command)
+            if channel.is_open and not isinstance(
+                self.connector, RabbitMqConsumerConnector
+            ):
+                channel.close()
+        except ChannelClosedByBroker:
+            # If command queue is not configured, it will be configured and then try to publish again.
+            self.configurer.configure()
+            unpublished_commands = [
+                command for command in commands if command not in published_commands
+            ]
+            self.publish_list(unpublished_commands)
 
     def close(self) -> None:
         self.connector.close(self.rabbitmq_key)
