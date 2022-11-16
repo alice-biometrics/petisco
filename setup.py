@@ -47,7 +47,7 @@ setup(
     zip_safe=False,
     extras_require={
         "sqlalchemy": [
-            "sqlalchemy==1.4.42",
+            "sqlalchemy==1.4.44",
             "sqlalchemy_utils==0.38.3",
             "PyMySQL==1.0.2",
         ],
