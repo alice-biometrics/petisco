@@ -35,7 +35,7 @@ class FlaskApplication(IApplication):
         self.app.app.add_url_rule(
             rule=f"/{self.application_name}/openapi.json",
             view_func=self._openapi_json,
-            endpoint="_openapi_json",
+            endpoint=f"/{self.application_name}./{self.application_name}_openapi_json",
         )
 
     def start(self):
