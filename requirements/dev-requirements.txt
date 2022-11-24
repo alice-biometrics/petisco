@@ -1,5 +1,5 @@
 black==22.10.0
-flake8==5.0.4
+flake8==6.0.0
 isort[colors]==5.10.1
 pre-commit==2.20.0
 mypy==0.982
