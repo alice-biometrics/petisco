@@ -8,10 +8,20 @@ from petisco.base.domain.message.message_subscriber import MessageSubscriber
 
 
 class DomainEventSubscriber(MessageSubscriber):
+    """
+    A base class for creating events subscribers
+    """
+
     @abstractmethod
     def subscribed_to(self) -> List[Type[DomainEvent]]:
+        """
+        returns the list of events that we want to subscribe
+        """
         raise NotImplementedError()
 
     @abstractmethod
-    def handle(self, domain_event: DomainEvent) -> BoolResult:  # type: ignore
+    def handle(self, domain_event: DomainEvent) -> BoolResult:
+        """
+        returns True if the event was processed or False if it could not be processed
+        """
         raise NotImplementedError()
