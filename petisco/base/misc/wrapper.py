@@ -14,7 +14,7 @@ from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.misc.result_mapper import ResultMapper
 
 
-def get_middleware_classes(config: Dict[str, Any]) -> List[Middleware]:
+def get_middleware_classes(config: Dict[str, Any]) -> List[Type[Middleware]]:
     def gettype(name: str) -> Type[Middleware]:
         lookup_table = {
             "NotifierMiddleware": NotifierMiddleware,

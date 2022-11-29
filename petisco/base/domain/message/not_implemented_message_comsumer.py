@@ -1,10 +1,10 @@
-from typing import List, NoReturn, Type
+from typing import Any, List, NoReturn, Type
 
 from petisco.base.domain.message.message_consumer import MessageConsumer
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
 
 
-class NotImplementedMessageConsumer(MessageConsumer):
+class NotImplementedMessageConsumer(MessageConsumer[Any]):
     def start(self) -> NoReturn:
         pass
 

@@ -5,7 +5,7 @@ from petisco.base.domain.message.message import Message
 
 
 class Command(Message):
-    def __init__(self, **data: Any):
+    def __init__(self, **data: Any) -> None:
         self._set_data()
         self._set_attributes(**data)
         self.type = "command"

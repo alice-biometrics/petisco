@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 from typing import Any, Dict, Tuple, Union, cast
 
+from petisco.base.domain.message.types_message import TypeMessage
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
 
@@ -83,7 +84,7 @@ class Message(metaclass=MetaMessage):
     def add_meta(self, meta: Dict[str, Any]) -> None:
         self.meta = meta
 
-    def update_meta(self, meta: Dict[str, Any]) -> "Message":
+    def update_meta(self, meta: Dict[str, Any]) -> TypeMessage:
         if not meta:
             return self
 
@@ -96,12 +97,12 @@ class Message(metaclass=MetaMessage):
         return self
 
     @staticmethod
-    def from_dict(message_data: Dict[str, Any]) -> "Message":
+    def from_dict(message_data: Dict[str, Any]) -> TypeMessage:
         data = cast(Dict[str, Any], message_data.get("data"))
         return Message(**data)
 
     @staticmethod
-    def from_json(message_json: Union[str, bytes]) -> "Message":
+    def from_json(message_json: Union[str, bytes]) -> TypeMessage:
         event_dict = json.loads(message_json)
         return Message.from_dict(event_dict)
 

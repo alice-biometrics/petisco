@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Generic, List
 
 from petisco.base.domain.message.message import Message
-from petisco.base.domain.message.types_message import TypeMessage
+from petisco.base.domain.message.types_message import TypeMessage, TypeMessageBus
 
 
 class MessageBus(ABC, Generic[TypeMessage]):
@@ -18,12 +18,12 @@ class MessageBus(ABC, Generic[TypeMessage]):
     def _set_additional_meta(self, meta: Dict[str, Any]) -> None:
         self.additional_meta = meta
 
-    def with_meta(self, meta: Dict[str, Any]) -> "MessageBus[TypeMessage]":
+    def with_meta(self, meta: Dict[str, Any]) -> TypeMessageBus[TypeMessage]:
         if not isinstance(meta, Dict):
             raise TypeError("MessageBus.with_meta() expect a dict")
-        event_bus = copy.copy(self)
-        event_bus._set_additional_meta(meta)
-        return event_bus
+        message_bus: TypeMessageBus = copy.copy(self)
+        message_bus._set_additional_meta(meta)
+        return message_bus
 
     def get_configured_meta(self) -> Dict[str, Any]:
         configured_meta: Dict[str, Any] = {}
