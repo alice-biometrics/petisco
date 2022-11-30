@@ -30,7 +30,7 @@ steps:
   check-requirements:
     run: safety check -r requirements/requirements.txt
   static-analysis:
-    run: yes | mypy --install-types $PACKAGE_NAME --exclude '.*petisco.legacy.*' --exclude '.*petisco.extra.sqlmodel.*' --exclude '.*petisco.extra.rabbitmq.*'
+    run: mypy $PACKAGE_NAME --exclude '.*petisco.legacy.*' --exclude '.*petisco.extra.sqlmodel.*' --exclude '.*petisco.extra.rabbitmq.*'
   coverage:
     envs:
       LUME_WAIT_HTTP_200_NUM_MAX_ATTEMPTS: 30

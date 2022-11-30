@@ -6,16 +6,16 @@ from petisco.base.misc.builder import Builder
 
 class Dependency:
     name: str
-    default_builder: Builder
+    default_builder: Builder[Any]
     envar_modifier: Union[str, None] = None
-    builders: Union[Dict[str, Builder], None] = None
+    builders: Union[Dict[str, Builder[Any]], None] = None
 
     def __init__(
         self,
         name: str,
-        default_builder: Builder,
+        default_builder: Builder[Any],
         envar_modifier: Union[str, None] = None,
-        builders: Union[Dict[str, Builder], None] = None,
+        builders: Union[Dict[str, Builder[Any]], None] = None,
     ):
         self.name = name
         self.default_builder = default_builder
