@@ -1,4 +1,5 @@
 from abc import ABC
+from copy import copy
 from typing import List, Union
 
 from pydantic import BaseModel, Field, NonNegativeInt, PrivateAttr, validator
@@ -30,6 +31,11 @@ class AggregateRoot(ABC, BaseModel):
         self._domain_events = []
 
     def pull_domain_events(self) -> List[DomainEvent]:
+        domain_events = copy(self._domain_events)
+        self.clear_domain_events()
+        return domain_events
+
+    def get_domain_events(self) -> List[DomainEvent]:
         return self._domain_events
 
     def pull_first_domain_event(self) -> Union[DomainEvent, None]:
