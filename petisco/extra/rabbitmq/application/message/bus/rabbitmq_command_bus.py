@@ -18,6 +18,11 @@ from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 
 class RabbitMqCommandBus(CommandBus):
+    """
+    An implementation of CommandBus using RabbitMQ infrastructure.
+    Implementation is based on pika library.
+    """
+
     def __init__(
         self,
         organization: str,
@@ -33,6 +38,9 @@ class RabbitMqCommandBus(CommandBus):
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
 
     def dispatch(self, command: Command) -> None:
+        """
+        Dispatch one Command
+        """
         self._check_is_command(command)
         meta = self.get_configured_meta()
         command = command.update_meta(meta)
@@ -58,4 +66,7 @@ class RabbitMqCommandBus(CommandBus):
             self.publish(command)
 
     def close(self) -> None:
+        """
+        Close RabbitMQ connection.
+        """
         self.connector.close(self.rabbitmq_key)

@@ -59,6 +59,10 @@ class SubscriberItem:
 
 
 class RabbitMqMessageConsumer(MessageConsumer):
+    """
+    A RabbitMQ consumer to link received messages from rabbitmq with defined subscribers.
+    """
+
     def __init__(
         self,
         organization: str,
@@ -84,6 +88,9 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self._thread: Union[threading.Thread, None] = None
 
     def start(self) -> NoReturn:
+        """
+        Start the process of consuming messages from RabbitMQ and pass to subscriber.
+        """
         if not self._channel:
             raise RuntimeError(
                 "RabbitMqMessageConsumer: cannot start consuming event without any subscriber defined."
@@ -95,6 +102,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self._channel.start_consuming()
 
     def add_subscribers(self, subscribers: List[Type[MessageSubscriber]]) -> None:
+        """
+        Add defined subscribers to be connected with main queues.
+        """
+
         for SubscriberClass in subscribers:
 
             subscriber: MessageSubscriber = SubscriberClass()
@@ -118,6 +129,9 @@ class RabbitMqMessageConsumer(MessageConsumer):
     def add_subscriber_on_dead_letter(
         self, subscriber: Type[MessageSubscriber]
     ) -> None:
+        """
+        Add defined subscribers to be connected with the correspondent dead letter.
+        """
         instance_subscriber: MessageSubscriber = subscriber()
         for subscriber_info in instance_subscriber.get_message_subscribers_info():
 
@@ -154,6 +168,9 @@ class RabbitMqMessageConsumer(MessageConsumer):
         is_store: bool = False,
         message_type_expected: str = "message",
     ) -> None:
+        """
+        Add defined subscribers to be connected with a specific queue name.
+        """
         subscriber_instance: MessageSubscriber = subscriber()
         self._add_subscriber_instance_on_queue(
             queue_name=queue_name,
@@ -370,6 +387,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
         return dict(properties.headers)
 
     def stop(self) -> None:
+        """
+        Stop the process of consuming messages from RabbitMQ.
+        """
+
         def _log_stop_exception(e: Exception) -> None:
             message = f"Error stopping RabbitMQMessageConsumer: {repr(e.__class__)} {e} | {traceback.format_exc()}"
             logger.error(message)

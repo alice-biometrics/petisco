@@ -8,16 +8,27 @@ T = TypeVar("T", bound=MessageSubscriber)
 
 
 class MessageConsumer(Generic[T], Interface):
+    """
+    A base class to implement an infrastructure-based consumer to link received messages from rabbitmq with
+    defined subscribers.
+    """
+
     @classmethod
     def __repr__(cls) -> str:
         return cls.__name__
 
     @abstractmethod
     def add_subscribers(self, subscribers: List[T]) -> None:
+        """
+        Add defined subscribers to be connected with main queues.
+        """
         raise NotImplementedError
 
     @abstractmethod
     def add_subscriber_on_dead_letter(self, subscriber: Type[T]) -> None:
+        """
+        Add defined subscribers to be connected with the correspondent dead letter.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -28,6 +39,9 @@ class MessageConsumer(Generic[T], Interface):
         is_store: bool = False,
         message_type_expected: str = "message",
     ) -> None:
+        """
+        Add defined subscribers to be connected with a specific queue name.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -40,8 +54,14 @@ class MessageConsumer(Generic[T], Interface):
 
     @abstractmethod
     def start(self) -> NoReturn:
+        """
+        Start the process of consuming messages from infrastructure and pass to subscriber.
+        """
         raise NotImplementedError
 
     @abstractmethod
     def stop(self) -> None:
+        """
+        Stop the process of consuming messages from infrastructure.
+        """
         raise NotImplementedError

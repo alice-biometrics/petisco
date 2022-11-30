@@ -4,6 +4,10 @@ T = TypeVar("T")
 
 
 class Builder(Generic[T]):
+    """
+    Data structure that defines the creation of an instance from its arguments.
+    """
+
     def __init__(
         self,
         klass: Type[T],

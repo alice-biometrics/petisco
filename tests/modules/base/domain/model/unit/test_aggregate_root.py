@@ -44,7 +44,11 @@ def test_aggregate_root_should_record_pull_and_clear_domain_events():
     )
     aggregate_root.record(MyAggregateRootCreated())
 
+    assert len(aggregate_root.get_domain_events()) == 1
+    assert len(aggregate_root.get_domain_events()) == 1
+
     assert len(aggregate_root.pull_domain_events()) == 1
+    assert len(aggregate_root.pull_domain_events()) == 0
 
     aggregate_root = MyAggregateRoot(
         aggregate_id=Uuid.v4(),

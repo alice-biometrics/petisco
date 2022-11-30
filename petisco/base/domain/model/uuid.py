@@ -8,6 +8,12 @@ from petisco.base.domain.model.value_object import ValueObject
 
 
 class Uuid(ValueObject):
+    """
+    A base class to define Uuid
+
+    Use it to identify domain entities
+    """
+
     value: str
 
     @validator("value")
