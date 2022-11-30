@@ -6,6 +6,13 @@ from meiga import Error
 
 
 class UnknownError(Error):
+    """
+    A base class to define unknown errors.
+
+    If UnknownError is caught and uses NotifierMiddleware in your operations (Controllers or Subscribers), when
+    you UseCase fails the system will notify the issue.
+    """
+
     def __init__(
         self,
         exception: Exception,

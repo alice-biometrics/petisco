@@ -5,8 +5,15 @@ from petisco.base.domain.message.message_bus import MessageBus
 
 
 class CommandBus(MessageBus[Command]):
+    """
+    A base class to implement an infrastructure-based bus to dispatch commands.
+    """
+
     @abstractmethod
     def dispatch(self, command: Command) -> None:
+        """
+        Dispatch one Command
+        """
         raise NotImplementedError
 
     def publish(self, command: Command) -> None:

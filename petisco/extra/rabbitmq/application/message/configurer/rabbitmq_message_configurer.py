@@ -16,6 +16,11 @@ from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 
 class RabbitMqMessageConfigurer(MessageConfigurer):
+    """
+    A class to configure RabbitMQ infrastructure.
+    This class configures exchanges, queue bindings and routing keys from defined MessageSubscribers.
+    """
+
     def __init__(
         self,
         organization: str,
@@ -35,6 +40,9 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         )
 
     def configure(self) -> None:
+        """
+        Define exchanges, queue bindings and routing key with empty subscribers.
+        """
         self.configure_subscribers([])
 
     def configure_subscribers(
@@ -43,6 +51,9 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         clear_subscriber_before: bool = False,
         clear_store_before: bool = False,
     ) -> None:
+        """
+        Define exchanges, queue bindings and routing keys from given subscribers.
+        """
         if subscribers is None:
             subscribers = []
 
@@ -56,6 +67,9 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
             self.store_configurer.execute()
 
     def clear_subscribers(self, subscribers: List[MessageSubscriber]) -> None:
+        """
+        Clear configured subscribers.
+        """
         if subscribers is None:
             subscribers = []
 
@@ -64,6 +78,9 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
             self.store_configurer.clear()
 
     def clear(self) -> None:
+        """
+        Clear all configured subscribers and store configuration.
+        """
         self.subscribers_configurer.clear()
         if self._use_store_queues:
             self.store_configurer.clear()

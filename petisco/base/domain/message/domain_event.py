@@ -5,6 +5,11 @@ from petisco.base.domain.message.message import Message
 
 
 class DomainEvent(Message):
+    """
+    A base class to model your domain events.
+    Define your Domain Events to express what happened in your domain.
+    """
+
     def __init__(self, **data: Any) -> None:
         super().__init__()
         self._set_attributes(**data)

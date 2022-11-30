@@ -7,6 +7,10 @@ from petisco.base.domain.message.types_message import TypeMessage
 
 
 class MessageBus(ABC, Generic[TypeMessage]):
+    """
+    A base class to implement an infrastructure-based bus to publish or dispatch messages.
+    """
+
     @classmethod
     def __repr__(cls) -> str:
         return cls.__name__
@@ -33,6 +37,9 @@ class MessageBus(ABC, Generic[TypeMessage]):
 
     @abstractmethod
     def publish(self, message: TypeMessage) -> None:
+        """
+        Publish one message
+        """
         raise NotImplementedError
 
     @abstractmethod

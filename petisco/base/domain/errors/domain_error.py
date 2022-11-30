@@ -4,6 +4,10 @@ from meiga import Error
 
 
 class DomainError(Error):
+    """
+    A base class to define Domain Errors
+    """
+
     def __init__(
         self,
         uuid_value: Optional[str] = None,

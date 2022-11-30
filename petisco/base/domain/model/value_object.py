@@ -9,6 +9,12 @@ TypeValueObject = TypeVar("TypeValueObject", bound="ValueObject")
 
 
 class ValueObject(BaseModel):
+    """
+    A base class to define ValueObject
+
+    It is small object that represents a simple entity whose equality is not based on identity.
+    """
+
     value: Any
 
     def __init__(self, value: Any, **data: Any) -> None:

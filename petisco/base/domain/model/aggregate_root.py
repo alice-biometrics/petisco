@@ -11,6 +11,12 @@ DEFAULT_VERSION = 1
 
 
 class AggregateRoot(ABC, BaseModel):
+    """
+    A base class to define AggregateRoot
+
+    It is a cluster of associated entities that are treated as a unit for the purpose of data changes.
+    """
+
     aggregate_id: Uuid = Field(default=Uuid.v4())
     aggregate_version: NonNegativeInt = Field(default=DEFAULT_VERSION)
     _domain_events: List[DomainEvent] = PrivateAttr(default=[])
@@ -25,17 +31,29 @@ class AggregateRoot(ABC, BaseModel):
         return v or DEFAULT_VERSION
 
     def record(self, domain_event: DomainEvent) -> None:
+        """
+        Record something that happened is our domain related with the aggregate (a DomainEvent).
+        """
         self._domain_events.append(domain_event)
 
     def clear_domain_events(self) -> None:
+        """
+        Clear all domain events recorded.
+        """
         self._domain_events = []
 
     def pull_domain_events(self) -> List[DomainEvent]:
+        """
+        Returns and clear all domain events recorded.
+        """
         domain_events = copy(self._domain_events)
         self.clear_domain_events()
         return domain_events
 
     def get_domain_events(self) -> List[DomainEvent]:
+        """
+        Returns all domain events recorded.
+        """
         return self._domain_events
 
     def pull_first_domain_event(self) -> Union[DomainEvent, None]:

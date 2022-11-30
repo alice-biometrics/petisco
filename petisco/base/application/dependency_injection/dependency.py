@@ -5,6 +5,12 @@ from petisco.base.misc.builder import Builder
 
 
 class Dependency:
+    """
+    Data structure to define how our dependency (Repository, AppService, etc) is built.
+
+    Definition of default Builder is Mandatory, create alternative builder with envar_modifier is optional.
+    """
+
     name: str
     default_builder: Builder
     envar_modifier: Union[str, None] = None
@@ -23,6 +29,9 @@ class Dependency:
         self.builders = builders
 
     def get_instance(self) -> Any:
+        """
+        Returns an instance of the dependency.
+        """
         if not self.envar_modifier:
             return self.default_builder.build()
 

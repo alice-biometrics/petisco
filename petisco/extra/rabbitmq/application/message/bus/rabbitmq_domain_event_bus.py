@@ -18,6 +18,11 @@ from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 
 class RabbitMqDomainEventBus(DomainEventBus):
+    """
+    An implementation of DomainEventBus using RabbitMQ infrastructure.
+    Implementation is based on pika library.
+    """
+
     def __init__(
         self,
         organization: str,
@@ -33,6 +38,9 @@ class RabbitMqDomainEventBus(DomainEventBus):
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
 
     def publish(self, domain_event: DomainEvent) -> None:
+        """
+        Publish one DomainEvent
+        """
         self._check_is_domain_event(domain_event)
         meta = self.get_configured_meta()
         domain_event = domain_event.update_meta(meta)
@@ -57,6 +65,9 @@ class RabbitMqDomainEventBus(DomainEventBus):
             self._retry(domain_event)
 
     def publish_list(self, domain_events: List[DomainEvent]) -> None:
+        """
+        Publish a list of DomainEvent
+        """
         meta = self.get_configured_meta()
         published_domain_event = []
         try:
@@ -138,4 +149,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
             self._retry(domain_event)
 
     def close(self) -> None:
+        """
+        Close RabbitMQ connection.
+        """
         self.connector.close(self.rabbitmq_key)

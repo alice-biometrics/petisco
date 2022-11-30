@@ -11,6 +11,10 @@ from petisco.base.misc.singleton import Singleton
 
 
 class RabbitMqConnector(metaclass=Singleton):
+    """
+    Singleton class to define RabbitMQ connections and some infrastructure configurations.
+    """
+
     def __init__(self) -> None:
         self.heartbeat = int(os.environ.get("RABBITMQ_HEARTBEAT", 60))
         self.user = os.environ.get("RABBITMQ_USER", "guest")
