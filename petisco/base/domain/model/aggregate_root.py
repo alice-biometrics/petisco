@@ -56,8 +56,14 @@ class AggregateRoot(ABC, BaseModel):
         """
         return self._domain_events
 
-    def pull_first_domain_event(self) -> Union[DomainEvent, None]:
+    def get_first_domain_event(self) -> Union[DomainEvent, None]:
+        """
+        Returns only the first domain event recorded.
+        """
         return self._domain_events[0] if len(self._domain_events) > 0 else None
 
-    def pull_last_domain_event(self) -> Union[DomainEvent, None]:
+    def get_last_domain_event(self) -> Union[DomainEvent, None]:
+        """
+        Returns only the last domain event recorded.
+        """
         return self._domain_events[-1] if len(self._domain_events) > 0 else None
