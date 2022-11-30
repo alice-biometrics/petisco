@@ -11,7 +11,7 @@ class Command(Message):
     An operation that intentionally creates a side effect.
     """
 
-    def __init__(self, **data: Any):
+    def __init__(self, **data: Any) -> None:
         self._set_data()
         self._set_attributes(**data)
         self.type = "command"

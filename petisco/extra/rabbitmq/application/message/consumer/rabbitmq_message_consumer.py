@@ -294,7 +294,8 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 return True
             return False
         else:
-            return properties.headers.get("redelivery_count") >= self.max_retries
+            redelivery_count: int = properties.headers.get("redelivery_count")
+            return bool(redelivery_count >= self.max_retries)
 
     def _get_routing_key(self, routing_key: str, prefix: str) -> str:
         if routing_key.startswith("retry."):

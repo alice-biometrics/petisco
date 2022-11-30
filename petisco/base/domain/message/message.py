@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import json
 import re
 from datetime import datetime
-from typing import Any, Dict, Tuple, Union, cast
+from typing import Any, Dict, cast
 
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
@@ -9,12 +11,12 @@ from petisco.base.domain.model.value_object import ValueObject
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 
-def get_version(config: Union[Dict[str, Any], None]) -> int:
+def get_version(config: dict[str, Any] | None) -> int:
     version = getattr(config, "version", 1) if config else 1
     return version
 
 
-def get_message_name(namespace: Dict[str, Any]) -> str:
+def get_message_name(namespace: dict[str, Any]) -> str:
     return (
         re.sub(r"(?<!^)(?=[A-Z])", "_", namespace.get("__qualname__", "message"))
         .lower()
@@ -24,8 +26,8 @@ def get_message_name(namespace: Dict[str, Any]) -> str:
 
 class MetaMessage(type):
     def __new__(
-        mcs, name: str, bases: Tuple[Any], namespace: Dict[str, Any]
-    ) -> "MetaMessage":
+        mcs, name: str, bases: tuple[Any], namespace: dict[str, Any]
+    ) -> MetaMessage:
         config = namespace.get("Config")
 
         namespace["version"] = get_version(config)
@@ -41,8 +43,8 @@ class Message(metaclass=MetaMessage):
     name: str
     version: int
     occurred_on: datetime
-    attributes: Dict[str, Any]
-    meta: Dict[str, Any]
+    attributes: dict[str, Any]
+    meta: dict[str, Any]
     type: str = "message"
 
     def __init__(self, **data: Any) -> None:
@@ -50,12 +52,12 @@ class Message(metaclass=MetaMessage):
         self.name: str
         self.version: int
         self.occurred_on: datetime
-        self.attributes: Dict[str, Any] = {}
-        self.meta: Dict[str, Any] = {}
+        self.attributes: dict[str, Any] = {}
+        self.meta: dict[str, Any] = {}
         self.type: str = "message"
         self._set_data(**data)
 
-    def _set_data(self, **kwargs: Union[Dict[str, Any], None]) -> None:
+    def _set_data(self, **kwargs: dict[str, Any] | None) -> None:
         if kwargs:
             self.message_id = (
                 Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
@@ -80,10 +82,10 @@ class Message(metaclass=MetaMessage):
         for k in data:
             self.attributes[k] = data[k]
 
-    def add_meta(self, meta: Dict[str, Any]) -> None:
+    def add_meta(self, meta: dict[str, Any]) -> None:
         self.meta = meta
 
-    def update_meta(self, meta: Dict[str, Any]) -> "Message":
+    def update_meta(self, meta: dict[str, Any]) -> Message:
         if not meta:
             return self
 
@@ -96,16 +98,16 @@ class Message(metaclass=MetaMessage):
         return self
 
     @staticmethod
-    def from_dict(message_data: Dict[str, Any]) -> "Message":
+    def from_dict(message_data: dict[str, Any]) -> Message:
         data = cast(Dict[str, Any], message_data.get("data"))
         return Message(**data)
 
     @staticmethod
-    def from_json(message_json: Union[str, bytes]) -> "Message":
+    def from_json(message_json: str | bytes) -> Message:
         event_dict = json.loads(message_json)
         return Message.from_dict(event_dict)
 
-    def _get_serialized_attributes(self) -> Dict[str, Any]:
+    def _get_serialized_attributes(self) -> dict[str, Any]:
         attributes = {}
         for key, attribute in self.attributes.items():
             serialized_value = attribute
@@ -116,7 +118,7 @@ class Message(metaclass=MetaMessage):
             attributes[key] = serialized_value
         return attributes
 
-    def dict(self) -> Dict[str, Dict[str, Any]]:
+    def dict(self) -> dict[str, dict[str, Any]]:
         data = {
             "data": {
                 "id": self.message_id.value,
