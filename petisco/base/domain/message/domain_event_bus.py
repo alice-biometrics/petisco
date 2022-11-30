@@ -6,8 +6,15 @@ from petisco.base.domain.message.message_bus import MessageBus
 
 
 class DomainEventBus(MessageBus[DomainEvent]):
+    """
+    A base class to implement an infrastructure-based bus to publish events.
+    """
+
     @abstractmethod
     def publish(self, domain_event: DomainEvent) -> None:
+        """
+        Publish one DomainEvent
+        """
         raise NotImplementedError
 
     @abstractmethod

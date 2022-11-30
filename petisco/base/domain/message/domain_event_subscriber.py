@@ -9,7 +9,8 @@ from petisco.base.domain.message.message_subscriber import MessageSubscriber
 
 class DomainEventSubscriber(MessageSubscriber):
     """
-    A base class for creating events subscribers
+    A base class to model your events subscribers.
+    Inherit from this class to parser the domain event, configure middlewares and instantiate and execute a UseCase.
     """
 
     @abstractmethod

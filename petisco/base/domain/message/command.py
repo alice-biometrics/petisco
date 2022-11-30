@@ -5,6 +5,12 @@ from petisco.base.domain.message.message import Message
 
 
 class Command(Message):
+    """
+    A base class to model your Command.
+    An operation that effects some change to the system (for example, modify the persistence).
+    An operation that intentionally creates a side effect.
+    """
+
     def __init__(self, **data: Any):
         self._set_data()
         self._set_attributes(**data)

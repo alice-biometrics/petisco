@@ -56,6 +56,12 @@ class MetaController(type, ABC):
 
 
 class Controller(metaclass=MetaController):
+    """
+    A base class for creating controllers.
+    Inherit from this class to convert to domain the request values, configure middlewares and instantiate and execute
+     a UseCase.
+    """
+
     @staticmethod
     def get_default_mapper() -> ResultMapper:
         return ResultMapper()

@@ -14,6 +14,11 @@ from petisco.base.domain.message.message_subscriber_info import MessageSubscribe
 
 
 class CommandSubscriber(MessageSubscriber):
+    """
+    A base class to model your command subscribers (or also called CommandHandlers).
+    Inherit from this class to parser the command, configure middlewares and instantiate and execute a UseCase.
+    """
+
     @abstractmethod
     def subscribed_to(self) -> Type[Command]:
         raise NotImplementedError()

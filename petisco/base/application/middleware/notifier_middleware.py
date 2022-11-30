@@ -15,6 +15,12 @@ from petisco.base.domain.errors.unknown_error import UnknownError
 
 
 class NotifierMiddleware(Middleware):
+    """
+    Middleware Implementation to notify critical and unknown errors.
+
+    This Middleware will check result and notify if necessary using Container.get("notifier") set dependency.
+    """
+
     def __init__(
         self, wrapped_class_name: str, wrapped_class_input_arguments: Any
     ) -> None:
