@@ -28,7 +28,7 @@ steps:
       - pyupgrade --py37-plus `find $PACKAGE_NAME tests -name "*.py" -type f`
       - isort $PACKAGE_NAME tests
   check-requirements:
-    run: safety check -r requirements/requirements.txt
+    run: pip-audit -r requirements/requirements.txt
   static-analysis:
     run: mypy $PACKAGE_NAME --exclude '.*petisco.legacy.*' --exclude '.*petisco.extra.sqlmodel.*' --exclude '.*petisco.extra.rabbitmq.*'
   coverage:

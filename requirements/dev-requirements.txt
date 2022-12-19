@@ -3,7 +3,7 @@ flake8==6.0.0
 isort[colors]==5.10.1
 pre-commit==2.20.0
 mypy==0.982
-safety==2.3.1
+pip-audit=2.4.10
 pytest==7.2.0
 pytest-cov==4.0.0
 pytest-mock==3.10.0
