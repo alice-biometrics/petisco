@@ -14,7 +14,23 @@ from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.misc.result_mapper import ResultMapper
 
 
-def get_middleware_classes(config: Dict[str, Any]) -> List[Type[Middleware]]:
+def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:
+    middlewares_instances: List[Middleware] = []
+
+    middlewares_configs = getattr(config, "middlewares", [])
+    if not middlewares_configs:
+        middlewares_configs = get_middlewares_configuration_from_environment()
+
+    for middlewares_config in middlewares_configs:
+        if not isinstance(middlewares_config, Middleware):
+            middlewares_instances.append(middlewares_config())
+        else:
+            middlewares_instances.append(middlewares_config)
+
+    return middlewares_instances
+
+
+def get_middlewares_configuration_from_environment():
     def gettype(name: str) -> Type[Middleware]:
         lookup_table = {
             "NotifierMiddleware": NotifierMiddleware,
@@ -27,20 +43,15 @@ def get_middleware_classes(config: Dict[str, Any]) -> List[Type[Middleware]]:
             )
         return my_type
 
-    middlewares_classes = getattr(config, "middlewares", [])
-    if not middlewares_classes:
-        default_middlewares_names: Union[str, None] = os.getenv(
-            "PETISCO_DEFAULT_MIDDLEWARES"
-        )
-        if not default_middlewares_names:
-            return []
-        default_middlewares_names_list = default_middlewares_names.split(",")
-        middlewares_classes = [
-            gettype(middleware_name)
-            for middleware_name in default_middlewares_names_list
-        ]
-
-    return middlewares_classes
+    default_middlewares_names: Union[str, None] = os.getenv(
+        "PETISCO_DEFAULT_MIDDLEWARES"
+    )
+    if not default_middlewares_names:
+        return []
+    default_middlewares_names_list = default_middlewares_names.split(",")
+    return [
+        gettype(middleware_name) for middleware_name in default_middlewares_names_list
+    ]
 
 
 def wrapper(
@@ -51,14 +62,12 @@ def wrapper(
 ) -> Callable[..., Any]:
     @wraps(execute_func)
     def wrapped(*args: Any, **kwargs: Any) -> Any:
-        middleware_classes = get_middleware_classes(config)
+        middlewares = get_middleware_instances(config)
         arguments = signature(execute_func).bind(*args, **kwargs).arguments
         arguments.pop("self")
-        middlewares = [
-            klass(wrapped_class_name, arguments) for klass in middleware_classes
-        ]
 
         for middleware in middlewares:
+            middleware.set_data(wrapped_class_name, arguments)
             middleware.before()
 
         try:

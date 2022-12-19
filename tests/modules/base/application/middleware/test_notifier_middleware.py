@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import pytest
 from meiga import Failure, isSuccess
 
 from petisco import CriticalError
@@ -15,6 +16,7 @@ from petisco.base.misc.builder import Builder
 from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 
+@pytest.mark.unit
 class TestNotifierMiddleware:
     notifier_middleware: NotifierMiddleware
 
