@@ -26,7 +26,8 @@ class TestNotifierMiddleware:
         )
         Container.set_dependencies([notifier_dependency])
 
-        self.notifier_middleware = NotifierMiddleware(
+        self.notifier_middleware = NotifierMiddleware()
+        self.notifier_middleware.set_data(
             wrapped_class_name="class_name", wrapped_class_input_arguments=()
         )
 
