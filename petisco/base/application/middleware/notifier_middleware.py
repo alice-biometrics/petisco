@@ -1,5 +1,3 @@
-from typing import Any
-
 from meiga import AnyResult
 
 from petisco import __version__
@@ -21,10 +19,7 @@ class NotifierMiddleware(Middleware):
     This Middleware will check result and notify if necessary using Container.get("notifier") set dependency.
     """
 
-    def __init__(
-        self, wrapped_class_name: str, wrapped_class_input_arguments: Any
-    ) -> None:
-        super().__init__(wrapped_class_name, wrapped_class_input_arguments)
+    def __init__(self) -> None:
         self.notifier = Container.get("notifier")
 
     def before(self) -> None:

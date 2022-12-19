@@ -10,7 +10,10 @@ class Middleware(ABC):
     A Middleware works before some operations (Controller and Subscriber) and also before returning the final result.
     """
 
-    def __init__(
+    wrapped_class_name: str = None
+    wrapped_class_input_arguments: Any = None
+
+    def set_data(
         self, wrapped_class_name: str, wrapped_class_input_arguments: Any
     ) -> None:
         self.wrapped_class_name = wrapped_class_name
