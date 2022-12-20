@@ -221,6 +221,41 @@ The result is:
 }
 ```
 
+!!! tip
+
+    If you want to modify the version of the Message, use the inner class `Config`:
+
+    ```python
+    class TaskCreated(DomainEvent):
+        task_id: TaskId
+
+        class Config:
+            version = 2
+    ```
+
+    Default value of message version is 1.
+
+
+!!! warning
+
+    🚫DO NOT overwrite the constructor of the Message 🚫. This could cause errors on the serialization of the message.
+    If you want to do an acction before the construction, use a named constructor as follows:
+
+    ```
+    class TaskCreated(DomainEvent):
+        complete_name: str
+        first_name: str | None = None
+
+        @staticmethod
+        def create(complete_name: str) -> "TaskCreated":
+            return TaskCreated(
+                complete_name=complete_name,
+                first_name=complete_name.split(" ")[0]
+            )
+    ```
+
+
+
 ### Command 
 
 If you use CQRS you can use also the `Command` class. Extend from it when you want to model an imperative action to be done.
