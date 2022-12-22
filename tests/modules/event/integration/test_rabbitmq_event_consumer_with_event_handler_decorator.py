@@ -213,7 +213,7 @@ def test_should_publish_consume_with_event_handler_when_fail_consumer():
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-@pytest.skip
+@pytest.mark.skip("This test is not correct")
 def test_should_publish_consume_with_event_handler_return_nothing():
     spy = SpyEvents()
     logger = FakeLogger()
