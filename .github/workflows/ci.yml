@@ -5,7 +5,7 @@ on:
     paths-ignore:
       - '*.md'
       - 'petisco/VERSION'
-    branches: 
+    branches:
       - legacy
   push:
     paths-ignore:
@@ -19,34 +19,34 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        os: [ubuntu-latest]
-        python-version: [3.7, 3.8, 3.9]
+        os: [ ubuntu-latest ]
+        python-version: [ 3.7, 3.8, 3.9, 3.11 ]
     runs-on: ${{matrix.os}}
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-        cache: pip
-        cache-dependency-path: '**/*requirements.txt'
-    - name: Install dependencies
-      run: |
-        pip install lume
-        lume -install
-    - name: Lint - Code checker
-      run: |
-        lume -lint
-    - name: Test
-      env:
-        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN_STAGING }}
-        SLACK_TESTS_CHANNEL: 'testing'
-      run: |
-        lume -build -test-with-rabbitmq-mysql-and-elastic -test-command-line
-    - name: Test end2end
-      run: |
-        lume -test-end2end
-    - name: Check Installation (--no-binary)
-      run: |
-        pip install wheel
-        python setup.py sdist
-        pip wheel --no-binary lume -w /tmp/ext dist/petisco-*.tar.gz
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: '**/*requirements.txt'
+      - name: Install dependencies
+        run: |
+          pip install lume
+          lume -install
+      - name: Lint - Code checker
+        run: |
+          lume -lint
+      - name: Test
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN_STAGING }}
+          SLACK_TESTS_CHANNEL: 'testing'
+        run: |
+          lume -build -test-with-rabbitmq-mysql-and-elastic -test-command-line
+      - name: Test end2end
+        run: |
+          lume -test-end2end
+      - name: Check Installation (--no-binary)
+        run: |
+          pip install wheel
+          python setup.py sdist
+          pip wheel --no-binary lume -w /tmp/ext dist/petisco-*.tar.gz

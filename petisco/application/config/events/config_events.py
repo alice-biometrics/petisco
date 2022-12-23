@@ -1,6 +1,5 @@
+from dataclasses import dataclass, field
 from typing import Optional
-
-from dataclasses import dataclass
 
 from petisco.application.config.events.config_event_publisher import (
     ConfigEventsPublisher,
@@ -13,8 +12,8 @@ from petisco.application.config.events.config_event_subscriber import (
 @dataclass
 class ConfigEvents:
     publish_deploy_event: Optional[bool] = False
-    config_event_publisher: Optional[ConfigEventsPublisher] = ConfigEventsPublisher()
-    config_event_subscriber: Optional[ConfigEventsSubscriber] = ConfigEventsSubscriber()
+    config_event_publisher: Optional[ConfigEventsPublisher] = field(default_factory=ConfigEventsPublisher)
+    config_event_subscriber: Optional[ConfigEventsSubscriber] = field(default_factory=ConfigEventsSubscriber)
 
     @staticmethod
     def from_dict(kdict):
