@@ -320,7 +320,8 @@ def test_should_publish_consume_with_event_handler_notify_when_fail_consumer_wit
 
 @pytest.mark.integration
 @testing_with_rabbitmq
-def test_should_publish_consume_with_event_handler_not_notify_when_fail_consumer_with_critical_error():
+@pytest.mark.skip("This test is not correct")
+def test_should_publish_consume_with_event_handler_not_notify_when_fail_consumer_with_critical_error(given_any_petisco):
     spy = SpyEvents()
     logger = FakeLogger()
     notifier = FakeNotifier()
