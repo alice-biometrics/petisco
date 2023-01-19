@@ -5,7 +5,7 @@ from typing import Dict
 from loguru import logger
 from pika import BlockingConnection, ConnectionParameters, PlainCredentials
 from pika.adapters.blocking_connection import BlockingChannel
-from pika.exceptions import StreamLostError
+from pika.exceptions import ConnectionClosedByBroker, StreamLostError
 
 from petisco.base.misc.singleton import Singleton
 
@@ -63,6 +63,10 @@ class RabbitMqConnector(metaclass=Singleton):
         try:
             channel = connection.channel()
         except StreamLostError:
+            connection = self.get_connection(key_connection)
+            channel = connection.channel()
+        except ConnectionClosedByBroker:
+            del self.open_connections[key_connection]
             connection = self.get_connection(key_connection)
             channel = connection.channel()
         return channel
