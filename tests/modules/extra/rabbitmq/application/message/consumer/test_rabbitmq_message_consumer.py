@@ -78,8 +78,8 @@ def test_rabbitmq_message_consumer_should_fail_after_try_to_reconnect_max_allowe
             consumer.connector.get_channel.side_effect = [ConnectionError()] * 20
             consumer._start()
 
-        consumer.stop()
-        configurer.clear()
+    consumer.stop()
+    configurer.clear()
     assert "Impossible to reconnect consumer" in str(exc_info.value)
 
 
