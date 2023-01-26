@@ -1,3 +1,4 @@
+import os
 import threading
 import traceback
 from dataclasses import dataclass
@@ -8,6 +9,7 @@ from loguru import logger
 from meiga import Failure
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
+from pika.exceptions import ConnectionClosedByBroker
 from pika.spec import Basic
 
 from petisco.base.domain.message.chaos.message_chaos import MessageChaos
@@ -48,6 +50,13 @@ from petisco.extra.rabbitmq.shared.rabbitmq_exchange_name_formatter import (
 )
 from petisco.legacy.logger.interface_logger import ILogger
 from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
+
+MAX_ATTEMPTS_TO_RECONNECT = int(
+    os.getenv("RABBITMQ_MAX_ATTEMPTS_TO_RECONNECT_CONSUMER", "20")
+)
+WAIT_SECONDS_TO_RECONNECT = int(
+    os.getenv("RABBITMQ_WAIT_SECONDS_TO_RECONNECT_CONSUMER", "5")
+)
 
 
 @dataclass
@@ -99,7 +108,36 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self._thread.start()
 
     def _start(self) -> None:
-        self._channel.start_consuming()
+        try:
+            self._channel.start_consuming()
+        except ConnectionClosedByBroker:
+            self._re_connect(attempt=1)
+
+    def _re_connect(self, attempt: int):
+        if attempt >= MAX_ATTEMPTS_TO_RECONNECT:
+            raise ConnectionError(
+                f"Impossible to reconnect consumer '{self.rabbitmq_key}' after {attempt} attempts"
+            )
+
+        logger.info(
+            f"Trying to reconnect consumer '{self.rabbitmq_key}' (attempt {attempt})"
+        )
+
+        try:
+            self._channel = self.connector.get_channel(self.rabbitmq_key)
+        except ConnectionError:
+            sleep(WAIT_SECONDS_TO_RECONNECT)
+            attempt += 1
+            self._re_connect(attempt=attempt)
+        else:
+            subscribers = [
+                item.subscriber.__class__ for item in self.subscribers.values()
+            ]
+            self.add_subscribers(subscribers)
+            self.start()
+            logger.info(
+                f"Consumer '{self.rabbitmq_key}' reconnected after {attempt} attempts"
+            )
 
     def add_subscribers(self, subscribers: List[Type[MessageSubscriber]]) -> None:
         """
