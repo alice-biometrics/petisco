@@ -1,10 +1,13 @@
 import copy
 from time import sleep
+from unittest.mock import Mock, patch
 
 import pytest
 from meiga import BoolResult, isFailure, isSuccess
+from pika.exceptions import ConnectionClosedByBroker
 
 from petisco import DomainEvent
+from petisco.extra.rabbitmq import RabbitMqConnector
 from tests.modules.extra.rabbitmq.mother.domain_event_user_created_mother import (
     DomainEventUserCreatedMother,
 )
@@ -22,6 +25,62 @@ from tests.modules.extra.rabbitmq.mother.rabbitmq_message_consumer_mother import
 )
 from tests.modules.extra.rabbitmq.utils.spy_messages import SpyMessages
 from tests.modules.extra.testing_decorators import testing_with_rabbitmq
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
+def test_rabbitmq_message_consumer_should_reconnect_when_has_been_closed_by_broker():
+    subscribers = [
+        MessageSubscriberMother.domain_event_subscriber(
+            domain_event_type=type(DomainEventUserCreatedMother.random()),
+            handler=lambda a: a,
+        )
+    ]
+    configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
+    configurer.configure_subscribers(subscribers)
+
+    valid_channel = RabbitMqConnector().get_channel("valid_channel")
+
+    with patch(
+        "pika.adapters.blocking_connection.BlockingChannel.start_consuming",
+        side_effect=[ConnectionClosedByBroker(1, ""), valid_channel],
+    ):
+        consumer = RabbitMqMessageConsumerMother.default()
+        consumer.add_subscribers(subscribers)
+        consumer.start()
+
+    sleep(1.0)
+
+    consumer.stop()
+    configurer.clear()
+
+
+@pytest.mark.integration
+@testing_with_rabbitmq
+def test_rabbitmq_message_consumer_should_fail_after_try_to_reconnect_max_allowed_attempts():
+    subscribers = [
+        MessageSubscriberMother.domain_event_subscriber(
+            domain_event_type=type(DomainEventUserCreatedMother.random()),
+            handler=lambda a: a,
+        )
+    ]
+    configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
+    configurer.configure_subscribers(subscribers)
+    consumer = RabbitMqMessageConsumerMother.default()
+    consumer.add_subscribers(subscribers)
+
+    with pytest.raises(ConnectionError) as exc_info:
+        with patch(
+            "pika.adapters.blocking_connection.BlockingChannel.start_consuming",
+            side_effect=[ConnectionClosedByBroker(1, "")],
+        ):
+            consumer.connector = Mock(RabbitMqConnector)
+            consumer.connector.get_channel.side_effect = [ConnectionError()] * 20
+            consumer._start()
+
+    consumer.stop()
+    configurer.clear()
+    assert "Impossible to reconnect consumer" in str(exc_info.value)
 
 
 @pytest.mark.integration

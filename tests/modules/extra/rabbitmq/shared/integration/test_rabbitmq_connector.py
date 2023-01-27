@@ -1,8 +1,9 @@
 from unittest import mock
-from unittest.mock import PropertyMock
+from unittest.mock import PropertyMock, patch
 
 import pytest
 from pika import BlockingConnection
+from pika.exceptions import ConnectionClosedByBroker
 
 from petisco.extra.rabbitmq import RabbitMqConnector
 from tests.modules.extra.rabbitmq.mother.defaults import DEFAULT_EXCHANGE_NAME
@@ -85,6 +86,22 @@ class TestRabbitMqConnector:
         connection.close()
 
         connection = connector.get_connection("test")
+
+        assert connection.is_open
+
+        connection.close()
+
+    @testing_with_rabbitmq
+    def should_recover_channel_when_connection_has_been_closed_by_broker(self):
+        connector = RabbitMqConnector()
+
+        valid_channel = connector.get_channel("valid_channel")
+
+        with patch(
+            "pika.BlockingConnection.channel",
+            side_effect=[ConnectionClosedByBroker(1, ""), valid_channel],
+        ):
+            connection = connector.get_channel("test")
 
         assert connection.is_open
 
