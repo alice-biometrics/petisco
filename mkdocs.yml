@@ -47,6 +47,7 @@ nav:
 - getting_started.md
 - application.md
 - domain.md
+- configuration.md
 - Infrastructure [Extras]:
   - FastAPI: extra/fastapi/fastapi.md
   - RabbitMQ: extra/rabbitmq/rabbitmq.md
