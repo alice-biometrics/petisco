@@ -1,9 +1,7 @@
 from contextlib import contextmanager
 from typing import Callable
 
-from petisco.extra.elastic.elastic_operational_database_error import (
-    ElasticOperationalDatabaseError,
-)
+from loguru import logger
 
 
 def elastic_session_scope_provider(session) -> Callable:
@@ -13,11 +11,14 @@ def elastic_session_scope_provider(session) -> Callable:
     def session_scope():
         try:
             yield session
-        except ConnectionRefusedError:
-            raise ElasticOperationalDatabaseError
-        except RequestError as e:  # noqa E722
-            raise ElasticOperationalDatabaseError
-        except:  # noqa E722
-            raise ElasticOperationalDatabaseError
+        except ConnectionRefusedError as e:
+            logger.error(e)
+            raise e
+        except RequestError as e:
+            logger.error(e)
+            raise e
+        except Exception as e:
+            logger.error(e)
+            raise e
 
     return session_scope

@@ -1,11 +1,8 @@
 from contextlib import contextmanager
 from typing import Callable
 
+from loguru import logger
 from sqlalchemy.exc import OperationalError
-
-from petisco.extra.sqlalchemy.sqlalchemy_operational_database_error import (
-    SqlAlchemyOperationalDatabaseError,
-)
 
 
 def sql_session_scope_provider(Session) -> Callable:
@@ -16,10 +13,11 @@ def sql_session_scope_provider(Session) -> Callable:
             yield session
             session.commit()
         except OperationalError as e:
-            print(e)
+            logger.error(e)
             session.rollback()
-            raise SqlAlchemyOperationalDatabaseError
+            raise e
         except Exception as e:
+            logger.error(e)
             session.rollback()
             raise e
         finally:
