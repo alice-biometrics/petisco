@@ -1,7 +1,6 @@
 import connexion
 import yaml
 from flask_bcrypt import Bcrypt
-
 from flask_cors import CORS
 
 from petisco.frameworks.flask.application.json_encoder import JSONEncoder
@@ -54,14 +53,28 @@ class FlaskApplication(IApplication):
             openapi = yaml.safe_load(openapi_yaml)
 
         hidden_endpoints = []
+        hidden_request_bodies = []
         for path, methods in openapi["paths"].items():
             for method, endpoint in methods.items():
-                print(f"{path} {method}")
                 if endpoint.get("x-hidden"):
                     hidden_endpoints.append((path, method))
+                if openapi["paths"][path][method].get("requestBody"):
+                    if openapi["paths"][path][method]["requestBody"].get("content"):
+                        for content_type, schema in openapi["paths"][path][method]["requestBody"]["content"].items():
+                            if openapi["paths"][path][method]["requestBody"]["content"][content_type]["schema"]:
+                                if openapi["paths"][path][method]["requestBody"]["content"][content_type]["schema"].get(
+                                        "x-hidden"):
+                                    hidden_request_bodies.append((path, method, content_type, len(
+                                        openapi["paths"][path][method]["requestBody"]["content"].items()) == 1))
 
         for path, method in hidden_endpoints:
             del openapi["paths"][path][method]
+
+        for path, method, content_type, only_one in hidden_request_bodies:
+            if only_one:
+                del openapi["paths"][path][method]["requestBody"]
+            else:
+                del openapi["paths"][path][method]["requestBody"]["content"][content_type]
 
         return openapi
 
