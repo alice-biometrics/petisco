@@ -23,6 +23,17 @@ def testing_with_rabbitmq(func):
     return wrapper
 
 
+def testing_without_rabbitmq(func):
+    @pytest.mark.skipif(
+        rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
+    )
+    @functools.wraps(func)
+    def wrapper(*args: Any, **kwargs: Any):
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 def testing_with_mysql(func):
     @pytest.mark.skipif(
         not mysql_is_running_locally(), reason="MySQL is not running locally"
