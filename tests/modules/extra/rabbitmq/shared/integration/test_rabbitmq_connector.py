@@ -16,12 +16,24 @@ from tests.modules.extra.rabbitmq.mother.rabbitmq_domain_event_bus_mother import
 from tests.modules.extra.rabbitmq.mother.rabbitmq_message_configurer_mother import (
     RabbitMqMessageConfigurerMother,
 )
-from tests.modules.extra.testing_decorators import testing_with_rabbitmq
+from tests.modules.extra.testing_decorators import (
+    testing_with_rabbitmq,
+    testing_without_rabbitmq,
+)
 
 
 @pytest.mark.integration
 @pytest.mark.filterwarnings("ignore::pytest.PytestUnraisableExceptionWarning")
 class TestRabbitMqConnector:
+    @testing_with_rabbitmq
+    def should_ping_with_available_rabbitmq(self):
+        RabbitMqConnector.ping()
+
+    @testing_without_rabbitmq
+    def should_raise_an_exception_when_connection_with_rabbitmq_is_not_available(self):
+        with pytest.raises(ConnectionError):
+            RabbitMqConnector.ping()
+
     @testing_with_rabbitmq
     def should_get_an_open_connection(self):
 

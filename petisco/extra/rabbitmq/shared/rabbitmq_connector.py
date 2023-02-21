@@ -29,6 +29,12 @@ class RabbitMqConnector(metaclass=Singleton):
         )
         self.open_connections: Dict[str, BlockingConnection] = dict()
 
+    @staticmethod
+    def ping() -> None:
+        connector = RabbitMqConnector()
+        connector.get_connection(key_connection="ping")
+        connector.close(key_connection="ping")
+
     def close_all(self) -> None:
         for key_connection in list(self.open_connections.keys()):
             connection = self.open_connections.pop(key_connection)
