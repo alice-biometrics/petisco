@@ -3,6 +3,7 @@ from typing import List, Union
 from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
+from petisco.base.domain.message.not_implemented_domain_event_bus import NotImplementedDomainEventBus
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
@@ -30,12 +31,15 @@ class RabbitMqDomainEventBus(DomainEventBus):
         connector: Union[
             RabbitMqConnector, RabbitMqConsumerConnector
         ] = RabbitMqConnector(),
+        fallback: Union[DomainEventBus, None] = NotImplementedDomainEventBus()
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"publisher-{self.exchange_name}"
         self.configurer = RabbitMqMessageConfigurer(organization, service, connector)
+        self.already_configured = False
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
+        self.fallback = fallback
 
     def publish(self, domain_event: DomainEvent) -> None:
         """
@@ -63,6 +67,8 @@ class RabbitMqDomainEventBus(DomainEventBus):
 
         except ChannelClosedByBroker:
             self._retry(domain_event)
+        except: # noqa
+            self.fallback.publish(domain_event)
 
     def publish_list(self, domain_events: List[DomainEvent]) -> None:
         """
@@ -96,16 +102,29 @@ class RabbitMqDomainEventBus(DomainEventBus):
                 event for event in domain_events if event not in published_domain_event
             ]
             self._retry_publish_list(unpublished_domain_events)
+        except:  # noqa
+            unpublished_domain_events = [
+                event for event in domain_events if event not in published_domain_event
+            ]
+            self.fallback.publish_list(unpublished_domain_events)
 
     def _retry(self, domain_event: DomainEvent) -> None:
         # If domain event queue is not configured, it will be configured and then try to publish again.
-        self.configurer.configure()
-        self.publish(domain_event)
+        if not self.already_configured:
+            self.configurer.configure()
+            self.already_configured = True
+            self.publish(domain_event)
+        else:
+            self.fallback.publish(domain_event)
 
     def _retry_publish_list(self, domain_events: List[DomainEvent]) -> None:
         # If domain event queue is not configured, it will be configured and then try to publish again.
-        self.configurer.configure()
-        self.publish_list(domain_events)
+        if not self.already_configured:
+            self.configurer.configure()
+            self.already_configured = True
+            self.publish_list(domain_events)
+        else:
+            self.fallback.publish_list(domain_events)
 
     def retry_publish_only_on_store_queue(self, domain_event: DomainEvent) -> None:
         self._check_is_domain_event(domain_event)
