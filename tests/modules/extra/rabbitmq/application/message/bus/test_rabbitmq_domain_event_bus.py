@@ -68,7 +68,9 @@ class TestRabbitMqDomainEventBus:
         configurer.configure()
 
         bus = RabbitMqDomainEventBusMother.with_info_id()
-        with mock.patch.object(BlockingChannel, "basic_publish") as mock_channel_publish:
+        with mock.patch.object(
+            BlockingChannel, "basic_publish"
+        ) as mock_channel_publish:
             bus.publish_list(domain_event_list)
 
         assert mock_channel_publish.call_count == events_number
@@ -76,7 +78,9 @@ class TestRabbitMqDomainEventBus:
         configurer.clear()
 
     @testing_with_rabbitmq
-    def should_publish_domain_event_only_on_store_queue_with_previous_rabbitmq_configuration(self):
+    def should_publish_domain_event_only_on_store_queue_with_previous_rabbitmq_configuration(
+        self,
+    ):
         configurer = RabbitMqMessageConfigurerMother.default()
         configurer.configure()
 
@@ -86,7 +90,9 @@ class TestRabbitMqDomainEventBus:
         configurer.clear()
 
     @testing_with_rabbitmq
-    def should_retry_publish_only_on_store_queue_not_affecting_default_domain_event_queue(self):
+    def should_retry_publish_only_on_store_queue_not_affecting_default_domain_event_queue(
+        self,
+    ):
 
         spy_consumer_default_queue = SpyMessages()
         spy_consumer_store = SpyMessages()
@@ -101,9 +107,12 @@ class TestRabbitMqDomainEventBus:
 
         subscribers = [
             MessageSubscriberMother.domain_event_subscriber(
-                domain_event_type=type(self.domain_event), handler=assert_consumer_default_queue
+                domain_event_type=type(self.domain_event),
+                handler=assert_consumer_default_queue,
             ),
-            MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_store),
+            MessageSubscriberMother.all_messages_subscriber(
+                handler=assert_consumer_store
+            ),
         ]
 
         configurer = RabbitMqMessageConfigurerMother.default()
@@ -123,13 +132,17 @@ class TestRabbitMqDomainEventBus:
         configurer.clear()
 
         spy_consumer_default_queue.assert_number_unique_messages(0)
-        spy_consumer_default_queue.assert_count_by_message_id(self.domain_event.message_id, 0)
+        spy_consumer_default_queue.assert_count_by_message_id(
+            self.domain_event.message_id, 0
+        )
         spy_consumer_store.assert_number_unique_messages(1)
         spy_consumer_store.assert_first_message(self.domain_event)
         spy_consumer_store.assert_count_by_message_id(self.domain_event.message_id, 1)
 
     @testing_with_rabbitmq
-    def should_publish_and_then_consumer_retry_publish_only_on_store_queue_not_affecting_default_domain_event_queue(self):
+    def should_publish_and_then_consumer_retry_publish_only_on_store_queue_not_affecting_default_domain_event_queue(
+        self,
+    ):
 
         spy_consumer_default_queue = SpyMessages()
         spy_consumer_store = SpyMessages()
@@ -146,9 +159,12 @@ class TestRabbitMqDomainEventBus:
 
         subscribers = [
             MessageSubscriberMother.domain_event_subscriber(
-                domain_event_type=type(self.domain_event), handler=assert_consumer_default_queue
+                domain_event_type=type(self.domain_event),
+                handler=assert_consumer_default_queue,
             ),
-            MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_store),
+            MessageSubscriberMother.all_messages_subscriber(
+                handler=assert_consumer_store
+            ),
         ]
 
         configurer = RabbitMqMessageConfigurerMother.default()
@@ -167,16 +183,22 @@ class TestRabbitMqDomainEventBus:
         consumer.stop()
         configurer.clear()
 
-        spy_consumer_default_queue.assert_count_by_message_id(self.domain_event.message_id, 1)
+        spy_consumer_default_queue.assert_count_by_message_id(
+            self.domain_event.message_id, 1
+        )
         spy_consumer_store.assert_count_by_message_id(self.domain_event.message_id, 2)
 
     @testing_with_rabbitmq
     def should_publish_via_fallback_when_unexpected_exception(self):
 
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
-        bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
+        bus = RabbitMqDomainEventBusMother.default(
+            fallback=mock_fallback_domain_event_bus
+        )
 
-        with patch.object(BlockingChannel, 'basic_publish', side_effect=Exception()) as mock_channel:
+        with patch.object(
+            BlockingChannel, "basic_publish", side_effect=Exception()
+        ) as mock_channel:
             bus.publish(self.domain_event)
 
             mock_fallback_domain_event_bus.publish.assert_called_once()
@@ -187,9 +209,15 @@ class TestRabbitMqDomainEventBus:
     @testing_with_rabbitmq
     def should_publish_retry_and_publish_via_fallback_when_unexpected_exception(self):
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
-        bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
+        bus = RabbitMqDomainEventBusMother.default(
+            fallback=mock_fallback_domain_event_bus
+        )
 
-        with patch.object(BlockingChannel, 'basic_publish', side_effect=ChannelClosedByBroker(reply_code=1, reply_text="dummy")) as mock_channel:
+        with patch.object(
+            BlockingChannel,
+            "basic_publish",
+            side_effect=ChannelClosedByBroker(reply_code=1, reply_text="dummy"),
+        ) as mock_channel:
             bus.publish(self.domain_event)
 
             mock_fallback_domain_event_bus.publish.assert_called_once()
@@ -198,14 +226,17 @@ class TestRabbitMqDomainEventBus:
 
         bus.configurer.clear()
 
-
     @testing_with_rabbitmq
     def should_publish_list_via_fallback_when_unexpected_exception(self):
 
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
-        bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
+        bus = RabbitMqDomainEventBusMother.default(
+            fallback=mock_fallback_domain_event_bus
+        )
 
-        with patch.object(BlockingChannel, 'basic_publish', side_effect=Exception()) as mock_channel:
+        with patch.object(
+            BlockingChannel, "basic_publish", side_effect=Exception()
+        ) as mock_channel:
             bus.publish_list([self.domain_event])
 
             mock_fallback_domain_event_bus.publish_list.assert_called_once()
@@ -214,11 +245,19 @@ class TestRabbitMqDomainEventBus:
         bus.configurer.clear()
 
     @testing_with_rabbitmq
-    def should_publish_list_retry_and_publish_via_fallback_when_unexpected_exception(self):
+    def should_publish_list_retry_and_publish_via_fallback_when_unexpected_exception(
+        self,
+    ):
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
-        bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
+        bus = RabbitMqDomainEventBusMother.default(
+            fallback=mock_fallback_domain_event_bus
+        )
 
-        with patch.object(BlockingChannel, 'basic_publish', side_effect=ChannelClosedByBroker(reply_code=1, reply_text="dummy")) as mock_channel:
+        with patch.object(
+            BlockingChannel,
+            "basic_publish",
+            side_effect=ChannelClosedByBroker(reply_code=1, reply_text="dummy"),
+        ) as mock_channel:
             bus.publish_list([self.domain_event])
 
             mock_fallback_domain_event_bus.publish_list.assert_called_once()

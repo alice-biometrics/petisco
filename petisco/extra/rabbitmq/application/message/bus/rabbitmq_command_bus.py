@@ -3,9 +3,11 @@ from typing import Union
 from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
-from petisco.base.domain.message.not_implemented_command_bus import NotImplementedCommandBus
 from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.command_bus import CommandBus
+from petisco.base.domain.message.not_implemented_command_bus import (
+    NotImplementedCommandBus,
+)
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
     RabbitMqMessageConfigurer,
 )
@@ -25,13 +27,13 @@ class RabbitMqCommandBus(CommandBus):
     """
 
     def __init__(
-            self,
-            organization: str,
-            service: str,
-            connector: Union[
-                RabbitMqConnector, RabbitMqConsumerConnector
-            ] = RabbitMqConnector(),
-            fallback: CommandBus = NotImplementedCommandBus()
+        self,
+        organization: str,
+        service: str,
+        connector: Union[
+            RabbitMqConnector, RabbitMqConsumerConnector
+        ] = RabbitMqConnector(),
+        fallback: CommandBus = NotImplementedCommandBus(),
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
@@ -61,7 +63,7 @@ class RabbitMqCommandBus(CommandBus):
                 properties=self.properties,
             )
             if channel.is_open and not isinstance(
-                    self.connector, RabbitMqConsumerConnector
+                self.connector, RabbitMqConsumerConnector
             ):
                 channel.close()
         except ChannelClosedByBroker:

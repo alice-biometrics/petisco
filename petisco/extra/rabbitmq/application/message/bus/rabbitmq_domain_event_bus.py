@@ -3,9 +3,11 @@ from typing import List, Union
 from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
-from petisco.base.domain.message.not_implemented_domain_event_bus import NotImplementedDomainEventBus
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
+from petisco.base.domain.message.not_implemented_domain_event_bus import (
+    NotImplementedDomainEventBus,
+)
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
     RabbitMqMessageConfigurer,
 )
@@ -31,7 +33,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         connector: Union[
             RabbitMqConnector, RabbitMqConsumerConnector
         ] = RabbitMqConnector(),
-        fallback: DomainEventBus = NotImplementedDomainEventBus()
+        fallback: DomainEventBus = NotImplementedDomainEventBus(),
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
@@ -67,7 +69,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
 
         except ChannelClosedByBroker:
             self._retry(domain_event)
-        except: # noqa
+        except:  # noqa
             self.fallback.publish(domain_event)
 
     def publish_list(self, domain_events: List[DomainEvent]) -> None:
