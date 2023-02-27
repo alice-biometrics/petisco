@@ -31,7 +31,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         connector: Union[
             RabbitMqConnector, RabbitMqConsumerConnector
         ] = RabbitMqConnector(),
-        fallback: Union[DomainEventBus, None] = NotImplementedDomainEventBus()
+        fallback: DomainEventBus = NotImplementedDomainEventBus()
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"

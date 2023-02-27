@@ -3,6 +3,7 @@ from typing import Union
 from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
+from petisco.base.domain.message.not_implemented_command_bus import NotImplementedCommandBus
 from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.command_bus import CommandBus
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
@@ -24,18 +25,21 @@ class RabbitMqCommandBus(CommandBus):
     """
 
     def __init__(
-        self,
-        organization: str,
-        service: str,
-        connector: Union[
-            RabbitMqConnector, RabbitMqConsumerConnector
-        ] = RabbitMqConnector(),
+            self,
+            organization: str,
+            service: str,
+            connector: Union[
+                RabbitMqConnector, RabbitMqConsumerConnector
+            ] = RabbitMqConnector(),
+            fallback: CommandBus = NotImplementedCommandBus()
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"publisher-{self.exchange_name}"
         self.configurer = RabbitMqMessageConfigurer(organization, service, connector)
+        self.already_configured = False
         self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
+        self.fallback = fallback
 
     def dispatch(self, command: Command) -> None:
         """
@@ -57,13 +61,22 @@ class RabbitMqCommandBus(CommandBus):
                 properties=self.properties,
             )
             if channel.is_open and not isinstance(
-                self.connector, RabbitMqConsumerConnector
+                    self.connector, RabbitMqConsumerConnector
             ):
                 channel.close()
         except ChannelClosedByBroker:
-            # If domain event queue is not configured, it will be configured and then try to publish again.
+            self._retry(command)
+        except:  # noqa
+            self.fallback.dispatch(command)
+
+    def _retry(self, command: Command) -> None:
+        # If command queue is not configured, it will be configured and then try to dispatch again.
+        if not self.already_configured:
             self.configurer.configure()
-            self.publish(command)
+            self.already_configured = True
+            self.dispatch(command)
+        else:
+            self.fallback.dispatch(command)
 
     def close(self) -> None:
         """

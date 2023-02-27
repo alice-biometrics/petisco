@@ -176,11 +176,11 @@ class TestRabbitMqDomainEventBus:
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
         bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
 
-        with patch.object(BlockingChannel, 'basic_publish', side_effect=Exception()) as mock_method:
+        with patch.object(BlockingChannel, 'basic_publish', side_effect=Exception()) as mock_channel:
             bus.publish(self.domain_event)
 
             mock_fallback_domain_event_bus.publish.assert_called_once()
-            mock_method.assert_called_once()
+            mock_channel.assert_called_once()
 
         bus.configurer.clear()
 
@@ -189,11 +189,11 @@ class TestRabbitMqDomainEventBus:
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
         bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
 
-        with patch.object(BlockingChannel, 'basic_publish', side_effect=ChannelClosedByBroker(reply_code=1, reply_text="dummy")) as mock_method:
+        with patch.object(BlockingChannel, 'basic_publish', side_effect=ChannelClosedByBroker(reply_code=1, reply_text="dummy")) as mock_channel:
             bus.publish(self.domain_event)
 
             mock_fallback_domain_event_bus.publish.assert_called_once()
-            assert mock_method.call_count == 2
+            assert mock_channel.call_count == 2
             assert bus.already_configured is True
 
         bus.configurer.clear()
@@ -205,11 +205,11 @@ class TestRabbitMqDomainEventBus:
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
         bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
 
-        with patch.object(BlockingChannel, 'basic_publish', side_effect=Exception()) as mock_method:
+        with patch.object(BlockingChannel, 'basic_publish', side_effect=Exception()) as mock_channel:
             bus.publish_list([self.domain_event])
 
             mock_fallback_domain_event_bus.publish_list.assert_called_once()
-            mock_method.assert_called_once()
+            mock_channel.assert_called_once()
 
         bus.configurer.clear()
 
@@ -218,11 +218,11 @@ class TestRabbitMqDomainEventBus:
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
         bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
 
-        with patch.object(BlockingChannel, 'basic_publish', side_effect=ChannelClosedByBroker(reply_code=1, reply_text="dummy")) as mock_method:
+        with patch.object(BlockingChannel, 'basic_publish', side_effect=ChannelClosedByBroker(reply_code=1, reply_text="dummy")) as mock_channel:
             bus.publish_list([self.domain_event])
 
             mock_fallback_domain_event_bus.publish_list.assert_called_once()
-            assert mock_method.call_count == 2
+            assert mock_channel.call_count == 2
             assert bus.already_configured is True
 
         bus.configurer.clear()

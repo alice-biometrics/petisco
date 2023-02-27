@@ -11,7 +11,7 @@ from tests.modules.extra.rabbitmq.mother.defaults import (
 
 class RabbitMqDomainEventBusMother:
     @staticmethod
-    def default(connector: RabbitMqConnector = None, fallback: Union[DomainEventBus, None] = NotImplementedDomainEventBus()):
+    def default(connector: RabbitMqConnector = None, fallback: DomainEventBus = NotImplementedDomainEventBus()):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqDomainEventBus(DEFAULT_ORGANIZATION, DEFAULT_SERVICE, connector, fallback=fallback)
 
