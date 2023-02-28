@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Any, Callable, Dict, List
 
+from loguru import logger
 from pydantic import BaseSettings, Field
 
 from petisco.base.application.application_configurer import ApplicationConfigurer
@@ -25,11 +26,15 @@ class Application(BaseSettings):
     configurers: List[ApplicationConfigurer] = []
 
     def __init__(self, **data: Any) -> None:
-        ApplicationInfo(
+        info = ApplicationInfo(
             name=data["name"],
             organization=data["organization"],
             version=data["version"],
             deployed_at=data.get("deployed_at"),
+        )
+        deployed_at = info.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
+        logger.info(
+            f"Application: {info.name} {info.version} ({info.organization}) deployed at {deployed_at}"
         )
         super().__init__(**data)
 
@@ -40,9 +45,17 @@ class Application(BaseSettings):
             for configurer in self.configurers
             if configurer.execute_after_dependencies is False
         ]
+        name_configurers = [
+            configurer.__class__.__name__
+            for configurer in before_dependencies_configurers
+        ]
+        logger.info(
+            f"Application: running configurators before setting dependencies {name_configurers}..."
+        )
         for configurer in before_dependencies_configurers:
             configurer.execute(testing)
 
+        logger.info("Application: setting dependencies...")
         Container.set_dependencies(self.get_dependencies())
 
         after_dependencies_configurers = [
@@ -50,8 +63,18 @@ class Application(BaseSettings):
             for configurer in self.configurers
             if configurer.execute_after_dependencies is True
         ]
+
+        name_configurers = [
+            configurer.__class__.__name__
+            for configurer in after_dependencies_configurers
+        ]
+        logger.info(
+            f"Application: running configurators after setting dependencies {name_configurers}..."
+        )
         for configurer in after_dependencies_configurers:
             configurer.execute(testing)
+
+        logger.info("Application: successful configuration")
 
     def get_dependencies(self) -> List[Dependency]:
         default_dependencies = (
