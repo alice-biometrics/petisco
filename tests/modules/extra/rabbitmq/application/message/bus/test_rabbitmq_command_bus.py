@@ -131,3 +131,17 @@ class TestRabbitMqCommandBus:
             assert bus.already_configured is True
 
         bus.configurer.clear()
+
+    @testing_with_rabbitmq
+    def should_raise_an_unexpected_exception_when_not_given_fallback(self):
+        bus = RabbitMqCommandBusMother.default()
+
+        with patch.object(
+            BlockingChannel, "basic_publish", side_effect=Exception()
+        ) as mock_channel:
+            with pytest.raises(Exception):
+                bus.dispatch(self.command)
+
+            mock_channel.assert_called_once()
+
+        bus.configurer.clear()
