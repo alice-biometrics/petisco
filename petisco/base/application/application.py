@@ -31,6 +31,7 @@ class Application(BaseSettings):
             organization=data["organization"],
             version=data["version"],
             deployed_at=data.get("deployed_at"),
+            force_recreation=True,
         )
         deployed_at = info.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
         logger.info(
