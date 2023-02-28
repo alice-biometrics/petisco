@@ -1,4 +1,6 @@
-from petisco import DomainEventBus, NotImplementedDomainEventBus
+from typing import Union
+
+from petisco import DomainEventBus
 from petisco.extra.rabbitmq import RabbitMqConnector, RabbitMqDomainEventBus
 from tests.modules.base.mothers.message_meta_mother import MessageMetaMother
 from tests.modules.extra.rabbitmq.mother.defaults import (
@@ -11,7 +13,7 @@ class RabbitMqDomainEventBusMother:
     @staticmethod
     def default(
         connector: RabbitMqConnector = None,
-        fallback: DomainEventBus = NotImplementedDomainEventBus(),
+        fallback: Union[DomainEventBus, None] = None,
     ):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqDomainEventBus(

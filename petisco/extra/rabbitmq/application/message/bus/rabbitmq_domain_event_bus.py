@@ -5,9 +5,6 @@ from pika.exceptions import ChannelClosedByBroker
 
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
-from petisco.base.domain.message.not_implemented_domain_event_bus import (
-    NotImplementedDomainEventBus,
-)
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
     RabbitMqMessageConfigurer,
 )
@@ -33,7 +30,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         connector: Union[
             RabbitMqConnector, RabbitMqConsumerConnector
         ] = RabbitMqConnector(),
-        fallback: DomainEventBus = NotImplementedDomainEventBus(),
+        fallback: Union[DomainEventBus, None] = None,
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
@@ -69,7 +66,9 @@ class RabbitMqDomainEventBus(DomainEventBus):
 
         except ChannelClosedByBroker:
             self._retry(domain_event)
-        except:  # noqa
+        except Exception as exc:  # noqa
+            if not self.fallback:
+                raise exc
             self.fallback.publish(domain_event)
 
     def publish_list(self, domain_events: List[DomainEvent]) -> None:
@@ -104,7 +103,10 @@ class RabbitMqDomainEventBus(DomainEventBus):
                 event for event in domain_events if event not in published_domain_event
             ]
             self._retry_publish_list(unpublished_domain_events)
-        except:  # noqa
+        except Exception as exc:  # noqa
+            if not self.fallback:
+                raise exc
+
             unpublished_domain_events = [
                 event for event in domain_events if event not in published_domain_event
             ]
@@ -116,7 +118,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
             self.configurer.configure()
             self.already_configured = True
             self.publish(domain_event)
-        else:
+        elif self.fallback:
             self.fallback.publish(domain_event)
 
     def _retry_publish_list(self, domain_events: List[DomainEvent]) -> None:
@@ -125,7 +127,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
             self.configurer.configure()
             self.already_configured = True
             self.publish_list(domain_events)
-        else:
+        elif self.fallback:
             self.fallback.publish_list(domain_events)
 
     def retry_publish_only_on_store_queue(self, domain_event: DomainEvent) -> None:

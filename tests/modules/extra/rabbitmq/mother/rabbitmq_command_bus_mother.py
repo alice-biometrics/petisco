@@ -1,4 +1,6 @@
-from petisco import CommandBus, NotImplementedCommandBus
+from typing import Union
+
+from petisco import CommandBus
 from petisco.extra.rabbitmq import RabbitMqCommandBus, RabbitMqConnector
 from tests.modules.base.mothers.message_meta_mother import MessageMetaMother
 from tests.modules.extra.rabbitmq.mother.defaults import (
@@ -11,7 +13,7 @@ class RabbitMqCommandBusMother:
     @staticmethod
     def default(
         connector: RabbitMqConnector = None,
-        fallback: CommandBus = NotImplementedCommandBus(),
+        fallback: Union[CommandBus, None] = None,
     ):
         connector = RabbitMqConnector() if not connector else connector
         return RabbitMqCommandBus(

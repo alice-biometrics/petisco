@@ -5,9 +5,6 @@ from pika.exceptions import ChannelClosedByBroker
 
 from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.command_bus import CommandBus
-from petisco.base.domain.message.not_implemented_command_bus import (
-    NotImplementedCommandBus,
-)
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
     RabbitMqMessageConfigurer,
 )
@@ -33,7 +30,7 @@ class RabbitMqCommandBus(CommandBus):
         connector: Union[
             RabbitMqConnector, RabbitMqConsumerConnector
         ] = RabbitMqConnector(),
-        fallback: CommandBus = NotImplementedCommandBus(),
+        fallback: Union[CommandBus, None] = None,
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
@@ -68,7 +65,9 @@ class RabbitMqCommandBus(CommandBus):
                 channel.close()
         except ChannelClosedByBroker:
             self._retry(command)
-        except:  # noqa
+        except Exception as exc:  # noqa
+            if not self.fallback:
+                raise exc
             self.fallback.dispatch(command)
 
     def _retry(self, command: Command) -> None:
@@ -77,7 +76,7 @@ class RabbitMqCommandBus(CommandBus):
             self.configurer.configure()
             self.already_configured = True
             self.dispatch(command)
-        else:
+        elif self.fallback:
             self.fallback.dispatch(command)
 
     def close(self) -> None:
