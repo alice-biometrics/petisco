@@ -65,6 +65,25 @@ def test_use_case_should_return_failure_result_when_raise_an_uncontrolled_error_
 
 
 @pytest.mark.unit
+def test_use_case_should_return_failure_result_when_raise_an_uncontrolled_error_with_input_parameters():
+    expected_exception = TypeError("whatever")
+
+    class MyUseCase(UseCase):
+        def execute(self, param1: str, param2: str) -> BoolResult:
+            raise expected_exception
+
+    result = MyUseCase().execute("param1_value", param2="param2_value")
+
+    assert_failure(
+        result,
+        value_is_instance_of=UseCaseUncontrolledError,
+        value_is_equal_to=UseCaseUncontrolledError(expected_exception),
+    )
+    assert result.value.input_parameters["param1"] == "param1_value"
+    assert result.value.input_parameters["param2"] == "param2_value"
+
+
+@pytest.mark.unit
 def test_use_case_should_only_wrap_with_meiga_checker_execute_method():
     class MyUseCase(UseCase):
         def execute(self) -> BoolResult:
