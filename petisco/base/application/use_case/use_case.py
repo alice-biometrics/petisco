@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from functools import wraps
+from inspect import signature
 from types import FunctionType
 from typing import Any, Callable, Dict, Tuple
 
@@ -25,8 +26,10 @@ def wrapper(
         except Error as error:
             return Failure(error)
         except Exception as exception:
+            arguments = signature(method).bind(*args, **kwargs).arguments
+            arguments.pop("self")
             uncontrolled_error = UseCaseUncontrolledError.from_exception(
-                exception=exception, arguments=args, class_name=wrapped_class_name
+                exception=exception, arguments=arguments, class_name=wrapped_class_name
             )
             client = elasticapm.get_client()
             if client:
