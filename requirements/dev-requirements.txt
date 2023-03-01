@@ -13,7 +13,7 @@ pytest-clarity==1.0.1
 pytest-ordering==0.6
 requests-mock==1.8.0
 hypothesis==6.56.3
-fakeredis==1.7.0
+fakeredis==2.9.2
 autoflake==1.4
 pyupgrade==3.2.0
 httpx==0.23.0
