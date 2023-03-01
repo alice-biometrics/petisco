@@ -51,6 +51,7 @@ nav:
 - Infrastructure [Extras]:
   - FastAPI: extra/fastapi/fastapi.md
   - RabbitMQ: extra/rabbitmq/rabbitmq.md
+  - Redis: extra/redis/redis.md
   - Elastic: extra/elastic/elastic.md
   - SQLAlchemy: extra/sqlalchemy/sqlalchemy.md
   - Slack: extra/slack/slack.md

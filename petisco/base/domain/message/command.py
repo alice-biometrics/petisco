@@ -34,4 +34,4 @@ class Command(Message):
         return Command.from_dict(event_dict, target_type)
 
     def __repr__(self) -> str:
-        return self.to_str(class_name="Command", type="domain_event")
+        return self.to_str(class_name="Command", type="command")
