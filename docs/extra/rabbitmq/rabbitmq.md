@@ -479,9 +479,35 @@ What is happening here?
    * x-dead-letter-routing-key: `acme.registration.1.event.user.created.send_mail_handler`
 7. Then, the process will return to 2, however in this case, only will be requed to `acme.registration.1.event.user.created.send_mail_handler` thanks to the additional binding key `retry.acme.registration.1.event.user.created.send_mail_handler`.
 
-### Event Chaos (It is not migrated yet)
+### Message Chaos 
 
-You can add a `IEventChaos` object as collaborator on a `RabbitMqConsumer`.
+!!! info 
+
+    Chaos engineering is the discipline of experimenting on a system in order to build confidence in the system's capability to withstand turbulent conditions in production. **Wikipedia**
+
+Petisco allows you to force errors from the configuration of certain parameters by setting environment variables.
+
+#### Message Bus
+
+You can force fails in message publication in (for example in `RabbitMqDomainEventBus` and `RabbitMqCommandBus`).
+
+| Environment Variable                                 | Description                                                                                       | Default |
+|------------------------------------------------------|---------------------------------------------------------------------------------------------------|---------|
+| PETISCO_CHAOS_PERCENTAGE_INVALID_MESSAGE_PUBLICATION | Percentage of invalid message publication. Where 1.0 means rejecting all the publishing messages. | 0.0     |
+
+!!! helps 
+
+    You can configure PETISCO_CHAOS_PERCENTAGE_INVALID_MESSAGE_PUBLICATION=0.1 to force failures in the 10% of the message
+    publication. This is a convinient way of testing if fallback strategy works as expected.
+
+#### Message Consumer
+
+!!! warning
+
+    To be deprecated to use better naming in 2.0.0. Migration work has already stated with `ChaosConfig` class implementation.
+
+
+You can add a `MessageChaos` object as collaborator on a `RabbitMqConsumer`.
 As example, petisco provides the `RabbitMqEventChaos` implementation, where configurable parameters are the following:
 
 * percentage_simulate_nack: Percentage of simulate nack [0.0 -> 1.0]. Where 1.0 rejects all the event.

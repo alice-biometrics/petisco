@@ -5,7 +5,7 @@ class ChaosConfig(BaseSettings):
     percentage_invalid_message_publication: confloat(ge=0.0, le=1.0) = Field(
         default=0,
         env="PETISCO_CHAOS_PERCENTAGE_INVALID_MESSAGE_PUBLICATION",
-        description="",
+        description="Percentage of invalid message publication. Where 1.0 means rejecting all the publishing messages.",
     )
     percentage_simulate_nack: confloat(ge=0.0, le=1.0) = Field(
         default=0,
