@@ -3,6 +3,7 @@ from typing import List, Union
 from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
+from petisco.base.application.chaos.check_chaos import check_chaos_publication
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
@@ -48,6 +49,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         meta = self.get_configured_meta()
         domain_event = domain_event.update_meta(meta)
         try:
+            check_chaos_publication()
             channel = self.connector.get_channel(self.rabbitmq_key)
             routing_key = RabbitMqMessageQueueNameFormatter.format(
                 domain_event, exchange_name=self.exchange_name
@@ -78,8 +80,8 @@ class RabbitMqDomainEventBus(DomainEventBus):
         meta = self.get_configured_meta()
         published_domain_event = []
         try:
+            check_chaos_publication()
             channel = self.connector.get_channel(self.rabbitmq_key)
-
             for domain_event in domain_events:
                 self._check_is_domain_event(domain_event)
                 domain_event = domain_event.update_meta(meta)

@@ -3,6 +3,7 @@ from typing import Union
 from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
+from petisco.base.application.chaos.check_chaos import check_chaos_publication
 from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.command_bus import CommandBus
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
@@ -48,6 +49,7 @@ class RabbitMqCommandBus(CommandBus):
         meta = self.get_configured_meta()
         command = command.update_meta(meta)
         try:
+            check_chaos_publication()
             channel = self.connector.get_channel(self.rabbitmq_key)
             routing_key = RabbitMqMessageQueueNameFormatter.format(
                 command, exchange_name=self.exchange_name
