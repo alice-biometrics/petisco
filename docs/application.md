@@ -459,7 +459,7 @@ Both will use the `Container`, to inject the dependencies.
     
         def execute(self, task: Task) -> BoolResult:
             self.repository.save(task).unwrap_or_return()
-            self.domain_event_bus.publish_list(TaskCreated())
+            self.domain_event_bus.publish(TaskCreated())
             return isSuccess
     ```
 
