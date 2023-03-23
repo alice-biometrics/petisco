@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, List, TypeVar, Union
+from typing import Any, Dict, Generic, TypeVar
 
 from deprecation import deprecated
 
@@ -42,15 +42,15 @@ class MessageBus(ABC, Generic[TypeMessage]):
         return configured_meta
 
     @abstractmethod
-    def publish(self, message: Union[TypeMessage, List[TypeMessage]]) -> None:
+    def publish(self, message: TypeMessage | list[TypeMessage]) -> None:
         """
         Publish a message or a list of messages
         """
         raise NotImplementedError
 
     def _check_input(
-        self, message: Union[TypeMessage, List[TypeMessage]]
-    ) -> List[TypeMessage]:  # noqa
+        self, message: TypeMessage | list[TypeMessage]
+    ) -> list[TypeMessage]:  # noqa
         if isinstance(message, list):
             messages = message
         else:
