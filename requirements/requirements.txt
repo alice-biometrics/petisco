@@ -5,3 +5,4 @@ pyyaml>=6.0,<7
 loguru>=0.6.0,<1
 pyjwt[crypto]==2.4.0
 validators==0.18.2
+deprecation

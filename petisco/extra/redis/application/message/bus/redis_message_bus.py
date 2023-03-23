@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Union
 
 from redis.client import Redis
 from redis.exceptions import RedisError
@@ -14,7 +14,7 @@ class RedisMessageBus(MessageBus):
     A generic implementation of MessageBus using Redis infrastructure.
     """
 
-    def publish(self, message: TypeMessage) -> None:
+    def publish(self, message: Union[TypeMessage, List[TypeMessage]]) -> None:
         pass
 
     def __init__(
@@ -25,23 +25,7 @@ class RedisMessageBus(MessageBus):
         self.redis_database = redis_database
         self.database_name = database_name
 
-    def save(self, message: Message) -> None:
-        """
-        Save one Message
-        """
-        self._check_is_message(message)
-        meta = self.get_configured_meta()
-        message = message.update_meta(meta)
-
-        try:
-            data = [self._get_formatted_data(message)]
-            with self.redis_database.pipeline() as pipe:
-                pipe.lpush(self.database_name, *data)
-                pipe.execute()
-        except (TimeoutError, ConnectionError, RedisError) as ex:
-            raise CriticalError(additional_info={"error message": str(ex)})
-
-    def save_list(self, messages: List[Message]) -> None:
+    def save(self, messages: List[Message]) -> None:
         """
         Save several Message
         """
@@ -52,7 +36,6 @@ class RedisMessageBus(MessageBus):
             meta = self.get_configured_meta()
             message = message.update_meta(meta)
             updated_messages.append(message)
-
         try:
             data = [self._get_formatted_data(message) for message in updated_messages]
             with self.redis_database.pipeline() as pipe:
@@ -68,9 +51,6 @@ class RedisMessageBus(MessageBus):
             "message": message.dict(),
         }
         return json.dumps(formatted_data)
-
-    def retry_publish_only_on_store_queue(self, message: TypeMessage) -> None:
-        pass
 
     def close(self) -> None:
         pass

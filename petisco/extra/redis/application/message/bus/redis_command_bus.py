@@ -1,3 +1,5 @@
+from typing import List, Union
+
 from redis.client import Redis
 
 from petisco.base.domain.message.command import Command
@@ -14,8 +16,9 @@ class RedisCommandBus(RedisMessageBus):
     def __init__(self, organization: str, service: str, redis_database: Redis):
         super().__init__(organization, service, redis_database, "commands")
 
-    def dispatch(self, command: Command) -> None:
+    def dispatch(self, command: Union[Command, List[Command]]) -> None:
         """
         Dispatch one Command
         """
-        self.save(command)
+        commands = self._check_input(command)
+        self.save(commands)

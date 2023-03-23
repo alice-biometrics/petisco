@@ -1,19 +1,18 @@
-from typing import Union
+from typing import List, Union
 
-from pika import BasicProperties
 from pika.exceptions import ChannelClosedByBroker
 
 from petisco.base.application.chaos.check_chaos import check_chaos_publication
 from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.command_bus import CommandBus
+from petisco.extra.rabbitmq.application.message.bus.rabbitmq_message_publisher import (
+    RabbitMqMessagePublisher,
+)
 from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_configurer import (
     RabbitMqMessageConfigurer,
 )
 from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import (
     RabbitMqConsumerConnector,
-)
-from petisco.extra.rabbitmq.application.message.formatter.rabbitmq_message_queue_name_formatter import (
-    RabbitMqMessageQueueNameFormatter,
 )
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
@@ -38,41 +37,47 @@ class RabbitMqCommandBus(CommandBus):
         self.rabbitmq_key = f"publisher-{self.exchange_name}"
         self.configurer = RabbitMqMessageConfigurer(organization, service, connector)
         self.already_configured = False
-        self.properties = BasicProperties(delivery_mode=2)  # PERSISTENT_TEXT_PLAIN
         self.fallback = fallback
+        self.publisher = RabbitMqMessagePublisher(self.exchange_name)
 
-    def dispatch(self, command: Command) -> None:
+    def dispatch(self, command: Union[Command, List[Command]]) -> None:
         """
-        Dispatch one Command
+        Dispatch one Command or a list of commands
+
+        Dispatch several commands could be a code smell but some use case could require this feature.
         """
-        self._check_is_command(command)
+
         meta = self.get_configured_meta()
-        command = command.update_meta(meta)
+        dispatched_commands = []
+        commands = self._check_input(command)
+
         try:
             check_chaos_publication()
             channel = self.connector.get_channel(self.rabbitmq_key)
-            routing_key = RabbitMqMessageQueueNameFormatter.format(
-                command, exchange_name=self.exchange_name
-            )
-            channel.confirm_delivery()
-            channel.basic_publish(
-                exchange=self.exchange_name,
-                routing_key=routing_key,
-                body=command.json().encode(),
-                properties=self.properties,
-            )
-            if channel.is_open and not isinstance(
-                self.connector, RabbitMqConsumerConnector
-            ):
-                channel.close()
+            for command in commands:
+                self._check_is_command(command)
+                command = command.update_meta(meta)
+                self.publisher.execute(channel, command)
+                if channel.is_open and not isinstance(
+                    self.connector, RabbitMqConsumerConnector
+                ):
+                    channel.close()
+                dispatched_commands.append(command)
         except ChannelClosedByBroker:
-            self._retry(command)
+            unpublished_commands = [
+                command for command in commands if command not in dispatched_commands
+            ]
+            self._retry(unpublished_commands)
         except Exception as exc:  # noqa
             if not self.fallback:
                 raise exc
-            self.fallback.dispatch(command)
 
-    def _retry(self, command: Command) -> None:
+            unpublished_commands = [
+                command for command in commands if command not in dispatched_commands
+            ]
+            self.fallback.dispatch(unpublished_commands)
+
+    def _retry(self, command: Union[Command, List[Command]]) -> None:
         # If command queue is not configured, it will be configured and then try to dispatch again.
         if not self.already_configured:
             self.configurer.configure()
