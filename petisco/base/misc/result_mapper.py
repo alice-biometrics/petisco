@@ -1,3 +1,4 @@
+import inspect
 from abc import ABC
 from typing import Any, Callable, Optional, Union
 
@@ -22,7 +23,7 @@ class ResultMapper(ABC):
         error_map: Optional[ErrorMap] = None,
         success_handler: Callable[[AnyResult], Any] = lambda result: result,
         failure_handler: Callable[
-            [Result[DomainError, Error], ErrorMap], Any
+            [Result[DomainError, Error], Union[ErrorMap, None]], Any
         ] = default_failure_handler,
     ):
         self.error_map = error_map if error_map is not None else dict()
@@ -33,4 +34,7 @@ class ResultMapper(ABC):
         if result.is_success:
             return self.success_handler(result)
         else:
-            return self.failure_handler(result, self.error_map)
+            if "error_map" in inspect.signature(self.failure_handler).parameters:
+                return self.failure_handler(result, self.error_map)
+            else:
+                return self.failure_handler(result)  # noqa
