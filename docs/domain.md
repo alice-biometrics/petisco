@@ -289,6 +289,47 @@ The result:
 }
 ```
 
+### DomainEventPublisher
+
+Use `DomainEventPublisher` to publish `DomainEvent`s in your Use Cases. 
+
+???+ example "Example of usage into a `UseCase`"
+
+    ```python hl_lines="22 23"
+    from meiga import BoolResult, isSuccess
+    from petisco import CrudRepository, DomainEventBus, UseCase
+    
+    from app.src.task.label.domain.task_labeler import TaskLabeler
+    from app.src.task.shared.domain.task import Task
+    
+    
+    class TaskCreator(UseCase):
+        def __init__(
+            self,
+            labeler: TaskLabeler,
+            repository: CrudRepository,
+            domain_event_bus: DomainEventBus,
+        ):
+            self.labeler = labeler
+            self.repository = repository
+            self.domain_event_bus = domain_event_bus
+    
+        def execute(self, task: Task) -> BoolResult:
+            task = self.labeler.execute(task).unwrap_or_return()
+            self.repository.save(task).unwrap_or_return()
+            domain_events = task.pull_domain_events() # (1)
+            self.domain_event_bus.publish(domain_events) # (2)
+            return isSuccess
+    ```
+
+    1. Pull `DomainEvent`s from the `Task` Aggregate.
+    2. Publish retrieved `DomainEvent`s. 
+
+### CommandDispatcher
+
+Use `CommandDispatcher` to publish `Command`s in your Use Cases or Controllers.
+
+
 ## Other Domain Elements
 
 ### Domain Error
