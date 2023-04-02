@@ -1,11 +1,13 @@
 from collections import defaultdict
-from typing import Any, Dict, List, Union
+from typing import Dict, Generic, List, TypeVar, Union
 
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.misc.singleton import Singleton
 
+T = TypeVar("T")
 
-class Container(metaclass=Singleton):
+
+class Container(Generic[T], metaclass=Singleton):
     """
     Singleton which contains set dependencies (List[Dependency)) prepared to be instantiated in order to be injected
      in the UseCases of our application
@@ -15,7 +17,7 @@ class Container(metaclass=Singleton):
         self.dependencies: Dict[str, Dependency] = defaultdict()
 
     @staticmethod
-    def get(name: str) -> Any:
+    def get(name: T) -> T:
         """
         Returns an instance of set Dependency.
         """
@@ -46,5 +48,24 @@ class Container(metaclass=Singleton):
 
     def _set_dependencies(self, input_dependencies: List[Dependency]) -> None:
         for dependency in input_dependencies:
-            if dependency.name not in self.dependencies:
+
+            if dependency.name:
+                if dependency.name in self.dependencies:
+                    raise IndexError(
+                        f"Container: dependency (name={dependency.name}) is already added to dependencies. check set_dependencies input"
+                    )
                 self.dependencies[dependency.name] = dependency
+            elif dependency.alias:
+                if dependency.alias in self.dependencies:
+                    raise IndexError(
+                        f"Container: dependency (alias={dependency.alias}) is already added to dependencies. check set_dependencies input"
+                    )
+                self.dependencies[dependency.alias] = dependency
+            else:
+                generic_type = dependency.get_generic_type()
+                if generic_type:
+                    if generic_type in self.dependencies:
+                        raise IndexError(
+                            f"Container: dependency (type={generic_type.__name__}) is already added to dependencies. Use Dependency alias to set different dependencies with the same base type"
+                        )
+                    self.dependencies[generic_type] = dependency

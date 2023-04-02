@@ -32,7 +32,7 @@ class Dependency(Generic[T]):
         builders: dict[str, Builder[Any]] | None = None,
     ):
         self.name = name
-        self.alias = name
+        self.alias = alias
         self.default_builder = default_builder
         self.envar_modifier = envar_modifier
         self.builders = builders
