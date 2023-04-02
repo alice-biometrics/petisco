@@ -15,7 +15,7 @@ class TestContainer:
     def should_success_when_access_one_dynamic_attr_representing_a_dependency_with_type(
         self,
     ):
-        dependencies = [Dependency[Repo](default_builder=Builder(MyRepo))]
+        dependencies = [Dependency(Repo, default_builder=Builder(MyRepo))]
 
         Container.set_dependencies(dependencies)
 
@@ -31,7 +31,7 @@ class TestContainer:
         self,
     ):
         dependencies = [
-            Dependency[Repo](alias="my-alias", default_builder=Builder(MyRepo))
+            Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo))
         ]
 
         Container.set_dependencies(dependencies)
@@ -49,8 +49,8 @@ class TestContainer:
 
     def should_success_when_define_two_dependencies_with_the_same_base_type(self):
         dependencies = [
-            Dependency[Repo](default_builder=Builder(MyRepo)),
-            Dependency[Repo](alias="my-alias", default_builder=Builder(MyRepo)),
+            Dependency(Repo, default_builder=Builder(MyRepo)),
+            Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo)),
         ]
 
         Container.set_dependencies(dependencies)
@@ -70,14 +70,14 @@ class TestContainer:
         [
             (
                 [
-                    Dependency[Repo](default_builder=Builder(MyRepo)),
-                    Dependency[Repo](default_builder=Builder(MyRepo)),
+                    Dependency(Repo, default_builder=Builder(MyRepo)),
+                    Dependency(Repo, default_builder=Builder(MyRepo)),
                 ]
             ),
             (
                 [
-                    Dependency[Repo](alias="my-alias", default_builder=Builder(MyRepo)),
-                    Dependency[Repo](alias="my-alias", default_builder=Builder(MyRepo)),
+                    Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo)),
+                    Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo)),
                 ]
             ),
             (
@@ -96,8 +96,8 @@ class TestContainer:
 
     def should_raise_exception_if_repeat_alias(self):
         dependencies = [
-            Dependency[Repo](alias="my-alias", default_builder=Builder(MyRepo)),
-            Dependency[Repo](alias="my-alias", default_builder=Builder(MyRepo)),
+            Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo)),
+            Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo)),
         ]
 
         with pytest.raises(IndexError):
@@ -109,10 +109,10 @@ class TestContainer:
         "dependencies,expected_available_dependencies",
         [
             ([], []),
-            ([Dependency[Repo](default_builder=Builder(MyRepo))], [Repo]),
+            ([Dependency(Repo, default_builder=Builder(MyRepo))], [Repo]),
             (
                 [
-                    Dependency[Repo](default_builder=Builder(MyRepo)),
+                    Dependency(Repo, default_builder=Builder(MyRepo)),
                     Dependency(
                         alias="inmemory_repo", default_builder=Builder(InMemoryRepo)
                     ),
@@ -174,7 +174,7 @@ class TestContainer:
         self,
         dependencies,
     ):
-        expected_dependencies_names = [dependency.name for dependency in dependencies]
+        expected_dependencies_names = [dependency.alias for dependency in dependencies]
 
         Container.set_dependencies(dependencies)
 

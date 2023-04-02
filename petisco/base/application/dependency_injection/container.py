@@ -62,10 +62,9 @@ class Container(Generic[T], metaclass=Singleton):
                     )
                 self.dependencies[dependency.alias] = dependency
             else:
-                generic_type = dependency.get_generic_type()
-                if generic_type:
-                    if generic_type in self.dependencies:
+                if dependency.type:
+                    if dependency.type in self.dependencies:
                         raise IndexError(
-                            f"Container: dependency (type={generic_type.__name__}) is already added to dependencies. Use Dependency alias to set different dependencies with the same base type"
+                            f"Container: dependency (type={dependency.type.__name__}) is already added to dependencies. Use Dependency alias to set different dependencies with the same base type"
                         )
-                    self.dependencies[generic_type] = dependency
+                    self.dependencies[dependency.type] = dependency

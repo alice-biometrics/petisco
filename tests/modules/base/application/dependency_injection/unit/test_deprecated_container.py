@@ -27,7 +27,7 @@ class TestDeprecatedContainer:
         self,
     ):
         dependencies = [
-            Dependency[Repo](name="my-alias", default_builder=Builder(MyRepo))
+            Dependency(Repo, name="my-alias", default_builder=Builder(MyRepo))
         ]
 
         Container.set_dependencies(dependencies)

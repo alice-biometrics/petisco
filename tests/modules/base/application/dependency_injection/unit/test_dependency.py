@@ -76,18 +76,18 @@ class TestDependency:
 
     def should_return_typed_default_instance(self):
 
-        dependency = Dependency[Repo](default_builder=Builder(MyRepo))
+        dependency = Dependency(Repo, default_builder=Builder(MyRepo))
 
         instance = dependency.get_instance()
 
-        assert dependency.get_generic_type() == Repo
+        assert dependency.type == Repo
         assert isinstance(instance, MyRepo)
 
     def should_raise_error_when_default_builder_type_is_not_a_subclass_of_generic_type(
         self,
     ):
 
-        dependency = Dependency[Repo](default_builder=Builder(str))
+        dependency = Dependency(Repo, default_builder=Builder(str))
 
         with pytest.raises(
             TypeError,
@@ -98,7 +98,8 @@ class TestDependency:
 
     def should_raise_error_when_builder_type_is_not_a_subclass_of_generic_type(self):
 
-        dependency = Dependency[Repo](
+        dependency = Dependency(
+            Repo,
             default_builder=Builder(MyRepo),
             builders={"inmemory": Builder(InMemoryRepo), "invalid": Builder(str)},
         )
