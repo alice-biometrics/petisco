@@ -88,28 +88,92 @@ flowchart LR
 
 As we presented in the [Getting Started](getting_started.md) section. The dependencies will be configured in the `Container` when `Aplication` is configured.
 
-??? example
+???+ example "Usage"
 
     Accessing the container to instantiate its dependencies is as easy as following:
-
-    ```python
-    from petisco import Container
-
-    my_instance = Container.get("name-of-my-dependency")  
-
-    # You can check available dependencies
-    available_dependencies: list[str] = Container.get_available_dependencies()
-    ```
-
     To configure dependencies manually, use `set_dependencies`:
 
-    ```python
-    from petisco import Container
+    === "Defining Dependencies"
 
-    dependencies = [Dependency(name="name-of-my-dependency", default_builder=Builder(MyDependencyObjectType))]    
-    Container.set_dependencies(dependencies)
-    my_instance: MyDependencyObjectType = Container.get("name-of-my-dependency")
+        ```python
+        from petisco import Container
+    
+        dependencies = [
+            Dependency(MyBase, builders={"default": Builder(MyImplementation)})
+        ]    
+        Container.set_dependencies(dependencies)
+        ```
+
+    === "Instantiation of set Dependencies"
+
+        ```python
+        from petisco import Container
+    
+        my_instance = Container.get(MyBase)
+    
+        # You can check available dependencies
+        available_dependencies = Container.get_available_dependencies()
+        ```
+
+    When defining dependencies, you can add different implementation on the builders as in the following code:
+
+    ```python hl_lines="6 7"
+    dependencies = [
+        Dependency(
+            MyBase, 
+            builders={
+                "default": Builder(MyImplementation),
+                "fake": Builder(MyFakeImplementation),
+                "inmemory": Builder(MyInmemoryImplementation),
+            }
+        )
+    ]    
     ```
+
+    !!! warning
+    
+        "default" implementation is mandatory on `Dependency` definition, if not it will raise an error in Runtime.
+
+    **Environment Modifiers:** 
+
+    When you get the instance with `Container.get(MyBase)`, by default you will get an instance of default implementation
+    defined in `builders`. 
+    
+    If you want to modify this, you an do it with an environment variable (`<NAME_OF_THE_BASE_TYPE>` + `_TYPE`).
+    For example, in the above class if we set the envar `MY_BASE_TYPE` to `fake` the `Container.get(MyBase)` will return
+    `fake` implementation.
+
+    **Alias:**
+
+    Imagine you want to have available two different dependencies from the same base type. You can use the alias to tell
+    apart between them in instatiation time.
+
+    ```python hl_lines="4 11"
+    dependencies = [
+        Dependency(
+            MyBase, 
+            alias="implementation_1",
+            builders={
+                "default": Builder(MyImplementation_1),
+            }
+        ),
+        Dependency(
+            MyBase, 
+            alias="implementation_2",
+            builders={
+                "default": Builder(MyImplementation_2),
+            }
+        )
+    ]    
+    ```
+
+    Then, to instatiate them, you can use alias parameter in Container:
+
+    ```python
+    instance_1 = Container.get(MyBase, alias="implementation_1")
+    instance_2 = Container.get(MyBase, alias="implementation_2")
+    ```
+
     
 
 ## Controller

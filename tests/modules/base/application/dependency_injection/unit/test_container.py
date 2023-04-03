@@ -43,7 +43,7 @@ class TestContainer:
         with pytest.raises(IndexError, match="Invalid dependency"):
             Container.get(BaseRepo)
 
-        instance = Container.get("my-alias")
+        instance = Container.get(MyRepo, alias="my-alias")
 
         assert isinstance(instance, MyRepo)
 
@@ -62,7 +62,7 @@ class TestContainer:
         assert Container.get_available_dependencies() == [BaseRepo, "my-alias"]
 
         instance_base_type = Container.get(BaseRepo)
-        instance_with_alias = Container.get("my-alias")
+        instance_with_alias = Container.get(BaseRepo, alias="my-alias")
 
         assert isinstance(instance_base_type, MyRepo)
         assert isinstance(instance_with_alias, MyRepo)

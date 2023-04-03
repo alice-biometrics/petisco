@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from collections import defaultdict
-from typing import Dict, Generic, List, Type, TypeVar, Union
+from typing import Generic, TypeVar
 
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.misc.singleton import Singleton
@@ -14,25 +16,27 @@ class Container(Generic[T], metaclass=Singleton):
     """
 
     def __init__(self) -> None:
-        self.dependencies: Dict[str, Dependency] = defaultdict()
+        self.dependencies: dict[str, Dependency] = defaultdict()
 
     @staticmethod
-    def get(name: Type[T]) -> T:
+    def get(base_type: type[T], *, alias: str | None = None) -> T:
         """
         Returns an instance of set Dependency.
         """
         container = Container()
-        dependency = container.dependencies.get(name)
+
+        key = base_type if not alias else alias
+        dependency = container.dependencies.get(key)
         if dependency is None:
             raise IndexError(
-                f"Invalid dependency. {name} is not found within available dependencies [{container.get_available_dependencies()}]"
+                f"Invalid dependency. {key} is not found within available dependencies [{container.get_available_dependencies()}]"
             )
         instance = dependency.get_instance()
         return instance
 
     @staticmethod
     def set_dependencies(
-        dependencies: Union[List[Dependency], None] = None, overwrite: bool = True
+        dependencies: list[Dependency] | None = None, overwrite: bool = True
     ) -> None:
         """
         Set dependencies from a list of them.
@@ -42,33 +46,36 @@ class Container(Generic[T], metaclass=Singleton):
         Container()._set_dependencies(dependencies, overwrite)
 
     @staticmethod
-    def get_available_dependencies() -> List[str]:
+    def get_available_dependencies() -> list[str]:
         """
         Returns the names (keys) of set dependencies.
         """
         return list(Container().dependencies.keys())
 
     def _set_dependencies(
-        self, input_dependencies: List[Dependency], overwrite: bool = True
+        self, input_dependencies: list[Dependency], overwrite: bool = True
     ) -> None:
         for dependency in input_dependencies:
 
             if dependency.name:
                 if dependency.name in self.dependencies and not overwrite:
                     raise IndexError(
-                        f"Container: dependency (name={dependency.name}) is already added to dependencies. check set_dependencies input"
+                        f"Container: dependency (name={dependency.name}) is already added to dependencies. Check "
+                        f"set_dependencies input "
                     )
                 self.dependencies[dependency.name] = dependency
             elif dependency.alias:
                 if dependency.alias in self.dependencies and not overwrite:
                     raise IndexError(
-                        f"Container: dependency (alias={dependency.alias}) is already added to dependencies. check set_dependencies input"
+                        f"Container: dependency (alias={dependency.alias}) is already added to dependencies. Check "
+                        f"set_dependencies input "
                     )
                 self.dependencies[dependency.alias] = dependency
             else:
                 if dependency.type:
                     if dependency.type in self.dependencies and not overwrite:
                         raise IndexError(
-                            f"Container: dependency (type={dependency.type.__name__}) is already added to dependencies. Use Dependency alias to set different dependencies with the same base type"
+                            f"Container: dependency (type={dependency.type.__name__}) is already added to "
+                            f"dependencies. Use Dependency alias to set different dependencies with the same base type "
                         )
                     self.dependencies[dependency.type] = dependency
