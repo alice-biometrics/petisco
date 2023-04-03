@@ -4,30 +4,30 @@ from typing import List
 from petisco import Container
 
 
-class Repo(ABC):
+class BaseRepo(ABC):
     @abstractmethod
     def execute(self):
         raise NotImplementedError
 
 
-class MyRepo(Repo):
+class MyRepo(BaseRepo):
     def execute(self):
         print("MyRepo")
 
 
-class MyRepoWithBuilderAndDependency(Repo):
+class MyRepoWithBuilderAndDependency(BaseRepo):
     @staticmethod
     def build():
         return MyRepoWithBuilderAndDependency(Container.get("repo"))
 
-    def __init__(self, repository: Repo):
+    def __init__(self, repository: BaseRepo):
         self.repository = repository
 
     def execute(self):
         return self.repository.execute()
 
 
-class MyRepoWithBuilderAndSeveralDependency(Repo):
+class MyRepoWithBuilderAndSeveralDependency(BaseRepo):
     @staticmethod
     def build():
         return MyRepoWithBuilderAndSeveralDependency(
@@ -38,7 +38,7 @@ class MyRepoWithBuilderAndSeveralDependency(Repo):
             ]
         )
 
-    def __init__(self, repositories: List[Repo]):
+    def __init__(self, repositories: List[BaseRepo]):
         self.repositories = repositories
 
     def execute(self):
@@ -46,6 +46,6 @@ class MyRepoWithBuilderAndSeveralDependency(Repo):
             repo.execute()
 
 
-class InMemoryRepo(Repo):
+class InMemoryRepo(BaseRepo):
     def execute(self):
         print("InMemoryRepo")

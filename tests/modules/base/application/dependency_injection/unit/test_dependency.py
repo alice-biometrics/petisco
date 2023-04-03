@@ -2,9 +2,9 @@ import pytest
 
 from petisco import Builder, Dependency
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
+    BaseRepo,
     InMemoryRepo,
     MyRepo,
-    Repo,
 )
 
 
@@ -76,18 +76,18 @@ class TestDependency:
 
     def should_return_typed_default_instance(self):
 
-        dependency = Dependency(Repo, default_builder=Builder(MyRepo))
+        dependency = Dependency(BaseRepo, default_builder=Builder(MyRepo))
 
         instance = dependency.get_instance()
 
-        assert dependency.type == Repo
+        assert dependency.type == BaseRepo
         assert isinstance(instance, MyRepo)
 
     def should_raise_error_when_default_builder_type_is_not_a_subclass_of_generic_type(
         self,
     ):
 
-        dependency = Dependency(Repo, default_builder=Builder(str))
+        dependency = Dependency(BaseRepo, default_builder=Builder(str))
 
         with pytest.raises(
             TypeError,
@@ -99,10 +99,24 @@ class TestDependency:
     def should_raise_error_when_builder_type_is_not_a_subclass_of_generic_type(self):
 
         dependency = Dependency(
-            Repo,
+            BaseRepo,
             default_builder=Builder(MyRepo),
             builders={"inmemory": Builder(InMemoryRepo), "invalid": Builder(str)},
         )
 
         with pytest.raises(TypeError):
             dependency.get_instance()
+
+    def should_check_default_envar_modifier(self):
+
+        dependency = Dependency(BaseRepo, default_builder=Builder(MyRepo))
+
+        assert dependency.envar_modifier == "BASE_REPO_TYPE"
+
+    def should_raise_error_when_no_default_builder_is_given(self):
+        with pytest.raises(TypeError):
+            Dependency(BaseRepo)
+
+    def should_raise_error_when_no_default_builders_is_given(self):
+        with pytest.raises(TypeError):
+            Dependency(BaseRepo, builders={"inmemory": Builder(InMemoryRepo)})

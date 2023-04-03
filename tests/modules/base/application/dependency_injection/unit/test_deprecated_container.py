@@ -2,11 +2,11 @@ import pytest
 
 from petisco import Builder, Container, Dependency
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
+    BaseRepo,
     InMemoryRepo,
     MyRepo,
     MyRepoWithBuilderAndDependency,
     MyRepoWithBuilderAndSeveralDependency,
-    Repo,
 )
 
 
@@ -27,7 +27,7 @@ class TestDeprecatedContainer:
         self,
     ):
         dependencies = [
-            Dependency(Repo, name="my-alias", default_builder=Builder(MyRepo))
+            Dependency(BaseRepo, name="my-alias", default_builder=Builder(MyRepo))
         ]
 
         Container.set_dependencies(dependencies)
@@ -35,7 +35,7 @@ class TestDeprecatedContainer:
         assert Container.get_available_dependencies() == ["my-alias"]
 
         with pytest.raises(IndexError, match="Invalid dependency"):
-            Container.get(Repo)
+            Container.get(BaseRepo)
 
         instance = Container.get("my-alias")
 
@@ -122,7 +122,7 @@ class TestDeprecatedContainer:
         )
 
         for name in expected_dependencies_names:
-            assert isinstance(Container().get(name), Repo)
+            assert isinstance(Container().get(name), BaseRepo)
 
         Container.clear()
 
@@ -131,8 +131,12 @@ class TestDeprecatedContainer:
         [
             (
                 [
-                    Dependency[Repo](name="my-alias", default_builder=Builder(MyRepo)),
-                    Dependency[Repo](name="my-alias", default_builder=Builder(MyRepo)),
+                    Dependency[BaseRepo](
+                        name="my-alias", default_builder=Builder(MyRepo)
+                    ),
+                    Dependency[BaseRepo](
+                        name="my-alias", default_builder=Builder(MyRepo)
+                    ),
                 ]
             ),
             (

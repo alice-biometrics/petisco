@@ -2,11 +2,11 @@ import pytest
 
 from petisco import Builder, Container, Dependency
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
+    BaseRepo,
     InMemoryRepo,
     MyRepo,
     MyRepoWithBuilderAndDependency,
     MyRepoWithBuilderAndSeveralDependency,
-    Repo,
 )
 
 
@@ -15,13 +15,13 @@ class TestContainer:
     def should_success_when_access_one_dynamic_attr_representing_a_dependency_with_type(
         self,
     ):
-        dependencies = [Dependency(Repo, default_builder=Builder(MyRepo))]
+        dependencies = [Dependency(BaseRepo, default_builder=Builder(MyRepo))]
 
         Container.set_dependencies(dependencies)
 
-        assert Container.get_available_dependencies() == [Repo]
+        assert Container.get_available_dependencies() == [BaseRepo]
 
-        instance = Container.get(Repo)
+        instance = Container.get(BaseRepo)
 
         assert isinstance(instance, MyRepo)
 
@@ -31,7 +31,7 @@ class TestContainer:
         self,
     ):
         dependencies = [
-            Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo))
+            Dependency(BaseRepo, alias="my-alias", default_builder=Builder(MyRepo))
         ]
 
         Container.set_dependencies(dependencies)
@@ -39,7 +39,7 @@ class TestContainer:
         assert Container.get_available_dependencies() == ["my-alias"]
 
         with pytest.raises(IndexError, match="Invalid dependency"):
-            Container.get(Repo)
+            Container.get(BaseRepo)
 
         instance = Container.get("my-alias")
 
@@ -49,15 +49,15 @@ class TestContainer:
 
     def should_success_when_define_two_dependencies_with_the_same_base_type(self):
         dependencies = [
-            Dependency(Repo, default_builder=Builder(MyRepo)),
-            Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo)),
+            Dependency(BaseRepo, default_builder=Builder(MyRepo)),
+            Dependency(BaseRepo, alias="my-alias", default_builder=Builder(MyRepo)),
         ]
 
         Container.set_dependencies(dependencies)
 
-        assert Container.get_available_dependencies() == [Repo, "my-alias"]
+        assert Container.get_available_dependencies() == [BaseRepo, "my-alias"]
 
-        instance_base_type = Container.get(Repo)
+        instance_base_type = Container.get(BaseRepo)
         instance_with_alias = Container.get("my-alias")
 
         assert isinstance(instance_base_type, MyRepo)
@@ -70,14 +70,18 @@ class TestContainer:
         [
             (
                 [
-                    Dependency(Repo, default_builder=Builder(MyRepo)),
-                    Dependency(Repo, default_builder=Builder(MyRepo)),
+                    Dependency(BaseRepo, default_builder=Builder(MyRepo)),
+                    Dependency(BaseRepo, default_builder=Builder(MyRepo)),
                 ]
             ),
             (
                 [
-                    Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo)),
-                    Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo)),
+                    Dependency(
+                        BaseRepo, alias="my-alias", default_builder=Builder(MyRepo)
+                    ),
+                    Dependency(
+                        BaseRepo, alias="my-alias", default_builder=Builder(MyRepo)
+                    ),
                 ]
             ),
             (
@@ -96,8 +100,8 @@ class TestContainer:
 
     def should_raise_exception_if_repeat_alias(self):
         dependencies = [
-            Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo)),
-            Dependency(Repo, alias="my-alias", default_builder=Builder(MyRepo)),
+            Dependency(BaseRepo, alias="my-alias", default_builder=Builder(MyRepo)),
+            Dependency(BaseRepo, alias="my-alias", default_builder=Builder(MyRepo)),
         ]
 
         with pytest.raises(IndexError):
@@ -109,15 +113,15 @@ class TestContainer:
         "dependencies,expected_available_dependencies",
         [
             ([], []),
-            ([Dependency(Repo, default_builder=Builder(MyRepo))], [Repo]),
+            ([Dependency(BaseRepo, default_builder=Builder(MyRepo))], [BaseRepo]),
             (
                 [
-                    Dependency(Repo, default_builder=Builder(MyRepo)),
+                    Dependency(BaseRepo, default_builder=Builder(MyRepo)),
                     Dependency(
                         alias="inmemory_repo", default_builder=Builder(InMemoryRepo)
                     ),
                 ],
-                [Repo, "inmemory_repo"],
+                [BaseRepo, "inmemory_repo"],
             ),
         ],
     )
@@ -184,6 +188,6 @@ class TestContainer:
         )
 
         for name in expected_dependencies_names:
-            assert isinstance(Container().get(name), Repo)
+            assert isinstance(Container().get(name), BaseRepo)
 
         Container.clear()

@@ -2,11 +2,11 @@ import pytest
 
 from petisco import Builder, Dependency, Injector
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
+    BaseRepo,
     InMemoryRepo,
     MyRepo,
     MyRepoWithBuilderAndDependency,
     MyRepoWithBuilderAndSeveralDependency,
-    Repo,
 )
 
 
@@ -102,6 +102,6 @@ class TestDeprecatedInjector:
         )
 
         for name in expected_dependencies_names:
-            assert isinstance(Injector().get(name), Repo)
+            assert isinstance(Injector().get(name), BaseRepo)
 
         Injector.clear()
