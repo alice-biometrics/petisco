@@ -51,7 +51,7 @@ setup(
             "sqlalchemy_utils==0.39.0",
             "PyMySQL==1.0.2",
         ],
-        "redis": ["redis==4.5.1"],
+        "redis": ["redis<5.0.0,>=4.5.3"],
         "rabbitmq": ["pika==1.3.1"],
         "slack": ["slack_sdk==3.20.0"],
         "elastic": ["elasticsearch<8.0.0,>=7.13.1", "elastic-apm==6.15.0"],
