@@ -71,7 +71,7 @@ class Controller(metaclass=MetaController):
         return ResultMapper(
             error_map=cast(ErrorMap, getattr(config, "error_map", None)),
             success_handler=getattr(config, "success_handler", lambda result: result),
-            failure_handler=default_failure_handler,
+            failure_handler=getattr(config, "failure_handler", default_failure_handler),
         )
 
     @abstractmethod

@@ -47,15 +47,15 @@ setup(
     zip_safe=False,
     extras_require={
         "sqlalchemy": [
-            "sqlalchemy==1.4.46",
-            "sqlalchemy_utils==0.39.0",
-            "PyMySQL==1.0.2",
+            "sqlalchemy==1.4.47",
+            "sqlalchemy_utils==0.40.0",
+            "PyMySQL==1.0.3",
         ],
-        "redis": ["redis==4.5.1"],
+        "redis": ["redis<5.0.0,>=4.5.3"],
         "rabbitmq": ["pika==1.3.1"],
-        "slack": ["slack_sdk==3.20.0"],
-        "elastic": ["elasticsearch<8.0.0,>=7.13.1", "elastic-apm==6.15.0"],
-        "elastic-apm": ["elastic-apm==6.15.0"],
-        "fastapi": ["fastapi==0.92.0"],
+        "slack": ["slack_sdk<4.0.0,>=3.20.2"],
+        "elastic": ["elasticsearch<8.0.0,>=7.13.1", "elastic-apm<7.0.0,>=6.15.1"],
+        "elastic-apm": ["elastic-apm<7.0.0,>=6.15.1"],
+        "fastapi": ["fastapi<1.0.0,>=0.95.0"],
     },
 )
