@@ -36,7 +36,7 @@ class Container(Generic[T], metaclass=Singleton):
 
     @staticmethod
     def set_dependencies(
-        dependencies: list[Dependency] | None = None, overwrite: bool = True
+        dependencies: list[Dependency] | None = None, overwrite: bool = False
     ) -> None:
         """
         Set dependencies from a list of them.
@@ -53,7 +53,7 @@ class Container(Generic[T], metaclass=Singleton):
         return list(Container().dependencies.keys())
 
     def _set_dependencies(
-        self, input_dependencies: list[Dependency], overwrite: bool = True
+        self, input_dependencies: list[Dependency], overwrite: bool = False
     ) -> None:
         for dependency in input_dependencies:
 

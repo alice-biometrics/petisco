@@ -119,6 +119,20 @@ class TestApplication:
         )
 
     @testing_with_empty_container
+    def should_raise_an_exception_when_construct_with_a_existent_dependency(self):
+        def dependencies_provider() -> List[Dependency]:
+            return [DependencyMother.domain_event_bus()]
+
+        with pytest.raises(IndexError, match="Container: dependency"):
+            Application(
+                name="service",
+                version="1.0.0",
+                organization="acme",
+                dependencies_provider=dependencies_provider,
+                deployed_at=datetime.utcnow(),
+            ).configure()
+
+    @testing_with_empty_container
     def should_construct_with_a_dependency_overwrite(self):
         def dependencies_provider() -> List[Dependency]:
             return [DependencyMother.domain_event_bus()]
@@ -129,7 +143,7 @@ class TestApplication:
             organization="acme",
             dependencies_provider=dependencies_provider,
             deployed_at=datetime.utcnow(),
-        ).configure()
+        ).configure(overwrite_dependencies=True)
 
         assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
 
@@ -178,7 +192,7 @@ class TestApplication:
             dependencies_provider=dependencies_provider,
             deployed_at=datetime.utcnow(),
         )
-        application.configure()
+        application.configure(overwrite_dependencies=True)
 
         class MyDomainEvent(DomainEvent):
             pass

@@ -39,7 +39,9 @@ class Application(BaseSettings):
         )
         super().__init__(**data)
 
-    def configure(self, testing: bool = False) -> None:
+    def configure(
+        self, testing: bool = False, overwrite_dependencies: bool = False
+    ) -> None:
 
         before_dependencies_configurers = [
             configurer
@@ -57,7 +59,7 @@ class Application(BaseSettings):
             configurer.execute(testing)
 
         logger.info("Application: setting dependencies...")
-        Container.set_dependencies(self.get_dependencies())
+        Container.set_dependencies(self.get_dependencies(), overwrite_dependencies)
 
         after_dependencies_configurers = [
             configurer
