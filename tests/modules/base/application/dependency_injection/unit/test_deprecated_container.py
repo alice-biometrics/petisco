@@ -149,6 +149,6 @@ class TestDeprecatedContainer:
     )
     def should_raise_exception_if_there_is_duplicated_dependencies(self, dependencies):
         with pytest.raises(IndexError):
-            Container.set_dependencies(dependencies)
+            Container.set_dependencies(dependencies, overwrite=False)
 
         Container.clear()

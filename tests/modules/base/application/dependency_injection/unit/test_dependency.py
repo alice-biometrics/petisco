@@ -14,9 +14,8 @@ class TestDependency:
 
         dependency = Dependency(
             name="repo",
-            default_builder=Builder(MyRepo),
             envar_modifier="REPOSITORY",
-            builders={"inmemory": Builder(InMemoryRepo)},
+            builders={"default": Builder(MyRepo), "inmemory": Builder(InMemoryRepo)},
         )
         assert isinstance(dependency.get_instance(), MyRepo)
 
@@ -28,9 +27,8 @@ class TestDependency:
         monkeypatch.setenv("REPOSITORY", "inmemory")
         dependency = Dependency(
             name="repo",
-            default_builder=Builder(MyRepo),
             envar_modifier="REPOSITORY",
-            builders={"inmemory": Builder(InMemoryRepo)},
+            builders={"default": Builder(MyRepo), "inmemory": Builder(InMemoryRepo)},
         )
 
         assert isinstance(dependency.get_instance(), InMemoryRepo)
@@ -45,9 +43,8 @@ class TestDependency:
         monkeypatch.setenv("REPOSITORY", "other")
         dependency = Dependency(
             name="repo",
-            default_builder=Builder(MyRepo),
             envar_modifier="REPOSITORY",
-            builders={"inmemory": Builder(InMemoryRepo)},
+            builders={"default": Builder(MyRepo), "inmemory": Builder(InMemoryRepo)},
         )
 
         assert isinstance(dependency.get_instance(), MyRepo)
@@ -56,7 +53,7 @@ class TestDependency:
 
     def should_return_default_when_optional_parameters_are_not_used(self):
 
-        dependency = Dependency(name="repo", default_builder=Builder(MyRepo))
+        dependency = Dependency(name="repo", builders={"default": Builder(MyRepo)})
 
         assert isinstance(dependency.get_instance(), MyRepo)
 
@@ -67,7 +64,9 @@ class TestDependency:
 
         monkeypatch.setenv("REPOSITORY", "other")
         dependency = Dependency(
-            name="repo", envar_modifier="REPOSITORY", default_builder=Builder(MyRepo)
+            name="repo",
+            envar_modifier="REPOSITORY",
+            builders={"default": Builder(MyRepo)},
         )
 
         assert isinstance(dependency.get_instance(), MyRepo)
@@ -76,7 +75,7 @@ class TestDependency:
 
     def should_return_typed_default_instance(self):
 
-        dependency = Dependency(BaseRepo, default_builder=Builder(MyRepo))
+        dependency = Dependency(BaseRepo, builders={"default": Builder(MyRepo)})
 
         instance = dependency.get_instance()
 
@@ -87,21 +86,20 @@ class TestDependency:
         self,
     ):
 
-        dependency = Dependency(BaseRepo, default_builder=Builder(str))
+        dependency = Dependency(BaseRepo, builders={"default": Builder(str)})
 
-        with pytest.raises(
-            TypeError,
-            match="Dependency: The class str from default_builder is not a subclass from generic type given by "
-            "Dependency",
-        ):
+        with pytest.raises(TypeError):
             dependency.get_instance()
 
     def should_raise_error_when_builder_type_is_not_a_subclass_of_generic_type(self):
 
         dependency = Dependency(
             BaseRepo,
-            default_builder=Builder(MyRepo),
-            builders={"inmemory": Builder(InMemoryRepo), "invalid": Builder(str)},
+            builders={
+                "default": Builder(MyRepo),
+                "inmemory": Builder(InMemoryRepo),
+                "invalid": Builder(str),
+            },
         )
 
         with pytest.raises(TypeError):
@@ -109,7 +107,7 @@ class TestDependency:
 
     def should_check_default_envar_modifier(self):
 
-        dependency = Dependency(BaseRepo, default_builder=Builder(MyRepo))
+        dependency = Dependency(BaseRepo, builders={"default": Builder(MyRepo)})
 
         assert dependency.envar_modifier == "BASE_REPO_TYPE"
 

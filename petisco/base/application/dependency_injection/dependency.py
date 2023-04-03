@@ -52,19 +52,25 @@ class Dependency(Generic[T]):
 
     def _set_default_builders(self):
         if not self.builders:
-            self.builders = {"default": self.default_builder}
+            if self.default_builder:
+                self.builders = {"default": self.default_builder}
         else:
-            self.builders["default"] = self.default_builder
+            if self.default_builder:
+                self.builders["default"] = self.default_builder
 
-        if self.builders.get("default") is None:
+        if self.builders is None or self.builders.get("default") is None:
             raise TypeError(
-                f"Dependency: Define a builder for {self.type.__name__} with `default` key. This is mandatory."
+                f"Dependency: Define a builder for {self.type.__name__} with `default` key. This is mandatory. Given builders={self.builders}"
             )
 
     def _set_envar_modifier(self, envar_modifier: str | None = None):
 
         if envar_modifier is None and self.type:
-            return re.sub(r"(?<!^)(?=[A-Z])", "_", self.type.__name__).upper() + "_TYPE"
+            return (
+                # "PETISCO_" + # TODO this will break compatibility (waiting for v2)
+                re.sub(r"(?<!^)(?=[A-Z])", "_", self.type.__name__).upper()
+                + "_TYPE"
+            )
 
         return envar_modifier
 
@@ -72,10 +78,10 @@ class Dependency(Generic[T]):
         if self.type:
 
             # TODO: simplify as default_builder will be deprecated
-            if not issubclass(self.default_builder.klass, self.type):
-                raise TypeError(
-                    f"Dependency: The class {self.default_builder.klass.__name__} from default_builder is not a subclass from generic type given by Dependency[{self.type.__name__}]"
-                )
+            # if not issubclass(self.default_builder.klass, self.type):
+            #     raise TypeError(
+            #         f"Dependency: The class {self.default_builder.klass.__name__} from default_builder is not a subclass from generic type given by Dependency[{self.type.__name__}]"
+            #     )
 
             if self.builders is None:
                 return
@@ -93,22 +99,25 @@ class Dependency(Generic[T]):
 
         self._validate()
 
-        if not self.envar_modifier:
-            builder = self.builders.get("default")
-            if not builder:
-                raise TypeError(
-                    f"Dependency: Define a default builder for {self.type.__name__}. This is mandatory."
-                )
+        modifier = os.getenv(self.envar_modifier) if self.envar_modifier else None
+        if not modifier:
+            builder = self._get_default_builder()
             instance = builder.build()
             return instance
-
-        modifier = os.getenv(self.envar_modifier)
-        if not modifier or not self.builders or modifier not in self.builders:
-            return self.default_builder.build()
         else:
             builder = self.builders.get(modifier)
+            if not builder:
+                builder = self._get_default_builder()
             assert isinstance(
                 builder, Builder
             ), "Oh no! Dependency builder is corrupted!"
             instance = builder.build()
             return instance
+
+    def _get_default_builder(self) -> Builder:
+        builder = self.builders.get("default")
+        if not builder:
+            raise TypeError(
+                f"Dependency: Define a default builder for {self.type.__name__}. This is mandatory."
+            )
+        return builder

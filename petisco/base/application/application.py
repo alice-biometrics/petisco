@@ -82,7 +82,7 @@ class Application(BaseSettings):
             get_default_message_dependencies() + get_default_notifier_dependencies()
         )
         default_dependencies_dict = {
-            dependency.name: dependency for dependency in default_dependencies
+            dependency.type: dependency for dependency in default_dependencies
         }
         provided_dependencies = self.dependencies_provider()
         given_dependencies_dict = {
@@ -99,7 +99,7 @@ class Application(BaseSettings):
         info["deployed_at"] = self.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
 
         info["dependencies"] = {
-            dependency.name: dependency.get_instance().info()
+            dependency.type.__name__: dependency.get_instance().info()
             for dependency in self.get_dependencies()
         }
         del info["dependencies_provider"]
@@ -111,16 +111,16 @@ class Application(BaseSettings):
 
     def publish_domain_event(self, domain_event: DomainEvent) -> None:
         try:
-            domain_event_bus: DomainEventBus = Container.get("domain_event_bus")
+            domain_event_bus = Container.get(DomainEventBus)
             domain_event_bus.publish(domain_event)
-        except:  # noqa
+        except Exception as exc:  # noqa
             raise TypeError(
-                'To publish an event to the domain event bus, please add a dependency with name "domain_event_bus" on Application dependencies'
+                f"To publish an event to the domain event bus, please add a dependency with type `DomainEventBus` on Application dependencies. {str(exc)}"
             )
 
     def notify(self, message: NotifierMessage) -> None:
         try:
-            notifier: Notifier = Container.get("notifier")
+            notifier = Container.get(Notifier)
             notifier.publish(message)
         except:  # noqa
             raise TypeError(
