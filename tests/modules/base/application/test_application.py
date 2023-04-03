@@ -33,11 +33,11 @@ def testing_with_empty_container(func):
 
 
 DEFAULT_AVAILABLE_DEPENDENCIES = [
-    DomainEventBus,
-    CommandBus,
-    MessageConfigurer,
-    MessageConsumer,
-    Notifier,
+    DomainEventBus.__name__,
+    CommandBus.__name__,
+    MessageConfigurer.__name__,
+    MessageConsumer.__name__,
+    Notifier.__name__,
 ]
 
 

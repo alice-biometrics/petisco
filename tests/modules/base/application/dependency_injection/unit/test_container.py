@@ -19,7 +19,7 @@ class TestContainer:
 
         Container.set_dependencies(dependencies)
 
-        assert Container.get_available_dependencies() == [BaseRepo]
+        assert Container.get_available_dependencies() == [BaseRepo.__name__]
 
         instance = Container.get(BaseRepo)
 
@@ -59,7 +59,7 @@ class TestContainer:
 
         Container.set_dependencies(dependencies)
 
-        assert Container.get_available_dependencies() == [BaseRepo, "my-alias"]
+        assert Container.get_available_dependencies() == [BaseRepo.__name__, "my-alias"]
 
         instance_base_type = Container.get(BaseRepo)
         instance_with_alias = Container.get(BaseRepo, alias="my-alias")
@@ -127,7 +127,10 @@ class TestContainer:
         "dependencies,expected_available_dependencies",
         [
             ([], []),
-            ([Dependency(BaseRepo, builders={"default": Builder(MyRepo)})], [BaseRepo]),
+            (
+                [Dependency(BaseRepo, builders={"default": Builder(MyRepo)})],
+                [BaseRepo.__name__],
+            ),
             (
                 [
                     Dependency(BaseRepo, builders={"default": Builder(MyRepo)}),
@@ -135,7 +138,7 @@ class TestContainer:
                         alias="inmemory_repo", default_builder=Builder(InMemoryRepo)
                     ),
                 ],
-                [BaseRepo, "inmemory_repo"],
+                [BaseRepo.__name__, "inmemory_repo"],
             ),
         ],
     )

@@ -50,7 +50,8 @@ class Container(Generic[T], metaclass=Singleton):
         """
         Returns the names (keys) of set dependencies.
         """
-        return list(Container().dependencies.keys())
+        keys = list(Container().dependencies.keys())
+        return [key if isinstance(key, str) else key.__name__ for key in keys]
 
     def _set_dependencies(
         self, input_dependencies: list[Dependency], overwrite: bool = False
