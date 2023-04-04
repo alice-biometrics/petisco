@@ -7,12 +7,19 @@ import pytest
 from petisco import (
     Application,
     ApplicationConfigurer,
+    Builder,
     Container,
     Dependency,
     DomainEvent,
     NotifierMessage,
 )
 from petisco.base.application.application_info import ApplicationInfo
+from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
+    BaseRepo,
+    MyOtherRepo,
+    MyRepo,
+    OtherBaseRepo,
+)
 from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 
@@ -160,7 +167,7 @@ class TestApplication:
         ).configure()
 
     @testing_with_empty_container
-    def should_raise_an_exception_when_configurer_with_an_exeption(self):
+    def should_raise_an_exception_when_a_configurer_raise_an_exception(self):
         class MyApplicationConfigurer(ApplicationConfigurer):
             def execute(self, testing: bool = False) -> NoReturn:
                 raise RuntimeError("Our Error")
@@ -215,3 +222,30 @@ class TestApplication:
             },
         )
         application.notify(message)
+
+    @testing_with_empty_container
+    def should_construct_and_configure_with_two_provided_dependencies(self):
+
+        deployed_at = datetime(year=2021, month=10, day=25, hour=11, minute=11)
+
+        def dependencies_provider() -> list[Dependency]:
+            return [
+                Dependency(BaseRepo, builders={"default": Builder(MyRepo)}),
+                Dependency(OtherBaseRepo, builders={"default": Builder(MyOtherRepo)}),
+            ]
+
+        application = Application(
+            name="service",
+            version="1.0.0",
+            organization="acme",
+            deployed_at=deployed_at,
+            dependencies_provider=dependencies_provider,
+        )
+        application.configure()
+
+        assert (
+            DEFAULT_AVAILABLE_DEPENDENCIES + ["BaseRepo", "OtherBaseRepo"]
+            == Container.get_available_dependencies()
+        )
+        assert issubclass(type(Container.get(BaseRepo)), BaseRepo)
+        assert issubclass(type(Container.get(OtherBaseRepo)), OtherBaseRepo)
