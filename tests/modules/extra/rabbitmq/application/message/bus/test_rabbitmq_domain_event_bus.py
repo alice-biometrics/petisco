@@ -71,7 +71,7 @@ class TestRabbitMqDomainEventBus:
         with mock.patch.object(
             BlockingChannel, "basic_publish"
         ) as mock_channel_publish:
-            bus.publish_list(domain_event_list)
+            bus.publish(domain_event_list)
 
         assert mock_channel_publish.call_count == events_number
 
@@ -237,9 +237,9 @@ class TestRabbitMqDomainEventBus:
         with patch.object(
             BlockingChannel, "basic_publish", side_effect=Exception()
         ) as mock_channel:
-            bus.publish_list([self.domain_event])
+            bus.publish([self.domain_event])
 
-            mock_fallback_domain_event_bus.publish_list.assert_called_once()
+            mock_fallback_domain_event_bus.publish.assert_called_once()
             mock_channel.assert_called_once()
 
         bus.configurer.clear()
@@ -258,9 +258,9 @@ class TestRabbitMqDomainEventBus:
             "basic_publish",
             side_effect=ChannelClosedByBroker(reply_code=1, reply_text="dummy"),
         ) as mock_channel:
-            bus.publish_list([self.domain_event])
+            bus.publish([self.domain_event])
 
-            mock_fallback_domain_event_bus.publish_list.assert_called_once()
+            mock_fallback_domain_event_bus.publish.assert_called_once()
             assert mock_channel.call_count == 2
             assert bus.already_configured is True
 
@@ -290,7 +290,7 @@ class TestRabbitMqDomainEventBus:
             BlockingChannel, "basic_publish", side_effect=Exception()
         ) as mock_channel:
             with pytest.raises(Exception):
-                bus.publish_list([self.domain_event])
+                bus.publish([self.domain_event])
 
             mock_channel.assert_called_once()
 

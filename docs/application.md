@@ -820,6 +820,7 @@ async def create_task(task: TaskIn):
     
 ```
 
+
 ## Subscriber
 
 A `Subscriber` is similar to `Controller`, use it to define and configure inputs and outputs or your entry point.

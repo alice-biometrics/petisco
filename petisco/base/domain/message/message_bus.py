@@ -4,6 +4,9 @@ import copy
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Generic, TypeVar
 
+from deprecation import deprecated
+
+from petisco import __version__
 from petisco.base.domain.message.message import Message
 
 TypeMessage = TypeVar("TypeMessage", bound=Message)
@@ -39,15 +42,20 @@ class MessageBus(ABC, Generic[TypeMessage]):
         return configured_meta
 
     @abstractmethod
-    def publish(self, message: TypeMessage) -> None:
+    def publish(self, message: TypeMessage | list[TypeMessage]) -> None:
         """
-        Publish one message
+        Publish a message or a list of messages
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def retry_publish_only_on_store_queue(self, message: TypeMessage) -> None:
-        raise NotImplementedError
+    def _check_input(
+        self, message: TypeMessage | list[TypeMessage]
+    ) -> list[TypeMessage]:  # noqa
+        if isinstance(message, list):
+            messages = message
+        else:
+            messages = [message]
+        return messages
 
     @abstractmethod
     def close(self) -> None:
@@ -57,12 +65,12 @@ class MessageBus(ABC, Generic[TypeMessage]):
         if not message or not issubclass(message.__class__, Message):
             raise TypeError("MessageBus only publishes Message objects")
 
+    @deprecated(
+        deprecated_in="1.14.0",
+        removed_in="2.0.0",
+        current_version=__version__,
+        details="Use publish function instead",
+    )
     def publish_list(self, messages: list[TypeMessage]) -> None:
         for message in messages:
             self.publish(message)
-
-    def retry_publish_list_only_on_store_queue(
-        self, messages: list[TypeMessage]
-    ) -> None:
-        for message in messages:
-            self.retry_publish_only_on_store_queue(message)

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from redis.client import Redis
 
@@ -16,14 +16,9 @@ class RedisDomainEventBus(RedisMessageBus):
     def __init__(self, organization: str, service: str, redis_database: Redis):
         super().__init__(organization, service, redis_database, "events")
 
-    def publish(self, domain_event: DomainEvent) -> None:
+    def publish(self, domain_event: Union[DomainEvent, List[DomainEvent]]) -> None:
         """
-        Publish a DomainEvent
+        Publish a DomainEvent or a list of DomainEvent
         """
-        self.save(domain_event)
-
-    def publish_list(self, domain_events: List[DomainEvent]) -> None:
-        """
-        Publish a list of DomainEvent
-        """
-        self.save_list(domain_events)
+        domain_events = self._check_input(domain_event)
+        self.save(domain_events)

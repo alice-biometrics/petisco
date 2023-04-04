@@ -55,7 +55,7 @@ class TestRedisDomainEventBus:
 
     def should_publish_list_several_domain_events(self):
         bus = RedisDomainEventBusMother.default(self.redis_database)
-        bus.publish_list([self.domain_event, self.domain_event, self.domain_event])
+        bus.publish([self.domain_event, self.domain_event, self.domain_event])
 
         self._assert_numer_of_domain_events(bus, 3)
 
@@ -67,6 +67,6 @@ class TestRedisDomainEventBus:
 
     def should_publish_list_several_domain_events_with_info_id(self):
         bus = RedisDomainEventBusMother.with_info_id(self.redis_database)
-        bus.publish_list([self.domain_event, self.domain_event, self.domain_event])
+        bus.publish([self.domain_event, self.domain_event, self.domain_event])
 
         self._assert_numer_of_domain_events(bus, 3)
