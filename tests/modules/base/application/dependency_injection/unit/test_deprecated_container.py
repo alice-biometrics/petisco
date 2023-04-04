@@ -131,12 +131,8 @@ class TestDeprecatedContainer:
         [
             (
                 [
-                    Dependency[BaseRepo](
-                        name="my-alias", default_builder=Builder(MyRepo)
-                    ),
-                    Dependency[BaseRepo](
-                        name="my-alias", default_builder=Builder(MyRepo)
-                    ),
+                    Dependency(name="my-alias", default_builder=Builder(MyRepo)),
+                    Dependency(name="my-alias", default_builder=Builder(MyRepo)),
                 ]
             ),
             (

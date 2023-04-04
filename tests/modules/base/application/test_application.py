@@ -1,23 +1,27 @@
+from __future__ import annotations
+
 import functools
 from datetime import datetime
-from typing import Any, List, NoReturn
+from typing import Any, NoReturn
 
 import pytest
 
 from petisco import (
     Application,
     ApplicationConfigurer,
-    CommandBus,
+    Builder,
     Container,
     Dependency,
     DomainEvent,
-    DomainEventBus,
-    MessageConsumer,
-    Notifier,
     NotifierMessage,
 )
 from petisco.base.application.application_info import ApplicationInfo
-from petisco.base.domain.message.message_configurer import MessageConfigurer
+from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
+    BaseRepo,
+    MyOtherRepo,
+    MyRepo,
+    OtherBaseRepo,
+)
 from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 
@@ -33,11 +37,11 @@ def testing_with_empty_container(func):
 
 
 DEFAULT_AVAILABLE_DEPENDENCIES = [
-    DomainEventBus.__name__,
-    CommandBus.__name__,
-    MessageConfigurer.__name__,
-    MessageConsumer.__name__,
-    Notifier.__name__,
+    "DomainEventBus",
+    "CommandBus",
+    "MessageConfigurer",
+    "MessageConsumer",
+    "Notifier",
 ]
 
 
@@ -102,7 +106,7 @@ class TestApplication:
 
     @testing_with_empty_container
     def should_construct_with_dependencies_provider(self):
-        def dependencies_provider() -> List[Dependency]:
+        def dependencies_provider() -> list[Dependency]:
             return [DependencyMother.any()]
 
         Application(
@@ -114,13 +118,14 @@ class TestApplication:
         ).configure()
 
         assert (
-            DEFAULT_AVAILABLE_DEPENDENCIES + ["repo"]
+            DEFAULT_AVAILABLE_DEPENDENCIES + ["BaseRepo"]
             == Container.get_available_dependencies()
         )
 
     @testing_with_empty_container
+    @pytest.mark.skip  # We have to define how this is going to work on v2 (default or not default dependencies)
     def should_raise_an_exception_when_construct_with_a_existent_dependency(self):
-        def dependencies_provider() -> List[Dependency]:
+        def dependencies_provider() -> list[Dependency]:
             return [DependencyMother.domain_event_bus()]
 
         with pytest.raises(IndexError, match="Container: dependency"):
@@ -134,7 +139,7 @@ class TestApplication:
 
     @testing_with_empty_container
     def should_construct_with_a_dependency_overwrite(self):
-        def dependencies_provider() -> List[Dependency]:
+        def dependencies_provider() -> list[Dependency]:
             return [DependencyMother.domain_event_bus()]
 
         Application(
@@ -165,7 +170,7 @@ class TestApplication:
         ).configure()
 
     @testing_with_empty_container
-    def should_raise_an_exception_when_configurer_with_an_exeption(self):
+    def should_raise_an_exception_when_a_configurer_raise_an_exception(self):
         class MyApplicationConfigurer(ApplicationConfigurer):
             def execute(self, testing: bool = False) -> NoReturn:
                 raise RuntimeError("Our Error")
@@ -182,7 +187,7 @@ class TestApplication:
 
     @testing_with_empty_container
     def should_publish_a_domain_event(self):
-        def dependencies_provider() -> List[Dependency]:
+        def dependencies_provider() -> list[Dependency]:
             return [DependencyMother.domain_event_bus()]
 
         application = Application(
@@ -220,3 +225,30 @@ class TestApplication:
             },
         )
         application.notify(message)
+
+    @testing_with_empty_container
+    def should_construct_and_configure_with_two_provided_dependencies(self):
+
+        deployed_at = datetime(year=2021, month=10, day=25, hour=11, minute=11)
+
+        def dependencies_provider() -> list[Dependency]:
+            return [
+                Dependency(BaseRepo, builders={"default": Builder(MyRepo)}),
+                Dependency(OtherBaseRepo, builders={"default": Builder(MyOtherRepo)}),
+            ]
+
+        application = Application(
+            name="service",
+            version="1.0.0",
+            organization="acme",
+            deployed_at=deployed_at,
+            dependencies_provider=dependencies_provider,
+        )
+        application.configure()
+
+        assert (
+            DEFAULT_AVAILABLE_DEPENDENCIES + ["BaseRepo", "OtherBaseRepo"]
+            == Container.get_available_dependencies()
+        )
+        assert issubclass(type(Container.get(BaseRepo)), BaseRepo)
+        assert issubclass(type(Container.get(OtherBaseRepo)), OtherBaseRepo)

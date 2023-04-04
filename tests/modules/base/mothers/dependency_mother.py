@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any
 
 from meiga import Result
 
@@ -8,6 +8,9 @@ from petisco import (
     DomainEventBus,
     NotImplementedDomainEventBus,
     Repository,
+)
+from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
+    BaseRepo,
 )
 
 
@@ -28,14 +31,11 @@ class MyRepo(Repository):
 class DependencyMother:
     @staticmethod
     def any() -> Dependency:
-        return Dependency(name="repo", builders={"default": Builder(MyRepo)})
+        return Dependency(BaseRepo, builders={"default": Builder(MyRepo)})
 
     @staticmethod
-    def several() -> List[Dependency]:
-        return [
-            Dependency(name="repo", builders={"default": Builder(MyRepo)}),
-            # Dependency(name="app_service", default_instance=MyRepo())
-        ]
+    def legacy() -> Dependency:
+        return Dependency(name="repo", builders={"default": Builder(MyRepo)})
 
     @staticmethod
     def domain_event_bus() -> Dependency:

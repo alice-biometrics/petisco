@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 from meiga import Failure, isSuccess
 
-from petisco import CriticalError
+from petisco import Builder, CriticalError, Dependency, Notifier
 from petisco.base.application.application_info import ApplicationInfo
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
@@ -12,8 +12,6 @@ from petisco.base.application.notifier.not_implemented_notifier import (
 )
 from petisco.base.domain.errors.defaults.not_found import NotFound
 from petisco.base.domain.errors.unknown_error import UnknownError
-from petisco.base.misc.builder import Builder
-from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 
 @pytest.mark.unit
@@ -21,10 +19,10 @@ class TestNotifierMiddleware:
     notifier_middleware: NotifierMiddleware
 
     def setup_method(self):
-        notifier_dependency = DependencyMother.create(
-            name="notifier", builder=Builder(NotImplementedNotifier)
+        notifier_dependency = Dependency(
+            Notifier, builders={"default": Builder(NotImplementedNotifier)}
         )
-        Container.set_dependencies([notifier_dependency])
+        Container.set_dependencies([notifier_dependency], overwrite=True)
 
         self.notifier_middleware = NotifierMiddleware()
         self.notifier_middleware.set_data(
