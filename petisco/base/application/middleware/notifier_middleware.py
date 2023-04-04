@@ -4,6 +4,7 @@ from petisco import __version__
 from petisco.base.application.application_info import ApplicationInfo
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.middleware.middleware import Middleware
+from petisco.base.application.notifier.notifier import Notifier
 from petisco.base.application.notifier.notifier_exception_message import (
     NotifierExceptionMessage,
 )
@@ -16,11 +17,11 @@ class NotifierMiddleware(Middleware):
     """
     Middleware Implementation to notify critical and unknown errors.
 
-    This Middleware will check result and notify if necessary using Container.get("notifier") set dependency.
+    This Middleware will check result and notify if necessary using Container.get(Notifier) set dependency.
     """
 
     def __init__(self) -> None:
-        self.notifier = Container.get("notifier")
+        self.notifier = Container.get(Notifier)
 
     def before(self) -> None:
         pass

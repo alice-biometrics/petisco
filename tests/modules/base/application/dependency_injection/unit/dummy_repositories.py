@@ -10,7 +10,18 @@ class BaseRepo(ABC):
         raise NotImplementedError
 
 
+class OtherBaseRepo(ABC):
+    @abstractmethod
+    def execute(self):
+        raise NotImplementedError
+
+
 class MyRepo(BaseRepo):
+    def execute(self):
+        print("MyRepo")
+
+
+class MyOtherRepo(OtherBaseRepo):
     def execute(self):
         print("MyRepo")
 
