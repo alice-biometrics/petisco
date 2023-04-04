@@ -17,7 +17,7 @@ class NotifierMiddleware(Middleware):
     """
     Middleware Implementation to notify critical and unknown errors.
 
-    This Middleware will check result and notify if necessary using Container.get("notifier") set dependency.
+    This Middleware will check result and notify if necessary using Container.get(Notifier) set dependency.
     """
 
     def __init__(self) -> None:

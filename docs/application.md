@@ -400,9 +400,9 @@ the application use cases given a result.
 
 ```python
 from meiga import BoolResult
-from petisco import Controller, Container
+from petisco import Controller, Container, DomainEventBus
 from pydantic import BaseModel, constr
-from my_app import TaskCreator
+from my_app import TaskCreator, TaskRepository
 
 class Task(BaseModel):
     name: constr(max_length=50)
@@ -412,8 +412,8 @@ class CreateTaskController(Controller):
     def execute(self, task: Task) -> BoolResult:
         # Instantiate the use case and inject dependencies from Container
         task_creator = TaskCreator(
-            repository=Container.get("task_repository"),
-            domain_event_bus=Container.get("domain_event_bus"),
+            repository=Container.get(TaskRepository),
+            domain_event_bus=Container.get(DomainEventBus),
         )
         return task_creator.execute(task=task)    
 
@@ -439,7 +439,7 @@ if __name__ == '__main__':
     from pydantic import BaseModel
     from pydantic.types import constr
     from petisco import CommandSubscriber, Command, Container, CommandBus
-    from my_app import CreateTask, TaskCreator
+    from my_app import CreateTask, TaskCreator, TaskRepository
     
     app = FastAPI()
     
@@ -452,7 +452,7 @@ if __name__ == '__main__':
     # Controller
     class CreateTaskController(FastAPIController):
         def execute(self, task: Task) -> BoolResult:
-            command_bus: CommandBus = Container.get("command_bus")
+            command_bus: CommandBus = Container.get(CommandBus)
             create_task = CreateTask.from_task(task)
             command_bus.dispatch(create_task)
             return isSuccess
@@ -467,9 +467,8 @@ if __name__ == '__main__':
         def handle(self, command: Command) -> BoolResult:
             task = Task.from_command(command)
             task_creator = TaskCreator(
-                repository=Container.get("task_repository"),
-                domain_event_bus=self.domain_event_bus,
-                # Use available domain_event_bus in CommandSubscriber instead of Container.get("domain_event_bus")
+                repository=Container.get(TaskRepository),
+                domain_event_bus=self.domain_event_bus, # (1)
             )
             return task_creator.execute(task=task) 
     
@@ -477,9 +476,9 @@ if __name__ == '__main__':
     @app.post("/task")
     def create_task(task: Task):
         return CreateTaskController().execute(task)
-
-
     ```
+
+    1. Use available `domain_event_bus` in `CommandSubscriber` instead of `Container.get(DomainEventBus)`
 
 ## Use Case
 
@@ -784,7 +783,7 @@ To use it in combination with FastAPI is as easy as inherit from  `FastAPIContro
 
 ```python hl_lines="9 10 11 12 13 14 15 16"
 from meiga import BoolResult
-from petisco import Container
+from petisco import Container, DomainEventBus
 from petisco.extra.fastapi import FastAPIController
 
 from app.src.task.create.application.task_creator import TaskCreator
@@ -794,9 +793,9 @@ from app.src.task.shared.domain.task import Task
 class CreateTaskController(FastAPIController):
     def execute(self, task: Task) -> BoolResult:
         task_creator = TaskCreator(
-            labeler=Container.get("task_labeler"),
-            repository=Container.get("task_repository"),
-            domain_event_bus=Container.get("domain_event_bus"),
+            labeler=Container.get(TaskLabeler),
+            repository=Container.get(TaskRepository),
+            domain_event_bus=Container.get(DomainEventBus),
         )
         return task_creator.execute(task=task)
 ```
@@ -884,7 +883,7 @@ If you want to create a subscriber to handle all the message, you have to extend
     
     class StoreMessage(AllMessageSubscriber):
         def handle(self, message: Message) -> BoolResult:
-            saver = MessageSaver(repository=Container.get("message_repository"))
+            saver = MessageSaver(repository=Container.get(MessageRepository))
             return saver.save(message)
     ```
     
@@ -929,7 +928,7 @@ You can subscribe to domain events (check [Domain](domain.md) to learn how to cr
     
         def handle(self, domain_event: DomainEvent) -> BoolResult:
             notification = Notification.from_domain_event(domain_event)
-            notificator = Notificator(app_service=Container.get("my_app_service"))
+            notificator = Notificator(app_service=Container.get(MyAppService))
             return notificator.execute(notification)
     ```
 
@@ -984,7 +983,7 @@ You can subscribe to domain events (check [Domain](domain.md) to learn how to cr
     
         def handle(self, domain_event: DomainEvent) -> BoolResult:
             notification = Notification.from_domain_event(domain_event)
-            notificator = Notificator(app_service=Container.get("my_app_service"))
+            notificator = Notificator(app_service=Container.get(MyAppService))
             return notificator.execute(notification)
     ```
 
@@ -1010,13 +1009,14 @@ You can subscribe to a command that is published by your domain.
         def handle(self, command: Command) -> BoolResult:
             task = Task.from_command(command)
              task_creator = TaskCreator(
-                repository=Container.get("task_repository"),
-                domain_event_bus=self.domain_event_bus, # Use available domain_event_bus in CommandSubscriber instead of Container.get("domain_event_bus")
+                repository=Container.get(TaskRepository),
+                domain_event_bus=self.domain_event_bus, # (2) 
             )
             return task_creator.execute(task=task)  
     ```
 
     1. Defines which `Command` this subscriber will execute (In this case `CreateTask`).
+    2. Use available `domain_event_bus` in `CommandSubscriber` instead of `Container.get(DomainEventBus)`
 
 
 
@@ -1085,7 +1085,7 @@ class Task(BaseModel):
 # Controller
 class CreateTaskController(FastAPIController):
     def execute(self, task: Task) -> BoolResult:
-        command_bus: CommandBus = Container.get("command_bus")
+        command_bus: CommandBus = Container.get(CommandBus)
         create_task = CreateTask.from_task(task)
         command_bus.dispatch(create_task)
         return isSuccess
@@ -1100,9 +1100,8 @@ class CreateTaskOnCreateTaskCommandSubscriber(CommandSubscriber):
     def handle(self, command: Command) -> BoolResult:
         task = Task.from_command(command)
         task_creator = TaskCreator(
-            repository=Container.get("task_repository"),
-            domain_event_bus=self.domain_event_bus,
-            # Use available domain_event_bus in CommandSubscriber instead of Container.get("domain_event_bus")
+            repository=Container.get(TaskRepository),
+            domain_event_bus=self.domain_event_bus, # (1)
         )
         return task_creator.execute(task=task)
 
@@ -1110,3 +1109,5 @@ class CreateTaskOnCreateTaskCommandSubscriber(CommandSubscriber):
 def create_task(task: Task):
     return CreateTaskController().execute(task)
 ```
+
+1. Use available `domain_event_bus` in `CommandSubscriber` instead of `Container.get(DomainEventBus")`

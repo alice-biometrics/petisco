@@ -176,7 +176,7 @@ use it to initialize some repository, to configure your persistence, subscribers
             super().__init__(execute_after_dependencies)
     
         def execute(self, testing: bool = False) -> None:
-            repository = Container.get("task_repository")
+            repository = Container.get(TaskRepository)
             for task in self.tasks:
                 repository.save(task)
             
@@ -225,7 +225,7 @@ use it to initialize some repository, to configure your persistence, subscribers
             if not testing:
                 return
             
-            notifier = Container.get("notifies")
+            notifier = Container.get(Notifier)
             notifier.send_message("Message to Github Actions")
             
     configurers = [
