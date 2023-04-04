@@ -2,7 +2,13 @@ from typing import Any, List
 
 from meiga import Result
 
-from petisco import Builder, Dependency, NotImplementedMessageBus, Repository
+from petisco import (
+    Builder,
+    Dependency,
+    DomainEventBus,
+    NotImplementedDomainEventBus,
+    Repository,
+)
 
 
 class MyRepo(Repository):
@@ -22,21 +28,21 @@ class MyRepo(Repository):
 class DependencyMother:
     @staticmethod
     def any() -> Dependency:
-        return Dependency(name="repo", default_builder=Builder(MyRepo))
+        return Dependency(name="repo", builders={"default": Builder(MyRepo)})
 
     @staticmethod
     def several() -> List[Dependency]:
         return [
-            Dependency(name="repo", default_builder=Builder(MyRepo)),
+            Dependency(name="repo", builders={"default": Builder(MyRepo)}),
             # Dependency(name="app_service", default_instance=MyRepo())
         ]
 
     @staticmethod
     def domain_event_bus() -> Dependency:
         return Dependency(
-            name="domain_event_bus", default_builder=Builder(NotImplementedMessageBus)
+            DomainEventBus, builders={"default": Builder(NotImplementedDomainEventBus)}
         )
 
     @staticmethod
     def create(name: str, builder: Any) -> Dependency:
-        return Dependency(name=name, default_builder=builder)
+        return Dependency(name=name, builders={"default": builder})

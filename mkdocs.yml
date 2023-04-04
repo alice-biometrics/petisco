@@ -74,6 +74,8 @@ markdown_extensions:
 - pymdownx.snippets
 - pymdownx.superfences
 - mdx_truly_sane_lists
+- pymdownx.tabbed:
+    alternate_style: true
 - pymdownx.superfences:
     custom_fences:
       - name: mermaid
