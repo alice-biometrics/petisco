@@ -105,6 +105,22 @@ class TestDependency:
         with pytest.raises(TypeError):
             dependency.get_instance()
 
+    def should_not_raise_error_when_builder_type_is_not_a_subclass_of_generic_type_with_strict_false(
+        self,
+    ):
+
+        dependency = Dependency(
+            BaseRepo,
+            builders={
+                "default": Builder(MyRepo),
+                "inmemory": Builder(InMemoryRepo),
+                "invalid": Builder(str),
+            },
+            strict=False,
+        )
+
+        dependency.get_instance()
+
     def should_check_default_envar_modifier(self):
 
         dependency = Dependency(BaseRepo, builders={"default": Builder(MyRepo)})
