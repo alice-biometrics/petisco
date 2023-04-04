@@ -31,6 +31,7 @@ class Dependency(Generic[T]):
     # TODO To be deprecated
     name: str | None = None  # as petisco will index from Generic T by default
     default_builder: Builder[T] | None = None  # as use builders with default value
+    strict: bool = True
 
     def __init__(
         self,
@@ -41,6 +42,7 @@ class Dependency(Generic[T]):
         default_builder: Builder[Any] | None = None,  # to be deleted
         envar_modifier: str | None = None,
         builders: dict[str, Builder[Any]] | None = None,  # mandatory
+        strict: bool = True,
     ):
         self.type = type
         self.name = name
@@ -48,6 +50,7 @@ class Dependency(Generic[T]):
         self.envar_modifier = self._set_envar_modifier(envar_modifier)
         self.default_builder = default_builder
         self.builders = builders
+        self.strict = strict
         self._set_default_builders()  # temporary as default_builder is still valid
 
     def _set_default_builders(self):
@@ -75,17 +78,9 @@ class Dependency(Generic[T]):
         return envar_modifier
 
     def _validate(self) -> None:
-        if self.type:
-
-            # TODO: simplify as default_builder will be deprecated
-            # if not issubclass(self.default_builder.klass, self.type):
-            #     raise TypeError(
-            #         f"Dependency: The class {self.default_builder.klass.__name__} from default_builder is not a subclass from generic type given by Dependency[{self.type.__name__}]"
-            #     )
-
+        if self.type and self.strict:
             if self.builders is None:
                 return
-
             for key, builder in self.builders.items():
                 if not issubclass(builder.klass, self.type):
                     raise TypeError(

@@ -182,6 +182,43 @@ object.
     instance_2 = Container.get(MyBase, alias="implementation_2")
     ```
 
+    **Validation:**
+
+    Petisco will vailidate all dependencies to check if given implementations are subclasses of base class. `MyBase` 
+    in the following example:
+
+    ```python hl_lines="2 4"
+     Dependency(
+            MyBase, 
+            builders={
+                "default": Builder(MyImplementation), # (1)
+            }
+        )
+    ```
+    
+    1. If the implementation is not a subclass of MyBase, petisco will raise a TypeError exception
+
+    ???+ info "strict=False"
+
+        If you want to be more permissive with this strict mode of validation you can specify it in your Dependency 
+        definition.
+
+        ```python hl_lines="12"
+        class MyImplementationFactory:
+            @staticmethod
+            def build() -> MyImplementation:
+                # do your stuff
+                return MyImplementation()
+        
+        Dependency(
+            MyBase, 
+            builders={
+                "default": Builder(MyImplementationFactory, is_builder=True), 
+            },
+            strict=False
+        )
+        ```
+
     ???+ help "Example with Controller"
 
 
