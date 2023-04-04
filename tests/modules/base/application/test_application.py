@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import functools
 from datetime import datetime
-from typing import Any, List, NoReturn
+from typing import Any, NoReturn
 
 import pytest
 
@@ -104,7 +106,7 @@ class TestApplication:
 
     @testing_with_empty_container
     def should_construct_with_dependencies_provider(self):
-        def dependencies_provider() -> List[Dependency]:
+        def dependencies_provider() -> list[Dependency]:
             return [DependencyMother.any()]
 
         Application(
@@ -123,7 +125,7 @@ class TestApplication:
     @testing_with_empty_container
     @pytest.mark.skip  # We have to define how this is going to work on v2 (default or not default dependencies)
     def should_raise_an_exception_when_construct_with_a_existent_dependency(self):
-        def dependencies_provider() -> List[Dependency]:
+        def dependencies_provider() -> list[Dependency]:
             return [DependencyMother.domain_event_bus()]
 
         with pytest.raises(IndexError, match="Container: dependency"):
@@ -137,7 +139,7 @@ class TestApplication:
 
     @testing_with_empty_container
     def should_construct_with_a_dependency_overwrite(self):
-        def dependencies_provider() -> List[Dependency]:
+        def dependencies_provider() -> list[Dependency]:
             return [DependencyMother.domain_event_bus()]
 
         Application(
@@ -185,7 +187,7 @@ class TestApplication:
 
     @testing_with_empty_container
     def should_publish_a_domain_event(self):
-        def dependencies_provider() -> List[Dependency]:
+        def dependencies_provider() -> list[Dependency]:
             return [DependencyMother.domain_event_bus()]
 
         application = Application(
