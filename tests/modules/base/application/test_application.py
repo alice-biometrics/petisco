@@ -7,17 +7,12 @@ import pytest
 from petisco import (
     Application,
     ApplicationConfigurer,
-    CommandBus,
     Container,
     Dependency,
     DomainEvent,
-    DomainEventBus,
-    MessageConsumer,
-    Notifier,
     NotifierMessage,
 )
 from petisco.base.application.application_info import ApplicationInfo
-from petisco.base.domain.message.message_configurer import MessageConfigurer
 from tests.modules.base.mothers.dependency_mother import DependencyMother
 
 
@@ -33,11 +28,11 @@ def testing_with_empty_container(func):
 
 
 DEFAULT_AVAILABLE_DEPENDENCIES = [
-    DomainEventBus.__name__,
-    CommandBus.__name__,
-    MessageConfigurer.__name__,
-    MessageConsumer.__name__,
-    Notifier.__name__,
+    "DomainEventBus",
+    "CommandBus",
+    "MessageConfigurer",
+    "MessageConsumer",
+    "Notifier",
 ]
 
 
