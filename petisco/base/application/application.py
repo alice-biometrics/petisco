@@ -80,6 +80,7 @@ class Application(BaseSettings):
         logger.info("Application: successful configuration")
 
     def get_dependencies(self) -> List[Dependency]:
+        # TODO: review default dependencies in v2
         default_dependencies = (
             get_default_message_dependencies() + get_default_notifier_dependencies()
         )
@@ -90,11 +91,15 @@ class Application(BaseSettings):
             for dependency in default_dependencies
         }
         provided_dependencies = self.dependencies_provider()
-        given_dependencies_dict = {
+        provided_dependencies_dict = {
             dependency.type if not dependency.name else dependency.name: dependency
             for dependency in provided_dependencies
         }
-        merged_dependencies = {**default_dependencies_dict, **given_dependencies_dict}
+        # This merged_dependencies will give preference to provided_dependencies_dict over default_dependencies_dict
+        merged_dependencies = {
+            **default_dependencies_dict,
+            **provided_dependencies_dict,
+        }
         return list(merged_dependencies.values())
 
     def clear(self) -> None:
