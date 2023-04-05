@@ -53,6 +53,14 @@ class Dependency(Generic[T]):
         self.strict = strict
         self._set_default_builders()  # temporary as default_builder is still valid
 
+    def get_key(self) -> str:
+        if self.alias:
+            return self.alias
+        # TODO: to be deleted
+        if self.name:
+            return self.name
+        return self.type
+
     def _set_default_builders(self):
         if not self.builders:
             if self.default_builder:
@@ -84,7 +92,9 @@ class Dependency(Generic[T]):
             for key, builder in self.builders.items():
                 if not issubclass(builder.klass, self.type):
                     raise TypeError(
-                        f"Dependency: The class {builder.klass.__name__} from builders ({key}) is not a subclass from generic type given by Dependency[{self.type.__name__}]"
+                        f"Dependency: The class {builder.klass.__name__} from builders ({key}) is not a subclass from "
+                        f"generic type given by Dependency[{self.type.__name__}]. If you want to skip it use "
+                        f"Dependency(strict=False) "
                     )
 
     def get_instance(self) -> T:

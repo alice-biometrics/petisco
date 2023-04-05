@@ -81,19 +81,18 @@ class Application(BaseSettings):
 
     def get_dependencies(self) -> List[Dependency]:
         # TODO: review default dependencies in v2
+
         default_dependencies = (
             get_default_message_dependencies() + get_default_notifier_dependencies()
         )
         # TODO: the `dependency.type if not dependency.name else dependency.name` will be deprecated in v2 -> use
         #  just `dependency.type` as key
         default_dependencies_dict = {
-            dependency.type if not dependency.name else dependency.name: dependency
-            for dependency in default_dependencies
+            dependency.get_key(): dependency for dependency in default_dependencies
         }
         provided_dependencies = self.dependencies_provider()
         provided_dependencies_dict = {
-            dependency.type if not dependency.name else dependency.name: dependency
-            for dependency in provided_dependencies
+            dependency.get_key(): dependency for dependency in provided_dependencies
         }
         # This merged_dependencies will give preference to provided_dependencies_dict over default_dependencies_dict
         merged_dependencies = {

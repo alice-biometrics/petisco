@@ -13,7 +13,9 @@ from petisco import (
     Container,
     Dependency,
     DomainEvent,
+    DomainEventBus,
     NotifierMessage,
+    NotImplementedDomainEventBus,
 )
 from petisco.base.application.application_info import ApplicationInfo
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
@@ -151,6 +153,30 @@ class TestApplication:
         ).configure(overwrite_dependencies=True)
 
         assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
+
+    @testing_with_empty_container
+    def should_construct_adding_an_existent_dependency_with_an_alias(self):
+        def dependencies_provider() -> list[Dependency]:
+            return [
+                Dependency(
+                    DomainEventBus,
+                    alias="other-domain-event-bus",
+                    builders={"default": Builder(NotImplementedDomainEventBus)},
+                )
+            ]
+
+        Application(
+            name="service",
+            version="1.0.0",
+            organization="acme",
+            dependencies_provider=dependencies_provider,
+            deployed_at=datetime.utcnow(),
+        ).configure()
+
+        assert (
+            DEFAULT_AVAILABLE_DEPENDENCIES + ["other-domain-event-bus"]
+            == Container.get_available_dependencies()
+        )
 
     @testing_with_empty_container
     def should_construct_with_configurers(self):

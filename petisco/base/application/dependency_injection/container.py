@@ -28,8 +28,9 @@ class Container(Generic[T], metaclass=Singleton):
         key = base_type if not alias else alias
         dependency = container.dependencies.get(key)
         if dependency is None:
+            key_str = key.__name__ if isinstance(key, type) else key
             raise IndexError(
-                f"Invalid dependency. {key} is not found within available dependencies [{container.get_available_dependencies()}]"
+                f"Invalid dependency. `{key_str}` is not found within available dependencies [{container.get_available_dependencies()}]"
             )
         instance = dependency.get_instance()
         return instance
