@@ -140,7 +140,7 @@ object.
 
     !!! warning
     
-        "default" implementation is mandatory on `Dependency` definition, if not it will raise an error in Runtime.
+        "default" implementation is mandatory on `Dependency` definition, if it is not defined  it will raise an error in Runtime.
 
     **Environment Modifiers:** 
 
@@ -244,278 +244,6 @@ object.
         1. Instantiate an `UseCase` using dependencies from container (using its base type).
         2. Execute the `UseCase` passing external output.
 
-
-
-## Controller
-
-Use `Controller` class to define and configure inputs and outputs or your entry point.
-
-```mermaid
-flowchart LR
-
-		subgraph I/O
-		cli([CLI])
-        webapp([Web App])
-        message([Message Broker])
-		end
-		
-		dic([Container])		
-		dic-- Dependency Injection -->usecase
-
-		subgraph Application
-		controller([Controller])
-		usecase([UseCase])
-		subscriber([Subscriber])
-		controller .-> dic
-		controller --> usecase
-		subscriber --> usecase
-		end
-		
-		webapp --> controller
-		cli --> controller
-		message --> subscriber
-
-		subgraph Domain
-        petisco(((petisco)))
-		end
-		
-		usecase --> petisco
-
-		subgraph Infrastructure
-		Persistence[(Persistence)]
-		petisco --> Persistence
-		petisco --> Buses
-		petisco --> Monitoring
-		petisco --> Others
-		end
-		
-		style controller fill:#F0B27A
-		style Application fill:#D6EAF8
-```
-
-??? example
-
-    You can use a simpler and default configuration:
-    ```python
-    from petisco import Controller
-    from meiga import Result, Success, Error
-    import random
-    
-    class MyController(Controller):
-        def execute(self) -> Result[bool, Error]:
-            return Success(random.choice([True, False]))
-    ```
-    
-    Or define some configurations using the inner class `Config` (e.g. add `middlewares`).
-    
-    ```python
-    from petisco import DomainError, Controller, PrintMiddleware
-    from meiga import Result, Success, Error
-    import random
-    
-    class MyError(DomainError): ...
-    
-    class MyController(Controller):
-        class Config:
-            middlewares = [PrintMiddleware]
-    
-        def execute(self) -> Result[bool, Error]:
-            return Success(random.choice([True, False]))
-    ```
-
-### Middlewares
-
-Middlewares are a layer of action that are wrapped around a piece of core logic in an application (in this case, the `Controller`)
-
-`petisco` provides some examples of Middlewares:
-
-| Middleware                                     | Definition                                                  | 
-|------------------------------------------------|:------------------------------------------------------------| 
-| `PrintMiddleware`                              | Print something before and after the controller             | 
-| `NotifierMiddleware`                           | Notify a message if the result of a controller is a failure |
-
-To create your Middleware is necessary to extend from `Middleware`.
-
-??? example
-
-    ```python
-    from meiga import Result
-    
-    from petisco.base.application.middleware.middleware import Middleware
-    
-    
-    class PrintMiddleware(Middleware):
-        def before(self):
-            print(
-                f"{self.wrapped_class_name} -> Start | Params {dict(self.wrapped_class_input_arguments)}"
-            )
-    
-        def after(self, result: Result):
-            print(f"{self.wrapped_class_name} -> End | {result}")
-    ```
-
-??? note
-
-    If you want to set a default middleware for every Controller, you can use the envvar `PETISCO_DEFAULT_MIDDLEWARES`:
-
-    - `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware`: to configure PrintMiddleware
-    - `PETISCO_DEFAULT_MIDDLEWARES=NotifierMiddleware`: to configure NotifierMiddleware
-    - `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware,NotifierMiddleware`: to configure several middlewares (using comma to separate)
-
-### Success Handler
-
-On one hand, you can modify the result of a controller when the result is a success with the `success_handler` Config argument.
-
-??? example
-
-    ```python
-    from petisco import DomainError, Controller, PrintMiddleware
-    from meiga import Result, Success, Error
-    import random
-    
-    class MyError(DomainError): ...
-    
-    class MyController(Controller):
-        class Config:
-            middlewares = [PrintMiddleware]
-            success_handler = lambda result: {"message": f"MyController set {result}", "detail": "whatever"} 
-            
-        def execute(self) -> Result[bool, Error]:
-            return Success(random.choice([True, False]))
-    ```
-
-### Failure Handler
-
-On the other hand, you can modify the result of the controller when failure. you can use the `error_map` 
-
-??? example
-
-    ```python
-    from petisco import DomainError, Controller, PrintMiddleware, HttpError
-    from meiga import Result, Success, Failure, Error
-    import random
-    
-    class MyError(DomainError): ...
-    
-    class MyController(Controller):
-        class Config:
-            middlewares = [PrintMiddleware]
-            error_map = {MyError: HttpError(status_code=400, detail="Random error")}
-    
-        def execute(self) -> Result[bool, Error]:
-            if random.choice([True, False]) is False:
-                return Failure(MyError())
-            return Success(True)
-    ```
-
-If you want to further customize the result you can use the `failure_handler`:
-
-??? example
-
-    ```python
-    from petisco import DomainError, Controller, PrintMiddleware
-    from meiga import Result, Success, Failure, Error
-    import random
-    
-    class MyError(DomainError): ...
-    
-    class MyController(Controller):
-        class Config:
-            middlewares = [PrintMiddleware]
-            failure_handler = lambda result: {"message": f"MyController error {result}", "detail": "random error"} 
-    
-        def execute(self) -> Result[bool, Error]:
-            if random.choice([True, False]) is False:
-                return Failure(MyError())
-            return Success(True)
-    ```
-
-### Example 
-
-A controller is class which receive inputs from the infrastructure layer (web framework, cli, etc...) and orchestrate 
-the application use cases given a result.
-
-```python
-from meiga import BoolResult
-from petisco import Controller, Container, DomainEventBus
-from pydantic import BaseModel, constr
-from my_app import TaskCreator, TaskRepository
-
-class Task(BaseModel):
-    name: constr(max_length=50)
-    description: constr(max_length=200)
-
-class CreateTaskController(Controller):
-    def execute(self, task: Task) -> BoolResult:
-        # Instantiate the use case and inject dependencies from Container
-        task_creator = TaskCreator(
-            repository=Container.get(TaskRepository),
-            domain_event_bus=Container.get(DomainEventBus),
-        )
-        return task_creator.execute(task=task)    
-
-def create_task(task: Task):
-    return CreateTaskController().execute(task)
-
-# Example calling the controller from a script
-if __name__ == '__main__':
-    task = Task(name="petisco", description="Learning petisco is nice!")
-    result = create_task(task)
-    print(result)
-```
-
-??? tip "Example with FastAPI"
-
-    To use it in combination with FastAPI is as easy as inherit from  `FastAPIController` instead of using `Controller`:  
-
-    ```python
-    from typing import Type
-    from fastapi import FastAPI
-    from meiga import BoolResult, isSuccess
-    from petisco.extra.fastapi import FastAPIController
-    from pydantic import BaseModel
-    from pydantic.types import constr
-    from petisco import CommandSubscriber, Command, Container, CommandBus
-    from my_app import CreateTask, TaskCreator, TaskRepository
-    
-    app = FastAPI()
-    
-    
-    class Task(BaseModel):
-        name: constr(max_length=50)
-        description: constr(max_length=200)
-    
-    
-    # Controller
-    class CreateTaskController(FastAPIController):
-        def execute(self, task: Task) -> BoolResult:
-            command_bus: CommandBus = Container.get(CommandBus)
-            create_task = CreateTask.from_task(task)
-            command_bus.dispatch(create_task)
-            return isSuccess
-    
-    
-    # Subscriber
-    class CreateTaskOnCreateTaskCommandSubscriber(CommandSubscriber):
-    
-        def subscribed_to(self) -> Type[Command]:
-            return CreateTask
-    
-        def handle(self, command: Command) -> BoolResult:
-            task = Task.from_command(command)
-            task_creator = TaskCreator(
-                repository=Container.get(TaskRepository),
-                domain_event_bus=self.domain_event_bus, # (1)
-            )
-            return task_creator.execute(task=task) 
-    
-    
-    @app.post("/task")
-    def create_task(task: Task):
-        return CreateTaskController().execute(task)
-    ```
-
-    1. Use available `domain_event_bus` in `CommandSubscriber` instead of `Container.get(DomainEventBus)`
 
 ## Use Case
 
@@ -859,8 +587,10 @@ async def create_task(task: TaskIn):
 
 ## Subscriber
 
-A `Subscriber` is similar to `Controller`, use it to define and configure inputs and outputs or your entry point.
-The difference is that the `Subscriber` is executed reactively to messages (Domain Events, Commands, etc..).
+!!! note ""
+    
+    A `Subscriber` is similar to `Controller`, use it to define and configure inputs and outputs or your entry point.
+    The difference is that the `Subscriber` is executed reactively to messages (Domain Events, Commands, etc..).
 
 
 ```mermaid
@@ -907,11 +637,8 @@ flowchart LR
 `Subscribers` (or handlers) are very useful on Event Streaming Architectures, where use cases publish domain events and
 subscribers handle them.
 
-### Subscribe to all messages
-
-If you want to create a subscriber to handle all the message, you have to extend from `AllMessageSubscriber`.
-
-???+ example
+* **Subscribe to all messages:** If you want to create a subscriber to handle all the message, you have to extend from 
+`AllMessageSubscriber`.
 
     ```python
     from petisco import AllMessageSubscriber, Message, Container
@@ -926,12 +653,9 @@ If you want to create a subscriber to handle all the message, you have to extend
     
     In this example, the subscriber will handle all the messages and store them into a configured repository.
 
-### Subscribe to a DomainEvent
-
-You can subscribe to domain events (check [Domain](domain.md) to learn how to create a domain event).
-
-???+ example "Example subscribing to 1 Domain Event"
-
+* **Subscribe to a DomainEvent:** You can subscribe to domain events (check [Domain](domain.md) to learn how to create a 
+domain event).
+  
     ```mermaid
     flowchart LR
     
@@ -954,6 +678,11 @@ You can subscribe to domain events (check [Domain](domain.md) to learn how to cr
             style message_broker fill:#F0B27A,stroke:#333,stroke-width:2px
     ```
 
+    
+!!! example "Example subscribing to 1 Domain Event"
+
+
+
     ```python hl_lines="6 7"
     from petisco import DomainEventSubscriber, DomainEvent, Container
     from my_app import TaskCreated, Notification, Notificator
@@ -971,7 +700,7 @@ You can subscribe to domain events (check [Domain](domain.md) to learn how to cr
 
     1. Defines which `DomainEvent` this subscriber will execute (In this case `TaskCreated`).
 
-??? example "Example subscribing to several Domain Events"
+!!! example "Example subscribing to several Domain Events"
 
     ```mermaid
     flowchart LR
@@ -1027,9 +756,7 @@ You can subscribe to domain events (check [Domain](domain.md) to learn how to cr
     1. Defines which `DomainEvent` this subscriber will execute (In this case `TaskCreated`, `TaskUpdated`, `TaskRemoved`).
 
 
-### Subscribe to a Command
-
-You can subscribe to a command that is published by your domain.
+* **Subscribe to a Command:** You can subscribe to a command that is published by your domain.
 
 ???+ example
 
@@ -1054,7 +781,6 @@ You can subscribe to a command that is published by your domain.
 
     1. Defines which `Command` this subscriber will execute (In this case `CreateTask`).
     2. Use available `domain_event_bus` in `CommandSubscriber` instead of `Container.get(DomainEventBus)`
-
 
 
 !!! info

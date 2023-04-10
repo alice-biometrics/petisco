@@ -65,8 +65,8 @@ class Task(AggregateRoot): ...
 def dependencies_provider() -> list[Dependency]:
     dependencies = [
         Dependency( 
-            name="task_repository",
-            default_builder=Builder(InmemoryCrudRepository[Task])
+            TaskRepository,
+            builders={"default": Builder(InmemoryCrudRepository[Task])}
         )
     ]
     return dependencies
@@ -103,11 +103,10 @@ to inject them to the use cases.
     
     def dependencies_provider() -> list[Dependency]:
         dependencies = [
-            Dependency( 
-                name="task_repository",
-                default_builder=Builder(InmemoryCrudRepository[Task]), # <== default implementation 
-                envar_modifier="TASK_REPOSITORY_TYPE", # <== env variable acts as modificator
+            Dependency(
+                TaskRepository
                 builders={
+                    "default": Builder(InmemoryCrudRepository[Task]), # (1) 
                     "folder": Builder(
                         FolderTaskCrudRepository, folder="folder_task_database" # Here we have to add required parameter on the implementation constructor
                     ),
@@ -118,10 +117,14 @@ to inject them to the use cases.
                         ElasticTaskCrudRepository, connection="whatever required" # Here we have to add required parameter on the implementation constructor
                     )
                 },
+                envar_modifier="TASK_REPOSITORY_TYPE", # (2)
             )
         ]
         return dependencies
     ```
+
+    1. This "default" builder is mandatory.
+    2. `envar_modifier` value works as a selector of builders. 
 
     When envar `TASK_REPOSITORY_TYPE` is not defined, default implementation is `InmemoryCrudRepository`.
     When `TASK_REPOSITORY_TYPE` has a valid value (available as a key in the `builders` dictation) the implementation 
