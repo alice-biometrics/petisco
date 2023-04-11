@@ -68,3 +68,17 @@ class RabbitMqMessageConsumerMother:
             chaos,
             logger,
         )
+
+    @staticmethod
+    def with_rabbitmq_key_prefix(
+        rabbitmq_key_prefix: str, connector: RabbitMqConnector = None
+    ):
+        connector = RabbitMqConnector() if not connector else connector
+        return RabbitMqMessageConsumer(
+            DEFAULT_ORGANIZATION,
+            DEFAULT_SERVICE,
+            DEFAULT_MAX_RETRIES,
+            connector,
+            DEFAULT_VERBOSE,
+            rabbitmq_key_prefix=rabbitmq_key_prefix,
+        )
