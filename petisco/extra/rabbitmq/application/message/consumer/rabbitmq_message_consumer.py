@@ -81,12 +81,13 @@ class RabbitMqMessageConsumer(MessageConsumer):
         verbose: bool = False,
         chaos: MessageChaos = NotImplementedMessageChaos(),
         logger: Optional[ILogger] = NotImplementedLogger(),
+        rabbitmq_key_prefix: str = "consumer",
     ) -> None:
         self.connector = connector
         self.organization = organization
         self.service = service
         self.exchange_name = f"{organization}.{service}"
-        self.rabbitmq_key = f"consumer-{self.exchange_name}"
+        self.rabbitmq_key = f"{rabbitmq_key_prefix}-{self.exchange_name}"
         self._fallback_store_exchange_name = f"retry.{organization}.store"
         self.max_retries = max_retries
         self._channel = self.connector.get_channel(self.rabbitmq_key)
