@@ -397,7 +397,25 @@ class MyController(Controller): # (1)
 ```
 
 1. Inherit from petisco Controller class
-    
+
+
+Since version `1.15.0`, you can use the type alias `ControllerResult`. This solves some type-hint issues and improve 
+development experience.
+
+```python hl_lines="5 7"
+from petisco import Controller, ControllerResult
+from meiga import Result, Success, Error
+import random
+
+class MyController(Controller[bool]): # (1)
+    def execute(self) -> ControllerResult: # (1)
+        return Success(random.choice([True, False]))
+```
+
+1. Define the expected result
+2. Return a generic ControllerResult which is equivalent to `Result[T, Error] | T`, being T defined type (`bool`).
+
+
 #### Configuration
     
 You can configure some behaviours with the inner class `Config`. 
@@ -526,7 +544,7 @@ Let's go into more detail in the following points.
 * **error_map**: you can define a mapping between `DomainError`s and HttpError using the `error_map` dictionary.
 
     ```python hl_lines="9"
-    from petisco import DomainError, Controller, PrintMiddleware, HttpError
+    from petisco import DomainError, Controller, HttpError
     from meiga import Result, Success, Failure, Error
     import random
     
@@ -541,6 +559,23 @@ Let's go into more detail in the following points.
                 return Failure(MyError())
             return Success(True)
     ```
+  
+* **skip_result_mapping**: with this value to True (default False) you can skip the success and failure handlers, returning the raw value.
+
+    ```python hl_lines="7"
+    from petisco import DomainError, Controller
+    
+    class MyError(DomainError): ...
+    
+    class MyController(Controller):
+        class Config:
+            skip_result_mapping = True
+
+        def execute(self) -> bool: 
+            return True
+    ```
+
+    You can use `bool` thanks to `skip_result_mapping=True`, otherwise you have to use a `Result[bool, Error]` type (e.g. `Success(True)`).
 
 #### FastAPI ⚡️
 
