@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from types import FunctionType
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar, cast
 
-from meiga import AnyResult, NotImplementedMethodError
+from meiga import AnyResult, Error, NotImplementedMethodError, Result
 
 from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.middleware.middleware import Middleware
@@ -55,7 +55,12 @@ class MetaController(type, ABC):
         return NotImplementedMethodError
 
 
-class Controller(metaclass=MetaController):
+T = TypeVar("T")
+
+ControllerResult = Result[T, Error] | T
+
+
+class Controller(Generic[T], metaclass=MetaController):
     """
     A base class for creating controllers.
     Inherit from this class to convert to domain the request values, configure middlewares and instantiate and execute
@@ -72,8 +77,11 @@ class Controller(metaclass=MetaController):
             error_map=cast(ErrorMap, getattr(config, "error_map", None)),
             success_handler=getattr(config, "success_handler", lambda result: result),
             failure_handler=getattr(config, "failure_handler", default_failure_handler),
+            skip_result_mapping=getattr(config, "skip_result_mapping", False),
         )
 
     @abstractmethod
-    def execute(self, *args: Tuple[str, ...], **kwargs: Dict[str, Any]) -> AnyResult:
+    def execute(
+        self, *args: Tuple[str, ...], **kwargs: Dict[str, Any]
+    ) -> ControllerResult:
         return NotImplementedMethodError

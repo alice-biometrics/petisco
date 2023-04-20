@@ -1,7 +1,7 @@
 """Public API of Alice Petisco Framework"""
 from petisco.base.application.application import Application
 from petisco.base.application.application_configurer import ApplicationConfigurer
-from petisco.base.application.controller.controller import Controller
+from petisco.base.application.controller.controller import Controller, ControllerResult
 from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.controller.http_error import HttpError
 from petisco.base.application.dependency_injection.container import Container
@@ -90,6 +90,7 @@ from petisco.base.testing.assert_http import assert_http
 __all__ = [
     # base
     "Controller",
+    "ControllerResult",
     "ResultMapper",
     "Middleware",
     "NotifierMiddleware",

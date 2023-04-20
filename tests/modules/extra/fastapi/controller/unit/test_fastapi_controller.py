@@ -7,7 +7,14 @@ from fastapi import HTTPException
 from loguru import logger
 from meiga import BoolResult, Failure, Result, Success, isFailure, isSuccess
 
-from petisco import AlreadyExists, DomainError, HttpError, NotFound, PrintMiddleware
+from petisco import (
+    AlreadyExists,
+    ControllerResult,
+    DomainError,
+    HttpError,
+    NotFound,
+    PrintMiddleware,
+)
 from petisco.extra.fastapi import (
     FASTAPI_DEFAULT_RESPONSE,
     FastAPIController,
@@ -312,3 +319,33 @@ class TestFastApiController:
 
         result = MyController().execute()
         assert result == expected_response
+
+    def should_succees_when_return_typed_controller_result(self):  # noqa
+        class MyController(FastAPIController[int]):
+            def execute(self) -> ControllerResult:
+                return Success(1)
+
+        def function() -> int:
+            return MyController().execute()
+
+        function()
+
+    def should_fail_when_return_type_is_not_a_result(self):  # noqa
+        class MyController(FastAPIController[int]):
+            def execute(self) -> ControllerResult:
+                return 1
+
+        with pytest.raises(TypeError, match="Controller Error"):
+            MyController().execute()
+
+    def should_skip_mapping_when_return_type_is_not_a_result(self):  # noqa
+        class MyController(FastAPIController[int]):
+            class Config:
+                skip_result_mapping = True
+
+            def execute(self) -> ControllerResult:
+                return 1
+
+        result = MyController().execute()
+
+        assert isinstance(result, int)

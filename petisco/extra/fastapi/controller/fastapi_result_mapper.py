@@ -27,4 +27,5 @@ class FastAPIResultMapper:
             error_map=error_map,
             success_handler=getattr(config, "success_handler", fastapi_success_handler),
             failure_handler=getattr(config, "failure_handler", fastapi_failure_handler),
+            skip_result_mapping=getattr(config, "skip_result_mapping", False),
         )
