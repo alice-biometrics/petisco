@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Generic, TypeVar
 
 from meiga import AnyResult, NotImplementedMethodError
 
@@ -7,8 +7,10 @@ from petisco.base.application.controller.controller import Controller
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.extra.fastapi.controller.fastapi_result_mapper import FastAPIResultMapper
 
+T = TypeVar("T")
 
-class FastAPIController(Controller):
+
+class FastAPIController(Generic[T], Controller[T]):
     @staticmethod
     def get_default_mapper() -> ResultMapper:
         return FastAPIResultMapper.default()

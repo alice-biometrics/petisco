@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from types import FunctionType
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Any, Generic, TypeVar, Union, cast
 
-from meiga import AnyResult, NotImplementedMethodError
+from meiga import AnyResult, Error, NotImplementedMethodError, Result
 
 from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.middleware.middleware import Middleware
@@ -10,7 +12,7 @@ from petisco.base.misc.result_mapper import ResultMapper, default_failure_handle
 from petisco.base.misc.wrapper import wrapper
 
 
-def get_mapper(bases: Tuple[Any], config: Optional[Dict[str, Any]]) -> ResultMapper:
+def get_mapper(bases: tuple[Any], config: dict[str, Any] | None) -> ResultMapper:
     mapper = ResultMapper()
     if config:
         for base in bases:
@@ -28,11 +30,11 @@ def get_mapper(bases: Tuple[Any], config: Optional[Dict[str, Any]]) -> ResultMap
 
 
 class MetaController(type, ABC):
-    middlewares: List[Middleware] = []
+    middlewares: list[Middleware] = []
 
     def __new__(
-        mcs, name: str, bases: Tuple[Any], namespace: Dict[str, Any]
-    ) -> "MetaController":
+        mcs, name: str, bases: tuple[Any], namespace: dict[str, Any]
+    ) -> MetaController:
         config = namespace.get("Config")
 
         mapper = get_mapper(bases, config)
@@ -55,7 +57,12 @@ class MetaController(type, ABC):
         return NotImplementedMethodError
 
 
-class Controller(metaclass=MetaController):
+T = TypeVar("T")
+
+ControllerResult = Union[Result[T, Error], T]
+
+
+class Controller(Generic[T], metaclass=MetaController):
     """
     A base class for creating controllers.
     Inherit from this class to convert to domain the request values, configure middlewares and instantiate and execute
@@ -67,13 +74,16 @@ class Controller(metaclass=MetaController):
         return ResultMapper()
 
     @staticmethod
-    def get_config_mapper(config: Dict[str, Any]) -> ResultMapper:
+    def get_config_mapper(config: dict[str, Any]) -> ResultMapper:
         return ResultMapper(
             error_map=cast(ErrorMap, getattr(config, "error_map", None)),
             success_handler=getattr(config, "success_handler", lambda result: result),
             failure_handler=getattr(config, "failure_handler", default_failure_handler),
+            skip_result_mapping=getattr(config, "skip_result_mapping", False),
         )
 
     @abstractmethod
-    def execute(self, *args: Tuple[str, ...], **kwargs: Dict[str, Any]) -> AnyResult:
+    def execute(
+        self, *args: tuple[str, ...], **kwargs: dict[str, Any]
+    ) -> ControllerResult:
         return NotImplementedMethodError

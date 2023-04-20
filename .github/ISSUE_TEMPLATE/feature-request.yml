@@ -133,22 +133,6 @@ body:
       label: Operating System Details
       description: You can add more details about your operating system here, in particular if you chose "Other".
   - type: input
-    id: petisco-version
-    attributes:
-      label: Petisco Version
-      description: |
-        What petisco version are you using?
-
-        You can find the semente version with:
-
-        ```bash
-        >> petisco --version
-        or
-        >> python -c "import petisco; print(petisco.__version__)"
-        ```
-    validations:
-      required: true
-  - type: input
     id: python-version
     attributes:
       label: Python Version
