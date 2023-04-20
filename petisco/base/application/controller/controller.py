@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from types import FunctionType
-from typing import Any, Generic, TypeVar, cast
+from typing import Any, Generic, TypeVar, Union, cast
 
 from meiga import AnyResult, Error, NotImplementedMethodError, Result
 
@@ -59,7 +59,7 @@ class MetaController(type, ABC):
 
 T = TypeVar("T")
 
-ControllerResult = Result[T, Error] | T
+ControllerResult = Union[Result[T, Error], T]
 
 
 class Controller(Generic[T], metaclass=MetaController):
