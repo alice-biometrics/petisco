@@ -521,6 +521,22 @@ Let's go into more detail in the following points.
         def execute(self) -> Result[bool, Error]:
             return Success(random.choice([True, False]))
     ```
+  
+    If your want just to unwrap the success value of a Result (example above `Success(random.choice([True, False]))`) 
+    just use the `unwrap_result_handler`.
+
+    ```python hl_lines="7"
+    from petisco import Controller, unwrap_result_handler
+    from meiga import Result, Success, Error
+    import random
+
+    class MyController(Controller):
+        class Config:
+            success_handler = unwrap_result_handler
+  
+        def execute(self) -> Result[bool, Error]:
+            return Success(random.choice([True, False]))
+    ```
 
 * **failure_handler**: you can modify the result of the controller when failure. 
 
