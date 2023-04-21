@@ -9,7 +9,7 @@ from petisco import (
     ControllerResult,
     PrintMiddleware,
     UnknownError,
-    result_handler,
+    unwrap_result_handler,
 )
 
 
@@ -266,7 +266,7 @@ class TestController:
 
         class MyController(Controller):
             class Config:
-                success_handler = result_handler
+                success_handler = unwrap_result_handler
 
             def execute(self) -> BoolResult:
                 return Success(expected_result)
