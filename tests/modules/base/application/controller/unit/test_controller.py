@@ -4,7 +4,13 @@ import pytest
 from meiga import BoolResult, Error, Failure, Success, isFailure, isSuccess
 from meiga.assertions import assert_failure, assert_success
 
-from petisco import Controller, ControllerResult, PrintMiddleware, UnknownError
+from petisco import (
+    Controller,
+    ControllerResult,
+    PrintMiddleware,
+    UnknownError,
+    result_handler,
+)
 
 
 class MyError(Error):
@@ -254,3 +260,17 @@ class TestController:
         result = MyController().execute()
 
         assert isinstance(result, int)
+
+    def should_return_result_value_from_success_handler(self):  # noqa
+        expected_result = {"message", "ok"}
+
+        class MyController(Controller):
+            class Config:
+                success_handler = result_handler
+
+            def execute(self) -> BoolResult:
+                return Success(expected_result)
+
+        result = MyController().execute()
+
+        assert result == expected_result

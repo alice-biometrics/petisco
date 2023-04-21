@@ -12,6 +12,11 @@ from petisco.base.misc.result_mapper import ResultMapper, default_failure_handle
 from petisco.base.misc.wrapper import wrapper
 
 
+def result_handler(result: Result) -> Any:
+    assert isinstance(result, Result), "result_handler input must be a Result"
+    return result.unwrap()
+
+
 def get_mapper(bases: tuple[Any], config: dict[str, Any] | None) -> ResultMapper:
     mapper = ResultMapper()
     if config:
