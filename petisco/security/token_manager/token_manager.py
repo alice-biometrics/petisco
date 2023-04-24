@@ -15,7 +15,7 @@ from petisco.security.token_manager.interface_token_manager import ITokenManager
 class TokenManager(ITokenManager):
     def __init__(
         self,
-        accepted_tokens=List[AcceptedToken],
+        accepted_tokens: List[AcceptedToken],
         token_decoder: ITokenDecoder = TokenDecoder(),
     ):
         self.accepted_tokens = accepted_tokens
