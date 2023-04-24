@@ -3,13 +3,13 @@ from typing import List
 from meiga import Result, Error, Success, Failure, isSuccess, BoolResult
 from meiga.decorators import meiga
 
-from petisco.security.token_decoder.invalid_token_error import InvalidTokenError
-from petisco.security.token_decoder.token import Token
-from petisco.security.token_manager.accepted_token import AcceptedToken
-from petisco.security.token_manager.interface_token_manager import ITokenManager
 from petisco.domain.aggregate_roots.info_id import InfoId
 from petisco.security.token_decoder.interface_token_decoder import ITokenDecoder
+from petisco.security.token_decoder.invalid_token_error import InvalidTokenError
+from petisco.security.token_decoder.token import Token
 from petisco.security.token_decoder.token_decoder import TokenDecoder
+from petisco.security.token_manager.accepted_token import AcceptedToken
+from petisco.security.token_manager.interface_token_manager import ITokenManager
 
 
 class TokenManager(ITokenManager):
@@ -28,7 +28,7 @@ class TokenManager(ITokenManager):
         if not auth_token:
             return Failure(
                 InvalidTokenError(
-                    message=f"This entry point expects a valid {self.accepted_tokens.token_type} Token"
+                    message=f"This entry point expects a valid token: {[token.token_type for token in self.accepted_tokens]}"
                 )
             )
 
