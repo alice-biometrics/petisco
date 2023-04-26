@@ -70,7 +70,7 @@ class TestFastApiController:
         )
 
     def should_return_mapped_success_handler(self):
-        expected_result = {"message", "ok"}
+        expected_result = {"message": "ok"}
 
         class MyController(FastAPIController):
             class Config:

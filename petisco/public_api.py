@@ -4,6 +4,7 @@ from petisco.base.application.application_configurer import ApplicationConfigure
 from petisco.base.application.controller.controller import (
     Controller,
     ControllerResult,
+    custom_message_handler,
     unwrap_result_handler,
 )
 from petisco.base.application.controller.error_map import ErrorMap
@@ -96,6 +97,7 @@ __all__ = [
     "Controller",
     "ControllerResult",
     "unwrap_result_handler",
+    "custom_message_handler",
     "ResultMapper",
     "Middleware",
     "NotifierMiddleware",
