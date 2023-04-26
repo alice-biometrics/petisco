@@ -1,3 +1,4 @@
+import sys
 from uuid import uuid4
 
 import validators
@@ -5,6 +6,11 @@ from pydantic import validator
 
 from petisco.base.domain.errors.defaults.invalid_uuid import InvalidUuid
 from petisco.base.domain.model.value_object import ValueObject
+
+if sys.version_info < (3, 11):
+    Self = "Uuid"
+else:
+    from typing import Self  # noqa
 
 
 class Uuid(ValueObject):
@@ -23,5 +29,5 @@ class Uuid(ValueObject):
         return value
 
     @classmethod
-    def v4(cls) -> "Uuid":
+    def v4(cls) -> Self:
         return cls(value=str(uuid4()))
