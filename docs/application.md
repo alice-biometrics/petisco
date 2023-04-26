@@ -537,6 +537,22 @@ Let's go into more detail in the following points.
         def execute(self) -> Result[bool, Error]:
             return Success(random.choice([True, False]))
     ```
+  
+    Additionally, if you don't care about original result, for instance a `BoolResult`, you can define a custom message 
+    with `custom_message_handler`:
+
+    ```python hl_lines="7"
+    from petisco import Controller, unwrap_result_handler
+    from meiga import Result, Success, Error
+    import random
+
+    class MyController(Controller):
+        class Config:
+            success_handler = custom_message_handler({"message": "my-custom-message}")
+  
+        def execute(self) -> Result[bool, Error]:
+            return Success(random.choice([True, False]))
+    ```
 
 * **failure_handler**: you can modify the result of the controller when failure. 
 

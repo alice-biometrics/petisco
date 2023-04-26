@@ -1,7 +1,8 @@
+from typing import Any
 from unittest.mock import patch
 
 import pytest
-from meiga import BoolResult, Error, Failure, Success, isFailure, isSuccess
+from meiga import BoolResult, Error, Failure, Result, Success, isFailure, isSuccess
 from meiga.assertions import assert_failure, assert_success
 
 from petisco import (
@@ -9,6 +10,7 @@ from petisco import (
     ControllerResult,
     PrintMiddleware,
     UnknownError,
+    custom_message_handler,
     unwrap_result_handler,
 )
 
@@ -36,7 +38,7 @@ class TestController:
         assert_failure(result)
 
     def should_return_mapped_success_handler(self):  # noqa
-        expected_result = {"message", "ok"}
+        expected_result = {"message": "ok"}
 
         class MyController(Controller):
             class Config:
@@ -50,7 +52,7 @@ class TestController:
         assert result == expected_result
 
     def should_return_mapped_by_error_map(self):  # noqa
-        expected_result = {"message", "not ok"}
+        expected_result = {"message": "not ok"}
 
         class MyController(Controller):
             class Config:
@@ -195,7 +197,7 @@ class TestController:
 
     @pytest.mark.parametrize(
         "simulate_result, expected_result",
-        [(isSuccess, {"message", "ok"}), (Failure(MyError()), {"message", "not ok"})],
+        [(isSuccess, {"message": "ok"}), (Failure(MyError()), {"message": "not ok"})],
     )
     def should_works_with_all_configurations(self, simulate_result, expected_result):
         class MyController(Controller):
@@ -261,15 +263,33 @@ class TestController:
 
         assert isinstance(result, int)
 
-    def should_return_result_value_from_success_handler(self):  # noqa
-        expected_result = {"message", "ok"}
+    def should_return_result_value_from_success_handler_with_unwrap_result_handler(
+        self,
+    ):  # noqa
+        expected_result = {"message": "ok"}
 
         class MyController(Controller):
             class Config:
                 success_handler = unwrap_result_handler
 
-            def execute(self) -> BoolResult:
+            def execute(self) -> Result[dict[str, Any], Error]:
                 return Success(expected_result)
+
+        result = MyController().execute()
+
+        assert result == expected_result
+
+    def should_return_result_value_from_success_handler_with_custom_message_handler(
+        self,
+    ):  # noqa
+        expected_result = {"message": "my-custom-message"}
+
+        class MyController(Controller):
+            class Config:
+                success_handler = custom_message_handler(expected_result)
+
+            def execute(self) -> BoolResult:
+                return isSuccess
 
         result = MyController().execute()
 

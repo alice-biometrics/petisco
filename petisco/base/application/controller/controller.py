@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from types import FunctionType
-from typing import Any, Generic, TypeVar, Union, cast
+from typing import Any, Callable, Generic, TypeVar, Union, cast
 
 from meiga import AnyResult, Error, NotImplementedMethodError, Result
 
@@ -15,6 +15,15 @@ from petisco.base.misc.wrapper import wrapper
 def unwrap_result_handler(result: Result) -> Any:
     assert isinstance(result, Result), "result_handler input must be a Result"
     return result.unwrap()
+
+
+def custom_message_handler(
+    message: dict[str, Any]
+) -> Callable[[AnyResult], dict[str, Any]]:
+    def _result_handler(_: AnyResult) -> dict[str, Any]:
+        return message
+
+    return _result_handler
 
 
 def get_mapper(bases: tuple[Any], config: dict[str, Any] | None) -> ResultMapper:
