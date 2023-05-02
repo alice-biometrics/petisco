@@ -10,6 +10,7 @@ from petisco import DomainEvent
 from petisco.extra.rabbitmq import RabbitMqConnector
 from tests.modules.extra.rabbitmq.mother.domain_event_user_created_mother import (
     DomainEventUserCreatedMother,
+    UserCreated,
 )
 from tests.modules.extra.rabbitmq.mother.message_subscriber_mother import (
     MessageSubscriberMother,
@@ -125,12 +126,43 @@ class TestRabbitMqMessageConsumer:
         consumer.stop()
         configurer.clear()
 
+    def should_publish_consume_a_typed_domain_event(self):
+        spy = SpyMessages()
+
+        def assert_consumer(domain_event: UserCreated) -> BoolResult:
+            spy.append(domain_event)
+            if hasattr(domain_event, "user_id"):
+                return isSuccess
+            else:
+                return isFailure
+
+        domain_event = DomainEventUserCreatedMother.random()
+
+        subscribers = [
+            MessageSubscriberMother.domain_event_subscriber(
+                domain_event_type=type(domain_event), handler=assert_consumer
+            )
+        ]
+
+        configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
+        configurer.configure_subscribers(subscribers)
+
+        bus = RabbitMqDomainEventBusMother.default()
+        bus.publish(domain_event)
+
+        consumer = RabbitMqMessageConsumerMother.default()
+        consumer.add_subscribers(subscribers)
+        consumer.start()
+
+        sleep(1.0)
+
+        consumer.stop()
+        configurer.clear()
+
         spy.assert_number_unique_messages(1)
         spy.assert_first_message(domain_event)
         spy.assert_last_message(domain_event)
-        spy.assert_count_by_message_id(
-            domain_event.message_id, expected_number_event_consumed
-        )
+        spy.assert_count_by_message_id(domain_event.message_id, 1)
 
     @testing_with_rabbitmq
     def should_publish_consume_and_retry_event_with_two_handlers_from_rabbitmq(self):
