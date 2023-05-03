@@ -4,9 +4,6 @@ import copy
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Generic, TypeVar
 
-from deprecation import deprecated
-
-from petisco import __version__
 from petisco.base.domain.message.message import Message
 
 TypeMessage = TypeVar("TypeMessage", bound=Message)
@@ -64,13 +61,3 @@ class MessageBus(ABC, Generic[TypeMessage]):
     def _check_is_message(self, message: TypeMessage) -> None:
         if not message or not issubclass(message.__class__, Message):
             raise TypeError("MessageBus only publishes Message objects")
-
-    @deprecated(
-        deprecated_in="1.14.0",
-        removed_in="2.0.0",
-        current_version=__version__,
-        details="Use publish function instead",
-    )
-    def publish_list(self, messages: list[TypeMessage]) -> None:
-        for message in messages:
-            self.publish(message)
