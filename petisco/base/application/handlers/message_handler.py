@@ -17,8 +17,7 @@ def wrapper(method: Callable[..., AnyResult]) -> Callable[..., Any]:
         try:
             return method(*args, **kwargs)
         except OnFailureException as exception:
-            # TODO create issue to add typing on OnFailureException meiga class
-            return exception.result  # type: ignore
+            return exception.result
         except Error as error:
             return Failure(error)
         except Exception as exception:
