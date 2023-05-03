@@ -8,10 +8,5 @@ class NotImplementedMessageBus(MessageBus[Message]):
         meta = self.get_configured_meta()
         _ = message.update_meta(meta)
 
-    def retry_publish_only_on_store_queue(self, message: Message) -> None:
-        self._check_is_message(message)
-        meta = self.get_configured_meta()
-        _ = message.update_meta(meta)
-
     def close(self) -> None:
         pass
