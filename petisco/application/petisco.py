@@ -1,15 +1,20 @@
 import inspect
 import os
 import time
+from dataclasses import dataclass
 from datetime import datetime
 from distutils.util import strtobool
 from os import environ
 from typing import Callable, Dict, Any
 
-from dataclasses import dataclass
 from deprecation import deprecated
 
+from petisco import __version__
+from petisco.application.config.config import Config
 from petisco.application.deploy_checker import DeployChecker
+from petisco.application.interface_app_service import IService, IAppService
+from petisco.application.interface_repository import IRepository
+from petisco.application.singleton import Singleton
 from petisco.event.bus.infrastructure.not_implemented_event_bus import (
     NotImplementedEventBus,
 )
@@ -22,11 +27,11 @@ from petisco.event.consumer.infrastructure.not_implemented_event_comsumer import
 from petisco.event.legacy.publisher.domain.interface_event_publisher import (
     IEventPublisher,
 )
-from petisco.event.shared.domain.config_events import ConfigEvents
-from petisco.event.shared.domain.service_deployed import ServiceDeployed
 from petisco.event.legacy.subscriber.domain.interface_event_subscriber import (
     IEventSubscriber,
 )
+from petisco.event.shared.domain.config_events import ConfigEvents
+from petisco.event.shared.domain.service_deployed import ServiceDeployed
 from petisco.event.shared.domain.service_restarted import ServiceRestarted
 from petisco.event.shared.infrastructure.configure_events_infrastructure import (
     configure_events_infrastructure,
@@ -35,19 +40,14 @@ from petisco.frameworks.interface_application import IApplication
 from petisco.logger.interface_logger import INFO, ILogger, ERROR
 from petisco.logger.log_message import LogMessage
 from petisco.logger.not_implemented_logger import NotImplementedLogger
+from petisco.notifier.domain.interface_notifier import INotifier
+from petisco.notifier.domain.notifier_message import NotifierMessage
 from petisco.notifier.infrastructure.not_implemented_notifier import (
     NotImplementedNotifier,
 )
-from petisco.notifier.domain.interface_notifier import INotifier
-from petisco.notifier.domain.notifier_message import NotifierMessage
-from petisco.application.config.config import Config
-from petisco.application.singleton import Singleton
-from petisco.application.interface_repository import IRepository
-from petisco.application.interface_app_service import IService, IAppService
 from petisco.tasks.infrastructure.apscheduler_task_executor import (
     APSchedulerTaskExecutor,
 )
-from petisco import __version__
 from petisco.tasks.infrastructure.not_implemented_task_executor import (
     NotImplementedTaskExecutor,
 )
@@ -205,7 +205,10 @@ class Petisco(metaclass=Singleton):
             self.event_publisher.publish(event)
 
     def _notify_restart(self):
-        if not self._deploy_checker.was_recently_deployed(datetime.utcnow()):
+        petisco_announce_notify = (
+                os.getenv("PETISCO_ANNOUNCE_NOTIFY", "false").lower() == "true"
+        )
+        if petisco_announce_notify and not self._deploy_checker.was_recently_deployed(datetime.utcnow()):
             self._notifier.publish(
                 NotifierMessage(
                     title="Service Restarted",
