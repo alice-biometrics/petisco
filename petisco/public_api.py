@@ -26,6 +26,7 @@ from petisco.base.application.notifier.notifier_exception_message import (
 )
 from petisco.base.application.notifier.notifier_message import NotifierMessage
 from petisco.base.application.patterns.app_service import AppService
+from petisco.base.application.patterns.async_app_service import AsyncAppService
 from petisco.base.application.patterns.crud_repository import CrudRepository
 from petisco.base.application.patterns.inmemory_crud_repository import (
     InmemoryCrudRepository,
@@ -137,6 +138,7 @@ __all__ = [
     "CrudRepository",
     "InmemoryCrudRepository",
     "AppService",
+    "AsyncAppService",
     "Application",
     "ApplicationConfigurer",
     "Builder",
