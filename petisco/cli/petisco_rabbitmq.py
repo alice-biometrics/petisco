@@ -12,12 +12,11 @@ from petisco import (
     MessageSubscriber,
     __version__,
 )
+from petisco.extra.logger import Logger, LoggingBasedLogger
 from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_message_consumer import (
     RabbitMqMessageConsumer,
 )
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
-from petisco.legacy.logger.interface_logger import ILogger
-from petisco.legacy.logger.logging_based_logger import LoggingBasedLogger
 
 ORGANIZATION = "alice"
 RETRY_TTL = 5000  # default
@@ -31,7 +30,7 @@ def has_args(args: Any) -> bool:
     return is_active
 
 
-def get_logger() -> ILogger:
+def get_logger() -> Logger:
     def logging_config() -> None:
         logging.getLogger("pika").setLevel(logging.WARNING)
 

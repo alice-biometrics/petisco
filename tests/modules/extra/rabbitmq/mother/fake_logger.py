@@ -1,8 +1,7 @@
-from petisco.legacy import LogMessage
-from petisco.legacy.logger.interface_logger import ILogger
+from petisco.extra.logger import Logger, LogMessage
 
 
-class FakeLogger(ILogger):
+class FakeLogger(Logger):
     def __init__(self):
         self.logging_messages = []
 
