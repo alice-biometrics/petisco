@@ -21,57 +21,38 @@ class Dependency(Generic[T]):
     Definition of default Builder is Mandatory, create alternative builder with envar_modifier is optional.
     """
 
-    type: T | None = None
-    builders: dict[
-        str, Builder[T]
-    ] | None = None  # This should be  mandatory (not optional) it is temporary to help on migration to v2
-    alias: str | None = None  # Use alias instead of name to identify different dependencies with the same base type
+    type: T
+    builders: dict[str, Builder[T]]
+    alias: str | None = None  # Use alias instead of deprecated name to identify different dependencies with the same base type
     envar_modifier: str | None = None
-
-    # TODO To be deprecated
-    name: str | None = None  # as petisco will index from Generic T by default
-    default_builder: Builder[T] | None = None  # as use builders with default value
     strict: bool = True
 
     def __init__(
         self,
-        type: T | None = None,
+        type: T,  # noqa
         *,
-        name: str | None = None,  # to be deleted
+        builders: dict[str, Builder[Any]],
         alias: str | None = None,
-        default_builder: Builder[Any] | None = None,  # to be deleted
         envar_modifier: str | None = None,
-        builders: dict[str, Builder[Any]] | None = None,  # mandatory
         strict: bool = True,
     ):
         self.type = type
-        self.name = name
         self.alias = alias
         self.envar_modifier = self._set_envar_modifier(envar_modifier)
-        self.default_builder = default_builder
         self.builders = builders
         self.strict = strict
-        self._set_default_builders()  # temporary as default_builder is still valid
+        self._check()
 
     def get_key(self) -> str:
         if self.alias:
             return self.alias
-        # TODO: to be deleted
-        if self.name:
-            return self.name
         return self.type
 
-    def _set_default_builders(self):
-        if not self.builders:
-            if self.default_builder:
-                self.builders = {"default": self.default_builder}
-        else:
-            if self.default_builder:
-                self.builders["default"] = self.default_builder
-
+    def _check(self):
         if self.builders is None or self.builders.get("default") is None:
             raise TypeError(
-                f"Dependency: Define a builder for {self.type.__name__} with `default` key. This is mandatory. Given builders={self.builders}"
+                f"Dependency: Define at least one builder for {self.type.__name__} with `default` key. This is "
+                f"mandatory. Given builders={self.builders} "
             )
 
     def _set_envar_modifier(self, envar_modifier: str | None = None):

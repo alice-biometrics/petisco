@@ -12,6 +12,7 @@ pytest-variables[yaml]==2.0.0
 pytest-clarity==1.0.1
 pytest-ordering==0.6
 pytest-asyncio==0.20.1
+pytest-loguru==0.2.0
 requests-mock==1.8.0
 hypothesis==6.56.3
 fakeredis==2.9.2

@@ -3,7 +3,6 @@ import pytest
 from petisco import Builder, Container, Dependency
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
     BaseRepo,
-    InMemoryRepo,
     MyRepo,
     MyRepoWithBuilderAndDependency,
     MyRepoWithBuilderAndSeveralDependency,
@@ -94,8 +93,16 @@ class TestContainer:
             ),
             (
                 [
-                    Dependency(alias="my-alias", builders={"default": Builder(MyRepo)}),
-                    Dependency(alias="my-alias", builders={"default": Builder(MyRepo)}),
+                    Dependency(
+                        BaseRepo,
+                        alias="my-alias",
+                        builders={"default": Builder(MyRepo)},
+                    ),
+                    Dependency(
+                        BaseRepo,
+                        alias="my-alias",
+                        builders={"default": Builder(MyRepo)},
+                    ),
                 ]
             ),
         ],
@@ -135,7 +142,9 @@ class TestContainer:
                 [
                     Dependency(BaseRepo, builders={"default": Builder(MyRepo)}),
                     Dependency(
-                        alias="inmemory_repo", default_builder=Builder(InMemoryRepo)
+                        BaseRepo,
+                        alias="inmemory_repo",
+                        builders={"default": Builder(MyRepo)},
                     ),
                 ],
                 ["BaseRepo", "inmemory_repo"],
@@ -145,7 +154,6 @@ class TestContainer:
     def should_return_several_available_dependencies(
         self, dependencies, expected_available_dependencies
     ):
-
         Container.set_dependencies(dependencies)
 
         assert Container.get_available_dependencies() == expected_available_dependencies
@@ -157,36 +165,56 @@ class TestContainer:
         [
             [
                 Dependency(
+                    BaseRepo,
                     alias="repo-with-dependency",
-                    default_builder=Builder(
-                        MyRepoWithBuilderAndDependency, is_builder=True
-                    ),
+                    builders={
+                        "default": Builder(
+                            MyRepoWithBuilderAndDependency, is_builder=True
+                        )
+                    },
                 ),
-                Dependency(alias="repo", builders={"default": Builder(MyRepo)}),
-            ],
-            [
-                Dependency(alias="repo", builders={"default": Builder(MyRepo)}),
                 Dependency(
-                    alias="repo-with-dependency",
-                    default_builder=Builder(
-                        MyRepoWithBuilderAndDependency, is_builder=True
-                    ),
+                    BaseRepo, alias="repo", builders={"default": Builder(MyRepo)}
                 ),
             ],
             [
-                Dependency(alias="repo", builders={"default": Builder(MyRepo)}),
-                Dependency(alias="other-repo", builders={"default": Builder(MyRepo)}),
                 Dependency(
-                    alias="repo-with-dependency",
-                    default_builder=Builder(
-                        MyRepoWithBuilderAndDependency, is_builder=True
-                    ),
+                    BaseRepo, alias="repo", builders={"default": Builder(MyRepo)}
                 ),
                 Dependency(
+                    BaseRepo,
+                    alias="repo-with-dependency",
+                    builders={
+                        "default": Builder(
+                            MyRepoWithBuilderAndDependency, is_builder=True
+                        )
+                    },
+                ),
+            ],
+            [
+                Dependency(
+                    BaseRepo, alias="repo", builders={"default": Builder(MyRepo)}
+                ),
+                Dependency(
+                    BaseRepo, alias="other-repo", builders={"default": Builder(MyRepo)}
+                ),
+                Dependency(
+                    BaseRepo,
+                    alias="repo-with-dependency",
+                    builders={
+                        "default": Builder(
+                            MyRepoWithBuilderAndDependency, is_builder=True
+                        )
+                    },
+                ),
+                Dependency(
+                    BaseRepo,
                     alias="repo-with-3-dependencies",
-                    default_builder=Builder(
-                        MyRepoWithBuilderAndSeveralDependency, is_builder=True
-                    ),
+                    builders={
+                        "default": Builder(
+                            MyRepoWithBuilderAndSeveralDependency, is_builder=True
+                        )
+                    },
                 ),
             ],
         ],

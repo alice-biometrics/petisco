@@ -26,6 +26,8 @@ from petisco.base.domain.message.message_handler_returns_none_error import (
     MessageHandlerReturnsNoneError,
 )
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
+from petisco.extra.logger.logger import Logger
+from petisco.extra.logger.not_implemented_logger import NotImplementedLogger
 from petisco.extra.rabbitmq.application.message.bus.rabbitmq_command_bus import (
     RabbitMqCommandBus,
 )
@@ -48,8 +50,6 @@ from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 from petisco.extra.rabbitmq.shared.rabbitmq_exchange_name_formatter import (
     RabbitMqExchangeNameFormatter,
 )
-from petisco.legacy.logger.interface_logger import ILogger
-from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
 
 MAX_ATTEMPTS_TO_RECONNECT = int(
     os.getenv("PETISCO_RABBITMQ_MAX_ATTEMPTS_TO_RECONNECT_CONSUMER", "20")
@@ -80,7 +80,7 @@ class RabbitMqMessageConsumer(MessageConsumer):
         connector: RabbitMqConnector = RabbitMqConnector(),
         verbose: bool = False,
         chaos: MessageChaos = NotImplementedMessageChaos(),
-        logger: Optional[ILogger] = NotImplementedLogger(),
+        logger: Optional[Logger] = NotImplementedLogger(),
         rabbitmq_key_prefix: str = "consumer",
     ) -> None:
         self.connector = connector

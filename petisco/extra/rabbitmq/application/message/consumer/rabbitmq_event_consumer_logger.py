@@ -5,13 +5,13 @@ from pika import BasicProperties
 from pika.spec import Basic
 
 from petisco.base.domain.message.consumer_derived_action import ConsumerDerivedAction
-from petisco.legacy.logger.interface_logger import DEBUG, ILogger
-from petisco.legacy.logger.log_message import LogMessage
-from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
+from petisco.extra.logger.log_message import LogMessage
+from petisco.extra.logger.logger import DEBUG, Logger
+from petisco.extra.logger.not_implemented_logger import NotImplementedLogger
 
 
 class RabbitMqMessageConsumerLogger:
-    def __init__(self, logger: Optional[ILogger] = NotImplementedLogger()) -> None:
+    def __init__(self, logger: Optional[Logger] = NotImplementedLogger()) -> None:
         self.logger = logger
 
     def _get_base_message(self, handler: Callable[..., Any]) -> LogMessage:

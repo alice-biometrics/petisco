@@ -1,10 +1,10 @@
 from meiga import Failure
 
 from petisco.base.domain.message.chaos.message_chaos_error import MessageChaosError
-from petisco.legacy import DEBUG
+from petisco.extra.logger import DEBUG
 
 
-def assert_logger_represents_simulated_failure_scenario(logger, max_retries_allowed):
+def assert_logger_represents_simulated_failure_scenario(logger):
     def assert_redelivered_message(
         logging_message, expected_derived_action, check_headers: bool
     ):
