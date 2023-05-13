@@ -11,9 +11,6 @@ from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.controller.http_error import HttpError
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.dependency_injection.dependency import Dependency
-from petisco.base.application.dependency_injection.injector import (  # deprecated
-    Injector,
-)
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
@@ -160,6 +157,4 @@ __all__ = [
     "InvalidValueObject",
     "HttpError",
     "ErrorMap",
-    # deprecated
-    "Injector",
 ]

@@ -13,7 +13,7 @@ class TestDependency:
     def should_return_default_instance(self):
 
         dependency = Dependency(
-            name="repo",
+            BaseRepo,
             envar_modifier="REPOSITORY",
             builders={"default": Builder(MyRepo), "inmemory": Builder(InMemoryRepo)},
         )
@@ -26,7 +26,7 @@ class TestDependency:
 
         monkeypatch.setenv("REPOSITORY", "inmemory")
         dependency = Dependency(
-            name="repo",
+            BaseRepo,
             envar_modifier="REPOSITORY",
             builders={"default": Builder(MyRepo), "inmemory": Builder(InMemoryRepo)},
         )
@@ -42,7 +42,7 @@ class TestDependency:
 
         monkeypatch.setenv("REPOSITORY", "other")
         dependency = Dependency(
-            name="repo",
+            BaseRepo,
             envar_modifier="REPOSITORY",
             builders={"default": Builder(MyRepo), "inmemory": Builder(InMemoryRepo)},
         )
@@ -53,7 +53,7 @@ class TestDependency:
 
     def should_return_default_when_optional_parameters_are_not_used(self):
 
-        dependency = Dependency(name="repo", builders={"default": Builder(MyRepo)})
+        dependency = Dependency(BaseRepo, builders={"default": Builder(MyRepo)})
 
         assert isinstance(dependency.get_instance(), MyRepo)
 
@@ -64,7 +64,7 @@ class TestDependency:
 
         monkeypatch.setenv("REPOSITORY", "other")
         dependency = Dependency(
-            name="repo",
+            BaseRepo,
             envar_modifier="REPOSITORY",
             builders={"default": Builder(MyRepo)},
         )
