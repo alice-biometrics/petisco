@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from petisco.legacy.logger.log_message import LogMessage
+from petisco.extra.logger.log_message import LogMessage
 
 CRITICAL = 50
 FATAL = CRITICAL
@@ -12,7 +12,7 @@ DEBUG = 10
 NOTSET = 0
 
 
-class ILogger(ABC):
+class Logger(ABC):
     @abstractmethod
     def log(self, logging_level: int, log_message: LogMessage):
         return NotImplementedError

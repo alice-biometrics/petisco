@@ -2,7 +2,8 @@ import logging
 import os
 from typing import Callable
 
-from petisco.legacy.logger.interface_logger import (
+from petisco.extra.logger.log_message import LogMessage
+from petisco.extra.logger.logger import (
     CRITICAL,
     DEBUG,
     ERROR,
@@ -10,9 +11,8 @@ from petisco.legacy.logger.interface_logger import (
     INFO,
     WARN,
     WARNING,
-    ILogger,
+    Logger,
 )
-from petisco.legacy.logger.log_message import LogMessage
 
 CORRESPONDENCES_LOGGING_LEVEL = {
     "DEBUG": logging.DEBUG,
@@ -23,7 +23,7 @@ CORRESPONDENCES_LOGGING_LEVEL = {
 }
 
 
-class LoggingBasedLogger(ILogger):
+class LoggingBasedLogger(Logger):
     def __init__(
         self,
         logger_name: str,
