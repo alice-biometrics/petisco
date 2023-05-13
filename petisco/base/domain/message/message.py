@@ -72,6 +72,8 @@ class Message(metaclass=MetaMessage):
             self.attributes = cast(Dict[str, Any], kwargs.get("attributes"))
             self.meta = cast(Dict[str, Any], kwargs.get("meta"))
             self.type = str(kwargs.get("type_message", "message"))
+            for key, value in self.attributes.items():
+                setattr(self, key, value)
         else:
             self.message_id = Uuid.v4()
             self.occurred_on = datetime.utcnow()
@@ -81,6 +83,7 @@ class Message(metaclass=MetaMessage):
             self.attributes = {}
         for k in data:
             self.attributes[k] = data[k]
+            setattr(self, k, data[k])
 
     def add_meta(self, meta: dict[str, Any]) -> None:
         self.meta = meta
