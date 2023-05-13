@@ -5,7 +5,6 @@ from unittest.mock import patch
 
 import pytest
 from meiga import BoolResult, Error, Failure, Result, Success, isFailure, isSuccess
-from meiga.assertions import assert_failure, assert_success
 
 from petisco import (
     Controller,
@@ -29,7 +28,7 @@ class TestController:
                 return isSuccess
 
         result = MyController().execute()
-        assert_success(result)
+        result.assert_success()
 
     def should_return_failure_result(self):  # noqa
         class MyController(Controller):
@@ -37,7 +36,7 @@ class TestController:
                 return isFailure
 
         result = MyController().execute()
-        assert_failure(result)
+        result.assert_failure()
 
     def should_return_mapped_success_handler(self):  # noqa
         expected_result = {"message": "ok"}
@@ -83,7 +82,7 @@ class TestController:
                 return isSuccess
 
         result = MyController().execute()
-        assert_success(result)
+        result.assert_success()
 
     @pytest.mark.parametrize(
         "configured_middlewares",
@@ -99,7 +98,7 @@ class TestController:
                 return isSuccess
 
         result = MyController().execute()
-        assert_success(result)
+        result.assert_success()
 
         monkeypatch.undo()
 
@@ -143,7 +142,7 @@ class TestController:
             ) as mock_middleware_after:
                 result = MyController().execute()
 
-        assert result.is_failure
+        result.assert_failure()
         mock_middleware_before.assert_called()
         mock_middleware_after.assert_called()
 
@@ -191,7 +190,7 @@ class TestController:
             ) as mock_middleware_after:
                 result = MyController().execute()
 
-        assert result.is_success
+        result.assert_success()
         mock_middleware_before.assert_called()
         mock_middleware_after.assert_called()
 
@@ -232,8 +231,7 @@ class TestController:
                 return Success(result)
 
         result = MyController().execute(2)
-
-        assert_failure(result, value_is_instance_of=UnknownError)
+        result.assert_failure(value_is_instance_of=UnknownError)
 
     def should_succees_when_return_typed_controller_result(self):  # noqa
         class MyController(Controller[int]):

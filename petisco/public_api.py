@@ -1,13 +1,13 @@
 """Public API of Alice Petisco Framework"""
 from petisco.base.application.application import Application
 from petisco.base.application.application_configurer import ApplicationConfigurer
-from petisco.base.application.controller.controller import (
-    Controller,
-    ControllerResult,
+from petisco.base.application.controller.async_controller import AsyncController
+from petisco.base.application.controller.controller import Controller, ControllerResult
+from petisco.base.application.controller.error_map import ErrorMap
+from petisco.base.application.controller.handlers import (
     custom_message_handler,
     unwrap_result_handler,
 )
-from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.controller.http_error import HttpError
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.dependency_injection.dependency import Dependency
@@ -32,6 +32,7 @@ from petisco.base.application.patterns.inmemory_crud_repository import (
     InmemoryCrudRepository,
 )
 from petisco.base.application.patterns.repository import Repository
+from petisco.base.application.use_case.async_use_case import AsyncUseCase
 from petisco.base.application.use_case.use_case import UseCase
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
     UseCaseUncontrolledError,
@@ -96,6 +97,7 @@ from petisco.base.testing.assert_http import assert_http
 __all__ = [
     # base
     "Controller",
+    "AsyncController",
     "ControllerResult",
     "unwrap_result_handler",
     "custom_message_handler",
@@ -108,6 +110,7 @@ __all__ = [
     "NotImplementedNotifier",
     "PrintMiddleware",
     "UseCase",
+    "AsyncUseCase",
     "UseCaseUncontrolledError",
     "assert_http",
     "Dependency",

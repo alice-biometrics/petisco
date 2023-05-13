@@ -6,11 +6,11 @@ from meiga import AnyResult, NotImplementedMethodError
 from petisco.base.application.use_case.meta_use_case import MetaUseCase
 
 
-class UseCase(metaclass=MetaUseCase):
+class AsyncUseCase(metaclass=MetaUseCase):
     """
-    A base class for creating your use cases.
+    A base class for creating your async use cases.
     """
 
     @abstractmethod
-    def execute(self, *args: Any, **kwargs: Any) -> AnyResult:
+    async def execute(self, *args: Any, **kwargs: Any) -> AnyResult:
         return NotImplementedMethodError

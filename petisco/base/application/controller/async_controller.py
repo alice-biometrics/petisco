@@ -14,9 +14,9 @@ T = TypeVar("T")
 ControllerResult = Union[Result[T, Error], T]
 
 
-class Controller(Generic[T], metaclass=MetaController):
+class AsyncController(Generic[T], metaclass=MetaController):
     """
-    A base class for creating controllers.
+    A base class for creating async controllers.
     Inherit from this class to convert to domain the request values, configure middlewares and instantiate and execute
      a UseCase.
     """
@@ -35,7 +35,7 @@ class Controller(Generic[T], metaclass=MetaController):
         )
 
     @abstractmethod
-    def execute(
+    async def execute(
         self, *args: tuple[str, ...], **kwargs: dict[str, Any]
     ) -> ControllerResult:
         return NotImplementedMethodError

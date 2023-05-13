@@ -7,6 +7,10 @@ from petisco.base.misc.interface import Interface
 
 
 class AsyncAppService(Interface):
+    """
+    A base class for creating async app services.
+    """
+
     @abstractmethod
     async def execute(self, *args: Any, **kwargs: Any) -> AnyResult:
         return NotImplementedMethodError
