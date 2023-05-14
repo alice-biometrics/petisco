@@ -25,17 +25,12 @@ class ResultMapper(ABC):
         failure_handler: Callable[
             [Result[DomainError, Error], Union[ErrorMap, None]], Any
         ] = default_failure_handler,
-        skip_result_mapping: bool = False,
     ):
         self.error_map = error_map if error_map is not None else dict()
         self.success_handler = success_handler
         self.failure_handler = failure_handler
-        self.skip_result_mapping = skip_result_mapping
 
     def map(self, result: AnyResult) -> Any:
-        if self.skip_result_mapping:
-            return result
-
         try:
             if result.is_success:
                 return self.success_handler(result)
@@ -47,6 +42,5 @@ class ResultMapper(ABC):
         except AttributeError:  # noqa
             raise TypeError(
                 f"Controller Error: Return value `{result}` ({type(result)}) must be a `meiga.Result` to "
-                f"map values to success and failure handlers.\nIf you want to skip this, use the Config "
-                f"inner class of controller and modify parameter skip_result_mapping to True."
+                f"map values to success and failure handlers."
             )

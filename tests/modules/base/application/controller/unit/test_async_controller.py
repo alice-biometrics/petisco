@@ -42,8 +42,7 @@ class TestAsyncController:
                 return isSuccess
 
         result = await MyAsyncController().execute()
-
-        assert result == expected_result
+        assert result.transform() == expected_result
 
     async def should_return_mapped_by_error_map(self):  # noqa
         expected_result = {"message": "not ok"}
@@ -57,7 +56,7 @@ class TestAsyncController:
 
         result = await MyAsyncController().execute()
 
-        assert result == expected_result
+        assert result.transform() == expected_result
 
     @pytest.mark.parametrize(
         "configured_middlewares",
@@ -208,7 +207,7 @@ class TestAsyncController:
                 return simulate_result
 
         result = await MyAsyncController().execute()
-        assert result == expected_result
+        assert result.transform() == expected_result
 
     async def should_raise_an_exception_if_execute_method_is_not_implemented(
         self,
