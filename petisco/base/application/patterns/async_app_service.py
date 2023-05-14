@@ -6,11 +6,11 @@ from meiga import AnyResult, NotImplementedMethodError
 from petisco.base.misc.interface import Interface
 
 
-class AppService(Interface):
+class AsyncAppService(Interface):
     """
-    A base class for creating app services.
+    A base class for creating async app services.
     """
 
     @abstractmethod
-    def execute(self, *args: Any, **kwargs: Any) -> AnyResult:
+    async def execute(self, *args: Any, **kwargs: Any) -> AnyResult:
         return NotImplementedMethodError

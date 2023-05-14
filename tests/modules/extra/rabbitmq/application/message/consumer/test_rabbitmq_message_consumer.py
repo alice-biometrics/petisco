@@ -126,6 +126,7 @@ class TestRabbitMqMessageConsumer:
         consumer.stop()
         configurer.clear()
 
+    @testing_with_rabbitmq
     def should_publish_consume_a_typed_domain_event(self):
         spy = SpyMessages()
 
