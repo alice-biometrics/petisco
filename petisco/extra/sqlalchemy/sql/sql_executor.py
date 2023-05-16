@@ -19,7 +19,7 @@ class SqlExecutor:
     def execute_statement(self, statement: str):
         with self.session_scope() as session:
             command = self._get_command(statement)
-            session.execute(text(command))
+            session.execute(command)
 
     def execute_statements(self, statements: List[str]):
         with self.session_scope() as session:
