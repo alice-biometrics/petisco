@@ -1,33 +1,33 @@
 import pytest
 
 from petisco import Persistence
-from petisco.extra.elastic import ElasticConnection, ElasticDatabase
+from petisco.extra.elastic import ElasticConnection
+from petisco.extra.elastic.async_elastic_database import AsyncElasticDatabase
 from tests.modules.extra.decorators import testing_with_elastic
 
 
 @pytest.mark.integration
-class TestElasticDatabase:
+@pytest.mark.asyncio
+class TestAsyncElasticDatabase:
     @testing_with_elastic
-    def should_execute_a_session(self):
+    async def should_execute_a_session(self):
         connection = ElasticConnection.create_local()
-        database = ElasticDatabase(name="elastic_test", connection=connection)
+        database = AsyncElasticDatabase(name="elastic_test", connection=connection)
         database.create()
-
         session_scope = database.get_session_scope()
-
-        with session_scope() as es:
+        async with session_scope() as es:
             document = {
                 "title": "Example Document",
                 "content": "This is the content of the document.",
             }
             index_name = "my-index"
-            response = es.index(index=index_name, body=document)
+            response = await es.index(index=index_name, body=document)
             assert response.get("result") == "created"
 
     @testing_with_elastic
-    def should_create_persistence_with_elastic_database(self):
+    async def should_create_persistence_with_elastic_database(self):
         connection = ElasticConnection.create_local()
-        database = ElasticDatabase(name="elastic_test", connection=connection)
+        database = AsyncElasticDatabase(name="elastic_test", connection=connection)
         Persistence.clear()
 
         persistence = Persistence()
@@ -37,15 +37,18 @@ class TestElasticDatabase:
 
         persistence.create()
 
-        assert Persistence.is_available()
+        is_available = await Persistence.async_is_available(database.name)
+        assert is_available is True
 
         persistence.delete()
         Persistence.clear()
 
     @testing_with_elastic
-    def should_create_persistence_with_elastic_database_specifying_the_database(self):
+    async def should_create_persistence_with_elastic_database_specifying_the_database(
+        self,
+    ):
         connection = ElasticConnection.create_local()
-        database = ElasticDatabase(name="elastic_test", connection=connection)
+        database = AsyncElasticDatabase(name="elastic_test", connection=connection)
         Persistence.clear()
 
         persistence = Persistence()
@@ -55,7 +58,8 @@ class TestElasticDatabase:
 
         persistence.create()
 
-        assert Persistence.is_available(database.name)
+        is_available = await Persistence.async_is_available(database.name)
+        assert is_available is True
 
         persistence.delete()
         Persistence.clear()

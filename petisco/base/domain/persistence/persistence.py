@@ -60,6 +60,13 @@ class Persistence(metaclass=Singleton):
                 )
 
     def create(self) -> None:
+        # TODO should we check if database exists
+        # from sqlalchemy_utils import database_exists
+        # db_exist = database_exists(
+        #     database.connection.url
+        # )  # must be checked before of create persistence
+        #
+
         for database in self._databases.values():
             database.create()
 
@@ -87,7 +94,9 @@ class Persistence(metaclass=Singleton):
             return True
 
     @staticmethod
-    def is_available(database_name: str | None = None) -> bool:
+    def is_available(
+        database_name: str | None = None, check_async: bool = False
+    ) -> bool:
         def log_warning(message: str) -> None:
             logger.debug(message)
 
@@ -102,7 +111,34 @@ class Persistence(metaclass=Singleton):
             log_warning("Persistence databases are empty")
             return False
         for database_name, database in databases.items():
-            if not database.is_available():
+            if "Async" in database.__class__.__name__:
+                continue
+            if database.is_available() is not True:
+                log_warning(f"Database {database_name} is not available")
+                return False
+        return True
+
+    @staticmethod
+    async def async_is_available(
+        database_name: str | None = None, check_async: bool = False
+    ) -> bool:
+        def log_warning(message: str) -> None:
+            logger.debug(message)
+
+        databases = Persistence.get_instance()._databases
+        if database_name is not None:
+            if database_name not in databases:
+                raise IndexError(
+                    f"Database cannot return is_available. {database_name} not exists"
+                )
+            databases = {database_name: databases.get(database_name)}
+        if len(databases) < 1:
+            log_warning("Persistence databases are empty")
+            return False
+        for database_name, database in databases.items():
+            if "Async" not in database.__class__.__name__:
+                continue
+            if await database.is_available() is not True:
                 log_warning(f"Database {database_name} is not available")
                 return False
         return True
