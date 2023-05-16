@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import importlib
 import os
 import sys
 import traceback
-from typing import Any, Dict
+from typing import Any
 
 import yaml
 from yaml.parser import ParserError
@@ -10,12 +12,12 @@ from yaml.scanner import ScannerError
 
 
 class PersistenceModels:
-    def __init__(self, models: Dict[str, Any]) -> None:
+    def __init__(self, models: dict[str, Any]) -> None:
         self.models = models
-        self.imported_models: Dict[str, Any] = {}
+        self.imported_models: dict[str, Any] = {}
 
     @staticmethod
-    def from_filename(filename: str) -> "PersistenceModels":
+    def from_filename(filename: str) -> PersistenceModels:
         if not os.path.isfile(filename):
             raise FileNotFoundError(f"PersistenceModels ({filename} not found)")
         try:
@@ -27,7 +29,7 @@ class PersistenceModels:
             message = f"Error loading {filename} file: {repr(e.__class__)} {e} | {traceback.format_exc()}"
             raise RuntimeError(message)
 
-    def get_models_names(self) -> Dict[str, Any]:
+    def get_models_names(self) -> dict[str, Any]:
         return self.models
 
     def import_models(self) -> None:
@@ -39,7 +41,7 @@ class PersistenceModels:
         #     mod = importlib.import_module(mod_name)
         #     self.imported_models[name] = getattr(mod, model_name)
 
-    def import_database_models(self) -> Dict[str, Any]:
+    def import_database_models(self) -> dict[str, Any]:
         def _is_class_in_sqlalchemy_tables(class_model_name: str) -> bool:
             # We need this to filter deletion in case of Model dependencies.
             # For instance, ClientConfigModel imports ClientModel on class model definition
@@ -70,13 +72,14 @@ class PersistenceModels:
             # If module is already imported and Base has not tables, Tables won't be imported.
             # This, usually happens when start the application (e.g end2end tests)
             # e.g len(Base.metadata.tables) == 0
-            # With this function we ensure that model can be imported to help SqlAlchemy loading models if is not imported yet
+            # With this function we ensure that model can be imported to help SqlAlchemy loading models if is not
+            # imported yet
             if module_name in sys.modules and not _is_class_in_sqlalchemy_tables(
                 class_model_name
             ):
                 del sys.modules[module_name]
 
-        def _import_database_models_func() -> Dict[str, Any]:
+        def _import_database_models_func() -> dict[str, Any]:
             imported_models = {}
             for name, model_string in self.models.items():
                 module_name, class_model_name = model_string.rsplit(".", 1)
@@ -87,5 +90,5 @@ class PersistenceModels:
 
         return _import_database_models_func()
 
-    def get_imported_models(self) -> Dict[str, Any]:
+    def get_imported_models(self) -> dict[str, Any]:
         return self.imported_models

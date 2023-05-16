@@ -1,30 +1,32 @@
+from __future__ import annotations
+
 import inspect
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable
 
 from loguru import logger
 
-from petisco.base.domain.persistence.interface_database import Database
+from petisco.base.domain.persistence.database import Database
 from petisco.base.misc.singleton import Singleton
 
 
 @dataclass
 class Persistence(metaclass=Singleton):
     def __init__(self) -> None:
-        self._databases: Dict[str, Any] = {}
+        self._databases: dict[str, Any] = {}
 
     def __repr__(self) -> str:
         return f"Persistence: {str(self.get_info())}"
 
-    def get_info(self) -> Dict[str, Any]:
+    def get_info(self) -> dict[str, Any]:
         return {name: database.info() for name, database in self._databases.items()}
 
     @staticmethod
-    def info() -> Dict[str, Any]:
+    def info() -> dict[str, Any]:
         return Persistence.get_instance().get_info()
 
     @staticmethod
-    def get_instance() -> "Persistence":
+    def get_instance() -> Persistence:
         try:
             return Persistence()
         except Exception as e:  # noqa E722
@@ -65,7 +67,7 @@ class Persistence(metaclass=Singleton):
         for database in self._databases.values():
             database.delete()
 
-    def clear_data(self, database_name: Union[str, None] = None) -> None:
+    def clear_data(self, database_name: str | None = None) -> None:
         databases = self._databases
         if database_name is not None:
             if database_name not in self._databases:
@@ -85,7 +87,7 @@ class Persistence(metaclass=Singleton):
             return True
 
     @staticmethod
-    def is_available(database_name: Union[str, None] = None) -> bool:
+    def is_available(database_name: str | None = None) -> bool:
         def log_warning(message: str) -> None:
             logger.debug(message)
 
@@ -117,15 +119,15 @@ class Persistence(metaclass=Singleton):
         return database.get_base()
 
     @staticmethod
-    def get_databases() -> List[Database]:
+    def get_databases() -> list[Database]:
         return list(Persistence.get_instance()._databases.values())
 
     @staticmethod
-    def get_available_databases() -> List[str]:
+    def get_available_databases() -> list[str]:
         return list(Persistence.get_instance()._databases.keys())
 
     @staticmethod
-    def get_available_models_for_database(database_name: str) -> List[str]:
+    def get_available_models_for_database(database_name: str) -> list[str]:
         database = Persistence.get_instance()._databases.get(database_name)
         if not database:
             raise IndexError(f"Database name ({database_name}) not exists.")

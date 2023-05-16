@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Union
+from typing import Any
 
 
 class Database(ABC):
-    def __init__(self, name: str, models: Union[Dict[str, Any], None] = None):
+    def __init__(self, name: str, models: dict[str, Any] | None = None):
         self.name = name
         self.models = models if models else {}
 
-    def info(self) -> Dict[str, Any]:
-        _info: Dict[str, Any] = {"name": self.name}
+    def info(self) -> dict[str, Any]:
+        _info: dict[str, Any] = {"name": self.name}
         if self.models:
             _info["models"] = self.models
         return _info
@@ -30,5 +32,5 @@ class Database(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_model_names(self) -> List[str]:
+    def get_model_names(self) -> list[str]:
         raise NotImplementedError

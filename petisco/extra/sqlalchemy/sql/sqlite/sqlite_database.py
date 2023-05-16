@@ -3,7 +3,7 @@ from typing import Any, Callable, List
 
 from sqlalchemy.orm import scoped_session
 
-from petisco.base.domain.persistence.interface_database import Database
+from petisco.base.domain.persistence.database import Database
 from petisco.base.domain.persistence.persistence_models import PersistenceModels
 from petisco.extra.sqlalchemy.sql.sql_session_scope_provider import (
     sql_session_scope_provider,

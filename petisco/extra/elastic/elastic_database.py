@@ -1,6 +1,6 @@
 from typing import Any, Callable, List
 
-from petisco.base.domain.persistence.interface_database import Database
+from petisco.base.domain.persistence.database import Database
 from petisco.extra.elastic.elastic_connection import ElasticConnection
 from petisco.extra.elastic.elastic_session_scope_provider import (
     elastic_session_scope_provider,

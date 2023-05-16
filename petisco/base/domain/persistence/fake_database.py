@@ -1,6 +1,6 @@
 from typing import Any, List
 
-from petisco.base.domain.persistence.interface_database import Database
+from petisco.base.domain.persistence.database import Database
 from petisco.base.domain.persistence.persistence_models import PersistenceModels
 
 
