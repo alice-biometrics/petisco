@@ -6,7 +6,39 @@ that takes full advantage of the capabilities of the asyncio library.
 
 ### `AsyncAppService`
 
+Inherit from `AsyncAppService` and don't forget to add `async` prefix before execution method.
+
+```python
+from petisco import AsyncAppService
+from meiga import BoolResult, isSuccess
+
+class MyAsyncAppService(AsyncAppService):
+    async def execute(self, my_input: str) -> BoolResult:
+        return isSuccess
+```
+
+To call this app service, its necessary to await for it and call it from async function-
+
+```python
+result = await MyAsyncAppService().execute
+```
+
 ### `AsyncUseCase`
+
+Inherit from `AsyncUseCase` and don't forget to add `async` prefix before execution method.
+
+```python
+from petisco import AsyncUseCase
+from meiga import BoolResult
+
+ class MyUseCase(AsyncUseCase):
+    
+    def __init__(self, app_service: MyAsyncAppService) -> None:
+        self.app_service = app_service
+        
+    async def execute(self) -> BoolResult:
+        return await self.app_service.execute()
+```
 
 ### `AsyncController`
 
@@ -22,7 +54,7 @@ class MyController(AsyncController): # (1)
 
 1. Inherit from petisco AsyncController class
 
-#### FastAPI ⚡️
+### FastAPI ⚡️
 
 Use `AsyncFastAPIController` instead of using `FastAPIController`.
 
@@ -47,7 +79,7 @@ class CreateTaskController(AsyncFastAPIController):
 
 Then, we have to instantiate and execute the controller object in the FastAPI routers.
 
-```python hl_lines="11 12 13"
+```python hl_lines="12 13 14"
 from uuid import UUID
 
 from fastapi import APIRouter
