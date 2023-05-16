@@ -21,4 +21,4 @@ class TestPoolExecutor:
         pool_executor = PoolExecutor(self.executables, use_multi_threading)
         func_results = pool_executor.execute()
 
-        return func_results == ["executable 1", "executable 2", "executable 3"]
+        assert func_results == ["executable 1", "executable 2", "executable 3"]
