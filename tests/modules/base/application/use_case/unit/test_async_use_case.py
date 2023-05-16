@@ -1,8 +1,8 @@
 import pytest
-from meiga import BoolResult, Error, Failure, Result, Success, isSuccess
+from meiga import AnyResult, BoolResult, Error, Failure, Result, Success, isSuccess
 from meiga.on_failure_exception import OnFailureException
 
-from petisco import AsyncUseCase, UseCaseUncontrolledError
+from petisco import AsyncAppService, AsyncUseCase, UseCaseUncontrolledError
 
 
 class MyError(Error):
@@ -102,3 +102,26 @@ class TestAsyncUseCase:
                 excinfo.value.message
                 == "Petisco AsyncUseCase must implement an execute method"
             )
+
+    async def should_success_when_using_collaborators(self):
+        class MyAppService(AsyncAppService):
+            async def execute(self) -> AnyResult:
+                return isSuccess
+
+        class MyUseCase(AsyncUseCase):
+            def __init__(
+                self, app_service_1: MyAppService, app_service_2: MyAppService
+            ):
+                self.app_service_1 = app_service_1
+                self.app_service_2 = app_service_2
+
+            async def execute(self) -> BoolResult:
+                (await self.app_service_1.execute()).unwrap_or_return()
+                (await self.app_service_2.execute()).unwrap_or_return()
+                return isSuccess
+
+        result = await MyUseCase(
+            app_service_1=MyAppService(), app_service_2=MyAppService()
+        ).execute()
+
+        result.assert_success()
