@@ -289,9 +289,9 @@ The result:
 }
 ```
 
-### DomainEventPublisher
+### DomainEventBus
 
-Use `DomainEventPublisher` to publish `DomainEvent`s in your Use Cases. 
+Use `DomainEventBus` to publish `DomainEvent`s in your Use Cases. 
 
 ???+ example "Example of usage into a `UseCase`"
 
@@ -325,9 +325,9 @@ Use `DomainEventPublisher` to publish `DomainEvent`s in your Use Cases.
     1. Pull `DomainEvent`s from the `Task` Aggregate.
     2. Publish retrieved `DomainEvent`s. 
 
-### CommandDispatcher
+### CommandBus
 
-Use `CommandDispatcher` to publish `Command`s in your Use Cases or Controllers.
+Use `CommandBus` to dispatch `Command`s in your Use Cases or Controllers.
 
 
 ## Other Domain Elements
