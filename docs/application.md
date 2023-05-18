@@ -104,7 +104,7 @@ object.
     === "Defining Dependencies"
 
         ```python
-        from petisco import Container
+        from petisco import Dependency, Container
     
         dependencies = [
             Dependency(MyBase, builders={"default": Builder(MyImplementation)})
