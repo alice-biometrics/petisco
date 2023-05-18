@@ -57,6 +57,8 @@ nav:
   - SQLAlchemy: extra/sqlalchemy/sqlalchemy.md
   - Slack: extra/slack/slack.md
 - asyncio.md
+- Migrations:
+  - From v1 to v2: migrations/from_v1_to_v2.md
 - Contributing to petisco: contributing.md
 - changelog.md
 - acknowledgements.md
