@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import json
-from typing import List, Union
 
 from redis.client import Redis
+from redis.cluster import RedisCluster
 from redis.exceptions import RedisError
 
 from petisco.base.domain.errors.critical_error import CriticalError
@@ -14,18 +16,22 @@ class RedisMessageBus(MessageBus):
     A generic implementation of MessageBus using Redis infrastructure.
     """
 
-    def publish(self, message: Union[TypeMessage, List[TypeMessage]]) -> None:
+    def publish(self, message: TypeMessage | list[TypeMessage]) -> None:
         pass
 
     def __init__(
-        self, organization: str, service: str, redis_database: Redis, database_name: str
+        self,
+        organization: str,
+        service: str,
+        redis_database: Redis | RedisCluster,
+        database_name: str,
     ):
         self.organization = organization
         self.service = service
         self.redis_database = redis_database
         self.database_name = database_name
 
-    def save(self, messages: List[Message]) -> None:
+    def save(self, messages: list[Message]) -> None:
         """
         Save several Message
         """
