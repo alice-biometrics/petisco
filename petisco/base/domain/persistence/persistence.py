@@ -94,9 +94,7 @@ class Persistence(metaclass=Singleton):
             return True
 
     @staticmethod
-    def is_available(
-        database_name: str | None = None, check_async: bool = False
-    ) -> bool:
+    def is_available(database_name: str | None = None) -> bool:
         def log_warning(message: str) -> None:
             logger.debug(message)
 
