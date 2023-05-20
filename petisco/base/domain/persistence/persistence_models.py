@@ -7,6 +7,7 @@ import traceback
 from typing import Any
 
 import yaml
+from sqlalchemy.orm import DeclarativeMeta
 from yaml.parser import ParserError
 from yaml.scanner import ScannerError
 
@@ -32,8 +33,8 @@ class PersistenceModels:
     def get_models_names(self) -> dict[str, Any]:
         return self.models
 
-    def import_models(self) -> None:
-        self.imported_models = self.import_database_models()
+    def import_models(self, base: type[DeclarativeMeta]) -> None:
+        self.imported_models = self.import_database_models(base)
 
         # self.imported_models = {}
         # for name, model_string in self.models.items():
@@ -41,7 +42,7 @@ class PersistenceModels:
         #     mod = importlib.import_module(mod_name)
         #     self.imported_models[name] = getattr(mod, model_name)
 
-    def import_database_models(self) -> dict[str, Any]:
+    def import_database_models(self, base: type[DeclarativeMeta]) -> dict[str, Any]:
         def _is_class_in_sqlalchemy_tables(class_model_name: str) -> bool:
             # We need this to filter deletion in case of Model dependencies.
             # For instance, ClientConfigModel imports ClientModel on class model definition
@@ -56,11 +57,11 @@ class PersistenceModels:
             for database in Persistence.get_databases():
                 if not hasattr(database, "get_base"):
                     continue
-                Base = database.get_base()
-                if not Base:
+                # Base = database.get_base()
+                if not base:
                     continue
                 is_in_tables = class_model_name.replace("Model", "") in list(
-                    Base.metadata.tables.keys()
+                    base.metadata.tables.keys()
                 )
             return is_in_tables
 
