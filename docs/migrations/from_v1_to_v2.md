@@ -135,6 +135,36 @@ For more info about new way of defining dependencies, you can check the [Depende
     mapped_result = as_fastapi(result)
     ````
 
+To use this in a FastAPI router, is quite easy:
+
+=== "Petisco v1 👴"
+
+    ````python
+    from fastapi import APIRouter
+    
+    router = APIRouter()
+
+    @router.get("my/path"):
+    def my_router():
+        result = MyController().execute() # real result don't match with typehint as it is mapped
+        return result
+    ````
+
+=== "Petisco v2 👶"
+
+    ```python hl_lines="2 9"
+    from fastapi import APIRouter
+    from petisco.extra.fastapi import as_fastapi
+
+    router = APIRouter()
+
+    @router.get("my/path"):
+    def my_router():
+        result = MyController().execute()
+        return as_fastapi(result)
+    ```
+
+
 
 ## Dev Experience Improvements
 
@@ -207,13 +237,13 @@ For more info about new way of defining dependencies, you can check the [Depende
     ```python hl_lines="10 16"
     from meiga import BoolResult
     from petisco import Container, DomainEventBus
-    from petisco.extra.fastapi import AsyncFastAPIController
+    from petisco.extra.fastapi import FastAPIController
     
     from app.src.task.create.application.task_creator import TaskCreator
     from app.src.task.shared.domain.task import Task
     
     
-    class CreateTaskController(AsyncFastAPIController):
+    class CreateTaskController(FastAPIController):
         def execute(self, task: Task) -> BoolResult:
             task_creator = TaskCreator(
                 labeler=Container.get(TaskLabeler),
@@ -228,13 +258,13 @@ For more info about new way of defining dependencies, you can check the [Depende
     ```python hl_lines="10 16"
     from meiga import BoolResult
     from petisco import Container, DomainEventBus
-    from petisco.extra.fastapi import AsyncFastAPIController
+    from petisco.extra.fastapi import FastAPIController
     
     from app.src.task.create.application.task_creator import TaskCreator
     from app.src.task.shared.domain.task import Task
     
     
-    class CreateTaskController(AsyncFastAPIController):
+    class CreateTaskController(FastAPIController):
         def execute(self, task: Task) -> BoolResult:
             task_creator = TaskCreator(
                 labeler=Container.get(TaskLabeler),
@@ -246,7 +276,7 @@ For more info about new way of defining dependencies, you can check the [Depende
 
 === "Petisco v2 👶 (async ⚡)"
 
-    ```python hl_lines="10 16"
+    ```python hl_lines="9 10 16"
     from meiga import BoolResult
     from petisco import Container, DomainEventBus
     from petisco.extra.fastapi import AsyncFastAPIController
