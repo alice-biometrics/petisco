@@ -2,7 +2,7 @@
 from petisco.base.application.application import Application
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.controller.async_controller import AsyncController
-from petisco.base.application.controller.controller import Controller, ControllerResult
+from petisco.base.application.controller.controller import Controller
 from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.controller.handlers import (
     custom_message_handler,
@@ -95,7 +95,6 @@ __all__ = [
     # base
     "Controller",
     "AsyncController",
-    "ControllerResult",
     "unwrap_result_handler",
     "custom_message_handler",
     "ResultMapper",

@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from meiga import Error, Result, Success
 
 from petisco import assert_http
-from petisco.extra.fastapi import FastAPIController
+from petisco.extra.fastapi import FastAPIController, as_fastapi
 
 app = FastAPI(title="test-app")
 
@@ -17,7 +17,8 @@ class MyController(FastAPIController):
 
 @app.get("/test")
 def entry_point():
-    return MyController().execute(5)
+    result = MyController().execute(5)
+    return as_fastapi(result)
 
 
 @pytest.mark.unit

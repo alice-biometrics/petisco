@@ -1,3 +1,4 @@
+from aifc import Error
 from typing import Any, Dict
 from unittest.mock import patch
 
@@ -5,19 +6,13 @@ import elasticapm
 import pytest
 from fastapi import HTTPException
 from loguru import logger
-from meiga import BoolResult, Failure, Result, Success, isFailure, isSuccess
+from meiga import AnyResult, BoolResult, Failure, Result, Success, isFailure, isSuccess
 
-from petisco import (
-    AlreadyExists,
-    ControllerResult,
-    DomainError,
-    HttpError,
-    NotFound,
-    PrintMiddleware,
-)
+from petisco import AlreadyExists, DomainError, HttpError, NotFound, PrintMiddleware
 from petisco.extra.fastapi import (
     FASTAPI_DEFAULT_RESPONSE,
     FastAPIController,
+    as_fastapi,
     assert_http_exception,
 )
 
@@ -30,7 +25,7 @@ class TestFastApiController:
                 return isSuccess
 
         result = MyController().execute()
-        assert result == FASTAPI_DEFAULT_RESPONSE
+        assert as_fastapi(result) == FASTAPI_DEFAULT_RESPONSE
 
     def should_raise_http_exception_when_failure_result(self):
         class MyController(FastAPIController):
@@ -38,7 +33,8 @@ class TestFastApiController:
                 return isFailure
 
         with pytest.raises(HTTPException) as excinfo:
-            MyController().execute()
+            result = MyController().execute()
+            as_fastapi(result)
 
         assert excinfo.value.status_code == 500
         assert excinfo.value.detail == "Unknown Error"
@@ -53,7 +49,8 @@ class TestFastApiController:
                 raise TypeError("test_error")
 
         with pytest.raises(HTTPException):
-            MyController().execute()
+            result = MyController().execute()
+            as_fastapi(result)
 
         apm_set_custom_context_mock.assert_called()
         apm_internal_error_message = apm_set_custom_context_mock.call_args[0][0][
@@ -69,7 +66,7 @@ class TestFastApiController:
             __name__ in logger_error_message and __name__ in apm_internal_error_message
         )
 
-    def should_return_mapped_success_handler(self):
+    def should_return_tranformed_result_when_success_handler(self):
         expected_result = {"message": "ok"}
 
         class MyController(FastAPIController):
@@ -81,7 +78,7 @@ class TestFastApiController:
 
         result = MyController().execute()
 
-        assert result == expected_result
+        assert as_fastapi(result) == expected_result
 
     @patch.object(elasticapm, "set_custom_context")
     def should_raise_fastapi_http_exception_mapped_and_inject_info_in_apm(
@@ -98,7 +95,8 @@ class TestFastApiController:
                 return Failure(NotFound())
 
         with pytest.raises(HTTPException) as excinfo:
-            MyController().execute()
+            result = MyController().execute()
+            as_fastapi(result)
 
         assert excinfo.value.status_code == http_error.status_code
         assert excinfo.value.detail == http_error.detail
@@ -121,7 +119,8 @@ class TestFastApiController:
                 return Failure(MyError())
 
         with pytest.raises(HTTPException) as excinfo:
-            MyController().execute()
+            result = MyController().execute()
+            as_fastapi(result)
 
         assert excinfo.value.status_code == 500
         error_message = "Error 'MyError' is not mapped in controller"
@@ -151,7 +150,7 @@ class TestFastApiController:
                 return isSuccess
 
         result = MyController().execute()
-        assert result == FASTAPI_DEFAULT_RESPONSE
+        assert as_fastapi(result) == FASTAPI_DEFAULT_RESPONSE
 
     def should_execute_middleware_when_controller_raise_an_unexpected_exception(self):
         class MyController(FastAPIController):
@@ -168,7 +167,8 @@ class TestFastApiController:
                 PrintMiddleware, "after", return_value=isSuccess
             ) as mock_middleware_after:
                 with pytest.raises(HTTPException):
-                    MyController().execute()
+                    result = MyController().execute()
+                    as_fastapi(result)
 
         mock_middleware_before.assert_called()
         mock_middleware_after.assert_called()
@@ -186,7 +186,7 @@ class TestFastApiController:
                 return isSuccess
 
         result = MyController().execute()
-        assert result == FASTAPI_DEFAULT_RESPONSE
+        assert as_fastapi(result) == FASTAPI_DEFAULT_RESPONSE
 
     @pytest.mark.parametrize(
         "result,expected_http_exception",
@@ -245,7 +245,8 @@ class TestFastApiController:
                 return result
 
         with pytest.raises(HTTPException) as excinfo:
-            MyController().execute()
+            result = MyController().execute()
+            as_fastapi(result)
 
         assert_http_exception(excinfo.value, expected_http_exception)
 
@@ -268,7 +269,7 @@ class TestFastApiController:
                 return result
 
         result = MyController().execute()
-        assert result == expected_response
+        assert as_fastapi(result) == expected_response
 
     @pytest.mark.parametrize(
         "result,expected_response",
@@ -292,7 +293,7 @@ class TestFastApiController:
                 return result
 
         result = MyController().execute()
-        assert result == expected_response
+        assert as_fastapi(result) == expected_response
 
     @pytest.mark.parametrize(
         "result,expected_response",
@@ -318,34 +319,23 @@ class TestFastApiController:
                 return result
 
         result = MyController().execute()
-        assert result == expected_response
+        assert as_fastapi(result) == expected_response
 
-    def should_succees_when_return_typed_controller_result(self):  # noqa
-        class MyController(FastAPIController[int]):
-            def execute(self) -> ControllerResult:
+    def should_succees_when_use_as_fastapi_controller_result(self):  # noqa
+        class MyController(FastAPIController):
+            def execute(self) -> Result[int, Error]:
                 return Success(1)
 
         def function() -> int:
-            return MyController().execute()
+            result = MyController().execute()
+            return as_fastapi(result, expected_type=int)
 
         function()
 
     def should_fail_when_return_type_is_not_a_result(self):  # noqa
-        class MyController(FastAPIController[int]):
-            def execute(self) -> ControllerResult:
+        class MyController(FastAPIController):
+            def execute(self) -> AnyResult:
                 return 1
 
         with pytest.raises(TypeError, match="Controller Error"):
             MyController().execute()
-
-    def should_skip_mapping_when_return_type_is_not_a_result(self):  # noqa
-        class MyController(FastAPIController[int]):
-            class Config:
-                skip_result_mapping = True
-
-            def execute(self) -> ControllerResult:
-                return 1
-
-        result = MyController().execute()
-
-        assert isinstance(result, int)
