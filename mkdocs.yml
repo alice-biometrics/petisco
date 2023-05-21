@@ -45,6 +45,7 @@ extra_javascript:
 nav:
 - Overview: index.md
 - install.md
+- CLI: cli.md
 - getting_started.md
 - application.md
 - domain.md

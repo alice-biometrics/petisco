@@ -29,6 +29,7 @@ setup(
         "console_scripts": [
             "petisco = petisco.cli.petisco:main",
             "petisco-rabbitmq = petisco.cli.petisco_rabbitmq:main",
+            "petisco-dev = petisco.cli.petisco_dev:main",
         ]
     },
     classifiers=[
@@ -57,5 +58,6 @@ setup(
         "elastic": ["elasticsearch<8.0.0,>=7.13.1", "elastic-apm<7.0.0,>=6.15.1"],
         "elastic-apm": ["elastic-apm<7.0.0,>=6.15.1"],
         "fastapi": ["fastapi<1.0.0,>=0.95.0"],
+        "rich": ["rich"],
     },
 )
