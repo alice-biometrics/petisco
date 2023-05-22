@@ -3,7 +3,7 @@ from typing import Any, Callable, List
 from sqlalchemy import text
 from sqlalchemy.orm import scoped_session
 
-from petisco.base.domain.persistence.interface_database import Database
+from petisco.base.domain.persistence.legacy_database import LegacyDatabase
 from petisco.base.domain.persistence.persistence_models import PersistenceModels
 from petisco.extra.sqlalchemy.sql.mysql.mysql_connection import MySqlConnection
 from petisco.extra.sqlalchemy.sql.sql_session_scope_provider import (
@@ -11,10 +11,10 @@ from petisco.extra.sqlalchemy.sql.sql_session_scope_provider import (
 )
 
 
-class MySqlDatabase(Database):
+class LegacyMySqlDatabase(LegacyDatabase):
     @staticmethod
-    def local_connection_checker() -> "MySqlDatabase":
-        return MySqlDatabase(
+    def local_connection_checker() -> "LegacyMySqlDatabase":
+        return LegacyMySqlDatabase(
             name="test", connection=MySqlConnection.create_local("test")
         )
 

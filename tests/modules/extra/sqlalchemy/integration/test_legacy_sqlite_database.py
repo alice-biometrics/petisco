@@ -1,19 +1,19 @@
 import pytest
 
 from petisco import Persistence
-from petisco.extra.sqlalchemy import SqliteConnection, SqliteDatabase
+from petisco.extra.sqlalchemy import LegacySqliteDatabase, SqliteConnection
 from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
     ModelFilenameMother,
 )
 
 
 @pytest.mark.integration
-def test_should_create_persistence_with_sqlite_database():
+def test_should_create_persistence_with_legacy_sqlite_database():
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
     connection = SqliteConnection.create(
         server_name="sqlite", database_name="petisco.db"
     )
-    database = SqliteDatabase(
+    database = LegacySqliteDatabase(
         name="sqlite_test", connection=connection, model_filename=filename
     )
 
@@ -36,12 +36,12 @@ def test_should_create_persistence_with_sqlite_database():
 
 
 @pytest.mark.integration
-def test_should_add_an_user_with_sqlite_database_with_session():
+def test_should_add_an_user_with_legacy_sqlite_database_with_session():
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
     connection = SqliteConnection.create(
         server_name="sqlite", database_name="petisco.db"
     )
-    database = SqliteDatabase(
+    database = LegacySqliteDatabase(
         name="sqlite_test", connection=connection, model_filename=filename
     )
 
@@ -62,12 +62,12 @@ def test_should_add_an_user_with_sqlite_database_with_session():
 
 
 @pytest.mark.integration
-def test_should_add_a_product_with_sqlite_database_with_session_scope():
+def test_should_add_a_product_with_legacy_sqlite_database_with_session_scope():
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
     connection = SqliteConnection.create(
         server_name="sqlite", database_name="petisco.db"
     )
-    database = SqliteDatabase(
+    database = LegacySqliteDatabase(
         name="sqlite_test", connection=connection, model_filename=filename
     )
 
@@ -92,7 +92,9 @@ def test_should_raise_a_connection_error_exception():
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
 
     with pytest.raises(ConnectionError):
-        SqliteDatabase(name="sqlite_test", connection=None, model_filename=filename)
+        LegacySqliteDatabase(
+            name="sqlite_test", connection=None, model_filename=filename
+        )
 
 
 @pytest.mark.integration
@@ -100,7 +102,7 @@ def test_should_create_persistence_with_sqlite_database_without_filename():
     connection = SqliteConnection.create(
         server_name="sqlite", database_name="petisco.db"
     )
-    database = SqliteDatabase(
+    database = LegacySqliteDatabase(
         name="sqlite_test", connection=connection, model_filename=None
     )
 

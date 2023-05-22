@@ -83,8 +83,11 @@ from petisco.base.domain.message.not_implemented_message_configurer import (
 from petisco.base.domain.model.aggregate_root import AggregateRoot
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
+from petisco.base.domain.persistence.database import Database
+from petisco.base.domain.persistence.databases import Databases
 from petisco.base.domain.persistence.persistence import Persistence
 from petisco.base.domain.persistence.persistence_models import PersistenceModels
+from petisco.base.domain.persistence.sql_base import SqlBase
 from petisco.base.misc.builder import Builder
 from petisco.base.misc.interface import Interface
 from petisco.base.misc.result_mapper import ResultMapper
@@ -133,6 +136,9 @@ __all__ = [
     "AllMessageSubscriber",
     "Persistence",
     "PersistenceModels",
+    "Databases",
+    "Database",
+    "SqlBase",
     "Repository",
     "CrudRepository",
     "InmemoryCrudRepository",

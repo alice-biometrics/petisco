@@ -1,7 +1,7 @@
 import pytest
 
 from petisco import Persistence
-from petisco.extra.sqlalchemy import SqlExecutor, SqliteConnection, SqliteDatabase
+from petisco.extra.sqlalchemy import LegacySqliteDatabase, SqlExecutor, SqliteConnection
 from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
     ModelFilenameMother,
 )
@@ -13,7 +13,7 @@ def test_should_sql_executor_insert_statement():
     connection = SqliteConnection.create(
         server_name="sqlite", database_name="petisco.db"
     )
-    database = SqliteDatabase(
+    database = LegacySqliteDatabase(
         name="sqlite_test", connection=connection, model_filename=filename
     )
 
@@ -42,7 +42,7 @@ def test_should_sql_executor_from_filename_with_statement():
     connection = SqliteConnection.create(
         server_name="sqlite", database_name="petisco.db"
     )
-    database = SqliteDatabase(
+    database = LegacySqliteDatabase(
         name="sqlite_test", connection=connection, model_filename=filename
     )
 

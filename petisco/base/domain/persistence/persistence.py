@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, List, Union
 
 from loguru import logger
 
-from petisco.base.domain.persistence.interface_database import Database
+from petisco.base.domain.persistence.legacy_database import LegacyDatabase
 from petisco.base.misc.singleton import Singleton
 
 
@@ -38,7 +38,7 @@ class Persistence(metaclass=Singleton):
                 f"\tcode_context: {frame_info.code_context}\n\n"
             )
 
-    def add(self, database: Database, skip_if_exist: bool = False) -> None:
+    def add(self, database: LegacyDatabase, skip_if_exist: bool = False) -> None:
         if database.name in self._databases:
             if skip_if_exist is False:
                 raise NameError(
@@ -117,7 +117,7 @@ class Persistence(metaclass=Singleton):
         return database.get_base()
 
     @staticmethod
-    def get_databases() -> List[Database]:
+    def get_databases() -> List[LegacyDatabase]:
         return list(Persistence.get_instance()._databases.values())
 
     @staticmethod

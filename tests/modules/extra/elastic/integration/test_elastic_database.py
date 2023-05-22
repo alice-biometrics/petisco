@@ -1,7 +1,7 @@
 import pytest
 
 from petisco import Persistence
-from petisco.extra.elastic import ElasticConnection, ElasticDatabase
+from petisco.extra.elastic import ElasticConnection, LegacyElasticDatabase
 from tests.modules.extra.decorators import testing_with_elastic
 
 
@@ -9,7 +9,7 @@ from tests.modules.extra.decorators import testing_with_elastic
 @testing_with_elastic
 def test_should_create_persistence_with_elastic_database():
     connection = ElasticConnection.create_local()
-    database = ElasticDatabase(name="elastic_test", connection=connection)
+    database = LegacyElasticDatabase(name="elastic_test", connection=connection)
     Persistence.clear()
 
     persistence = Persistence()
@@ -29,7 +29,7 @@ def test_should_create_persistence_with_elastic_database():
 @testing_with_elastic
 def test_should_create_persistence_with_elastic_database_specifying_the_database():
     connection = ElasticConnection.create_local()
-    database = ElasticDatabase(name="elastic_test", connection=connection)
+    database = LegacyElasticDatabase(name="elastic_test", connection=connection)
     Persistence.clear()
 
     persistence = Persistence()

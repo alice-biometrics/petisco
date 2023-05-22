@@ -1,10 +1,13 @@
 from petisco.base.domain.persistence.persistence import Persistence
-from petisco.extra.sqlalchemy.sql.mysql.mysql_database import MySqlDatabase
 
 
 def mysql_is_running_locally() -> bool:
     try:
-        database = MySqlDatabase.local_connection_checker()
+        from petisco.extra.sqlalchemy.sql.mysql.legacy_mysql_database import (
+            LegacyMySqlDatabase,
+        )
+
+        database = LegacyMySqlDatabase.local_connection_checker()
         Persistence().add(database)
         Persistence().create()
         is_running_locally = True

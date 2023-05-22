@@ -9,7 +9,7 @@ from petisco.base.domain.errors.defaults.not_found import (
     AggregateNotFoundError,
     AggregatesNotFoundError,
 )
-from petisco.extra.sqlalchemy import SqliteConnection, SqliteDatabase
+from petisco.extra.sqlalchemy import LegacySqliteDatabase, SqliteConnection
 from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
     ModelFilenameMother,
 )
@@ -36,7 +36,7 @@ class TestBaseSqlRepository:
         connection = SqliteConnection.create(
             server_name="sqlite", database_name="petisco.db"
         )
-        database = SqliteDatabase(
+        database = LegacySqliteDatabase(
             name=self.database_name, connection=connection, model_filename=filename
         )
 

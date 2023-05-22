@@ -1,15 +1,13 @@
-from typing import Any, List
+from typing import Any, Callable, ContextManager
 
-from petisco.base.domain.persistence.interface_database import Database
-from petisco.base.domain.persistence.persistence_models import PersistenceModels
+from petisco.base.domain.persistence.database import Database, T
 
 
 class FakeDatabase(Database):
-    def __init__(self, name: str, model_filename: str):
-        models = PersistenceModels.from_filename(model_filename).get_models_names()
-        super().__init__(name, models=models)
+    def __init__(self, name: str):
+        super().__init__(name)
 
-    def create(self) -> None:
+    def initialize(self, *args: Any, **kwargs: Any) -> None:
         pass
 
     def delete(self) -> None:
@@ -18,13 +16,8 @@ class FakeDatabase(Database):
     def clear_data(self) -> None:
         pass
 
-    def get_model(self, model_name: str) -> Any:
-        model = self.models.get(model_name)
-        if not model:
-            raise IndexError(
-                f'Model "{model_name}" is not available for "{self.name}" database'
-            )
-        return model
+    def is_available(self) -> bool:
+        pass
 
-    def get_model_names(self) -> List[str]:
-        return list(self.models.keys())
+    def get_session_scope(self) -> Callable[..., ContextManager[T]]:
+        pass

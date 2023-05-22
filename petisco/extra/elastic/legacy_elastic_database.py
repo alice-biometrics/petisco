@@ -1,16 +1,18 @@
 from typing import Any, Callable, List
 
-from petisco.base.domain.persistence.interface_database import Database
+from petisco.base.domain.persistence.legacy_database import LegacyDatabase
 from petisco.extra.elastic.elastic_connection import ElasticConnection
 from petisco.extra.elastic.elastic_session_scope_provider import (
     elastic_session_scope_provider,
 )
 
 
-class ElasticDatabase(Database):
+class LegacyElasticDatabase(LegacyDatabase):
     @staticmethod
-    def local_connection_checker() -> "ElasticDatabase":
-        return ElasticDatabase(name="test", connection=ElasticConnection.create_local())
+    def local_connection_checker() -> "LegacyElasticDatabase":
+        return LegacyElasticDatabase(
+            name="test", connection=ElasticConnection.create_local()
+        )
 
     def __init__(self, name: str, connection: ElasticConnection) -> None:
         if not connection or not isinstance(connection, ElasticConnection):

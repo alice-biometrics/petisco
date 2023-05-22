@@ -4,7 +4,7 @@ from typing import Any, Callable, List
 from sqlalchemy import text
 from sqlalchemy.orm import scoped_session
 
-from petisco.base.domain.persistence.interface_database import Database
+from petisco.base.domain.persistence.legacy_database import LegacyDatabase
 from petisco.base.domain.persistence.persistence_models import PersistenceModels
 from petisco.extra.sqlalchemy.sql.sql_session_scope_provider import (
     sql_session_scope_provider,
@@ -12,7 +12,7 @@ from petisco.extra.sqlalchemy.sql.sql_session_scope_provider import (
 from petisco.extra.sqlalchemy.sql.sqlite.sqlite_connection import SqliteConnection
 
 
-class SqliteDatabase(Database):
+class LegacySqliteDatabase(LegacyDatabase):
     def __init__(
         self,
         name: str,
