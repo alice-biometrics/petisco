@@ -3,6 +3,7 @@ import threading
 from time import sleep
 
 import pytest
+from sqlalchemy import text
 
 from petisco import Persistence, Uuid
 from petisco.extra.sqlalchemy import (
@@ -92,7 +93,7 @@ def test_should_sql_executor_with_mysql_multithreading():
             sql_executor.execute_statement(
                 f'INSERT INTO Client (client_id,name) VALUES ("{uuid}","myclient")'
             )
-            sql_executor.execute_statement("SELECT * FROM Client")
+            sql_executor.execute_statement(text("SELECT * FROM Client"))
             sleep(1.0)
             sql_executor.execute_statement(
                 f'DELETE FROM Client WHERE client_id="{uuid}";'

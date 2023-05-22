@@ -1,6 +1,7 @@
 import os
 from typing import Any, Callable, List
 
+from sqlalchemy import text
 from sqlalchemy.orm import scoped_session
 
 from petisco.base.domain.persistence.interface_database import Database
@@ -75,7 +76,7 @@ class SqliteDatabase(Database):
         try:
             session_scope = self.get_session_scope()
             with session_scope() as session:
-                session.execute("SELECT 1")
+                session.execute(text("SELECT 1"))
                 _is_available = True
         except Exception:  # noqa E722
             _is_available = False
