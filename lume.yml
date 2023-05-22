@@ -17,8 +17,8 @@ uninstall:
 steps:
   clean:
     run:
-    - rm -rf output
-    - find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+      - rm -rf output
+      - find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
   build:
     run: pip install -e .[sqlalchemy,redis,rabbitmq,elastic,slack,fastapi]
   lint:
@@ -28,16 +28,16 @@ steps:
       - pyupgrade --py37-plus `find $PACKAGE_NAME tests -name "*.py" -type f`
       - isort $PACKAGE_NAME tests
   check-requirements:
-    run: pip-audit -r requirements/requirements.txt
+    run: pip-audit -v -r requirements/requirements.txt
   static-analysis:
     run: mypy $PACKAGE_NAME --exclude '.*petisco.legacy.*' --exclude '.*petisco.extra.sqlmodel.*' --exclude '.*petisco.extra.rabbitmq.*'
   coverage:
     envs:
       LUME_WAIT_HTTP_200_NUM_MAX_ATTEMPTS: 30
     setup:
-        - docker run -d --rm --name petisco-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
-        - docker run -d --rm --platform linux/x86_64 -v "$PWD/.mysqldata":/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root --name petisco-mysql -p 3307:3306 mysql:5.7
-        - docker run -d --rm --name petisco-elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.1
+      - docker run -d --rm --name petisco-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+      - docker run -d --rm --platform linux/x86_64 -v "$PWD/.mysqldata":/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root --name petisco-mysql -p 3307:3306 mysql:5.7
+      - docker run -d --rm --name petisco-elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.1
     wait_http_200: http://localhost:15672
     run: pytest -c pytest.coverage.ini
     teardown:

@@ -57,7 +57,7 @@ setup(
         "slack": ["slack_sdk<4.0.0,>=3.20.2"],
         "elastic": ["elasticsearch<8.0.0,>=7.13.1", "elastic-apm<7.0.0,>=6.15.1"],
         "elastic-apm": ["elastic-apm<7.0.0,>=6.15.1"],
-        "fastapi": ["fastapi<1.0.0,>=0.95.0"],
+        "fastapi": ["fastapi<1.0.0,>=0.95.2"],
         "rich": ["rich"],
     },
 )
