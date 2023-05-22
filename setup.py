@@ -48,8 +48,8 @@ setup(
     zip_safe=False,
     extras_require={
         "sqlalchemy": [
-            "sqlalchemy==1.4.47",
-            "sqlalchemy_utils==0.40.0",
+            "sqlalchemy<3.0.0,>=2.0.15",
+            "sqlalchemy_utils>=0.40.0",
             "PyMySQL==1.0.3",
         ],
         "redis": ["redis<5.0.0,>=4.5.3"],
