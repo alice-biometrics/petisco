@@ -61,7 +61,11 @@ steps:
       - docker stop petisco-mysql
       - docker stop petisco-elasticsearch
   test-command-line:
-    run: petisco --version
+    run:
+      - petisco --version
+      - petisco --uuid
+      - petisco --utcnow
+      - petisco-dev --help
   docs:
     run: |
       pip install -r requirements/docs-requirements.txt
