@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import inspect
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable
 
 from loguru import logger
 
@@ -11,13 +13,13 @@ from petisco.base.misc.singleton import Singleton
 @dataclass
 class Databases(metaclass=Singleton):
     def __init__(self) -> None:
-        self._databases: Dict[str, Any] = {}
+        self._databases: dict[str, Any] = {}
 
     def __repr__(self) -> str:
         return f"Databases: {str(self.get_info())}"
 
     @staticmethod
-    def get_instance() -> "Databases":
+    def get_instance() -> Databases:
         try:
             return Databases()
         except Exception as e:  # noqa E722
@@ -32,11 +34,11 @@ class Databases(metaclass=Singleton):
             )
 
     @staticmethod
-    def info() -> Dict[str, Any]:
+    def info() -> dict[str, Any]:
         return Databases.get_instance().get_info()
 
     @staticmethod
-    def is_available(database_name: Union[str, None] = None) -> bool:
+    def is_available(database_name: str | None = None) -> bool:
         def log_warning(message: str) -> None:
             logger.debug(message)
 
@@ -57,11 +59,11 @@ class Databases(metaclass=Singleton):
         return True
 
     @staticmethod
-    def get_databases() -> List[Database]:
+    def get_databases() -> list[Database]:
         return list(Databases.get_instance()._databases.values())
 
     @staticmethod
-    def get_available_databases() -> List[str]:
+    def get_available_databases() -> list[str]:
         return list(Databases.get_instance()._databases.keys())
 
     @staticmethod
@@ -96,7 +98,7 @@ class Databases(metaclass=Singleton):
         else:
             return True
 
-    def get_info(self) -> Dict[str, Any]:
+    def get_info(self) -> dict[str, Any]:
         return {name: database.info() for name, database in self._databases.items()}
 
     def add(self, database: Database, skip_if_exist: bool = False) -> None:
@@ -126,7 +128,7 @@ class Databases(metaclass=Singleton):
         for database in self._databases.values():
             database.delete()
 
-    def clear_data(self, database_name: Union[str, None] = None) -> None:
+    def clear_data(self, database_name: str | None = None) -> None:
         databases = self._databases
         if database_name is not None:
             if database_name not in self._databases:

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import inspect
 from abc import abstractmethod
 from typing import Generic, TypeVar
@@ -29,5 +31,5 @@ class SqlBase(DeclarativeBase, Generic[T]):
 
     @staticmethod
     @abstractmethod
-    def from_domain(domain_entity: T) -> "SqlBase":
+    def from_domain(domain_entity: T) -> SqlBase:
         pass
