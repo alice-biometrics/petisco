@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 from typing import Callable, ContextManager, TypeVar
 
 from loguru import logger
@@ -30,10 +31,12 @@ class SqlDatabase(Database[Session]):
         *,
         print_sql_statements: bool = False,
         use_scoped_session: bool = True,
+        initial_statements_filename: str = None,
     ):
         self.connection = connection
         self.print_sql_statements = print_sql_statements
         self.use_scoped_session = use_scoped_session
+        self.initial_statements_filename = initial_statements_filename
         self._check_connection()
         super().__init__(name)
 
@@ -56,8 +59,24 @@ class SqlDatabase(Database[Session]):
         if not database_exists(engine.url):
             create_database(engine.url)
             base.metadata.create_all(engine)
+            self._run_initial_statements(engine)
 
         self.session_factory = sessionmaker(bind=engine)
+
+    def _run_initial_statements(self, engine) -> None:
+        if self.initial_statements_filename:
+            try:
+                file = open(self.initial_statements_filename)
+                statements = re.split(r";\s*$", file.read(), flags=re.MULTILINE)
+                with engine.connect() as conn:
+                    for statement in statements:
+                        if statement:
+                            conn.execute(text(statement))
+                    conn.commit()
+            except Exception as exc:  # noqa
+                raise RuntimeError(
+                    f"Error loading the initial_statements_filename={self.initial_statements_filename}. {str(exc)}"
+                )
 
     def delete(self):
         if isinstance(self.connection, SqliteConnection):

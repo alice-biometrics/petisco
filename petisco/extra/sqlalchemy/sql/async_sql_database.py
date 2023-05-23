@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import AsyncContextManager, Callable, TypeVar
 
 from sqlalchemy import text
@@ -33,8 +34,22 @@ class AsyncSqlDatabase(SqlDatabase, AsyncDatabase[Session]):
             # await create_database(engine.url)
             async with engine.begin() as conn:
                 await conn.run_sync(base.metadata.create_all)
+                await self._async_run_initial_statements(conn)
 
         self.async_session_factory = async_sessionmaker(bind=engine)
+
+    async def _async_run_initial_statements(self, conn) -> None:
+        if self.initial_statements_filename:
+            try:
+                file = open(self.initial_statements_filename)
+                statements = re.split(r";\s*$", file.read(), flags=re.MULTILINE)
+                for statement in statements:
+                    if statement:
+                        await conn.execute(text(statement))
+            except Exception as exc:  # noqa
+                raise RuntimeError(
+                    f"Error loading the initial_statements_filename={self.initial_statements_filename}. {str(exc)}"
+                )
 
     def get_session_scope(self) -> Callable[..., AsyncContextManager[AsyncSession]]:
         if self.async_session_factory is None:
