@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from contextlib import asynccontextmanager
 from typing import Callable, ContextManager
 
@@ -33,7 +35,7 @@ class AsyncElasticDatabase(AsyncDatabase):
     session: AsyncElasticsearch | None = None
 
     @staticmethod
-    def local_connection_checker() -> "AsyncElasticDatabase":
+    def local_connection_checker() -> AsyncElasticDatabase:
         return AsyncElasticDatabase(
             name="test", connection=ElasticConnection.create_local()
         )

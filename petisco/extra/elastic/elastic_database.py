@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from contextlib import contextmanager
 from typing import Callable, ContextManager
 
@@ -34,7 +36,7 @@ class ElasticDatabase(Database):
     session: Elasticsearch | None = None
 
     @staticmethod
-    def local_connection_checker() -> "ElasticDatabase":
+    def local_connection_checker() -> ElasticDatabase:
         return ElasticDatabase(name="test", connection=ElasticConnection.create_local())
 
     def __init__(self, name: str, connection: ElasticConnection) -> None:
