@@ -21,7 +21,7 @@ T = TypeVar("T")
 
 class SqlDatabase(Database[Session]):
 
-    SessionMaker: sessionmaker | None = None
+    session_factory: sessionmaker | None = None
 
     def __init__(
         self,
@@ -57,7 +57,7 @@ class SqlDatabase(Database[Session]):
             create_database(engine.url)
             base.metadata.create_all(engine)
 
-        self.SessionMaker = sessionmaker(bind=engine)
+        self.session_factory = sessionmaker(bind=engine)
 
     def delete(self):
         if isinstance(self.connection, SqliteConnection):
@@ -80,15 +80,15 @@ class SqlDatabase(Database[Session]):
             )
 
     def get_session_scope(self) -> Callable[..., ContextManager[T]]:
-        if self.SessionMaker is None:
+        if self.session_factory is None:
             raise RuntimeError(
-                "SqlDatabase must run initialize() before get_session_sccope()"
+                "SqlDatabase must run initialize() before get_session_scope()"
             )
 
         if self.use_scoped_session:
-            Session = scoped_session(self.SessionMaker)  # noqa
+            Session = scoped_session(self.session_factory)  # noqa
         else:
-            Session = self.SessionMaker  # noqa
+            Session = self.session_factory  # noqa
         return sql_session_scope_provider(Session)
 
     def is_available(self):

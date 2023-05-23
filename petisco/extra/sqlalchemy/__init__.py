@@ -1,6 +1,7 @@
 from petisco.extra.sqlalchemy.is_sqlalchemy_available import is_sqlalchemy_available
 
 if is_sqlalchemy_available():
+    from petisco.extra.sqlalchemy.sql.async_sql_database import AsyncSqlDatabase
     from petisco.extra.sqlalchemy.sql.mysql.legacy_mysql_database import (
         LegacyMySqlDatabase,
     )
@@ -19,6 +20,7 @@ if is_sqlalchemy_available():
         "LegacySqliteDatabase",
         "SqlExecutor",
         "SqlDatabase",
+        "AsyncSqlDatabase",
     ]
 else:
     __all__ = []

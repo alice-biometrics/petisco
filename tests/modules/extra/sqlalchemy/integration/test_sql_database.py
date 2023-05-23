@@ -8,6 +8,7 @@ from petisco.extra.sqlalchemy import SqlDatabase, SqliteConnection
 
 class SqlUser(SqlBase):
     __tablename__ = "users"
+    __table_args__ = {"extend_existing": True}
 
     id: Mapped[int] = Column(Integer, primary_key=True)
 
@@ -24,6 +25,7 @@ class TestSqlDatabase:
             server_name="sqlite", database_name="petisco.db"
         )
         self.database = SqlDatabase(name="sqlite_test", connection=connection)
+        self.database.delete()
 
     def teardown_method(self):
         self.database.delete()

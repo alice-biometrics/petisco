@@ -1,14 +1,18 @@
 import pytest
 
-from petisco import Databases, Persistence
+from petisco import Database, Databases
+from petisco.base.domain.persistence.async_fake_database import AsyncFakeDatabase
 from petisco.base.domain.persistence.fake_database import FakeDatabase
 
 
 @pytest.mark.unit
 class TestDatabases:
-    def should_execute_lifecycle_of_persistence_with_fake_database(self):
-        database = FakeDatabase(name="fake")
-
+    @pytest.mark.parametrize(
+        "database", [FakeDatabase(name="fake"), AsyncFakeDatabase(name="fake")]
+    )
+    def should_execute_lifecycle_of_persistence_with_fake_database(
+        self, database: Database
+    ):
         databases = Databases()
         databases.add(database)
         assert ["fake"] == databases.get_available_databases()
@@ -29,10 +33,15 @@ class TestDatabases:
         databases.delete()
         Databases.clear()
 
-    def should_persistence_not_available_when_no_database_is_added(self):
-        Persistence.clear()
-        assert not Persistence.is_available()
+    def should_check_it_is_not_available(self):
+        Databases.clear()
+        assert not Databases.is_available()
 
-    def should_persistence_not_exist_when_no_database_is_added(self):
-        Persistence.clear()
-        assert not Persistence.exist()
+    # @pytest.mark.asyncio
+    # async def should_async_check_it_is_not_available(self):
+    #     Databases.clear()
+    #     assert not await Databases.is_available()
+
+    def should_check_not_exist_when_no_database_is_added(self):
+        Databases.clear()
+        assert not Databases.exist()
