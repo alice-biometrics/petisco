@@ -79,7 +79,7 @@ class SqlDatabase(Database[Session]):
                 "SqlDatabase do not implement clear_data to mitigate possible problems in production"
             )
 
-    def get_session_scope(self) -> Callable[..., ContextManager[T]]:
+    def get_session_scope(self) -> Callable[..., ContextManager[Session]]:
         if self.session_factory is None:
             raise RuntimeError(
                 "SqlDatabase must run initialize() before get_session_scope()"

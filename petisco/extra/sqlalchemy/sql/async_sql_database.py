@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import AsyncContextManager, Callable, TypeVar
 
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Session, scoped_session
-from sqlalchemy_utils import create_database, database_exists
+from sqlalchemy_utils import database_exists
 
 from petisco.base.domain.persistence.async_database import AsyncDatabase
 from petisco.base.domain.persistence.sql_base import SqlBase
@@ -30,13 +30,13 @@ class AsyncSqlDatabase(SqlDatabase, AsyncDatabase[Session]):
         )
 
         if not database_exists(engine.url):
-            create_database(engine.url)
+            # await create_database(engine.url)
             async with engine.begin() as conn:
                 await conn.run_sync(base.metadata.create_all)
 
         self.async_session_factory = async_sessionmaker(bind=engine)
 
-    def get_session_scope(self) -> Callable[..., AsyncContextManager[T]]:
+    def get_session_scope(self) -> Callable[..., AsyncContextManager[AsyncSession]]:
         if self.async_session_factory is None:
             raise RuntimeError(
                 "AsyncSqlDatabase must run initialize() before get_session_scope()"

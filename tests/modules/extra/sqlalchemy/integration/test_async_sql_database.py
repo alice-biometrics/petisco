@@ -16,7 +16,6 @@ class SqlUser(SqlBase):
     age: Mapped[int] = Column(Integer)
 
 
-@pytest.mark.skip
 @pytest.mark.asyncio
 @pytest.mark.integration
 class TestAsyncSqlDatabase:
