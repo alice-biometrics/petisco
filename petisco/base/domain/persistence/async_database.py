@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import Generic, TypeVar
 
-from petisco import Database
+from petisco.base.domain.persistence.database import Database
 
 T = TypeVar("T")
 

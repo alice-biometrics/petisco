@@ -10,7 +10,7 @@ from sqlalchemy_utils import create_database, database_exists
 
 from petisco.base.domain.persistence.database import Database
 from petisco.base.domain.persistence.sql_base import SqlBase
-from petisco.extra.sqlalchemy import MySqlConnection
+from petisco.extra.sqlalchemy.sql.mysql.mysql_connection import MySqlConnection
 from petisco.extra.sqlalchemy.sql.sql_session_scope_provider import (
     sql_session_scope_provider,
 )

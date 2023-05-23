@@ -6,6 +6,7 @@ from typing import Any, Callable
 
 from loguru import logger
 
+from petisco.base.domain.persistence.async_database import AsyncDatabase
 from petisco.base.domain.persistence.database import Database
 from petisco.base.misc.singleton import Singleton
 
@@ -38,10 +39,7 @@ class Databases(metaclass=Singleton):
         return Databases.get_instance().get_info()
 
     @staticmethod
-    def is_available(database_name: str | None = None) -> bool:
-        def log_warning(message: str) -> None:
-            logger.debug(message)
-
+    def _get_databases(database_name: str | None = None) -> dict[str, Database] | None:
         databases = Databases.get_instance()._databases
         if database_name is not None:
             if database_name not in databases:
@@ -50,11 +48,35 @@ class Databases(metaclass=Singleton):
                 )
             databases = {database_name: databases.get(database_name)}
         if len(databases) < 1:
-            log_warning("Databases databases are empty")
+            logger.warning("Databases databases are empty")
+            return None
+        return databases
+
+    @staticmethod
+    def are_available(database_name: str | None = None) -> bool:
+        databases = Databases._get_databases(database_name)
+        if databases is None:
             return False
+
         for database_name, database in databases.items():
+            if isinstance(database, AsyncDatabase):
+                continue
             if not database.is_available():
-                log_warning(f"Database {database_name} is not available")
+                logger.warning(f"Database {database_name} is not available")
+                return False
+        return True
+
+    @staticmethod
+    async def async_are_available(database_name: str | None = None) -> bool:
+        databases = Databases._get_databases(database_name)
+        if databases is None:
+            return False
+
+        for database_name, database in databases.items():
+            if not isinstance(database, AsyncDatabase):
+                continue
+            if not await database.is_available():
+                logger.warning(f"Database {database_name} is not available")
                 return False
         return True
 

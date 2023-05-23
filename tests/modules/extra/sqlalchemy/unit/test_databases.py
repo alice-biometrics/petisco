@@ -18,11 +18,7 @@ class TestDatabases:
         assert ["fake"] == databases.get_available_databases()
 
         info = databases.get_info()
-        assert info == {
-            "fake": {
-                "name": "fake",
-            }
-        }
+        assert info == {"fake": {"name": "fake"}}
         assert str(databases) == "Databases: {'fake': {'name': 'fake'}}"
 
         databases.remove("fake")
@@ -33,14 +29,14 @@ class TestDatabases:
         databases.delete()
         Databases.clear()
 
-    def should_check_it_is_not_available(self):
+    def should_check_if_are_not_available(self):
         Databases.clear()
-        assert not Databases.is_available()
+        assert not Databases.are_available()
 
-    # @pytest.mark.asyncio
-    # async def should_async_check_it_is_not_available(self):
-    #     Databases.clear()
-    #     assert not await Databases.is_available()
+    @pytest.mark.asyncio
+    async def should_async_check_if_are_not_available(self):
+        Databases.clear()
+        assert not await Databases.async_are_available()
 
     def should_check_not_exist_when_no_database_is_added(self):
         Databases.clear()
