@@ -48,14 +48,17 @@ setup(
     zip_safe=False,
     extras_require={
         "sqlalchemy": [
-            "sqlalchemy==1.4.47",
-            "sqlalchemy_utils==0.40.0",
+            "sqlalchemy<3.0.0,>=2.0.15",
+            "sqlalchemy_utils>=0.40.0",
             "PyMySQL==1.0.3",
         ],
         "redis": ["redis<5.0.0,>=4.5.3"],
         "rabbitmq": ["pika==1.3.2"],
         "slack": ["slack_sdk<4.0.0,>=3.20.2"],
-        "elastic": ["elasticsearch<8.0.0,>=7.13.1", "elastic-apm<7.0.0,>=6.15.1"],
+        "elastic": [
+            "elasticsearch[async]<8.0.0,>=7.13.1",
+            "elastic-apm<7.0.0,>=6.15.1",
+        ],
         "elastic-apm": ["elastic-apm<7.0.0,>=6.15.1"],
         "fastapi": ["fastapi<1.0.0,>=0.95.2"],
         "rich": ["rich"],

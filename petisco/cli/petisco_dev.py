@@ -1,5 +1,6 @@
 import argparse
 import importlib.util
+import inspect
 import sys
 from typing import Any
 
@@ -30,6 +31,13 @@ def get_application(module_path: str):
             "Try to install your app module with `pip install -e .` (maybe you need to add a setup.py or a "
             "pyproject.toml to your app root"
         )
+        if is_rich_available():
+            from rich.console import Console
+
+            console = Console()
+            console.print_exception()
+        else:
+            print(str(exc))
 
 
 def encourage_rich_installation() -> None:
@@ -144,6 +152,40 @@ def show_configurers(application) -> None:
         console.print(table)
 
 
+def show_sql_models() -> None:
+    from petisco import SqlBase
+
+    info: list[dict[str, str]] = []
+    for sql_model in SqlBase.__subclasses__():
+        info.append(
+            {
+                "name": sql_model.__name__,
+                "module": sql_model.__module__,
+                "filename": inspect.getsourcefile(sql_model),
+            }
+        )
+
+    if is_rich_available() is False:
+        print(info)
+    else:
+        from rich.console import Console
+        from rich.table import Table
+
+        table = Table()
+        console = Console()
+
+        table.add_column("Model", justify="right", style="cyan", no_wrap=True)
+        table.add_column("Filename", justify="left")
+
+        for model_info in info:
+            filename = model_info.get("filename")
+            table.add_row(
+                model_info.get("name"),
+                f"file://{filename}",
+            )
+        console.print(table)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="petisco-dev 🍪",
@@ -166,6 +208,12 @@ def main() -> None:
         help="show petisco app configurers.",
     )
     parser.add_argument(
+        "-sql-models",
+        "--sql-models",
+        action="store_true",
+        help="show petisco sql models.",
+    )
+    parser.add_argument(
         "--application",
         default="app.application",
         help="Module path (default app.application)",
@@ -177,6 +225,8 @@ def main() -> None:
         parser.print_help()
     else:
         application = get_application(args.application)
+        if application is None:
+            return
 
         if args.info:
             show_info(application)
@@ -188,4 +238,8 @@ def main() -> None:
 
         if args.configurers:
             show_configurers(application)
+            return
+
+        if args.sql_models:
+            show_sql_models()
             return

@@ -6,11 +6,11 @@ import pytest
 
 from petisco import Persistence, Uuid
 from petisco.extra.sqlalchemy import (
+    LegacyMySqlDatabase,
+    LegacySqliteDatabase,
     MySqlConnection,
-    MySqlDatabase,
     SqlExecutor,
     SqliteConnection,
-    SqliteDatabase,
 )
 from tests.modules.extra.decorators import testing_with_mysql
 from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
@@ -24,7 +24,7 @@ def test_should_sql_executor_with_sqlite_multithreading():
     connection = SqliteConnection.create(
         server_name="sqlite", database_name="petisco.db"
     )
-    database = SqliteDatabase(
+    database = LegacySqliteDatabase(
         name="sqlite_test", connection=connection, model_filename=filename
     )
 
@@ -67,7 +67,7 @@ def test_should_sql_executor_with_mysql_multithreading():
     connection = MySqlConnection.create_local()
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
 
-    database = MySqlDatabase(
+    database = LegacyMySqlDatabase(
         name="mysql_test",
         connection=connection,
         model_filename=filename,

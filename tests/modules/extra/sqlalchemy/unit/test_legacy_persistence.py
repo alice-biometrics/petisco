@@ -1,7 +1,7 @@
 import pytest
 
 from petisco import Persistence
-from petisco.base.domain.persistence.fake_database import FakeDatabase
+from petisco.base.domain.persistence.legacy_fake_database import LegacyFakeDatabase
 from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
     ModelFilenameMother,
 )
@@ -10,7 +10,7 @@ from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
 @pytest.mark.unit
 def test_should_execute_lifecycle_of_persistence_with_fake_database():
     filename = ModelFilenameMother.get("object/persistence.object.models.yml")
-    database = FakeDatabase(name="fake", model_filename=filename)
+    database = LegacyFakeDatabase(name="fake", model_filename=filename)
 
     persistence = Persistence()
     persistence.add(database)

@@ -1,4 +1,6 @@
-from typing import Callable, List
+from __future__ import annotations
+
+from typing import Callable
 
 from sqlalchemy import text
 
@@ -21,7 +23,7 @@ class SqlExecutor:
             command = self._get_command(statement)
             session.execute(command)
 
-    def execute_statements(self, statements: List[str]):
+    def execute_statements(self, statements: list[str]):
         with self.session_scope() as session:
             for statement in statements:
                 command = self._get_command(statement)

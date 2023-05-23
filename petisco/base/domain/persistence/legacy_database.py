@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Union
 
 
-class Database(ABC):
+class LegacyDatabase(ABC):
     def __init__(self, name: str, models: Union[Dict[str, Any], None] = None):
         self.name = name
         self.models = models if models else {}

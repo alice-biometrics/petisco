@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import Any, Callable, ContextManager
 
-from petisco.base.domain.persistence.database import Database, T
+from petisco.base.domain.persistence.async_database import AsyncDatabase
+from petisco.base.domain.persistence.database import T
 
 
-class FakeDatabase(Database):
+class AsyncFakeDatabase(AsyncDatabase):
     def __init__(self, name: str):
         super().__init__(name)
 
@@ -18,7 +19,7 @@ class FakeDatabase(Database):
     def clear_data(self) -> None:
         pass
 
-    def is_available(self) -> bool:
+    async def is_available(self) -> bool:
         pass
 
     def get_session_scope(self) -> Callable[..., ContextManager[T]]:
