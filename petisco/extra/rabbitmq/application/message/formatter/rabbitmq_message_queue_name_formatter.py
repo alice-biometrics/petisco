@@ -5,7 +5,11 @@ class RabbitMqMessageQueueNameFormatter:
     @staticmethod
     def format(message: Message, exchange_name: str = None) -> str:
         message_name = message.get_message_name().replace(".", "_")
-        message_type = message.type if message.type != "domain_event" else "event"
+        message_type = (
+            message.get_message_type()
+            if message.get_message_type() != "domain_event"
+            else "event"
+        )
         message_format = (
             f"{message.get_message_version()}.{message_type}.{message_name}"
         )
