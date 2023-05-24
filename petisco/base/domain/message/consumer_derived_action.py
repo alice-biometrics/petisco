@@ -1,12 +1,10 @@
-from __future__ import annotations
-
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
 
 class ConsumerDerivedAction(BaseModel):
-    action: str | None = None
-    exchange_name: str | None = None
-    routing_key: str | None = None
-    headers: dict[str, Any] | None = None
+    action: Optional[str] = None
+    exchange_name: Optional[str] = None
+    routing_key: Optional[str] = None
+    headers: Optional[dict[str, Any]] = None
