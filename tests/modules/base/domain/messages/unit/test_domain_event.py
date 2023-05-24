@@ -131,7 +131,7 @@ class TestDomainEvent:
         self,
     ):
         class MyInnerDomainEvent(DomainEvent):
-            ...  # noqa
+            ...
 
         domain_event = MyInnerDomainEvent()
         assert domain_event.name == "my.inner.domain.event"

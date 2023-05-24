@@ -17,11 +17,12 @@ def get_version(config: dict[str, Any] | None) -> int:
 
 
 def get_message_name(namespace: dict[str, Any]) -> str:
-    return (
-        re.sub(r"(?<!^)(?=[A-Z])", "_", namespace.get("__qualname__", "message"))
-        .lower()
-        .replace("_", ".")
-    )
+    message_name = namespace.get("__qualname__", "message")
+
+    if ".<locals>." in message_name:
+        message_name = message_name.split(".<locals>.")[-1]
+
+    return re.sub(r"(?<!^)(?=[A-Z])", "_", message_name).lower().replace("_", ".")
 
 
 class MetaMessage(type):
