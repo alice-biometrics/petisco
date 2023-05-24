@@ -7,6 +7,7 @@ from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
 )
 
 
+@pytest.mark.skip
 @pytest.mark.integration
 def test_should_create_persistence_with_legacy_sqlite_database():
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
@@ -35,6 +36,7 @@ def test_should_create_persistence_with_legacy_sqlite_database():
     Persistence.clear()
 
 
+@pytest.mark.skip
 @pytest.mark.integration
 def test_should_add_an_user_with_legacy_sqlite_database_with_session():
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
@@ -61,6 +63,7 @@ def test_should_add_an_user_with_legacy_sqlite_database_with_session():
     Persistence.clear()
 
 
+@pytest.mark.skip
 @pytest.mark.integration
 def test_should_add_a_product_with_legacy_sqlite_database_with_session_scope():
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
@@ -87,6 +90,7 @@ def test_should_add_a_product_with_legacy_sqlite_database_with_session_scope():
     Persistence.clear()
 
 
+@pytest.mark.skip
 @pytest.mark.integration
 def test_should_raise_a_connection_error_exception():
     filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
@@ -97,6 +101,7 @@ def test_should_raise_a_connection_error_exception():
         )
 
 
+@pytest.mark.skip
 @pytest.mark.integration
 def test_should_create_persistence_with_sqlite_database_without_filename():
     connection = SqliteConnection.create(

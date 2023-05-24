@@ -1,8 +1,7 @@
 import pytest
 
 from petisco import Databases
-from petisco.extra.elastic import ElasticConnection
-from petisco.extra.elastic.async_elastic_database import AsyncElasticDatabase
+from petisco.extra.elastic import AsyncElasticDatabase, ElasticConnection
 from tests.modules.extra.decorators import testing_with_elastic
 
 

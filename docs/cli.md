@@ -134,3 +134,16 @@ $ petisco-dev --configurers
     If your application is defined in other file, you can modify it with `petisco-dev --info --application app.other.module.application`. 
     
 
+### Show SQL Models
+
+<div class="termy">
+```console
+$ petisco-dev --sql-models
+┏━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃       Model ┃ Filename                                     ┃
+┡━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│     SqlUser │ app/src/infrastructure/models/sql_user.py    │
+│   SqlClient │ app/src/infrastructure/models/sql_client.py  │
+└─────────────┴──────────────────────────────────────────────┘
+```
+</div>
