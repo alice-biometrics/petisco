@@ -4,6 +4,7 @@ from petisco import Builder, Dependency
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
     BaseRepo,
     InMemoryRepo,
+    MyGenericRepo,
     MyRepo,
 )
 
@@ -134,3 +135,10 @@ class TestDependency:
     def should_raise_error_when_no_default_builders_is_given(self):
         with pytest.raises(TypeError):
             Dependency(BaseRepo, builders={"inmemory": Builder(InMemoryRepo)})
+
+    def should_return_default_instance_when_use_generic_class(self):
+        dependency = Dependency(
+            BaseRepo,
+            builders={"default": Builder(MyGenericRepo[int])},
+        )
+        assert isinstance(dependency.get_instance(), MyGenericRepo)
