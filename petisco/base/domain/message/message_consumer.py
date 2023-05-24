@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from abc import abstractmethod
-from typing import Generic, List, NoReturn, Type, TypeVar
+from typing import Generic, NoReturn, TypeVar
 
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
 from petisco.base.misc.interface import Interface
@@ -18,14 +20,14 @@ class MessageConsumer(Generic[T], Interface):
         return cls.__name__
 
     @abstractmethod
-    def add_subscribers(self, subscribers: List[T]) -> None:
+    def add_subscribers(self, subscribers: list[T]) -> None:
         """
         Add defined subscribers to be connected with main queues.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def add_subscriber_on_dead_letter(self, subscriber: Type[T]) -> None:
+    def add_subscriber_on_dead_letter(self, subscriber: type[T]) -> None:
         """
         Add defined subscribers to be connected with the correspondent dead letter.
         """
@@ -35,7 +37,7 @@ class MessageConsumer(Generic[T], Interface):
     def add_subscriber_on_queue(
         self,
         queue_name: str,
-        subscriber: Type[T],
+        subscriber: type[T],
         is_store: bool = False,
         message_type_expected: str = "message",
     ) -> None:

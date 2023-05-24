@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from petisco.base.domain.message.message import Message
 from petisco.base.domain.message.message_bus import MessageBus
 
