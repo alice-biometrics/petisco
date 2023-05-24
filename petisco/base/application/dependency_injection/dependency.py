@@ -71,7 +71,12 @@ class Dependency(Generic[T]):
             if self.builders is None:
                 return
             for key, builder in self.builders.items():
-                if not issubclass(builder.klass, self.type):
+
+                klass = builder.klass
+                if hasattr(builder.klass, "__origin__"):
+                    klass = builder.klass.__origin__
+
+                if not issubclass(klass, self.type):
                     raise TypeError(
                         f"Dependency: The class {builder.klass.__name__} from builders ({key}) is not a subclass from "
                         f"generic type given by Dependency[{self.type.__name__}]. If you want to skip it use "
