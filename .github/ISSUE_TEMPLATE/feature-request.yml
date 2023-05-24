@@ -114,24 +114,6 @@ body:
         Tell me about alternatives you've considered.
       placeholder: |
         Define the `maintainer` with an environment variable (`PETISCO_APPLICATION_MAINTAINER`)
-  - type: dropdown
-    id: os
-    attributes:
-      label: Operating System
-      description: What operating system are you on?
-      multiple: true
-      options:
-        - Linux
-        - Windows
-        - macOS
-        - Other
-    validations:
-      required: true
-  - type: textarea
-    id: os-details
-    attributes:
-      label: Operating System Details
-      description: You can add more details about your operating system here, in particular if you chose "Other".
   - type: input
     id: python-version
     attributes:

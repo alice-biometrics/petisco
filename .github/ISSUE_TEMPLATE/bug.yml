@@ -78,24 +78,6 @@ body:
         * But it only configures parameters and FastAPI is the one that will run the application.
     validations:
       required: true
-  - type: dropdown
-    id: os
-    attributes:
-      label: Operating System
-      description: What operating system are you on?
-      multiple: true
-      options:
-        - Linux
-        - Windows
-        - macOS
-        - Other
-    validations:
-      required: true
-  - type: textarea
-    id: os-details
-    attributes:
-      label: Operating System Details
-      description: You can add more details about your operating system here, in particular if you chose "Other".
   - type: input
     id: petisco-version
     attributes:
@@ -109,20 +91,6 @@ body:
         >> petisco --version
         or
         >> python -c "import petisco; print(petisco.__version__)"
-        ```
-    validations:
-      required: true
-  - type: input
-    id: python-version
-    attributes:
-      label: Python Version
-      description: |
-        What Python version are you using?
-
-        You can find the Python version with:
-
-        ```bash
-        python --version
         ```
     validations:
       required: true
