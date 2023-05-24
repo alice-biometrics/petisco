@@ -6,6 +6,7 @@ from petisco import DomainEvent, Uuid
 from petisco.base.domain.message.message import TIME_FORMAT
 from tests.modules.base.domain.messages.unit.domain_events import (
     AttributesDomainEvent,
+    MostConflictingDomainEvent,
     MyDomainEvent,
     NameConflictDomainEvent,
     NoAttributesDomainEvent,
@@ -134,6 +135,31 @@ class TestDomainEvent:
         retrieved_domain_event = DomainEvent.from_json(domain_event_json)
         assert domain_event.get_message_name() == "name.conflict.domain.event"
         assert retrieved_domain_event.get_message_name() == "name.conflict.domain.event"
+
+    def should_create_domain_event_with_most_conflicting_domain_event(  # noqa
+        self,
+    ):
+        now = datetime.utcnow()
+        domain_event = MostConflictingDomainEvent(
+            name="given-name",
+            version=2,
+            occurred_on=now,
+            attributes={"other-attribute": True},
+            meta={"client_id": "acme"},
+            type="given-type",
+        )
+        assert domain_event.get_message_name() == "most.conflicting.domain.event"
+        assert domain_event.get_message_version() == 2
+        assert domain_event.get_message_occurred_on() != now
+        assert domain_event.get_message_attributes() == {
+            "name": "given-name",
+            "version": 2,
+            "occurred_on": now,
+            "attributes": {"other-attribute": True},
+            "meta": {"client_id": "acme"},
+            "type": "given-type",
+        }
+        assert domain_event.get_message_meta() == {}
 
     def should_create_domain_event_with_correct_name_defined_inside_a_function(  # noqa
         self,

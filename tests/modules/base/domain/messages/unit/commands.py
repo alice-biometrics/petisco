@@ -1,34 +1,34 @@
 from datetime import datetime
 from typing import Any
 
-from petisco import DomainEvent
+from petisco import Command
 
 
-class MyDomainEvent(DomainEvent):
+class MyCommand(Command):
     my_specific_value: str
 
 
-class NoAttributesDomainEvent(DomainEvent):
+class NoAttributesCommand(Command):
     pass
 
 
-class AttributesDomainEvent(DomainEvent):
+class AttributesCommand(Command):
     id: str
     username: str
 
 
-class NameConflictDomainEvent(DomainEvent):
+class NameConflictCommand(Command):
     name: str
 
 
-class VersionConflictDomainEvent(DomainEvent):
+class VersionConflictCommand(Command):
     version: int
 
     class Config:
         version = 2
 
 
-class MostConflictingDomainEvent(DomainEvent):
+class MostConflictingCommand(Command):
     name: str
     version: int
     occurred_on: datetime
