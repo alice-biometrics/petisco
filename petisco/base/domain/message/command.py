@@ -18,7 +18,7 @@ class Command(Message):
     def __init__(self, **data: Any) -> None:
         self._set_data()
         self._set_attributes(**data)
-        self.type = "command"
+        self._message_type = "command"  # noqa
 
     @staticmethod
     def from_dict(

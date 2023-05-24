@@ -170,3 +170,6 @@ class Message(metaclass=MetaMessage):
 
     def get_message_meta(self) -> dict[str, Any]:
         return self._message_meta
+
+    def get_message_type(self) -> str:
+        return self._message_type

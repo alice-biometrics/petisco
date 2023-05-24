@@ -16,5 +16,5 @@ class MessageSubscriberInfo(BaseModel):
         return MessageSubscriberInfo(
             message_name=message.get_message_name(),
             message_version=message.get_message_version(),
-            message_type=message.type,
+            message_type=message.get_message_type(),
         )

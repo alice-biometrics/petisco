@@ -17,7 +17,7 @@ class DomainEvent(Message):
     def __init__(self, **data: Any) -> None:
         super().__init__()
         self._set_attributes(**data)
-        self.type = "domain_event"
+        self._message_type = "domain_event"
 
     @staticmethod
     def from_dict(
