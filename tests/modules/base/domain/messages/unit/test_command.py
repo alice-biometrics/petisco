@@ -45,3 +45,12 @@ class TestCommand:
         assert hasattr(command, "occurred_on")
         assert hasattr(command, "name")
         assert hasattr(command, "meta")
+
+    def should_create_command_with_correct_name_defined_inside_a_function(  # noqa
+        self,
+    ):
+        class MyInnerCommand(Command):
+            ...
+
+        command = MyInnerCommand()
+        assert command.name == "my.inner.command"
