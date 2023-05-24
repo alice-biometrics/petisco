@@ -54,8 +54,8 @@ class TestCommand:
             "my_specific_value": "whatever"
         }
         assert hasattr(command, "_message_id")
-        assert hasattr(command, "type")
-        assert getattr(command, "type") == "command"
+        assert hasattr(command, "_message_type")
+        assert getattr(command, "_message_type") == "command"
         assert hasattr(command, "_message_version")
         assert hasattr(command, "_message_occurred_on")
         assert hasattr(command, "_message_name")

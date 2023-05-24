@@ -67,8 +67,8 @@ class TestDomainEvent:
             "my_specific_value": "whatever"
         }
         assert hasattr(domain_event, "_message_id")
-        assert hasattr(domain_event, "type")
-        assert getattr(domain_event, "type") == "domain_event"
+        assert hasattr(domain_event, "_message_type")
+        assert getattr(domain_event, "_message_type") == "domain_event"
         assert hasattr(domain_event, "_message_version")
         assert hasattr(domain_event, "_message_occurred_on")
         assert hasattr(domain_event, "_message_name")
