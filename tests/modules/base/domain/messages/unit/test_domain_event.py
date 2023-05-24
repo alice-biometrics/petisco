@@ -61,16 +61,18 @@ class TestDomainEvent:
         domain_event = MyDomainEvent(my_specific_value="whatever")
 
         assert hasattr(domain_event, "my_specific_value")
-        assert hasattr(domain_event, "attributes")
-        assert getattr(domain_event, "attributes") == {"my_specific_value": "whatever"}
-        assert hasattr(domain_event, "message_id")
+        assert hasattr(domain_event, "_message_attributes")
+        assert getattr(domain_event, "_message_attributes") == {
+            "my_specific_value": "whatever"
+        }
+        assert hasattr(domain_event, "_message_id")
         assert hasattr(domain_event, "type")
         assert getattr(domain_event, "type") == "domain_event"
-        assert hasattr(domain_event, "version")
-        assert hasattr(domain_event, "occurred_on")
-        assert hasattr(domain_event, "name")
-        assert hasattr(domain_event, "attributes")
-        assert hasattr(domain_event, "meta")
+        assert hasattr(domain_event, "_message_version")
+        assert hasattr(domain_event, "_message_occurred_on")
+        assert hasattr(domain_event, "_message_name")
+        assert hasattr(domain_event, "_message_attributes")
+        assert hasattr(domain_event, "_message_meta")
 
     def should_create_domain_event_input_and_output_with_complex_atributtes(
         self,
@@ -91,7 +93,7 @@ class TestDomainEvent:
         assert domain_event == retrieved_domain_event
         assert id(domain_event) != id(retrieved_domain_event)
 
-        assert retrieved_domain_event.attributes == {
+        assert retrieved_domain_event.get_message_attributes() == {
             "user_id": "64Eb274A-2906-4670-B479-9751281F5407",
             "created_at": "2021-06-14 18:15:05.329569",
         }
@@ -103,8 +105,14 @@ class TestDomainEvent:
         domain_event2 = MyDomainEvent(
             my_specific_value="youwant", foo="hola2", bar="mundo2"
         )
-        assert domain_event1.attributes["foo"] != domain_event2.attributes["foo"]
-        assert domain_event1.attributes["bar"] != domain_event2.attributes["bar"]
+        assert (
+            domain_event1.get_message_attributes()["foo"]
+            != domain_event2.get_message_attributes()["foo"]
+        )
+        assert (
+            domain_event1.get_message_attributes()["bar"]
+            != domain_event2.get_message_attributes()["bar"]
+        )
 
     def should_create_domain_event_and_keep_message_version_when_exist_a_message_attribute(  # noqa
         self,
@@ -115,8 +123,8 @@ class TestDomainEvent:
         domain_event_json = domain_event.json()
         retrieved_domain_event = DomainEvent.from_json(domain_event_json)
 
-        assert domain_event.version == expected_message_version
-        assert retrieved_domain_event.version == expected_message_version
+        assert domain_event.get_message_version() == expected_message_version
+        assert retrieved_domain_event.get_message_version() == expected_message_version
 
     def should_create_domain_event_and_keep_message_name_when_exist_a_message_attribute(  # noqa
         self,
@@ -124,8 +132,8 @@ class TestDomainEvent:
         domain_event = NameConflictDomainEvent(name="whatever")
         domain_event_json = domain_event.json()
         retrieved_domain_event = DomainEvent.from_json(domain_event_json)
-        assert domain_event.name == "name.conflict.domain.event'"
-        assert retrieved_domain_event.version == "name.conflict.domain.event"
+        assert domain_event.get_message_name() == "name.conflict.domain.event"
+        assert retrieved_domain_event.get_message_name() == "name.conflict.domain.event"
 
     def should_create_domain_event_with_correct_name_defined_inside_a_function(  # noqa
         self,
@@ -134,4 +142,4 @@ class TestDomainEvent:
             ...
 
         domain_event = MyInnerDomainEvent()
-        assert domain_event.name == "my.inner.domain.event"
+        assert domain_event.get_message_name() == "my.inner.domain.event"

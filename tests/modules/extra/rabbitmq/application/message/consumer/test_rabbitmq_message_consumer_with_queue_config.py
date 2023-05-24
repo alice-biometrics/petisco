@@ -91,6 +91,6 @@ class TestRabbitMqMessageConsumerWithQueueConfig:
         spy.assert_first_message(domain_event)
         spy.assert_last_message(domain_event)
         spy.assert_count_by_message_id(
-            domain_event.message_id, expected_number_event_consumed
+            domain_event.get_message_id(), expected_number_event_consumed
         )
         spy_specific.assert_number_unique_messages(1)

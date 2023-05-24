@@ -31,63 +31,63 @@ class MetaMessage(type):
     ) -> MetaMessage:
         config = namespace.get("Config")
 
-        namespace["version"] = get_version(config)
-        namespace["name"] = get_message_name(namespace)
-        namespace["attributes"] = {}
-        namespace["meta"] = {}
+        namespace["_message_version"] = get_version(config)
+        namespace["_message_name"] = get_message_name(namespace)
+        namespace["_message_attributes"] = {}
+        namespace["_message_meta"] = {}
 
         return super().__new__(mcs, name, bases, namespace)
 
 
 class Message(metaclass=MetaMessage):
-    message_id: Uuid
-    name: str
-    version: int
-    occurred_on: datetime
-    attributes: dict[str, Any]
-    meta: dict[str, Any]
-    type: str = "message"
+    _message_id: Uuid
+    _message_name: str
+    _message_version: int
+    _message_occurred_on: datetime
+    _message_attributes: dict[str, Any]
+    _message_meta: dict[str, Any]
+    _message_type: str = "message"
 
     def __init__(self, **data: Any) -> None:
-        self.message_id: Uuid
-        self.name: str
-        self.version: int
-        self.occurred_on: datetime
-        self.attributes: dict[str, Any] = {}
-        self.meta: dict[str, Any] = {}
-        self.type: str = "message"
+        self._message_id: Uuid
+        self._message_name: str
+        self._message_version: int
+        self._message_occurred_on: datetime
+        self._message_attributes: dict[str, Any] = {}
+        self._message_meta: dict[str, Any] = {}
+        self._message_type: str = "message"
         self._set_data(**data)
 
     def _set_data(self, **kwargs: dict[str, Any] | None) -> None:
         if kwargs:
-            self.message_id = (
+            self._message_id = (
                 Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
             )
-            self.name = str(kwargs.get("type"))
-            self.version = cast(int, (kwargs.get("version")))
-            self.occurred_on = (
+            self._message_name = str(kwargs.get("type"))
+            self._message_version = cast(int, (kwargs.get("version")))
+            self._message_occurred_on = (
                 datetime.strptime(str(kwargs.get("occurred_on")), TIME_FORMAT)
                 if kwargs.get("occurred_on")
                 else datetime.now()
             )
-            self.attributes = cast(Dict[str, Any], kwargs.get("attributes"))
-            self.meta = cast(Dict[str, Any], kwargs.get("meta"))
-            self.type = str(kwargs.get("type_message", "message"))
-            for key, value in self.attributes.items():
+            self._message_attributes = cast(Dict[str, Any], kwargs.get("attributes"))
+            self._message_meta = cast(Dict[str, Any], kwargs.get("meta"))
+            self._message_type = str(kwargs.get("type_message", "message"))
+            for key, value in self._message_attributes.items():
                 setattr(self, key, value)
         else:
-            self.message_id = Uuid.v4()
-            self.occurred_on = datetime.utcnow()
+            self._message_id = Uuid.v4()
+            self._message_occurred_on = datetime.utcnow()
 
     def _set_attributes(self, **data: Any) -> None:
-        if self.attributes is None:
-            self.attributes = {}
+        if self._message_attributes is None:
+            self._message_attributes = {}
         for k in data:
-            self.attributes[k] = data[k]
+            self._message_attributes[k] = data[k]
             setattr(self, k, data[k])
 
     def add_meta(self, meta: dict[str, Any]) -> None:
-        self.meta = meta
+        self._message_meta = meta
 
     def update_meta(self, meta: dict[str, Any]) -> Message:
         if not meta:
@@ -95,10 +95,10 @@ class Message(metaclass=MetaMessage):
 
         if not isinstance(meta, Dict):
             raise TypeError("Message.update_meta() expect a dict")
-        if self.meta:
-            self.meta = {**self.meta, **meta}
+        if self._message_meta:
+            self._message_meta = {**self._message_meta, **meta}
         else:
-            self.meta = meta
+            self._message_meta = meta
         return self
 
     @staticmethod
@@ -113,7 +113,7 @@ class Message(metaclass=MetaMessage):
 
     def _get_serialized_attributes(self) -> dict[str, Any]:
         attributes = {}
-        for key, attribute in self.attributes.items():
+        for key, attribute in self._message_attributes.items():
             serialized_value = attribute
             if isinstance(attribute, ValueObject):
                 serialized_value = attribute.value
@@ -125,19 +125,19 @@ class Message(metaclass=MetaMessage):
     def dict(self) -> dict[str, dict[str, Any]]:
         data = {
             "data": {
-                "id": self.message_id.value,
-                "type": self.name,
-                "type_message": self.type,
-                "version": self.version,
-                "occurred_on": self.occurred_on.strftime(TIME_FORMAT),
+                "id": self._message_id.value,
+                "type": self._message_name,
+                "type_message": self._message_type,
+                "version": self._message_version,
+                "occurred_on": self._message_occurred_on.strftime(TIME_FORMAT),
                 "attributes": self._get_serialized_attributes(),
-                "meta": self.meta,
+                "meta": self._message_meta,
             }
         }
         return data
 
     def to_str(self, class_name: str = "Message", type: str = "message") -> str:
-        return f"{class_name} [{self.message_id.value} ({type}), {self.name} (v{self.version}), {self.occurred_on}, attributes={self.attributes}]"
+        return f"{class_name} [{self._message_id.value} ({type}), {self._message_name} (v{self._message_version}), {self._message_occurred_on}, attributes={self._message_attributes}]"
 
     def json(self) -> str:
         return json.dumps(self.dict())
@@ -152,3 +152,21 @@ class Message(metaclass=MetaMessage):
 
     def __repr__(self) -> str:
         return self.to_str()
+
+    def get_message_id(self) -> Uuid:
+        return self._message_id
+
+    def get_message_name(self) -> str:
+        return self._message_name
+
+    def get_message_version(self) -> int:
+        return self._message_version
+
+    def get_message_occurred_on(self) -> datetime:
+        return self._message_occurred_on
+
+    def get_message_attributes(self) -> dict[str, Any]:
+        return self._message_attributes
+
+    def get_message_meta(self) -> dict[str, Any]:
+        return self._message_meta

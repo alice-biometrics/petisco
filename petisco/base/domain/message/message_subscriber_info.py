@@ -14,7 +14,7 @@ class MessageSubscriberInfo(BaseModel):
     def from_class_type(class_type: Type[Message]) -> "MessageSubscriberInfo":
         message = class_type()
         return MessageSubscriberInfo(
-            message_name=message.name,
-            message_version=message.version,
+            message_name=message.get_message_name(),
+            message_version=message.get_message_version(),
             message_type=message.type,
         )
