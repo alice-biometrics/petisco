@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, ContextManager
 
 from sqlalchemy import text
+from sqlalchemy.orm import Session
 
 
 class SqlExecutor:
-    def __init__(self, session_scope: Callable):
+    def __init__(self, session_scope: Callable[..., ContextManager[Session]]):
         self.session_scope = session_scope
 
     def _get_command(self, statement: str):

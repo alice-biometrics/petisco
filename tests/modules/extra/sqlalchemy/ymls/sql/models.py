@@ -1,14 +1,9 @@
 from sqlalchemy import Column, Float, ForeignKey, Integer, String
 
-from petisco.base.domain.persistence.persistence import Persistence
-
-try:
-    Base = Persistence.get_base("mysql_test")
-except IndexError:
-    Base = Persistence.get_base("sqlite_test")
+from petisco import SqlBase
 
 
-class ClientModel(Base):
+class ClientModel(SqlBase):
     __tablename__ = "Client"
 
     id = Column(Integer, primary_key=True)
@@ -16,7 +11,7 @@ class ClientModel(Base):
     name = Column(String(100), nullable=False)
 
 
-class UserModel(Base):
+class UserModel(SqlBase):
     __tablename__ = "User"
 
     id = Column(Integer, primary_key=True)
@@ -25,7 +20,7 @@ class UserModel(Base):
     client_id = Column(Integer, ForeignKey("Client.id"))
 
 
-class ProductModel(Base):
+class ProductModel(SqlBase):
     __tablename__ = "Product"
 
     id = Column(Integer, primary_key=True)

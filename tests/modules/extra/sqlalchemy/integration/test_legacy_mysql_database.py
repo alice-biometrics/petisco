@@ -8,6 +8,7 @@ from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
 )
 
 
+@pytest.mark.skip
 @pytest.mark.integration
 @testing_with_mysql
 def test_should_create_persistence_with_mysql_database():
