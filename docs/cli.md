@@ -79,11 +79,11 @@ $ petisco-dev --info
 <div class="termy">
 ```console
 $ petisco-dev --dependencies
-┏━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┓
-┃        Type┃Default        ┃Implementation        ┃ENV               ┃
-┡━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━┩
-│MyRepository│SqlMyRepository│fake: FakeMyRepository│MY_REPOSITORY_TYPE│
-└────────────┴───────────────┴──────────────────────┴──────────────────┘
+┏━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃      Type┃Default      ┃Implementation      ┃ENV            ┃
+┡━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│Repository│SqlRepository│fake: FakeRepository│REPOSITORY_TYPE│
+└──────────┴─────────────┴────────────────────┴───────────────┘
 ```
 </div>
 
