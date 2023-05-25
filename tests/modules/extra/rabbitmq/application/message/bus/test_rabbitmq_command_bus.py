@@ -95,9 +95,9 @@ class TestRabbitMqCommandBus:
         configurer.clear()
 
         spy_consumer_default_queue.assert_count_by_message_id(
-            self.command.message_id, 1
+            self.command.get_message_id(), 1
         )
-        spy_consumer_store.assert_count_by_message_id(self.command.message_id, 1)
+        spy_consumer_store.assert_count_by_message_id(self.command.get_message_id(), 1)
 
     @testing_with_rabbitmq
     def should_dispatch_via_fallback_when_unexpected_exception(self):

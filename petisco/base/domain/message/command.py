@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import json
-from typing import Any, Dict, Optional, Type, TypeVar, Union
+from typing import Any, TypeVar
 
 from petisco.base.domain.message.message import Message
 
@@ -16,11 +18,11 @@ class Command(Message):
     def __init__(self, **data: Any) -> None:
         self._set_data()
         self._set_attributes(**data)
-        self.type = "command"
+        self._message_type = "command"  # noqa
 
     @staticmethod
     def from_dict(
-        message_data: Dict[str, Any], target_type: Optional[Type[T]] = None
+        message_data: dict[str, Any], target_type: type[T] | None = None
     ) -> T:
         target_type = Command if target_type is None else target_type
         data = message_data.get("data")
@@ -29,9 +31,7 @@ class Command(Message):
         return command
 
     @staticmethod
-    def from_json(
-        message_json: Union[str, bytes], target_type: Optional[Type[T]] = None
-    ) -> T:
+    def from_json(message_json: str | bytes, target_type: type[T] | None = None) -> T:
         event_dict = json.loads(message_json)
         return Command.from_dict(event_dict, target_type)
 

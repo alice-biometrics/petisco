@@ -67,7 +67,7 @@ def test_message_consumer_should_consumer_react_to_default_no_chaos():
 
     spy.assert_number_unique_messages(1)
     spy.assert_first_message(domain_event)
-    spy.assert_count_by_message_id(domain_event.message_id, 1)
+    spy.assert_count_by_message_id(domain_event.get_message_id(), 1)
 
     assert len(logger.get_logging_messages()) == 2
     logging_message = logger.get_logging_messages()[1]
@@ -120,7 +120,7 @@ def test_message_consumer_should_works_as_expected_with_chaos_with_zero_probabil
 
     spy.assert_number_unique_messages(1)
     spy.assert_first_message(domain_event)
-    spy.assert_count_by_message_id(domain_event.message_id, 1)
+    spy.assert_count_by_message_id(domain_event.get_message_id(), 1)
 
     assert len(logger.get_logging_messages()) == 2
     logging_message = logger.get_logging_messages()[1]
@@ -174,7 +174,7 @@ def test_message_consumer_should_works_when_configure_several_chaos_inputs(
     consumer.stop()
     configurer.clear()
     spy.assert_count_by_message_id(
-        domain_event.message_id, expected_number_event_consumed
+        domain_event.get_message_id(), expected_number_event_consumed
     )
 
 
@@ -274,8 +274,8 @@ def test_message_consumer_should_works_when_chaos_is_configure_with_failure_simu
     consumer.stop()
     configurer.clear()
 
-    spy.assert_count_by_message_id(domain_event.message_id, 0)
-    spy_dead_letter.assert_count_by_message_id(domain_event.message_id, 1)
+    spy.assert_count_by_message_id(domain_event.get_message_id(), 0)
+    spy_dead_letter.assert_count_by_message_id(domain_event.get_message_id(), 1)
 
 
 @pytest.mark.integration
@@ -332,8 +332,8 @@ def test_message_consumer_should_works_when_chaos_is_configured_with_failure_sim
     consumer.stop()
     configurer.clear()
 
-    spy.assert_count_by_message_id(domain_event.message_id, 0)
-    spy_dead_letter.assert_count_by_message_id(domain_event.message_id, 1)
+    spy.assert_count_by_message_id(domain_event.get_message_id(), 0)
+    spy_dead_letter.assert_count_by_message_id(domain_event.get_message_id(), 1)
 
     assert_logger_represents_simulated_failure_scenario(logger)
 
@@ -411,11 +411,13 @@ def test_message_consumer_should_consumer_react_to_chaos_with_failure_simulation
     consumer.stop()
     configurer.clear()
 
-    spy_subscriber.assert_count_by_message_id(domain_event.message_id, 0)
-    spy_store.assert_count_by_message_id(domain_event.message_id, 0)
+    spy_subscriber.assert_count_by_message_id(domain_event.get_message_id(), 0)
+    spy_store.assert_count_by_message_id(domain_event.get_message_id(), 0)
 
-    spy_dead_letter_subscriber.assert_count_by_message_id(domain_event.message_id, 1)
-    spy_dead_letter_store.assert_count_by_message_id(domain_event.message_id, 1)
+    spy_dead_letter_subscriber.assert_count_by_message_id(
+        domain_event.get_message_id(), 1
+    )
+    spy_dead_letter_store.assert_count_by_message_id(domain_event.get_message_id(), 1)
 
 
 @pytest.mark.integration
@@ -492,7 +494,9 @@ def test_message_consumer_should_consumer_react_to_chaos_with_failure_simulation
     consumer.stop()
     configurer.clear()
 
-    spy_subscriber.assert_count_by_message_id(domain_event.message_id, 0)
-    spy_store.assert_count_by_message_id(domain_event.message_id, 1)
-    spy_dead_letter_subscriber.assert_count_by_message_id(domain_event.message_id, 1)
-    spy_dead_letter_store.assert_count_by_message_id(domain_event.message_id, 0)
+    spy_subscriber.assert_count_by_message_id(domain_event.get_message_id(), 0)
+    spy_store.assert_count_by_message_id(domain_event.get_message_id(), 1)
+    spy_dead_letter_subscriber.assert_count_by_message_id(
+        domain_event.get_message_id(), 1
+    )
+    spy_dead_letter_store.assert_count_by_message_id(domain_event.get_message_id(), 0)

@@ -58,7 +58,7 @@ class TestRabbitMqMessageConsumerConfigurations:
         spy.assert_number_unique_messages(1)
         spy.assert_first_message(domain_event)
         spy.assert_last_message(domain_event)
-        spy.assert_count_by_message_id(domain_event.message_id, 1)
+        spy.assert_count_by_message_id(domain_event.get_message_id(), 1)
 
     @testing_with_rabbitmq
     @pytest.mark.parametrize(

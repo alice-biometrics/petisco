@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional
 
-from pydantic.main import BaseModel
+from pydantic import BaseModel
 
 
 class ConsumerDerivedAction(BaseModel):

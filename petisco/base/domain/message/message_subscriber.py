@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import re
 from abc import abstractmethod
 from types import FunctionType
-from typing import Any, Dict, List, Tuple, Type
+from typing import Any
 
 from meiga import BoolResult
 
@@ -25,11 +27,11 @@ from petisco.base.misc.wrapper import wrapper
 class MetaMessageSubscriber(type, Interface):
     domain_event_bus: DomainEventBus = NotImplementedDomainEventBus()
     command_bus: CommandBus = NotImplementedCommandBus()
-    middlewares: List[Middleware] = []
+    middlewares: list[Middleware] = []
 
     def __new__(
-        mcs, name: str, bases: Tuple[Any, ...], namespace: Dict[str, Any]
-    ) -> "MetaMessageSubscriber":
+        mcs, name: str, bases: tuple[Any, ...], namespace: dict[str, Any]
+    ) -> MetaMessageSubscriber:
         config = namespace.get("Config")
 
         if "handle" not in namespace:
@@ -48,7 +50,7 @@ class MetaMessageSubscriber(type, Interface):
         return super().__new__(mcs, name, bases, new_namespace)
 
     @abstractmethod
-    def subscribed_to(self) -> List[Type[Message]]:
+    def subscribed_to(self) -> list[type[Message]]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -81,7 +83,7 @@ class MessageSubscriber(metaclass=MetaMessageSubscriber):
     def get_subscriber_name(self) -> str:
         return re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__).lower()
 
-    def get_message_subscribers_info(self) -> List[MessageSubscriberInfo]:
+    def get_message_subscribers_info(self) -> list[MessageSubscriberInfo]:
         subscribers_info = []
         for class_type in self.subscribed_to():
             subscribers_info.append(MessageSubscriberInfo.from_class_type(class_type))

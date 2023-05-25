@@ -11,10 +11,10 @@ class SpyMessages:
 
     def append(self, message: Message):
         self.messages.append(message)
-        if str(message.message_id) not in self.counter_messages:
-            self.counter_messages[str(message.message_id)] = {"counter": 1}
+        if str(message.get_message_id()) not in self.counter_messages:
+            self.counter_messages[str(message.get_message_id())] = {"counter": 1}
         else:
-            self.counter_messages[str(message.message_id)]["counter"] += 1
+            self.counter_messages[str(message.get_message_id())]["counter"] += 1
 
     def assert_number_total_messages(self, expected_number_messages: int):
         actual_number_total_messages = len(self.messages)
