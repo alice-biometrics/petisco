@@ -64,7 +64,7 @@ class Message(metaclass=MetaMessage):
                 Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
             )
             self._message_name = str(kwargs.get("type"))
-            self._message_version = cast(int, (kwargs.get("version")))
+            self._message_version = int(kwargs.get("version", 1))
             self._message_occurred_on = (
                 datetime.strptime(str(kwargs.get("occurred_on")), TIME_FORMAT)
                 if kwargs.get("occurred_on")
