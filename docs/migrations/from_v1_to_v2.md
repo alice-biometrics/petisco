@@ -162,6 +162,69 @@ To use this in a FastAPI router, is quite easy:
         return as_fastapi(result)
     ```
 
+### DomainEvent and Command
+
+!!! warning
+
+    Petisco Message classes (`DomainEvent` and `Commnad`) had some limitations on version 1. Some `protected` class 
+    attribute names cannot be choosen as were used to store meta information of the message.
+    
+    For example, you cannot use `name` attribute in your definition, or `version`.
+
+    === "Petisco v1 👴"
+
+    ````python hl_lines="4 5"
+    from petisco import DomainEvent
+    
+    class UserCreated(DomainEvent):
+        name: str 
+        version: int
+    ````
+
+    Version 2 resolves this issues but needs to break compatibility.
+
+Now, the access to private attributes must be performed using a sort of getters.
+
+=== "Petisco v1 👴"
+
+    ````python hl_lines="4 5 10 11"
+    from petisco import DomainEvent
+    
+    class UserCreated(DomainEvent):
+        name: str 
+        version: int
+        
+        
+    user_created = UserCreated(name"Alice", version=2)
+    
+    print(user_created.name) # the given name conflicts with private name attribute
+    print(user_created.version) # the given version conflicts with private version attribute
+    print(user_created.attributes) 
+    print(user_created.message_id) 
+    print(user_created.ocurred_on) 
+    print(user_created.meta) 
+    ````
+
+=== "Petisco v2 👶"
+
+    ```python 
+    from petisco import DomainEvent
+    
+    class UserCreated(DomainEvent):
+        name: str 
+        version: int
+        
+        
+    user_created = UserCreated(name"Alice", version=2)
+    
+    print(user_created.get_message_name()) 
+    print(user_created.get_message_version()) 
+    print(user_created.get_message_attributes()) 
+    print(user_created.get_message_id()) 
+    print(user_created.get_message_ocurred_on()) 
+    print(user_created.get_message_meta()) 
+    ```
+
 ## Dev Experience Improvements
 
 ### Retrieved Message are better typed

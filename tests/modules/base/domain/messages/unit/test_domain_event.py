@@ -27,16 +27,8 @@ class TestDomainEvent:
     def should_create_domain_event_input_and_output(
         self, domain_event: DomainEvent
     ):  # noqa
-
         domain_event_json = domain_event.json()
-        print("....")
-        print(domain_event_json)
-
         retrieved_domain_event = DomainEvent.from_json(domain_event_json)
-
-        print(domain_event)
-        print(retrieved_domain_event)
-        print("....")
         assert domain_event == retrieved_domain_event
         assert id(domain_event) != id(retrieved_domain_event)
 
