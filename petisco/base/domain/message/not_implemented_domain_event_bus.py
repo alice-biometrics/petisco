@@ -14,11 +14,6 @@ class NotImplementedDomainEventBus(DomainEventBus):
             meta = self.get_configured_meta()
             _ = domain_event.update_meta(meta)
 
-    def retry_publish_only_on_store_queue(self, domain_event: DomainEvent) -> None:
-        self._check_is_domain_event(domain_event)
-        meta = self.get_configured_meta()
-        _ = domain_event.update_meta(meta)
-
     def retry_publish(
         self,
         domain_event: DomainEvent,

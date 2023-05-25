@@ -58,15 +58,7 @@ class Container(Generic[T], metaclass=Singleton):
         self, input_dependencies: list[Dependency], overwrite: bool = False
     ) -> None:
         for dependency in input_dependencies:
-
-            if dependency.name:
-                if dependency.name in self.dependencies and not overwrite:
-                    raise IndexError(
-                        f"Container: dependency (name={dependency.name}) is already added to dependencies. Check "
-                        f"set_dependencies input "
-                    )
-                self.dependencies[dependency.name] = dependency
-            elif dependency.alias:
+            if dependency.alias:
                 if dependency.alias in self.dependencies and not overwrite:
                     raise IndexError(
                         f"Container: dependency (alias={dependency.alias}) is already added to dependencies. Check "

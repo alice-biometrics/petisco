@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Generic, List, TypeVar
 
 from petisco import Container
 
@@ -18,6 +18,14 @@ class OtherBaseRepo(ABC):
 
 class MyRepo(BaseRepo):
     def execute(self):
+        print("MyRepo")
+
+
+T = TypeVar("T")
+
+
+class MyGenericRepo(Generic[T], BaseRepo):
+    def execute(self) -> T:
         print("MyRepo")
 
 

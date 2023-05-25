@@ -1,18 +1,26 @@
 from petisco.extra.sqlalchemy.is_sqlalchemy_available import is_sqlalchemy_available
 
 if is_sqlalchemy_available():
+    from petisco.extra.sqlalchemy.sql.async_sql_database import AsyncSqlDatabase
+    from petisco.extra.sqlalchemy.sql.mysql.legacy_mysql_database import (
+        LegacyMySqlDatabase,
+    )
     from petisco.extra.sqlalchemy.sql.mysql.mysql_connection import MySqlConnection
-    from petisco.extra.sqlalchemy.sql.mysql.mysql_database import MySqlDatabase
+    from petisco.extra.sqlalchemy.sql.sql_database import SqlDatabase
     from petisco.extra.sqlalchemy.sql.sql_executor import SqlExecutor
+    from petisco.extra.sqlalchemy.sql.sqlite.legacy_sqlite_database import (
+        LegacySqliteDatabase,
+    )
     from petisco.extra.sqlalchemy.sql.sqlite.sqlite_connection import SqliteConnection
-    from petisco.extra.sqlalchemy.sql.sqlite.sqlite_database import SqliteDatabase
 
     __all__ = [
         "MySqlConnection",
-        "MySqlDatabase",
+        "LegacyMySqlDatabase",
         "SqliteConnection",
-        "SqliteDatabase",
+        "LegacySqliteDatabase",
         "SqlExecutor",
+        "SqlDatabase",
+        "AsyncSqlDatabase",
     ]
 else:
     __all__ = []

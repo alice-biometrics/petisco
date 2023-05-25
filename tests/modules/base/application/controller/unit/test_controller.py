@@ -5,11 +5,9 @@ from unittest.mock import patch
 
 import pytest
 from meiga import BoolResult, Error, Failure, Result, Success, isFailure, isSuccess
-from meiga.assertions import assert_failure, assert_success
 
 from petisco import (
     Controller,
-    ControllerResult,
     PrintMiddleware,
     UnknownError,
     custom_message_handler,
@@ -29,7 +27,7 @@ class TestController:
                 return isSuccess
 
         result = MyController().execute()
-        assert_success(result)
+        result.assert_success()
 
     def should_return_failure_result(self):  # noqa
         class MyController(Controller):
@@ -37,9 +35,9 @@ class TestController:
                 return isFailure
 
         result = MyController().execute()
-        assert_failure(result)
+        result.assert_failure()
 
-    def should_return_mapped_success_handler(self):  # noqa
+    def should_return_transformed_success_handler(self):  # noqa
         expected_result = {"message": "ok"}
 
         class MyController(Controller):
@@ -51,9 +49,9 @@ class TestController:
 
         result = MyController().execute()
 
-        assert result == expected_result
+        assert result.transform() == expected_result
 
-    def should_return_mapped_by_error_map(self):  # noqa
+    def should_return_transformed_by_error_map(self):  # noqa
         expected_result = {"message": "not ok"}
 
         class MyController(Controller):
@@ -65,7 +63,7 @@ class TestController:
 
         result = MyController().execute()
 
-        assert result == expected_result
+        assert result.transform() == expected_result
 
     @pytest.mark.parametrize(
         "configured_middlewares",
@@ -83,7 +81,7 @@ class TestController:
                 return isSuccess
 
         result = MyController().execute()
-        assert_success(result)
+        result.assert_success()
 
     @pytest.mark.parametrize(
         "configured_middlewares",
@@ -99,7 +97,7 @@ class TestController:
                 return isSuccess
 
         result = MyController().execute()
-        assert_success(result)
+        result.assert_success()
 
         monkeypatch.undo()
 
@@ -143,7 +141,7 @@ class TestController:
             ) as mock_middleware_after:
                 result = MyController().execute()
 
-        assert result.is_failure
+        result.assert_failure()
         mock_middleware_before.assert_called()
         mock_middleware_after.assert_called()
 
@@ -191,7 +189,7 @@ class TestController:
             ) as mock_middleware_after:
                 result = MyController().execute()
 
-        assert result.is_success
+        result.assert_success()
         mock_middleware_before.assert_called()
         mock_middleware_after.assert_called()
 
@@ -212,7 +210,7 @@ class TestController:
                 return simulate_result
 
         result = MyController().execute()
-        assert result == expected_result
+        assert result.transform() == expected_result
 
     def should_raise_an_exception_if_execute_method_is_not_implemented(self):  # noqa
         with pytest.raises(NotImplementedError) as excinfo:
@@ -232,38 +230,7 @@ class TestController:
                 return Success(result)
 
         result = MyController().execute(2)
-
-        assert_failure(result, value_is_instance_of=UnknownError)
-
-    def should_succees_when_return_typed_controller_result(self):  # noqa
-        class MyController(Controller[int]):
-            def execute(self) -> ControllerResult:
-                return Success(1)
-
-        def function() -> int:
-            return MyController().execute()
-
-        function()
-
-    def should_fail_when_return_type_is_not_a_result(self):  # noqa
-        class MyController(Controller[int]):
-            def execute(self) -> ControllerResult:
-                return 1
-
-        with pytest.raises(TypeError, match="Controller Error"):
-            MyController().execute()
-
-    def should_skip_mapping_when_return_type_is_not_a_result(self):  # noqa
-        class MyController(Controller[int]):
-            class Config:
-                skip_result_mapping = True
-
-            def execute(self) -> ControllerResult:
-                return 1
-
-        result = MyController().execute()
-
-        assert isinstance(result, int)
+        result.assert_failure(value_is_instance_of=UnknownError)
 
     def should_return_result_value_from_success_handler_with_unwrap_result_handler(
         self,
@@ -279,7 +246,7 @@ class TestController:
 
         result = MyController().execute()
 
-        assert result == expected_result
+        assert result.transform() == expected_result
 
     def should_return_result_value_from_success_handler_with_custom_message_handler(
         self,
@@ -295,4 +262,4 @@ class TestController:
 
         result = MyController().execute()
 
-        assert result == expected_result
+        assert result.transform() == expected_result

@@ -27,7 +27,7 @@ To install extras:
 
 <div class="termy">
 ```console
-$ pip install petisco[sqlalchemy, redis, rabbitmq, slack, elastic, elastic-apm, fastapi]
+$ pip install petisco[sqlalchemy, redis, rabbitmq, slack, elastic, elastic-apm, fastapi, rich]
 ---> 100%
 Successfully installed petisco
 ```

@@ -1,45 +1,61 @@
 import pytest
 
-from petisco import Persistence
+from petisco import Databases
 from petisco.extra.elastic import ElasticConnection, ElasticDatabase
 from tests.modules.extra.decorators import testing_with_elastic
 
 
 @pytest.mark.integration
-@testing_with_elastic
-def test_should_create_persistence_with_elastic_database():
-    connection = ElasticConnection.create_local()
-    database = ElasticDatabase(name="elastic_test", connection=connection)
-    Persistence.clear()
+class TestElasticDatabase:
+    @testing_with_elastic
+    def should_execute_a_session(self):
+        connection = ElasticConnection.create_local()
+        database = ElasticDatabase(name="elastic_test", connection=connection)
+        database.initialize()
 
-    persistence = Persistence()
-    persistence.add(database)
+        session_scope = database.get_session_scope()
 
-    assert database.info() == {"name": "elastic_test"}
+        with session_scope() as es:
+            document = {
+                "title": "Example Document",
+                "content": "This is the content of the document.",
+            }
+            index_name = "my-index"
+            response = es.index(index=index_name, document=document)
+            assert response.get("result") == "created"
 
-    persistence.create()
+    @testing_with_elastic
+    def should_create_databases_with_elastic_database(self):
+        connection = ElasticConnection.create_local()
+        database = ElasticDatabase(name="elastic_test", connection=connection)
+        Databases.clear()
 
-    assert Persistence.is_available()
+        databases = Databases()
+        databases.add(database)
 
-    persistence.delete()
-    Persistence.clear()
+        assert database.info() == {"name": "elastic_test"}
 
+        databases.initialize()
 
-@pytest.mark.integration
-@testing_with_elastic
-def test_should_create_persistence_with_elastic_database_specifying_the_database():
-    connection = ElasticConnection.create_local()
-    database = ElasticDatabase(name="elastic_test", connection=connection)
-    Persistence.clear()
+        assert Databases.are_available()
 
-    persistence = Persistence()
-    persistence.add(database)
+        databases.delete()
+        Databases.clear()
 
-    assert database.info() == {"name": "elastic_test"}
+    @testing_with_elastic
+    def should_create_persistence_with_elastic_database_specifying_the_database(self):
+        connection = ElasticConnection.create_local()
+        database = ElasticDatabase(name="elastic_test", connection=connection)
+        Databases.clear()
 
-    persistence.create()
+        databases = Databases()
+        databases.add(database)
 
-    assert Persistence.is_available(database.name)
+        assert database.info() == {"name": "elastic_test"}
 
-    persistence.delete()
-    Persistence.clear()
+        databases.initialize()
+
+        assert Databases.are_available(database.name)
+
+        databases.delete()
+        Databases.clear()

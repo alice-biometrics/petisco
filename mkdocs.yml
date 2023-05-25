@@ -45,10 +45,11 @@ extra_javascript:
 nav:
 - Overview: index.md
 - install.md
+- CLI: cli.md
 - getting_started.md
 - application.md
 - domain.md
-- configuration.md
+- databases.md
 - Infrastructure [Extras]:
   - FastAPI: extra/fastapi/fastapi.md
   - RabbitMQ: extra/rabbitmq/rabbitmq.md
@@ -56,6 +57,10 @@ nav:
   - Elastic: extra/elastic/elastic.md
   - SQLAlchemy: extra/sqlalchemy/sqlalchemy.md
   - Slack: extra/slack/slack.md
+- configuration.md
+- asyncio.md
+- Migrations:
+  - From v1 to v2: migrations/from_v1_to_v2.md
 - Contributing to petisco: contributing.md
 - changelog.md
 - acknowledgements.md

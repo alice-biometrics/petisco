@@ -4,9 +4,15 @@ from petisco.base.domain.message.message import Message
 class RabbitMqMessageQueueNameFormatter:
     @staticmethod
     def format(message: Message, exchange_name: str = None) -> str:
-        message_name = message.name.replace(".", "_")
-        message_type = message.type if message.type != "domain_event" else "event"
-        message_format = f"{message.version}.{message_type}.{message_name}"
+        message_name = message.get_message_name().replace(".", "_")
+        message_type = (
+            message.get_message_type()
+            if message.get_message_type() != "domain_event"
+            else "event"
+        )
+        message_format = (
+            f"{message.get_message_version()}.{message_type}.{message_name}"
+        )
         return f"{exchange_name}.{message_format}" if exchange_name else message_name
 
     @staticmethod

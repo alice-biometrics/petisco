@@ -65,8 +65,8 @@ class TestRabbitMqMessageConsumerStartAndStop:
         configurer.clear()
 
         spy.assert_number_unique_messages(2)
-        spy.assert_count_by_message_id(first_event.message_id, 1)
-        spy.assert_count_by_message_id(second_event.message_id, 1)
+        spy.assert_count_by_message_id(first_event.get_message_id(), 1)
+        spy.assert_count_by_message_id(second_event.get_message_id(), 1)
 
     @testing_with_rabbitmq
     def should_unsubscribe_and_resume_handler_on_store_queue(self):
@@ -129,8 +129,8 @@ class TestRabbitMqMessageConsumerStartAndStop:
         configurer.clear()
 
         spy.assert_number_unique_messages(2)
-        spy.assert_count_by_message_id(first_event.message_id, 1)
-        spy.assert_count_by_message_id(second_event.message_id, 1)
+        spy.assert_count_by_message_id(first_event.get_message_id(), 1)
+        spy.assert_count_by_message_id(second_event.get_message_id(), 1)
         spy_dead_letter.assert_number_unique_messages(5)
 
     @testing_with_rabbitmq

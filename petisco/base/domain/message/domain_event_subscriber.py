@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from abc import abstractmethod
-from typing import List, Type
 
 from meiga import BoolResult
 
@@ -14,7 +15,7 @@ class DomainEventSubscriber(MessageSubscriber):
     """
 
     @abstractmethod
-    def subscribed_to(self) -> List[Type[DomainEvent]]:
+    def subscribed_to(self) -> list[type[DomainEvent]]:
         """
         returns the list of events that we want to subscribe
         """

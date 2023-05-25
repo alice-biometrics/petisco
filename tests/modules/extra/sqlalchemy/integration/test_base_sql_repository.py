@@ -1,7 +1,7 @@
 import pytest
 from meiga.assertions import assert_failure
 
-from petisco import Persistence
+from petisco import Databases
 from petisco.base.domain.errors.defaults.already_exists import (
     AggregateAlreadyExistError,
 )
@@ -9,10 +9,7 @@ from petisco.base.domain.errors.defaults.not_found import (
     AggregateNotFoundError,
     AggregatesNotFoundError,
 )
-from petisco.extra.sqlalchemy import SqliteConnection, SqliteDatabase
-from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
-    ModelFilenameMother,
-)
+from petisco.extra.sqlalchemy import SqlDatabase, SqliteConnection
 from tests.modules.extra.sqlalchemy.mother.sql_repository_mother import (
     Client,
     SqlRepositoryMother,
@@ -24,7 +21,7 @@ from tests.modules.extra.sqlalchemy.mother.sql_repository_mother import (
 @pytest.mark.integration
 class TestBaseSqlRepository:
     client: Client
-    persistence: Persistence
+    databases: Databases
     database_name = "sqlite_test"
 
     def setup_method(self):
@@ -32,21 +29,18 @@ class TestBaseSqlRepository:
         self.client = Client.random()
 
     def _configure_db(self) -> None:
-        filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
+        # filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
         connection = SqliteConnection.create(
             server_name="sqlite", database_name="petisco.db"
         )
-        database = SqliteDatabase(
-            name=self.database_name, connection=connection, model_filename=filename
-        )
+        database = SqlDatabase(name=self.database_name, connection=connection)
 
-        persistence = Persistence()
-        persistence.add(database)
-        persistence.create()
+        databases = Databases()
+        databases.add(database)
+        databases.initialize()
 
     def teardown_method(self) -> None:
-        Persistence.get_instance().remove(self.database_name)
-        Persistence.clear()
+        Databases.get_instance().remove(self.database_name)
 
     def should_save_a_model_using_a_sql_repository_implementation(self):
         repository = SqlRepositoryMother.with_client(self.database_name, self.client)

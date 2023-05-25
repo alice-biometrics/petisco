@@ -104,7 +104,7 @@ object.
     === "Defining Dependencies"
 
         ```python
-        from petisco import Container
+        from petisco import Dependency, Container
     
         dependencies = [
             Dependency(MyBase, builders={"default": Builder(MyImplementation)})
@@ -399,23 +399,6 @@ class MyController(Controller): # (1)
 1. Inherit from petisco Controller class
 
 
-Since version `1.15.0`, you can use the type alias `ControllerResult`. This solves some type-hint issues and improve 
-development experience.
-
-```python hl_lines="5 7"
-from petisco import Controller, ControllerResult
-from meiga import Result, Success, Error
-import random
-
-class MyController(Controller[bool]): # (1)
-    def execute(self) -> ControllerResult: # (1)
-        return Success(random.choice([True, False]))
-```
-
-1. Define the expected result
-2. Return a generic ControllerResult which is equivalent to `Result[T, Error] | T`, being T defined type (`bool`).
-
-
 #### Configuration
     
 You can configure some behaviours with the inner class `Config`. 
@@ -497,13 +480,13 @@ Let's go into more detail in the following points.
     ```
 
     
-??? note
-    
-    If you want to set a default middleware for every Controller, you can use the envvar `PETISCO_DEFAULT_MIDDLEWARES`:
-
-    - `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware`: to configure PrintMiddleware
-    - `PETISCO_DEFAULT_MIDDLEWARES=NotifierMiddleware`: to configure NotifierMiddleware
-    - `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware,NotifierMiddleware`: to configure several middlewares (using comma to separate)
+  !!! note
+      
+      If you want to set a default middleware for every Controller, you can use the envvar `PETISCO_DEFAULT_MIDDLEWARES`:
+  
+      - `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware`: to configure PrintMiddleware
+      - `PETISCO_DEFAULT_MIDDLEWARES=NotifierMiddleware`: to configure NotifierMiddleware
+      - `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware,NotifierMiddleware`: to configure several middlewares (using comma to separate)
 
 * **success_handler**: you can modify the result of a controller when the result is a success with the `success_handler` Config argument.
 
@@ -591,29 +574,12 @@ Let's go into more detail in the following points.
                 return Failure(MyError())
             return Success(True)
     ```
-  
-* **skip_result_mapping**: with this value to True (default False) you can skip the success and failure handlers, returning the raw value.
-
-    ```python hl_lines="7"
-    from petisco import DomainError, Controller
-    
-    class MyError(DomainError): ...
-    
-    class MyController(Controller):
-        class Config:
-            skip_result_mapping = True
-
-        def execute(self) -> bool: 
-            return True
-    ```
-
-    You can use `bool` thanks to `skip_result_mapping=True`, otherwise you have to use a `Result[bool, Error]` type (e.g. `Success(True)`).
 
 #### FastAPI ⚡️
 
 To use it in combination with FastAPI is as easy as inherit from  `FastAPIController` instead of using `Controller` (as shown above).
 
-```python hl_lines="9 10 11 12 13 14 15 16"
+```python hl_lines="9 10 11 12 13 14 15 16 17"
 from meiga import BoolResult
 from petisco import Container, DomainEventBus
 from petisco.extra.fastapi import FastAPIController
@@ -624,21 +590,27 @@ from app.src.task.shared.domain.task import Task
 
 class CreateTaskController(FastAPIController):
     def execute(self, task: Task) -> BoolResult:
-        task_creator = TaskCreator(
+        task_creator = TaskCreator( # (1)
             labeler=Container.get(TaskLabeler),
             repository=Container.get(TaskRepository),
             domain_event_bus=Container.get(DomainEventBus),
         )
-        return task_creator.execute(task=task)
+        return task_creator.execute(task=task) # (2)
 ```
+
+1. Defines and instantiate the use case.
+2. Executes the use case.
+
 
 Then, we have to instantiate and execute the controller object in the FastAPI routers.
 
-```python hl_lines="11 12 13"
+```python hl_lines="13 14 15 16"
 from uuid import UUID
 
 from fastapi import APIRouter
+from petisco.extra.fastapi import as_fastapi
 from petisco import Uuid
+
 
 from app.api.models import TaskIn, TaskOut
 from app.src.task.create.application.create_task_controller import CreateTaskController
@@ -647,9 +619,12 @@ router = APIRouter(tags=["Tasks"])
 
 @router.post("/task")
 async def create_task(task: TaskIn):
-    return CreateTaskController().execute(task.to_task())
-    
+    result = CreateTaskController().execute(task.to_task()) # (1) 
+    return as_fastapi(result) # (2) 
 ```
+
+1. Executes the Controller
+2. Transforms Result to FastAPI expected message or `HttpException`s.
 
 
 ## Subscriber
@@ -898,7 +873,7 @@ from typing import Type
 
 from fastapi import FastAPI
 from meiga import BoolResult, isSuccess
-from petisco.extra.fastapi import FastAPIController
+from petisco.extra.fastapi import FastAPIController, as_fastapi
 from pydantic import BaseModel
 from pydantic.types import constr
 from petisco import CommandSubscriber, Command, Container, CommandBus
@@ -937,7 +912,8 @@ class CreateTaskOnCreateTaskCommandSubscriber(CommandSubscriber):
 
 @app.post("/task")
 def create_task(task: Task):
-    return CreateTaskController().execute(task)
+    result = CreateTaskController().execute(task)
+    return as_fastapi(result)
 ```
 
 1. Use available `domain_event_bus` in `CommandSubscriber` instead of `Container.get(DomainEventBus")`

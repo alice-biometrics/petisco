@@ -1,15 +1,42 @@
-from typing import Any, Callable, List
+from __future__ import annotations
 
-from petisco.base.domain.persistence.interface_database import Database
+from contextlib import contextmanager
+from typing import Callable, ContextManager
+
+from elasticsearch import Elasticsearch
+from loguru import logger
+
+from petisco.base.domain.persistence.database import Database
 from petisco.extra.elastic.elastic_connection import ElasticConnection
-from petisco.extra.elastic.elastic_session_scope_provider import (
-    elastic_session_scope_provider,
-)
+
+
+def elastic_session_scope_provider(
+    session,
+) -> Callable[..., ContextManager[Elasticsearch]]:
+    from elasticsearch import RequestError
+
+    @contextmanager
+    def session_scope() -> ContextManager[Elasticsearch]:
+        try:
+            yield session
+        except ConnectionRefusedError as e:
+            logger.error(e)
+            raise e
+        except RequestError as e:
+            logger.error(e)
+            raise e
+        except Exception as e:
+            logger.error(e)
+            raise e
+
+    return session_scope
 
 
 class ElasticDatabase(Database):
+    session: Elasticsearch | None = None
+
     @staticmethod
-    def local_connection_checker() -> "ElasticDatabase":
+    def local_connection_checker() -> ElasticDatabase:
         return ElasticDatabase(name="test", connection=ElasticConnection.create_local())
 
     def __init__(self, name: str, connection: ElasticConnection) -> None:
@@ -20,9 +47,7 @@ class ElasticDatabase(Database):
         self.connection = connection
         super().__init__(name)
 
-    def create(self) -> None:
-        from elasticsearch import Elasticsearch
-
+    def initialize(self) -> None:
         self.session = Elasticsearch(
             self.connection.to_elastic_format(), http_auth=self.connection.http_auth
         )
@@ -35,21 +60,9 @@ class ElasticDatabase(Database):
 
     def is_available(self) -> bool:
         try:
-            return self.get_session().ping()
+            return self.session.ping()
         except Exception:  # noqa E722
             return False
 
-    def get_base(self) -> None:
-        return None
-
-    def get_model(self, model_name: str) -> Any:
-        return None
-
-    def get_model_names(self) -> List[str]:
-        return []
-
-    def get_session(self) -> Any:
-        return self.session
-
-    def get_session_scope(self) -> Callable:
-        return elastic_session_scope_provider(self.get_session())
+    def get_session_scope(self) -> Callable[..., ContextManager[Elasticsearch]]:
+        return elastic_session_scope_provider(self.session)

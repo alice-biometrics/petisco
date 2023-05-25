@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from abc import abstractmethod
-from typing import List, Type
 
 from meiga import BoolResult
 
@@ -20,12 +21,12 @@ class CommandSubscriber(MessageSubscriber):
     """
 
     @abstractmethod
-    def subscribed_to(self) -> Type[Command]:
+    def subscribed_to(self) -> type[Command]:
         raise NotImplementedError()
 
     @abstractmethod
     def handle(self, command: Command) -> BoolResult:  # type: ignore
         raise NotImplementedError()
 
-    def get_message_subscribers_info(self) -> List[MessageSubscriberInfo]:
+    def get_message_subscribers_info(self) -> list[MessageSubscriberInfo]:
         return [MessageSubscriberInfo.from_class_type(self.subscribed_to())]

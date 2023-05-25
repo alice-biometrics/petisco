@@ -9,6 +9,7 @@ on:
       - '.github/workflows/coverage.yml'
     branches: 
       - main
+      - v2
 
 jobs:
   ci:
@@ -37,6 +38,8 @@ jobs:
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN_STAGING }}
           SLACK_TESTS_CHANNEL: 'testing'
-        run: lume -build -test-with-rabbitmq-mysql-and-elastic -test-command-line
+        run: lume -build -test-with-rabbitmq-mysql-and-elastic
       - name: Check Installation (--no-binary)
         run: lume -check-no-binary-installation
+      - name: Check command line
+        run: lume -test-command-line

@@ -15,6 +15,8 @@ __pycache__/
 *.db
 
 .hypothesis
+site/
+mysqldata/
 output/
 metrics/
 docs/build

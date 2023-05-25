@@ -116,13 +116,13 @@ class TestRabbitMqMessageConfigurer:
         self.spy_dead_letter_1.assert_number_unique_messages(1)
         self.spy_dead_letter_1.assert_first_message(self.domain_event_1)
         self.spy_dead_letter_1.assert_count_by_message_id(
-            self.domain_event_1.message_id, 1
+            self.domain_event_1.get_message_id(), 1
         )
 
         self.spy_dead_letter_2.assert_number_unique_messages(1)
         self.spy_dead_letter_2.assert_first_message(self.domain_event_2)
         self.spy_dead_letter_2.assert_count_by_message_id(
-            self.domain_event_2.message_id, 1
+            self.domain_event_2.get_message_id(), 1
         )
 
     @testing_with_rabbitmq

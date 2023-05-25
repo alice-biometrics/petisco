@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from meiga import BoolResult, Failure, isFailure, isSuccess
 
 from petisco import DomainError, HttpError, NotFound, assert_http
-from petisco.extra.fastapi import FastAPIController
+from petisco.extra.fastapi import FastAPIController, as_fastapi
 
 app = FastAPI(title="test-app")
 
@@ -40,7 +40,8 @@ class MyController(FastAPIController):
 
 @app.get("/test")
 def entry_point(x_behavior: Optional[str] = Header("success")):
-    return MyController().execute(x_behavior)
+    result = MyController().execute(x_behavior)
+    return as_fastapi(result)
 
 
 @pytest.mark.unit

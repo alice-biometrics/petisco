@@ -4,6 +4,7 @@ from petisco import Builder, Dependency
 from tests.modules.base.application.dependency_injection.unit.dummy_repositories import (
     BaseRepo,
     InMemoryRepo,
+    MyGenericRepo,
     MyRepo,
 )
 
@@ -13,7 +14,7 @@ class TestDependency:
     def should_return_default_instance(self):
 
         dependency = Dependency(
-            name="repo",
+            BaseRepo,
             envar_modifier="REPOSITORY",
             builders={"default": Builder(MyRepo), "inmemory": Builder(InMemoryRepo)},
         )
@@ -26,7 +27,7 @@ class TestDependency:
 
         monkeypatch.setenv("REPOSITORY", "inmemory")
         dependency = Dependency(
-            name="repo",
+            BaseRepo,
             envar_modifier="REPOSITORY",
             builders={"default": Builder(MyRepo), "inmemory": Builder(InMemoryRepo)},
         )
@@ -42,7 +43,7 @@ class TestDependency:
 
         monkeypatch.setenv("REPOSITORY", "other")
         dependency = Dependency(
-            name="repo",
+            BaseRepo,
             envar_modifier="REPOSITORY",
             builders={"default": Builder(MyRepo), "inmemory": Builder(InMemoryRepo)},
         )
@@ -53,7 +54,7 @@ class TestDependency:
 
     def should_return_default_when_optional_parameters_are_not_used(self):
 
-        dependency = Dependency(name="repo", builders={"default": Builder(MyRepo)})
+        dependency = Dependency(BaseRepo, builders={"default": Builder(MyRepo)})
 
         assert isinstance(dependency.get_instance(), MyRepo)
 
@@ -64,7 +65,7 @@ class TestDependency:
 
         monkeypatch.setenv("REPOSITORY", "other")
         dependency = Dependency(
-            name="repo",
+            BaseRepo,
             envar_modifier="REPOSITORY",
             builders={"default": Builder(MyRepo)},
         )
@@ -134,3 +135,10 @@ class TestDependency:
     def should_raise_error_when_no_default_builders_is_given(self):
         with pytest.raises(TypeError):
             Dependency(BaseRepo, builders={"inmemory": Builder(InMemoryRepo)})
+
+    def should_return_default_instance_when_use_generic_class(self):
+        dependency = Dependency(
+            BaseRepo,
+            builders={"default": Builder(MyGenericRepo[int])},
+        )
+        assert isinstance(dependency.get_instance(), MyGenericRepo)

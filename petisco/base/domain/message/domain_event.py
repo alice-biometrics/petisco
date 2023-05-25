@@ -1,7 +1,11 @@
+from __future__ import annotations
+
 import json
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any, TypeVar
 
 from petisco.base.domain.message.message import Message
+
+T = TypeVar("T", bound="DomainEvent")
 
 
 class DomainEvent(Message):
@@ -13,13 +17,13 @@ class DomainEvent(Message):
     def __init__(self, **data: Any) -> None:
         super().__init__()
         self._set_attributes(**data)
-        self.type = "domain_event"
+        self._message_type = "domain_event"
 
     @staticmethod
     def from_dict(
-        message_data: Dict[str, Any],
-        target_type: Union[Type["DomainEvent"], None] = None,
-    ) -> "DomainEvent":
+        message_data: dict[str, Any],
+        target_type: type[T] | None = None,
+    ) -> T:
         target_type = DomainEvent if target_type is None else target_type
         data = message_data.get("data")
         domain_event = target_type()
@@ -28,9 +32,9 @@ class DomainEvent(Message):
 
     @staticmethod
     def from_json(
-        message_json: Union[str, bytes],
-        target_type: Optional[Type["DomainEvent"]] = None,
-    ) -> "DomainEvent":
+        message_json: str | bytes,
+        target_type: type[T] | None = None,
+    ) -> T:
         event_dict = json.loads(message_json)
         return DomainEvent.from_dict(event_dict, target_type)
 

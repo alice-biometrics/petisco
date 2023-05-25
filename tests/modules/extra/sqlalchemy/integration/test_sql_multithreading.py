@@ -1,120 +1,95 @@
 import concurrent.futures
-import threading
 from time import sleep
 
 import pytest
 
-from petisco import Persistence, Uuid
+from petisco import Uuid
 from petisco.extra.sqlalchemy import (
     MySqlConnection,
-    MySqlDatabase,
+    SqlDatabase,
     SqlExecutor,
     SqliteConnection,
-    SqliteDatabase,
 )
 from tests.modules.extra.decorators import testing_with_mysql
-from tests.modules.extra.sqlalchemy.mother.model_filename_mother import (
-    ModelFilenameMother,
-)
 
 
 @pytest.mark.integration
-def test_should_sql_executor_with_sqlite_multithreading():
-    filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
-    connection = SqliteConnection.create(
-        server_name="sqlite", database_name="petisco.db"
-    )
-    database = SqliteDatabase(
-        name="sqlite_test", connection=connection, model_filename=filename
-    )
+class TestSqlMulithreading:
+    def should_sql_executor_with_sqlite(self):
+        connection = SqliteConnection.create(
+            server_name="sqlite", database_name="petisco.db"
+        )
+        database = SqlDatabase(name="sqlite_test", connection=connection)
+        database.initialize()
 
-    persistence = Persistence()
-    persistence.add(database)
-    persistence.create()
+        def execute_sql_statement(name_thread):
+            try:
+                session_scope = database.get_session_scope()
+                sql_executor = SqlExecutor(session_scope)
 
-    def execute_sql_statement(name_thread):
-        try:
-            session_scope = Persistence.get_session_scope("sqlite_test")
-            sql_executor = SqlExecutor(session_scope)
+                sql_executor.execute_statement(
+                    'INSERT INTO Client (client_id,name) VALUES ("65dd83ef-d315-417d-bfa8-1ab398e16f02","myclient")'
+                )
+                sql_executor.execute_statement(
+                    'DELETE FROM Client WHERE client_id=="65dd83ef-d315-417d-bfa8-1ab398e16f02";'
+                )
+                return True
+            except Exception as exp:
+                print(exp)
+                return False
 
-            sql_executor.execute_statement(
-                'INSERT INTO Client (client_id,name) VALUES ("65dd83ef-d315-417d-bfa8-1ab398e16f02","myclient")'
-            )
-            sql_executor.execute_statement(
-                'DELETE FROM Client WHERE client_id=="65dd83ef-d315-417d-bfa8-1ab398e16f02";'
-            )
-            return True
-        except Exception as exp:
-            print(exp)
-            return False
+        number_of_threads = 20
 
-    number_of_threads = 20
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=number_of_threads
+        ) as executor:
+            for num_thread in range(number_of_threads):
+                executor.submit(execute_sql_statement, num_thread)
 
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=number_of_threads
-    ) as executor:
-        for num_thread in range(number_of_threads):
-            executor.submit(execute_sql_statement, num_thread)
+        database.clear_data()
 
-    persistence.clear_data()
-    persistence.delete()
-    Persistence.clear()
+    @testing_with_mysql
+    def should_sql_executor_with_mysql(self):
+        connection = MySqlConnection.create_local()
 
+        database = SqlDatabase(
+            name="mysql_test",
+            connection=connection,
+            print_sql_statements=True,
+        )
+        database.initialize()
 
-@pytest.mark.integration
-@testing_with_mysql
-def test_should_sql_executor_with_mysql_multithreading():
-    connection = MySqlConnection.create_local()
-    filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
+        def execute_sql_statement(name_thread):
+            try:
+                session_scope = database.get_session_scope()
+                sql_executor = SqlExecutor(session_scope)
 
-    database = MySqlDatabase(
-        name="mysql_test",
-        connection=connection,
-        model_filename=filename,
-        print_sql_statements=True,
-    )
+                uuid = Uuid.v4().value
 
-    persistence = Persistence()
-    persistence.add(database)
-    persistence.create()
+                sql_executor.execute_statement(
+                    f'INSERT INTO Client (client_id,name) VALUES ("{uuid}","myclient")'
+                )
+                sql_executor.execute_statement("SELECT * FROM Client")
+                sleep(1.0)
+                sql_executor.execute_statement(
+                    f'DELETE FROM Client WHERE client_id="{uuid}";'
+                )
+                return True
+            except Exception as exp:
+                print(exp)
+                return False
 
-    session_scope = Persistence.get_session_scope("mysql_test")
+        number_of_threads = 20
 
-    def execute_sql_statement(name_thread):
-        print(f"thread: {name_thread}")
-        print(threading.current_thread())
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=number_of_threads, thread_name_prefix="sql_threads"
+        ) as executor:
+            future_to_sql = {
+                executor.submit(execute_sql_statement, num_thread): num_thread
+                for num_thread in range(number_of_threads)
+            }
+            for future in concurrent.futures.as_completed(future_to_sql):
+                num_thread = future_to_sql[future]
+                assert future.result(), f"thread {num_thread} failed"
 
-        try:
-            sql_executor = SqlExecutor(session_scope)
-
-            uuid = Uuid.v4().value
-
-            sql_executor.execute_statement(
-                f'INSERT INTO Client (client_id,name) VALUES ("{uuid}","myclient")'
-            )
-            sql_executor.execute_statement("SELECT * FROM Client")
-            sleep(1.0)
-            sql_executor.execute_statement(
-                f'DELETE FROM Client WHERE client_id="{uuid}";'
-            )
-            return True
-        except Exception as exp:
-            print(exp)
-            return False
-
-    number_of_threads = 20
-
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=number_of_threads, thread_name_prefix="sql_threads"
-    ) as executor:
-        future_to_sql = {
-            executor.submit(execute_sql_statement, num_thread): num_thread
-            for num_thread in range(number_of_threads)
-        }
-        for future in concurrent.futures.as_completed(future_to_sql):
-            num_thread = future_to_sql[future]
-            assert future.result(), f"thread {num_thread} failed"
-
-    persistence.clear_data()
-    persistence.delete()
-    Persistence.clear()
+        database.clear_data()

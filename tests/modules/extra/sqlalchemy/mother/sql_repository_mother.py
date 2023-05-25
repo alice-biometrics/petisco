@@ -1,13 +1,14 @@
 import os
-from typing import List
+from typing import Callable, ContextManager, List
 
 from attr import dataclass
 from meiga import BoolResult, Error, Result, Success, isSuccess
 from meiga.decorators import meiga
+from sqlalchemy.orm import Session
 
-from petisco import Uuid, ValueObject
-from petisco.base.domain.persistence.persistence import Persistence
+from petisco import Databases, Uuid, ValueObject
 from petisco.extra.sqlalchemy.sql.base_sql_repository import BaseSqlRepository
+from tests.modules.extra.sqlalchemy.ymls.sql.models import ClientModel, UserModel
 
 BASE_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../ymls/"
 
@@ -80,17 +81,17 @@ class Client:
 
 
 class MyUserSqlRepository(BaseSqlRepository):
+    session_scope: Callable[..., ContextManager[Session]]
+
     def __init__(self, database_name: str):
-        self.session_scope = Persistence.get_session_scope(database_name)
-        self.UserModel = Persistence.get_model(database_name, "user")
-        self.ClientModel = Persistence.get_model(database_name, "client")
+        self.session_scope = Databases.get_session_scope(database_name)
 
     @meiga
     def save(self, user: User) -> BoolResult:
         with self.session_scope() as session:
             client_model = (
-                session.query(self.ClientModel)
-                .filter(self.ClientModel.client_id == user.client_id.value)
+                session.query(ClientModel)
+                .filter(ClientModel.client_id == user.client_id.value)
                 .first()
             )
             self.fail_if_aggregate_not_found(
@@ -98,15 +99,15 @@ class MyUserSqlRepository(BaseSqlRepository):
             ).unwrap_or_return()
 
             user_model = (
-                session.query(self.UserModel)
-                .filter(self.UserModel.user_id == user.user_id.value)
-                .filter(self.UserModel.client_id == client_model.client_id)
+                session.query(UserModel)
+                .filter(UserModel.user_id == user.user_id.value)
+                .filter(UserModel.client_id == client_model.client_id)
                 .first()
             )
             self.fail_if_aggregate_already_exist(
                 user_model, user.user_id
             ).unwrap_or_return()
-            user_model = self.UserModel(**user.to_dict())
+            user_model = UserModel(**user.to_dict())
             session.add(user_model)
         return isSuccess
 
@@ -114,8 +115,8 @@ class MyUserSqlRepository(BaseSqlRepository):
     def retrieve(self, user_id: UserId) -> Result[User, Error]:
         with self.session_scope() as session:
             user_model = (
-                session.query(self.UserModel)
-                .filter(self.UserModel.user_id == user_id.value)
+                session.query(UserModel)
+                .filter(UserModel.user_id == user_id.value)
                 .first()
             )
             self.fail_if_aggregate_not_found(user_model, user_id).unwrap_or_return()
@@ -126,15 +127,15 @@ class MyUserSqlRepository(BaseSqlRepository):
     def retrieve_all(self, client_id: ClientId) -> Result[List[User], Error]:
         with self.session_scope() as session:
             client_model = (
-                session.query(self.ClientModel)
-                .filter(self.ClientModel.client_id == client_id.value)
+                session.query(ClientModel)
+                .filter(ClientModel.client_id == client_id.value)
                 .first()
             )
             self.fail_if_aggregate_not_found(client_model, client_id).unwrap_or_return()
 
             user_models = (
-                session.query(self.UserModel)
-                .filter(self.UserModel.client_id == client_model.id)
+                session.query(UserModel)
+                .filter(UserModel.client_id == client_model.id)
                 .all()
             )
             self.fail_if_aggregates_not_found(user_models).unwrap_or_return()
@@ -143,22 +144,23 @@ class MyUserSqlRepository(BaseSqlRepository):
 
 
 class MyClientSqlRepository(BaseSqlRepository):
+    session_scope: Callable[..., ContextManager[Session]]
+
     def __init__(self, database_name: str):
-        self.session_scope = Persistence.get_session_scope(database_name)
-        self.ClientModel = Persistence.get_model(database_name, "client")
+        self.session_scope = Databases.get_session_scope(database_name)
 
     @meiga
     def save(self, client: Client) -> BoolResult:
         with self.session_scope() as session:
             client_model = (
-                session.query(self.ClientModel)
-                .filter(self.ClientModel.client_id == client.client_id.value)
+                session.query(ClientModel)
+                .filter(ClientModel.client_id == client.client_id.value)
                 .first()
             )
             self.fail_if_aggregate_already_exist(
                 client_model, client.client_id
             ).unwrap_or_return()
-            client_model = self.ClientModel(**client.to_dict())
+            client_model = ClientModel(**client.to_dict())
             session.add(client_model)
         return isSuccess
 
@@ -166,8 +168,8 @@ class MyClientSqlRepository(BaseSqlRepository):
     def retrieve(self, client_id: ClientId) -> Result[Client, Error]:
         with self.session_scope() as session:
             client_model = (
-                session.query(self.ClientModel)
-                .filter(self.ClientModel.client_id == client_id.value)
+                session.query(ClientModel)
+                .filter(ClientModel.client_id == client_id.value)
                 .first()
             )
             self.fail_if_aggregate_not_found(client_model, client_id).unwrap_or_return()

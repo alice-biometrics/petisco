@@ -91,8 +91,13 @@ def wrapper(
             if result:
                 middleware.after(result)
 
-        mapped_result = mapper.map(result)
-
-        return mapped_result
+        try:
+            result.set_transformer(mapper.map)
+        except AttributeError:  # noqa
+            raise TypeError(
+                f"Controller Error: Return value `{result}` ({type(result)}) must be a `meiga.Result` to "
+                f"transform values to success and failure handlers."
+            )
+        return result
 
     return wrapped

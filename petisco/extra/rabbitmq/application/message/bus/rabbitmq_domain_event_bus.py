@@ -1,9 +1,7 @@
 from typing import List, Union
 
-from deprecation import deprecated
 from pika.exceptions import ChannelClosedByBroker
 
-from petisco import __version__
 from petisco.base.application.chaos.check_chaos import check_chaos_publication
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
@@ -77,15 +75,6 @@ class RabbitMqDomainEventBus(DomainEventBus):
             ]
             self.fallback.publish(unpublished_domain_events)
 
-    @deprecated(
-        deprecated_in="1.14.0",
-        removed_in="2.0.0",
-        current_version=__version__,
-        details="Use publish function instead",
-    )
-    def publish_list(self, domain_events: List[DomainEvent]) -> None:
-        self.publish(domain_events)
-
     def _retry(self, domain_events: List[DomainEvent]) -> None:
         # If domain event queue is not configured, it will be configured and then try to publish again.
         if not self.already_configured:
@@ -94,20 +83,6 @@ class RabbitMqDomainEventBus(DomainEventBus):
             self.publish(domain_events)
         elif self.fallback:
             self.fallback.publish(domain_events)
-
-    @deprecated(
-        deprecated_in="1.14.0",
-        removed_in="2.0.0",
-        current_version=__version__,
-        details="Use publish function instead. If you want publish with different routing keys, implement new object",
-    )
-    def retry_publish_only_on_store_queue(self, domain_event: DomainEvent) -> None:
-        self._check_is_domain_event(domain_event)
-        meta = self.get_configured_meta()
-        domain_event = domain_event.update_meta(meta)
-
-        channel = self.connector.get_channel(self.rabbitmq_key)
-        self.publisher.execute(channel, domain_event, routing_key="retry.store")
 
     def close(self) -> None:
         """
