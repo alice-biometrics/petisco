@@ -3,7 +3,7 @@ interface (CLI) tools offered by petisco. Whether you are a beginner or an exper
 will help you harness the full potential of our CLI tools and streamline your development process.
 
 
-You `can check installed version of petisco with:
+You can check installed version of petisco with:
 
 <div class="termy">
 ```console
@@ -105,7 +105,7 @@ $ petisco-dev --configurers
 
     This information is obtained from instantiating a `petisco.Application`.
 
-    By default, `petisco-dev` searchs this application in the module `app.application`:
+    By default, `petisco-dev` searches this application in the module `app.application`:
 
     ```python hl_lines="13" title="app/application.py"
     from petisco.extra.fastapi import FastApiApplication

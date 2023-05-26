@@ -41,16 +41,8 @@ class SqlUser(SqlBase):
     age: Mapped[int] = Column(Integer)
 ```
 
-!!! help
-
-    You can check the [`petisco-dev --sql-models`](../../../cli/#show-sql-models) cli tool to check which SQL models
-    (inheriting from `SQLBase`) are available.
-
-!!! warning 
-
-    Only imported `SqlBase` models will be taken into account in caso of re-creation of all the tables. If you want to 
-    create a table, but this model is no imported in your module. You can force importing it to bypass this problem.
-
+Thanks to inheriting from `SqlBase` with have available abstract methods ready to be implemented to convert `SQL` models
+to domain model and vice versa.
 
 ```python hl_lines="7 8 9 12 20 21 22 23 24 25"
 from petisco import SqlBase
@@ -58,12 +50,12 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Mapped
 
-
+# Domain Model (pydantic)
 class User(BaseModel):
     name: str
     age: int | None
 
-
+# SQL Model (petisco)
 class SqlUser(SqlBase):
     __tablename__ = "users"
 
@@ -80,6 +72,59 @@ class SqlUser(SqlBase):
         return SQLUser(name=domain_entity.name, age=domain_entity.age)
 ```
 
+!!! help
+
+    You can check the [`petisco-dev --sql-models`](../../../cli/#show-sql-models) cli tool to check which SQL models
+    (inheriting from `SQLBase`) are available.
+
+!!! warning 
+
+    Consider that your defined models have to inherit from `SqlBase`. This `sqlalchemy.orm.DeclarativeBase` will be used
+    to gather all the models and create them in case of the database is empty.
+
+    When you initialize the `SqlDatabase` object, a default parameter is given (`SqlBase`). This given base will be used
+    to create all tables if required.
+
+    ```python hl_lines="1 11"
+    def initialize(self, base: DeclarativeBase = SqlBase) -> None:
+        engine = create_engine(
+            self.connection.url,
+            json_serializer=lambda obj: obj,
+            json_deserializer=lambda obj: obj,
+            echo=self.print_sql_statements,
+        )
+
+        if not database_exists(engine.url):
+            create_database(engine.url)
+            base.metadata.create_all(engine)
+            self._run_initial_statements(engine)
+
+        self.session_factory = sessionmaker(bind=engine)
+    ```
+
+    **Advaced Usage:** 
+
+    If you don't want to inherit from `SqlBase` and want to extend declarative, you can do it creating your base inheriting
+    from `DeclarativeBase` and passing this to the `initialize` method.
+
+    ```python hl_lines="3 4 6 16"
+    from sqlalchemy.orm import DeclarativeBase
+
+    class YourBaseExtension(DeclarativeBase):
+      # your extension code
+
+    class User(YourBaseExtension):
+        __tablename__ = "users"
+    
+        id: Mapped[int] = Column(Integer, primary_key=True)
+    
+        name: Mapped[str] = Column(String(30))
+        age: Mapped[int] = Column(Integer)
+
+    connection = SqliteConnection.create("sqlite", "database.db")
+    sql_database = SqlDatabase(name="petisco", connection=connection) 
+    sql_database.initializes(base=YourBaseExtension)
+    ```
 
 ## Session
 

@@ -167,7 +167,7 @@ To use this in a FastAPI router, is quite easy:
 !!! warning
 
     Petisco Message classes (`DomainEvent` and `Commnad`) had some limitations on version 1. Some `protected` class 
-    attribute names cannot be choosen as were used to store meta information of the message.
+    attribute names cannot be chosen as were used to store meta information of the message.
     
     For example, you cannot use `name` attribute in your definition, or `version`.
 

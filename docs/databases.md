@@ -40,7 +40,7 @@ application = FastApiApplication(
 
 In the `DatabasesConfigurer` we have to initialize databases, using the singleton `Databases` object adding each 
 implementation of `Database` abstract class. The following example configures a `SqlDatabase` connecting with a MySQL
-o SQLite backend depending on some configuration.
+or a SQLite backend depending on some configuration.
 
 ```python hl_lines="21 22 23"
 import os
@@ -54,7 +54,6 @@ SQL_SERVER = os.getenv("SQL_SERVER", "sqlite")
 
 class DatabasesConfigurer(ApplicationConfigurer):
     def execute(self, testing: bool = True) -> None:
-        initial_statements_filename = None
         if testing or (SQL_SERVER == "sqlite"):
           test_db_filename = "onboarding-test.db"
           connection = SqliteConnection.create("sqlite", test_db_filename) 
@@ -68,7 +67,7 @@ class DatabasesConfigurer(ApplicationConfigurer):
         databases.initialize() # (2)
 ```
 
-1. Add the `SqlDatabase` implementation to a `Databases` singleton object
+1. Adds the `SqlDatabase` implementation to a `Databases` singleton object
 2. Initializes all the added implementations.
 
 !!! tip "Use available implementations"
