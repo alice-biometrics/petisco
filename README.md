@@ -12,9 +12,13 @@
 <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png?raw=true" width=auto>
 
 > **Warning**
-> Disclaimer:
-> Current version now is v1 (not stable yet). 
-> v0 is now deprecated (legacy branch)
+> 
+> Current version now is v1 (*v1 branch*). 
+> 
+> v0 is now deprecated (*legacy branch*)
+> 
+> v2 is about to be release (*main branch*). 1 release candidate
+
 
 ---
 
