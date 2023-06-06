@@ -52,7 +52,7 @@ from petisco.extra.rabbitmq.shared.rabbitmq_exchange_name_formatter import (
 )
 
 MAX_ATTEMPTS_TO_RECONNECT = int(
-    os.getenv("PETISCO_RABBITMQ_MAX_ATTEMPTS_TO_RECONNECT_CONSUMER", "20")
+    os.getenv("PETISCO_RABBITMQ_MAX_ATTEMPTS_TO_RECONNECT_CONSUMER", "30")
 )
 WAIT_SECONDS_TO_RECONNECT = int(
     os.getenv("PETISCO_RABBITMQ_WAIT_SECONDS_TO_RECONNECT_CONSUMER", "5")
