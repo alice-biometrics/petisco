@@ -52,7 +52,7 @@ from petisco.legacy.logger.interface_logger import ILogger
 from petisco.legacy.logger.not_implemented_logger import NotImplementedLogger
 
 MAX_ATTEMPTS_TO_RECONNECT = int(
-    os.getenv("PETISCO_RABBITMQ_MAX_ATTEMPTS_TO_RECONNECT_CONSUMER", "20")
+    os.getenv("PETISCO_RABBITMQ_MAX_ATTEMPTS_TO_RECONNECT_CONSUMER", "30")
 )
 WAIT_SECONDS_TO_RECONNECT = int(
     os.getenv("PETISCO_RABBITMQ_WAIT_SECONDS_TO_RECONNECT_CONSUMER", "5")
