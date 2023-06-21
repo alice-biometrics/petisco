@@ -30,7 +30,7 @@ class TestAsyncSqlDatabase:
         self.connection = SqliteConnection.create(
             server_name="sqlite+aiosqlite", database_name="petisco.db"
         )
-        self.database = AsyncSqlDatabase(name="sqlite_test", connection=self.connection)
+        self.database = AsyncSqlDatabase(connection=self.connection)
 
     def teardown_method(self):
         self.database.delete()
@@ -50,11 +50,10 @@ class TestAsyncSqlDatabase:
 
     async def should_raise_a_connection_error_exception(self):
         with pytest.raises(ConnectionError):
-            AsyncSqlDatabase(name="sqlite_test", connection=None)
+            AsyncSqlDatabase(connection=None)
 
     async def should_success_when_use_initial_statements_filename(self):
         database = AsyncSqlDatabase(
-            name="sqlite_test",
             connection=self.connection,
             initial_statements_filename=f"{ROOT_PATH}/initial_statements.sql",
         )
@@ -70,7 +69,6 @@ class TestAsyncSqlDatabase:
     ):
         with pytest.raises(RuntimeError):
             database = AsyncSqlDatabase(
-                name="sqlite_test",
                 connection=self.connection,
                 initial_statements_filename="invalid_filename",
             )

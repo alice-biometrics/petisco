@@ -29,7 +29,7 @@ class TestSqlDatabase:
         self.connection = SqliteConnection.create(
             server_name="sqlite", database_name="petisco.db"
         )
-        self.database = SqlDatabase(name="sqlite_test", connection=self.connection)
+        self.database: SqlDatabase = SqlDatabase(connection=self.connection)
         self.database.delete()
 
     def teardown_method(self):
@@ -50,11 +50,10 @@ class TestSqlDatabase:
 
     def should_raise_a_connection_error_exception(self):
         with pytest.raises(ConnectionError):
-            SqlDatabase(name="sqlite_test", connection=None)
+            SqlDatabase(connection=None)
 
     def should_success_when_use_initial_statements_filename(self):
         database = SqlDatabase(
-            name="sqlite_test",
             connection=self.connection,
             initial_statements_filename=f"{ROOT_PATH}/initial_statements.sql",
         )
@@ -68,7 +67,6 @@ class TestSqlDatabase:
     def should_fail_when_use_initial_statements_filename_with_invalid_filename(self):
         with pytest.raises(RuntimeError):
             database = SqlDatabase(
-                name="sqlite_test",
                 connection=self.connection,
                 initial_statements_filename="invalid_filename",
             )

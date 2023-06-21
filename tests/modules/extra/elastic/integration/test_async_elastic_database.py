@@ -1,6 +1,6 @@
 import pytest
 
-from petisco import Databases
+from petisco import databases
 from petisco.extra.elastic import AsyncElasticDatabase, ElasticConnection
 from tests.modules.extra.decorators import testing_with_elastic
 
@@ -29,19 +29,17 @@ class TestAsyncElasticDatabase:
     async def should_create_databases_with_elastic_database(self):
         connection = ElasticConnection.create_local()
         database = AsyncElasticDatabase(name="elastic_test", connection=connection)
-        Databases.clear()
-
-        databases = Databases()
+        databases.clear()
         databases.add(database)
 
         assert database.info() == {"name": "elastic_test"}
 
         databases.initialize()
 
-        assert await Databases.async_are_available()
+        assert await databases.async_are_available()
 
         databases.delete()
-        Databases.clear()
+        databases.clear()
 
     @testing_with_elastic
     async def should_create_persistence_with_elastic_database_specifying_the_database(
@@ -49,16 +47,14 @@ class TestAsyncElasticDatabase:
     ):
         connection = ElasticConnection.create_local()
         database = AsyncElasticDatabase(name="elastic_test", connection=connection)
-        Databases.clear()
-
-        databases = Databases()
+        databases.clear()
         databases.add(database)
 
         assert database.info() == {"name": "elastic_test"}
 
         databases.initialize()
 
-        assert await Databases.async_are_available(database.name)
+        assert await databases.async_are_available(database.name)
 
         databases.delete()
-        Databases.clear()
+        databases.clear()

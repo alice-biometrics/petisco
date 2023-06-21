@@ -7,11 +7,17 @@ T = TypeVar("T")
 
 
 class Database(Generic[T], ABC):
-    def __init__(self, name: str):
-        self.name = name
+    alias: str | None = None
 
-    def info(self) -> dict[str, Any]:
-        return {"name": self.name}
+    def __init__(self, alias: str | None = None):
+        self.alias = alias
+
+    def get_key(self) -> str:
+        return type(self).__name__ if not self.alias else self.alias
+
+    @classmethod
+    def info(cls) -> dict[str, Any]:
+        return {"type": cls.__name__, "alias": cls.alias}
 
     @abstractmethod
     def initialize(self, *args: Any, **kwargs: Any) -> None:

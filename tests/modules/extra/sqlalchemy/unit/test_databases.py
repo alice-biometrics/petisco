@@ -1,43 +1,52 @@
 import pytest
 
-from petisco import Database, Databases
+from petisco import Database, databases
 from petisco.base.domain.persistence.async_fake_database import AsyncFakeDatabase
 from petisco.base.domain.persistence.fake_database import FakeDatabase
 
 
 @pytest.mark.unit
 class TestDatabases:
-    @pytest.mark.parametrize(
-        "database", [FakeDatabase(name="fake"), AsyncFakeDatabase(name="fake")]
-    )
+    def setup_method(self):  # noqa
+        databases.clear()
+
+    def teadown_method(self):  # noqa
+        databases.clear()
+
+    @pytest.mark.parametrize("database", [FakeDatabase(), AsyncFakeDatabase()])
     def should_execute_lifecycle_of_persistence_with_fake_database(
         self, database: Database
     ):
-        databases = Databases()
+        classname = database.__class__.__name__
+        assert [] == databases.get_database_names()
+
         databases.add(database)
-        assert ["fake"] == databases.get_available_databases()
+        assert [classname] == databases.get_database_names()
 
-        info = databases.get_info()
-        assert info == {"fake": {"name": "fake"}}
-        assert str(databases) == "Databases: {'fake': {'name': 'fake'}}"
+        assert databases.info() == {classname: {"alias": None, "type": classname}}
 
-        databases.remove("fake")
-        assert [] == databases.get_available_databases()
+        databases.remove(type(database))
+        assert [] == databases.get_database_names()
 
-        assert Databases.info() == {}
+        assert databases.info() == {}
         databases.initialize()
         databases.delete()
-        Databases.clear()
 
-    def should_check_if_are_not_available(self):
-        Databases.clear()
-        assert not Databases.are_available()
+    def should_add_databases_with_two_alias(self):
+        database_1 = FakeDatabase(alias="database_1")
+        database_2 = FakeDatabase(alias="database_2")
 
-    @pytest.mark.asyncio
-    async def should_async_check_if_are_not_available(self):
-        Databases.clear()
-        assert not await Databases.async_are_available()
+        databases.add([database_1, database_2])
 
-    def should_check_not_exist_when_no_database_is_added(self):
-        Databases.clear()
-        assert not Databases.exist()
+        assert ["database_1", "database_2"] == databases.get_database_names()
+
+        retrieved_database_1 = databases.get(FakeDatabase, alias="database_1")
+        retrieved_database_2 = databases.get(FakeDatabase, alias="database_2")
+
+        assert retrieved_database_1 == database_1
+        assert retrieved_database_2 == database_2
+
+        databases.remove(FakeDatabase, alias="database_1")
+        databases.remove(FakeDatabase, alias="database_2")
+
+        assert [] == databases.get_database_names()

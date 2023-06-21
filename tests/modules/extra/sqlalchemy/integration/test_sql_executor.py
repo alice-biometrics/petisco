@@ -11,7 +11,7 @@ class TestSqlExecutor:
         connection = SqliteConnection.create(
             server_name="sqlite", database_name="petisco.db"
         )
-        self.database = SqlDatabase(name="sqlite_test", connection=connection)
+        self.database = SqlDatabase(connection=connection)
         self.database.initialize()
 
     def should_insert_statement(self):

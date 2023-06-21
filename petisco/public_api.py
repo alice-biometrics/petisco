@@ -84,7 +84,7 @@ from petisco.base.domain.model.aggregate_root import AggregateRoot
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
 from petisco.base.domain.persistence.database import Database
-from petisco.base.domain.persistence.databases import Databases
+from petisco.base.domain.persistence.databases import databases
 from petisco.base.domain.persistence.persistence import Persistence
 from petisco.base.domain.persistence.persistence_models import PersistenceModels
 from petisco.base.domain.persistence.sql_base import SqlBase
@@ -136,7 +136,7 @@ __all__ = [
     "AllMessageSubscriber",
     "Persistence",
     "PersistenceModels",
-    "Databases",
+    "databases",
     "Database",
     "SqlBase",
     "Repository",
