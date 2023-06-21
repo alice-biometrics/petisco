@@ -26,9 +26,9 @@ class SqlDatabase(Database[Session]):
 
     def __init__(
         self,
-        name: str,
         connection: SqliteConnection | MySqlConnection,
         *,
+        alias: str | None = None,
         print_sql_statements: bool = False,
         use_scoped_session: bool = True,
         initial_statements_filename: str = None,
@@ -38,7 +38,7 @@ class SqlDatabase(Database[Session]):
         self.use_scoped_session = use_scoped_session
         self.initial_statements_filename = initial_statements_filename
         self._check_connection()
-        super().__init__(name)
+        super().__init__(alias)
 
     def _check_connection(self) -> None:
         if not self.connection or not isinstance(
@@ -98,16 +98,18 @@ class SqlDatabase(Database[Session]):
                 "SqlDatabase do not implement clear_data to mitigate possible problems in production"
             )
 
-    def get_session_scope(self) -> Callable[..., ContextManager[Session]]:
+    def get_session_scope(self) -> Callable[..., ContextManager[T]]:
         if self.session_factory is None:
             raise RuntimeError(
                 "SqlDatabase must run initialize() before get_session_scope()"
             )
 
         if self.use_scoped_session:
-            Session = scoped_session(self.session_factory)  # noqa
+            Session: Callable[..., Session] = scoped_session(
+                self.session_factory
+            )  # noqa
         else:
-            Session = self.session_factory  # noqa
+            Session: Callable[..., Session] = self.session_factory  # noqa
         return sql_session_scope_provider(Session)
 
     def is_available(self):

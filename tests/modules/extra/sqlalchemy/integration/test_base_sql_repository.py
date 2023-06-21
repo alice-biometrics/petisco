@@ -1,7 +1,7 @@
 import pytest
 from meiga.assertions import assert_failure
 
-from petisco import Databases
+from petisco import databases
 from petisco.base.domain.errors.defaults.already_exists import (
     AggregateAlreadyExistError,
 )
@@ -21,8 +21,6 @@ from tests.modules.extra.sqlalchemy.mother.sql_repository_mother import (
 @pytest.mark.integration
 class TestBaseSqlRepository:
     client: Client
-    databases: Databases
-    database_name = "sqlite_test"
 
     def setup_method(self):
         self._configure_db()
@@ -33,17 +31,14 @@ class TestBaseSqlRepository:
         connection = SqliteConnection.create(
             server_name="sqlite", database_name="petisco.db"
         )
-        database = SqlDatabase(name=self.database_name, connection=connection)
-
-        databases = Databases()
-        databases.add(database)
+        databases.add(SqlDatabase(connection=connection))
         databases.initialize()
 
     def teardown_method(self) -> None:
-        Databases.get_instance().remove(self.database_name)
+        databases.remove(SqlDatabase)
 
     def should_save_a_model_using_a_sql_repository_implementation(self):
-        repository = SqlRepositoryMother.with_client(self.database_name, self.client)
+        repository = SqlRepositoryMother.with_client(self.client)
 
         user = User(user_id=UserId.v4(), name="user1", client_id=self.client.client_id)
         repository.save(user)
@@ -54,23 +49,21 @@ class TestBaseSqlRepository:
 
     def should_raise_aggregate_already_exist_error(self):
         user = User(user_id=UserId.v4(), name="user1", client_id=self.client.client_id)
-        repository = SqlRepositoryMother.with_user(
-            user, self.database_name, self.client
-        )
+        repository = SqlRepositoryMother.with_user(user, self.client)
 
         result = repository.save(user)
 
         assert_failure(result, value_is_instance_of=AggregateAlreadyExistError)
 
     def should_raise_aggregate_not_found_error(self):
-        repository = SqlRepositoryMother.with_client(self.database_name, self.client)
+        repository = SqlRepositoryMother.with_client(self.client)
 
         result = repository.retrieve(UserId.v4())
 
         assert_failure(result, value_is_instance_of=AggregateNotFoundError)
 
     def should_raise_aggregates_not_found_error(self):
-        repository = SqlRepositoryMother.with_client(self.database_name, self.client)
+        repository = SqlRepositoryMother.with_client(self.client)
 
         result = repository.retrieve_all(self.client.client_id)
 

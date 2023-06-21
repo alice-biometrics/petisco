@@ -6,9 +6,6 @@ from petisco.base.domain.persistence.database import Database, T
 
 
 class FakeDatabase(Database):
-    def __init__(self, name: str):
-        super().__init__(name)
-
     def initialize(self, *args: Any, **kwargs: Any) -> None:
         pass
 

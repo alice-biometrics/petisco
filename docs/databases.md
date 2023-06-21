@@ -38,14 +38,14 @@ application = FastApiApplication(
 )
 ```
 
-In the `DatabasesConfigurer` we have to initialize databases, using the singleton `Databases` object adding each 
+In the `DatabasesConfigurer` we have to initialize databases, using the global `databases` object adding each 
 implementation of `Database` abstract class. The following example configures a `SqlDatabase` connecting with a MySQL
 or a SQLite backend depending on some configuration.
 
 ```python hl_lines="21 22 23"
 import os
 
-from petisco import ApplicationConfigurer, Databases
+from petisco import ApplicationConfigurer, databases
 from petisco.extra.sqlalchemy import MySqlConnection, SqlDatabase, SqliteConnection
 
 DATABASE_NAME = "petisco-sql"
@@ -62,27 +62,26 @@ class DatabasesConfigurer(ApplicationConfigurer):
 
         sql_database = SqlDatabase(name=DATABASE_NAME, connection=connection) 
     
-        databases = Databases() 
         databases.add(sql_database) # (1)
         databases.initialize() # (2)
 ```
 
-1. Adds the `SqlDatabase` implementation to a `Databases` singleton object
+1. Adds the `SqlDatabase` implementation to the global `databases` object
 2. Initializes all the added implementations.
 
 !!! tip "Use available implementations"
   
     Add other available implementation as `ElasticDatabase` easily with:
   
-    ```petisco hl_lines="1 6 10"
+    ```petisco hl_lines="2 7 11"
+      from petisco import databases
       from petisco.extra.elastic import ElasticDatabase, ElasticConnection
-  
+    
       ...
     
       sql_database = SqlDatabase(name=DATABASE_NAME, connection=connection) 
       elastic_database = ElasticDatabase(connection=ElasticConnection.create_local())
   
-      databases = Databases()
       databases.add(sql_database)
       databases.add(elastic_database)
       databases.initialize()
@@ -92,18 +91,45 @@ class DatabasesConfigurer(ApplicationConfigurer):
 
     You can extend the `Database` abstract class and create your own implementation
 
+    ```python
+    from typing import Callable, ContextManager
+    from petisco import Database
+    
+    class YourExtensionDatabase(Database):
+ 
+        def initialize(self) -> None:
+            # Add your stuff
+            pass
+
+        def delete(self):
+            # Add your stuff
+            pass
+    
+        def clear_data(self, base: DeclarativeBase = SqlBase) -> None:
+            # Add your stuff
+            pass
+    
+        def get_session_scope(self) -> Callable[..., ContextManager[T]]:
+            # Add your stuff
+            pass
+    
+        def is_available(self):
+            # Add your stuff
+            pass
+    ```
+
 
 ## Usage 
 
-Once the `Databases` initializes all the implementation, we should be ready to use these implementations. Let's overview
-how to use it through a repository implementation. Note that uses `Databases` singleton implementation to retrieve the 
+Once databases are initialized (after `databases.initializes()`), we should be ready to use these implementations. 
+Let's overview how to use it through a repository implementation. Note that uses `databases` instance to retrieve the 
 `get_session_scope` for the specified database name.
 
-```python hl_lines="13 14 15"
+```python hl_lines="12 13 14 15"
 from typing import Callable, ContextManager
 
 from meiga import BoolResult, early_return, isSuccess
-from petisco import Databases
+from petisco import databases
 from sqlalchemy.orm import Session
 from app.src.models import SqlUser, User
 
@@ -112,18 +138,16 @@ class SqlUserRepository(BaseRepository):
     session_scope: Callable[..., ContextManager[Session]]
 
     def __init__(self):
-        self.session_scope = Databases.get_session_scope(
-            DATABASE_NAME # same ase defined in the configuration `DATABASE_NAME = "petisco-sql"`
-        )  
+        # `DATABASE_NAME = "petisco-sql"` -> same as defined in the configuration 
+        database: SqlDatabase[Session] = databases.get(DATABASE_NAME) 
+        self.session_scope = database.get_session_scope()
 
     @early_return
     def save(self, user: User) -> BoolResult:
-
         with self.session_scope() as session:
             sql_user = SqlUser.from_domain(user)
             session.add(sql_user)
         return isSuccess
-
     ...
 ```
 

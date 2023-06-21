@@ -1,12 +1,12 @@
 import os
-from typing import Callable, ContextManager, List
+from typing import List
 
 from attr import dataclass
 from meiga import BoolResult, Error, Result, Success, isSuccess
 from meiga.decorators import meiga
-from sqlalchemy.orm import Session
 
-from petisco import Databases, Uuid, ValueObject
+from petisco import Uuid, ValueObject, databases
+from petisco.extra.sqlalchemy import SqlDatabase
 from petisco.extra.sqlalchemy.sql.base_sql_repository import BaseSqlRepository
 from tests.modules.extra.sqlalchemy.ymls.sql.models import ClientModel, UserModel
 
@@ -81,10 +81,8 @@ class Client:
 
 
 class MyUserSqlRepository(BaseSqlRepository):
-    session_scope: Callable[..., ContextManager[Session]]
-
-    def __init__(self, database_name: str):
-        self.session_scope = Databases.get_session_scope(database_name)
+    def __init__(self):
+        self.session_scope = databases.get(SqlDatabase).get_session_scope()
 
     @meiga
     def save(self, user: User) -> BoolResult:
@@ -144,10 +142,8 @@ class MyUserSqlRepository(BaseSqlRepository):
 
 
 class MyClientSqlRepository(BaseSqlRepository):
-    session_scope: Callable[..., ContextManager[Session]]
-
-    def __init__(self, database_name: str):
-        self.session_scope = Databases.get_session_scope(database_name)
+    def __init__(self):
+        self.session_scope = databases.get(SqlDatabase).get_session_scope()
 
     @meiga
     def save(self, client: Client) -> BoolResult:
@@ -179,19 +175,16 @@ class MyClientSqlRepository(BaseSqlRepository):
 
 class SqlRepositoryMother:
     @staticmethod
-    def with_client(
-        database_name: str = "sqlite_test", client: Client = Client.random()
-    ):
-        MyClientSqlRepository(database_name).save(client)
-        return MyUserSqlRepository(database_name)
+    def with_client(client: Client = Client.random()):
+        MyClientSqlRepository().save(client)
+        return MyUserSqlRepository()
 
     @staticmethod
     def with_user(
         user: User,
-        database_name: str = "sqlite_test",
         client: Client = Client.random(),
     ):
-        MyClientSqlRepository(database_name).save(client)
-        user_repository = MyUserSqlRepository(database_name)
+        MyClientSqlRepository().save(client)
+        user_repository = MyUserSqlRepository()
         user_repository.save(user)
         return user_repository

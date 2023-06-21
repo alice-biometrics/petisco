@@ -19,7 +19,7 @@ class TestSqlMulithreading:
         connection = SqliteConnection.create(
             server_name="sqlite", database_name="petisco.db"
         )
-        database = SqlDatabase(name="sqlite_test", connection=connection)
+        database = SqlDatabase(connection=connection)
         database.initialize()
 
         def execute_sql_statement(name_thread):
@@ -53,7 +53,6 @@ class TestSqlMulithreading:
         connection = MySqlConnection.create_local()
 
         database = SqlDatabase(
-            name="mysql_test",
             connection=connection,
             print_sql_statements=True,
         )
