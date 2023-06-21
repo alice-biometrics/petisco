@@ -1,6 +1,6 @@
-meiga>=1.9.0
-pydantic>2,<3
-pydantic-settings>2,<3
+meiga>=1.9.1
+pydantic==2.0b3
+pydantic-settings==2.0b1
 requests>=2.28.2,<3
 pyyaml>=6.0,<7
 loguru>=0.6.0,<1
