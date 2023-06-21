@@ -8,9 +8,9 @@ DEFAULT_HTTP_ERROR_DETAIL = "Unknown Error"
 
 
 class HttpError(BaseModel):
-    status_code: int | None = Field(default=500)
-    detail: str | None = Field(default=DEFAULT_HTTP_ERROR_DETAIL)
-    headers: dict[str, Any] | None = Field(default=None)
+    status_code: int = Field(default=500)
+    detail: str = Field(default=DEFAULT_HTTP_ERROR_DETAIL)
+    headers: dict[str, Any] = Field(default=None)
     type_error: str = Field(default=None, validate_default=True)
 
     @field_validator("type_error", mode="before")
