@@ -1,6 +1,6 @@
 from typing import Any, NoReturn, Type, TypeVar
 
-from pydantic import validator
+from pydantic import field_validator
 from pydantic.main import BaseModel
 
 from petisco.base.domain.errors.defaults.invalid_value_object import InvalidValueObject
@@ -33,7 +33,7 @@ class ValueObject(BaseModel):
     def from_value(cls: Type[TypeValueObject], value: Any) -> TypeValueObject:
         return cls(value=value)
 
-    @validator("value")
+    @field_validator("value")
     def validate_value(cls, value: Any) -> Any:
         if value is None:
             raise InvalidValueObject()

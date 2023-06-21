@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from typing import Any, Callable, Dict, List
 
 from loguru import logger
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.application_info import ApplicationInfo
