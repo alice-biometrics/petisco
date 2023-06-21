@@ -23,7 +23,7 @@ class ChaosConfig(BaseSettings):
         env="PETISCO_CHAOS_DELAY_AFTER_OPERATION_SECONDS",
         description="Percentage of simulate failures. Where 1.0 simulate always a failure on handlers",
     )
-    protected_routing_keys: str | None = Field(
+    protected_routing_keys: str = Field(
         default=None,
         env="PETISCO_CHAOS_PROTECTED_ROUTING_KEYS",
         description="Routing keys where chaos will not be applied",
