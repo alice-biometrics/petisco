@@ -1,4 +1,7 @@
-from pydantic import BaseSettings, Field, confloat
+from typing import Union
+
+from pydantic import Field, confloat
+from pydantic_settings import BaseSettings
 
 
 class ChaosConfig(BaseSettings):
@@ -22,7 +25,7 @@ class ChaosConfig(BaseSettings):
         env="PETISCO_CHAOS_DELAY_AFTER_OPERATION_SECONDS",
         description="Percentage of simulate failures. Where 1.0 simulate always a failure on handlers",
     )
-    protected_routing_keys: str = Field(
+    protected_routing_keys: Union[str, None] = Field(
         default=None,
         env="PETISCO_CHAOS_PROTECTED_ROUTING_KEYS",
         description="Routing keys where chaos will not be applied",

@@ -1,18 +1,17 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Union
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, field_validator
 
 DEFAULT_HTTP_ERROR_DETAIL = "Unknown Error"
 
 
 class HttpError(BaseModel):
-    status_code: Union[int, None] = 500
-    detail: Optional[str] = DEFAULT_HTTP_ERROR_DETAIL
-    headers: Optional[Dict[str, Any]] = None
-    type_error: Optional[str] = None
+    status_code: int = Field(default=500)
+    detail: str = Field(default=DEFAULT_HTTP_ERROR_DETAIL)
+    headers: Dict[str, Any] = Field(default=None)
+    type_error: str = Field(default=None, validate_default=True)
 
-    @validator("type_error", always=True)
-    @classmethod
+    @field_validator("type_error", mode="before")
     def prevent_type_error_none(cls, value: Union[str, None]) -> str:
         if value is None:
             value = cls.__name__

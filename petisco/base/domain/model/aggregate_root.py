@@ -2,7 +2,14 @@ from abc import ABC
 from copy import copy
 from typing import List, Union
 
-from pydantic import BaseModel, Field, NonNegativeInt, PrivateAttr, validator
+from pydantic import (
+    BaseModel,
+    Field,
+    NonNegativeInt,
+    PrivateAttr,
+    field_serializer,
+    field_validator,
+)
 
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.model.uuid import Uuid
@@ -21,12 +28,16 @@ class AggregateRoot(ABC, BaseModel):
     aggregate_version: NonNegativeInt = Field(default=DEFAULT_VERSION)
     _domain_events: List[DomainEvent] = PrivateAttr(default=[])
 
-    @validator("aggregate_id", pre=True, always=True)
+    @field_serializer("aggregate_id")
+    def serialize_aggregate_id(self, aggregate_id: Uuid):
+        return aggregate_id.value
+
+    @field_validator("aggregate_id", mode="before")
     def set_aggregate_id(cls, v: Union[str, Uuid]) -> Uuid:
         v = Uuid(v) if isinstance(v, str) else v
         return v or Uuid.v4()
 
-    @validator("aggregate_version", pre=True, always=True)
+    @field_validator("aggregate_version", mode="before")
     def set_aggregate_version(cls, v: NonNegativeInt) -> NonNegativeInt:
         return v or DEFAULT_VERSION
 

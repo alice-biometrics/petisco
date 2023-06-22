@@ -1,12 +1,12 @@
 import pytest
 import validators
-from pydantic import validator
+from pydantic import field_validator
 
 from petisco import InvalidUuid, Uuid
 
 
 class TaskId(Uuid):
-    @validator("value")
+    @field_validator("value")
     def validate_value(cls, value):
         if value is None or not validators.uuid(value):
             # Check Legacy

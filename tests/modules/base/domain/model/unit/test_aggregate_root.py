@@ -26,7 +26,7 @@ def test_aggregate_root_should_return_success_result():
     aggregate_root = MyAggregateRoot.create(name="name")
 
     assert len(aggregate_root.pull_domain_events()) == 1
-    assert aggregate_root.dict() == {
+    assert aggregate_root.model_dump() == {
         "aggregate_id": "0De49A24-C65A-4E8C-9917-125C067Eba2C",
         "aggregate_version": 1,
         "name": "name",
