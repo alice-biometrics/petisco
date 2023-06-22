@@ -574,6 +574,81 @@ Let's go into more detail in the following points.
                 return Failure(MyError())
             return Success(True)
     ```
+  
+  !!! note "Define shared error_map"
+
+      You can define a global shared error map to reuse in every controller of the application with:
+    
+      You can enhance your application's controllers by implementing a globally shared error map that can be utilized 
+      across all controllers. This approach offers several benefits, such as improved code reusability and easier 
+      management of error handling throughout the application. To implement this solution, consider the following steps:
+
+      * Create a shared error map: Define a dict with DomainErrors in keys and HttpErrors in values:
+      * Define the error map globally: Use the Application construction to define the shared error map.
+
+      ```python hl_lines="4 5 6 7 14"
+      from petisco import Application
+      from datetime import datetime
+ 
+      SHARED_ERROR_MAP: ErrorMap = {
+        MySharedNotFoundError: HttpError(status_code=404),
+        MySharedConflictError: HttpError(status_code=409)
+      }
+  
+      application = Application(
+          name="my-app",
+          version="1.0.0",
+          organization="acme",
+          deployed_at=str(datetime.utcnow()),
+          shared_error_map=SHARED_ERROR_MAP,
+      )
+      application.configure()
+      ```
+
+      By implementing a global shared error map, you can streamline error management and foster efficient code reuse 
+      among your application's controllers. This approach significantly improves maintainability and enables seamless future enhancements or modifications to error handling logic.
+
+      Furthermore, even if you choose not to explicitly select an `error_map` in your controllers or application, there 
+      are already default mappings available for you to leverage. For instance, you can make use of
+      `petisco.DEFAULT_HTTP_ERROR_MAP`, which provides a set of predefined mappings for common HTTP errors.
+
+      ```python
+      DEFAULT_HTTP_ERROR_MAP: ErrorMap = {
+        DomainError: HttpError(status_code=500),
+        NotFound: HttpError(status_code=404),
+        AlreadyExists: HttpError(status_code=409),
+        AggregateNotFoundError: HttpError(status_code=404),
+        AggregatesNotFoundError: HttpError(status_code=404),
+        AggregateAlreadyExistError: HttpError(status_code=409),
+        ClientNotFound: HttpError(status_code=404),
+        ClientAlreadyExists: HttpError(status_code=409),
+        UserNotFound: HttpError(status_code=404),
+        UserAlreadyExists: HttpError(status_code=409),
+        InvalidUuid: HttpError(status_code=422),
+        InvalidValueObject: HttpError(status_code=500),
+      }
+      ```
+      These default mappings serve as a solid foundation and can be customized as needed. If any specific error codes or
+      messages need to be overridden or added, you can extend or modify the shared error map accordingly. This 
+      flexibility allows you to tailor error handling to your application's unique requirements while still benefiting 
+      from the convenience and consistency offered by the shared error map approach.
+
+
+      **Important ⚠️**:
+      When using petisco, it's essential to note that all defined error_maps, including the shared, default, and 
+      controller ones, are internally merged. This merging process follows a specific priority order: controller 
+      mappings take precedence over shared mappings, which in turn take precedence over default mappings.
+      In practical terms, this means that if you define a key in the controller that is already defined in the shared 
+      or default error_map, petisco will prioritize the value from the controller definition. This behavior ensures that
+      you have full control over the error mappings within your specific controller, allowing you to override or 
+      customize any predefined mappings as needed.
+
+      By adhering to this merging priority, you can confidently manage and tailor error handling within your controllers 
+      while leveraging the shared and default error maps for consistency and convenience. It empowers you to fine-tune 
+      error mappings according to your application's requirements without sacrificing the benefits provided by petisco's 
+      predefined error mappings.
+
+
 
 #### FastAPI ⚡️
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
 from unittest.mock import patch
 
@@ -8,15 +9,35 @@ from meiga import BoolResult, Error, Failure, Result, Success, isFailure, isSucc
 
 from petisco import (
     Controller,
+    DomainError,
+    ErrorMap,
+    HttpError,
+    NotFound,
     PrintMiddleware,
     UnknownError,
     custom_message_handler,
     unwrap_result_handler,
 )
+from petisco.base.application.application_info import ApplicationInfo
 
 
 class MyError(Error):
     pass
+
+
+def set_shared_error_map(shared_error_map: ErrorMap) -> None:
+    ApplicationInfo(
+        name="test_controller",
+        organization="test",
+        version="1",
+        deployed_at=datetime.utcnow(),
+        force_recreation=True,
+        shared_error_map=shared_error_map,
+    )
+
+
+def clear_shared_error_map() -> None:
+    ApplicationInfo.clear()
 
 
 @pytest.mark.unit
@@ -64,6 +85,64 @@ class TestController:
         result = MyController().execute()
 
         assert result.transform() == expected_result
+
+    def should_return_transformed_by_default_error_map(self):  # noqa
+        class MyController(Controller):
+            def execute(self) -> BoolResult:
+                return Failure(
+                    NotFound()
+                )  # NotFound is available in petisco.DEFAULT_HTTP_ERROR_MAP
+
+        result = MyController().execute()
+
+        assert result.transform() == HttpError(status_code=404)
+
+    def should_return_transformed_by_shared_error_map(self):  # noqa
+
+        expected_http_error = HttpError(status_code=425)
+
+        class MySharedError(DomainError):
+            ...
+
+        set_shared_error_map({MySharedError: expected_http_error})
+
+        class MyController(Controller):
+            def execute(self) -> BoolResult:
+                return Failure(
+                    MySharedError()
+                )  # MySharedError is defined in SHARED_ERROR_MAP
+
+        result = MyController().execute()
+
+        assert result.transform() == expected_http_error
+
+        clear_shared_error_map()
+
+    def should_return_transformed_with_priority_for_controller_error_map_instead_of_shared(
+        self,
+    ):  # noqa
+
+        expected_http_error = HttpError(status_code=460)
+        not_expected_http_error = HttpError(status_code=404)
+
+        class MySharedAndConfiguredError(DomainError):
+            ...
+
+        set_shared_error_map({MySharedAndConfiguredError: not_expected_http_error})
+
+        class MyController(Controller):
+            class Config:
+                error_map = {MySharedAndConfiguredError: expected_http_error}
+
+            def execute(self) -> BoolResult:
+                return Failure(MySharedAndConfiguredError())
+
+        result = MyController().execute()
+
+        assert result.transform() == expected_http_error
+        assert result.transform() != not_expected_http_error
+
+        clear_shared_error_map()
 
     @pytest.mark.parametrize(
         "configured_middlewares",

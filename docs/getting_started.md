@@ -27,7 +27,6 @@ application = Application(
     organization="acme",
     deployed_at=str(datetime.utcnow()),
     environment="staging",
-
 )
 application.configure()
 ```

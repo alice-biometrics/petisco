@@ -12,8 +12,10 @@ from petisco import (
     Builder,
     Container,
     Dependency,
+    DomainError,
     DomainEvent,
     DomainEventBus,
+    HttpError,
     NotifierMessage,
     NotImplementedDomainEventBus,
 )
@@ -278,3 +280,22 @@ class TestApplication:
         )
         assert issubclass(type(Container.get(BaseRepo)), BaseRepo)
         assert issubclass(type(Container.get(OtherBaseRepo)), OtherBaseRepo)
+
+    @testing_with_empty_container
+    def should_construct_with_shared_error_map(self):
+        class MyNotFoundError(DomainError):
+            ...
+
+        shared_error_map = {MyNotFoundError: HttpError(status_code=404)}
+
+        Application(
+            name="service",
+            version="1.0.0",
+            organization="acme",
+            deployed_at=datetime(year=2021, month=10, day=25, hour=11, minute=11),
+            shared_error_map=shared_error_map,
+        )
+
+        application_info = ApplicationInfo()
+
+        assert shared_error_map == application_info.shared_error_map
