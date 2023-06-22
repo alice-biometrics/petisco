@@ -353,3 +353,12 @@ Now, the access to private attributes must be performed using a sort of getters.
             )
             return await task_creator.execute(task=task)
     ```
+
+### Use `shared_error_map`
+
+!!! info
+
+    Petisco v2 provides an implementation for configure shared error maps
+
+Check `error_map` documentation in [Application/Configuration](../../application/#configuration) to know hot to ease 
+your error handling.
