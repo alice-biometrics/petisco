@@ -299,3 +299,33 @@ class TestApplication:
         application_info = ApplicationInfo()
 
         assert shared_error_map == application_info.shared_error_map
+
+    @testing_with_empty_container
+    def should_construct_with_environment_envar(self, monkeypatch):
+        deployed_at = datetime(year=2021, month=10, day=25, hour=11, minute=11)
+        expected_environment = "production"
+        monkeypatch.setenv("ENVIRONMENT", expected_environment)
+
+        application = Application(
+            name="service",
+            version="1.0.0",
+            organization="acme",
+            deployed_at=deployed_at,
+        )
+        application.configure()
+        assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
+        expected_info = {
+            "name": "service",
+            "version": "1.0.0",
+            "organization": "acme",
+            "deployed_at": deployed_at.strftime("%m/%d/%Y, %H:%M:%S"),
+            "environment": expected_environment,
+            "dependencies": {
+                "DomainEventBus": {"name": "NotImplementedDomainEventBus"},
+                "CommandBus": {"name": "NotImplementedCommandBus"},
+                "MessageConfigurer": {"name": "NotImplementedMessageConfigurer"},
+                "MessageConsumer": {"name": "NotImplementedMessageConsumer"},
+                "Notifier": {"name": "NotImplementedNotifier"},
+            },
+        }
+        assert expected_info == application.info()

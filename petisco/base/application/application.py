@@ -23,7 +23,7 @@ class Application(BaseSettings):
     version: str
     organization: str
     deployed_at: datetime
-    environment: str = Field("local", env="ENVIRONMENT")
+    environment: str = Field(default="local", env="ENVIRONMENT")
     dependencies_provider: Callable[..., List[Dependency]] = lambda: []
     configurers: List[ApplicationConfigurer] = []
     shared_error_map: Union[ErrorMap, None] = Field(default=dict())
