@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Union
 
 from loguru import logger
 from pydantic import BaseSettings, Field
 
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.application_info import ApplicationInfo
+from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.application.notifier.notifier import Notifier
@@ -24,6 +25,7 @@ class Application(BaseSettings):
     environment: str = Field("local", env="ENVIRONMENT")
     dependencies_provider: Callable[..., List[Dependency]] = lambda: []
     configurers: List[ApplicationConfigurer] = []
+    shared_error_map: Union[ErrorMap, None] = Field(default=dict())
 
     def __init__(self, **data: Any) -> None:
         info = ApplicationInfo(
@@ -32,6 +34,7 @@ class Application(BaseSettings):
             version=data["version"],
             deployed_at=data.get("deployed_at"),
             force_recreation=True,
+            shared_error_map=data.get("shared_error_map", dict()),
         )
         deployed_at = info.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
         logger.info(
@@ -85,8 +88,6 @@ class Application(BaseSettings):
         default_dependencies = (
             get_default_message_dependencies() + get_default_notifier_dependencies()
         )
-        # TODO: the `dependency.type if not dependency.name else dependency.name` will be deprecated in v2 -> use
-        #  just `dependency.type` as key
         default_dependencies_dict = {
             dependency.get_key(): dependency for dependency in default_dependencies
         }
@@ -107,13 +108,13 @@ class Application(BaseSettings):
     def info(self) -> Dict[str, Any]:
         info = self.dict()
         info["deployed_at"] = self.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
-
         info["dependencies"] = {
             dependency.type.__name__: dependency.get_instance().info()
             for dependency in self.get_dependencies()
         }
         del info["dependencies_provider"]
         del info["configurers"]
+        del info["shared_error_map"]
         return info
 
     def was_deploy_few_minutes_ago(self, minutes: int = 25) -> bool:
