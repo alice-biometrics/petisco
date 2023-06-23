@@ -5,20 +5,22 @@ from typing import AsyncContextManager, Callable, TypeVar
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, Session, scoped_session
+from sqlalchemy.orm import DeclarativeBase, scoped_session
 from sqlalchemy_utils import database_exists
 
 from petisco.base.domain.persistence.async_database import AsyncDatabase
-from petisco.base.domain.persistence.sql_base import SqlBase
 from petisco.extra.sqlalchemy.sql.async_sql_session_scope_provider import (
     async_sql_session_scope_provider,
 )
+from petisco.extra.sqlalchemy.sql.sql_base import SqlBase
 from petisco.extra.sqlalchemy.sql.sql_database import SqlDatabase
 
 T = TypeVar("T")
 
+AsyncSqlSessionScope = Callable[..., AsyncContextManager[AsyncSession]]
 
-class AsyncSqlDatabase(SqlDatabase, AsyncDatabase[Session]):
+
+class AsyncSqlDatabase(SqlDatabase, AsyncDatabase[AsyncSession]):
 
     async_session_factory: async_sessionmaker | None = None
 

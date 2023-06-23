@@ -10,14 +10,16 @@ from sqlalchemy.orm import DeclarativeBase, Session, scoped_session, sessionmake
 from sqlalchemy_utils import create_database, database_exists
 
 from petisco.base.domain.persistence.database import Database
-from petisco.base.domain.persistence.sql_base import SqlBase
 from petisco.extra.sqlalchemy.sql.mysql.mysql_connection import MySqlConnection
+from petisco.extra.sqlalchemy.sql.sql_base import SqlBase
 from petisco.extra.sqlalchemy.sql.sql_session_scope_provider import (
     sql_session_scope_provider,
 )
 from petisco.extra.sqlalchemy.sql.sqlite.sqlite_connection import SqliteConnection
 
 T = TypeVar("T")
+
+SqlSessionScope = Callable[..., ContextManager[Session]]
 
 
 class SqlDatabase(Database[Session]):
@@ -98,7 +100,7 @@ class SqlDatabase(Database[Session]):
                 "SqlDatabase do not implement clear_data to mitigate possible problems in production"
             )
 
-    def get_session_scope(self) -> Callable[..., ContextManager[T]]:
+    def get_session_scope(self) -> Callable[..., ContextManager[Session]]:
         if self.session_factory is None:
             raise RuntimeError(
                 "SqlDatabase must run initialize() before get_session_scope()"

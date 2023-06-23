@@ -135,11 +135,11 @@ from app.src.models import SqlUser, User
 
 
 class SqlUserRepository(BaseRepository):
-    session_scope: Callable[..., ContextManager[Session]]
+    session_scope: SqlSessionScope
 
     def __init__(self):
         # `DATABASE_NAME = "petisco-sql"` -> same as defined in the configuration 
-        database: SqlDatabase[Session] = databases.get(DATABASE_NAME) 
+        database = databases.get(SqlDatabase, alias=DATABASE_NAME)
         self.session_scope = database.get_session_scope()
 
     @early_return

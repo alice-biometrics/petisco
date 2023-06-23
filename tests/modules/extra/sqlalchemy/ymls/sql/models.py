@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Float, ForeignKey, Integer, String
 
-from petisco import SqlBase
+from petisco.extra.sqlalchemy import SqlBase
 
 
 class ClientModel(SqlBase):

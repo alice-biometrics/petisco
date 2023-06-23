@@ -4,8 +4,7 @@ import pytest
 from sqlalchemy import Column, Integer, String, select
 from sqlalchemy.orm import Mapped
 
-from petisco import SqlBase
-from petisco.extra.sqlalchemy import AsyncSqlDatabase, SqliteConnection
+from petisco.extra.sqlalchemy import AsyncSqlDatabase, SqlBase, SqliteConnection
 
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 
