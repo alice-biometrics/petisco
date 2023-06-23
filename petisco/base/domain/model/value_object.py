@@ -1,7 +1,6 @@
 from typing import Any, NoReturn, Type, TypeVar
 
-from pydantic import field_validator
-from pydantic.main import BaseModel
+from pydantic import BaseModel, field_serializer, field_validator
 
 from petisco.base.domain.errors.defaults.invalid_value_object import InvalidValueObject
 
@@ -38,3 +37,11 @@ class ValueObject(BaseModel):
         if value is None:
             raise InvalidValueObject()
         return value
+
+    @staticmethod
+    def serializer(attribute_name: str):
+        def _serializer(value_object: ValueObject):
+            if value_object:
+                return value_object.value
+
+        return field_serializer(attribute_name)(_serializer)
