@@ -28,7 +28,7 @@ sql_database = SqlDatabase(name="petisco", connection=connection)
 To define your models, you have to inherit from `SqlBase` abstract object. Check the following example:
 
 ```python hl_lines="5"
-from petisco import SqlBase
+from petisco.extra.sqlalchemy import SqlBase
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Mapped
 
@@ -45,7 +45,7 @@ Thanks to inheriting from `SqlBase` with have available abstract methods ready t
 to domain model and vice versa.
 
 ```python hl_lines="7 8 9 12 20 21 22 23 24 25"
-from petisco import SqlBase
+from petisco.extra.sqlalchemy import SqlBase
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Mapped
@@ -270,7 +270,7 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Mapped
 
-from petisco import SqlBase
+from petisco.extra.sqlalchemy import SqlBase
 
 
 class User(BaseModel):
