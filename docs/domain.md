@@ -62,7 +62,7 @@ task_id = TaskId.v4()
 Create your Value Objects extending from `ValueObject` base class.
 
 ```python
-from pydantic import validator
+from pydantic import field_validator
 from meiga import Failure
 from petisco import ValueObject, DomainError
 
@@ -81,12 +81,28 @@ def ensure_value_is_less_than_200_char(value):
 
 class Description(ValueObject):
 
-    @validator('value')
+    @field_validator('value')
     def validate_value(cls, value):
         ensure_not_empty_value(value, cls.__name__)
         ensure_value_is_less_than_200_char(value)
         return value.title()
 ```
+
+
+!!! Note
+
+    To update 
+
+    ```python
+    from pydantic import BaseModel
+
+    class MyModel(BaseModel):
+      object_id: Uuid
+
+      _object_id = ValueObject.serialize("object_id")  # (1)
+    ```
+    
+    1. This is equivalent to `_object_id = field_serializer("object_id")(lamdba value_object: value_object.value)`
 
 ### Aggregate Root
 
