@@ -97,12 +97,12 @@ class Description(ValueObject):
     from pydantic import BaseModel
 
     class MyModel(BaseModel):
-      object_id: Uuid
+      model_id: Uuid
 
-      _object_id = ValueObject.serialize("object_id")  # (1)
+      _model_id = ValueObject.serializer("model_id")  # (1)
     ```
     
-    1. This is equivalent to `_object_id = field_serializer("object_id")(lamdba value_object: value_object.value)`
+    1. This is equivalent to `_model_id = field_serializer("model_id")(lamdba value_object: value_object.value)`
 
 ### Aggregate Root
 
