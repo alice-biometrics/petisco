@@ -16,14 +16,13 @@ DATABASE_FILENAME = "sqlite.db"
 SERVER_NAME = "sqlite"
 
 sql_database = SqlDatabase(
-    name=DATABASE_NAME,
+    alias=DATABASE_NAME,
     connection=SqliteConnection.create(SERVER_NAME, DATABASE_FILENAME),
 )
 sql_database.initialize()
 session_scope = sql_database.get_session_scope()
 
 with session_scope() as session:
-
     stmt = select(SqlUser)
     users = session.execute(stmt).all()
     print(f"{users=}")
@@ -33,8 +32,8 @@ with session_scope() as session:
     session.commit()
 
     stmt = select(SqlUser).where(SqlUser.name == "Alice")
-    user = session.execute(stmt).first()
-    print(user)
+    user = session.execute(stmt).fetchone()
+    print(f"{user=}")
 
     stmt = select(SqlUser)
     users = session.execute(stmt).all()
