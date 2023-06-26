@@ -12,9 +12,9 @@ DATABASE_FILENAME = "sqlite.db"
 SERVER_NAME = "sqlite+aiosqlite"
 
 
-async def main():
+async def main() -> None:
     sql_database = AsyncSqlDatabase(
-        name=DATABASE_NAME,
+        alias=DATABASE_NAME,
         connection=SqliteConnection.create(SERVER_NAME, DATABASE_FILENAME),
     )
     await sql_database.initialize()

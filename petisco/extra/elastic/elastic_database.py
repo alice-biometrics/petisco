@@ -42,13 +42,13 @@ class ElasticDatabase(Database):
     def local_connection_checker() -> ElasticDatabase:
         return ElasticDatabase(name="test", connection=ElasticConnection.create_local())
 
-    def __init__(self, name: str, connection: ElasticConnection) -> None:
+    def __init__(self, alias: str, connection: ElasticConnection) -> None:
         if not connection or not isinstance(connection, ElasticConnection):
             raise ConnectionError(
                 "ElasticDatabase needs a valid ElasticConnection connection"
             )
         self.connection = connection
-        super().__init__(name)
+        super().__init__(alias)
 
     def initialize(self) -> None:
         self.session = Elasticsearch(

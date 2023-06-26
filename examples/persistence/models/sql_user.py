@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Mapped
 
-from petisco import SqlBase
+from petisco.extra.sqlalchemy import SqlBase
 
 
 class User(BaseModel):
