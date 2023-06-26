@@ -31,6 +31,9 @@ def async_elastic_session_scope_provider(session) -> Callable:
     return session_scope
 
 
+AsyncElasticSessionScope = Callable[..., ContextManager[AsyncElasticsearch]]
+
+
 class AsyncElasticDatabase(AsyncDatabase):
     session: AsyncElasticsearch | None = None
 
@@ -65,5 +68,5 @@ class AsyncElasticDatabase(AsyncDatabase):
         except Exception:  # noqa E722
             return False
 
-    def get_session_scope(self) -> Callable[..., ContextManager[AsyncElasticsearch]]:
+    def get_session_scope(self) -> AsyncElasticSessionScope:
         return async_elastic_session_scope_provider(self.session)
