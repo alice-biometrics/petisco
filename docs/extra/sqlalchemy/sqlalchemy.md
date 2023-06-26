@@ -278,7 +278,7 @@ class User(BaseModel):
     age: int | None
 
 
-class SqlUser(SqlBase):
+class SqlUser(SqlBase[User]):
     __tablename__ = "users"
 
     id: Mapped[int] = Column(Integer, primary_key=True)

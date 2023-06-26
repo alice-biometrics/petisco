@@ -4,6 +4,7 @@ import os
 from sqlalchemy import select
 
 from examples.persistence.models import SqlUser
+from petisco import databases
 from petisco.extra.sqlalchemy import AsyncSqlDatabase, SqliteConnection
 
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -12,13 +13,19 @@ DATABASE_FILENAME = "sqlite.db"
 SERVER_NAME = "sqlite+aiosqlite"
 
 
-async def main() -> None:
+async def database_configurer() -> None:
     sql_database = AsyncSqlDatabase(
         alias=DATABASE_NAME,
         connection=SqliteConnection.create(SERVER_NAME, DATABASE_FILENAME),
     )
-    await sql_database.initialize()
-    session_scope = sql_database.get_session_scope()
+    databases.add(sql_database)
+    await databases.async_initialize()
+
+
+async def execution() -> None:
+    session_scope = databases.get(
+        AsyncSqlDatabase, alias=DATABASE_NAME
+    ).get_session_scope()
 
     async with session_scope() as session:
         stmt = select(SqlUser)
@@ -36,6 +43,11 @@ async def main() -> None:
         stmt = select(SqlUser)
         users = (await session.execute(stmt)).all()
         print(f"{users=}")
+
+
+async def main() -> None:
+    await database_configurer()
+    await execution()
 
 
 loop = asyncio.get_event_loop()

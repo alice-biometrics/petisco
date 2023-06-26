@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, TypeVar
 
+from petisco.base.domain.persistence.async_database import AsyncDatabase
 from petisco.base.domain.persistence.database import Database
 
 T = TypeVar("T")
@@ -112,7 +113,14 @@ class _Databases:
 
     def initialize(self) -> None:
         for database in self._databases.values():
+            if isinstance(database, AsyncDatabase):
+                continue
             database.initialize()
+
+    async def async_initialize(self) -> None:
+        for database in self._databases.values():
+            if isinstance(database, AsyncDatabase):
+                await database.initialize()
 
     def delete(self) -> None:
         for database in self._databases.values():

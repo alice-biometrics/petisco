@@ -65,7 +65,7 @@ class AsyncSqlDatabase(SqlDatabase, AsyncDatabase[AsyncSession]):
             Session = self.async_session_factory  # noqa
         return async_sql_session_scope_provider(Session)
 
-    async def is_available(self):
+    async def is_available(self) -> bool:
         try:
             context = self.get_session_scope()
             async with context() as session:
