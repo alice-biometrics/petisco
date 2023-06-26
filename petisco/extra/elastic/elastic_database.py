@@ -32,6 +32,9 @@ def elastic_session_scope_provider(
     return session_scope
 
 
+ElasticSessionScope = Callable[..., ContextManager[Elasticsearch]]
+
+
 class ElasticDatabase(Database):
     session: Elasticsearch | None = None
 
@@ -64,5 +67,5 @@ class ElasticDatabase(Database):
         except Exception:  # noqa E722
             return False
 
-    def get_session_scope(self) -> Callable[..., ContextManager[Elasticsearch]]:
+    def get_session_scope(self) -> ElasticSessionScope:
         return elastic_session_scope_provider(self.session)
