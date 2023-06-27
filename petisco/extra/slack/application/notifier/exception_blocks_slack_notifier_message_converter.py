@@ -100,6 +100,8 @@ class ExceptionBlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter
             traceback_max_length = 3000 - len(text_error) - len(traceback_base_str)
             text_error += traceback_base_str.format(
                 notifier_exception_message.traceback[:traceback_max_length]
+                if notifier_exception_message.traceback
+                else "None"
             )
 
             error_block = {
