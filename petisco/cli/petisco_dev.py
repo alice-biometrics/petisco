@@ -153,7 +153,7 @@ def show_configurers(application) -> None:
 
 
 def show_sql_models() -> None:
-    from petisco import SqlBase
+    from petisco.extra.sqlalchemy import SqlBase
 
     info: list[dict[str, str]] = []
     for sql_model in SqlBase.__subclasses__():
