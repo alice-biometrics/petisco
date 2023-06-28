@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 import os
-from typing import TypeVar
 
 from sqlalchemy import select
 
 from examples.persistence.models.sql_user import SqlUser
 from petisco import databases
 from petisco.extra.sqlalchemy import SqlDatabase, SqliteConnection
-
-T = TypeVar("T")
 
 # Initialization
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))

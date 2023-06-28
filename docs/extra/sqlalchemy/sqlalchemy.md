@@ -207,6 +207,27 @@ sql_executor.execute_from_filename("insert_users.sql")
     ) 
     ```
 
+    You can also define some callables before and after the initial statemenents execution with 
+    `before_initial_statements` and `after_initial_statements`.
+
+    ```python hl_lines="10 12"
+    
+    def run_alembic() -> None:
+        # add your alembic script
+
+    def do_whatever_after_sql_initial_stements() -> None:
+       # add your stuff
+
+    sql_database = SqlDatabase(
+        name="petisco", 
+        connection=connection, 
+        before_initial_statements=run_alembic,
+        initial_statements_filename="sql_statements.sql",
+        after_initial_statements=do_whatever_after_sql_initial_stements,
+    ) 
+    ```
+
+
 ## Examples
 
 ### Sync
@@ -222,45 +243,52 @@ python run_sql_database.py
 from __future__ import annotations
 
 import os
-from typing import TypeVar
 
 from sqlalchemy import select
 
-from petisco.extra.sqlalchemy import SqliteConnection, SqlDatabase
 from examples.persistence.models.sql_user import SqlUser
+from petisco import databases
+from petisco.extra.sqlalchemy import SqlDatabase, SqliteConnection
 
-
-T = TypeVar("T")
-
+# Initialization
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 DATABASE_NAME = "my-database"
 DATABASE_FILENAME = "sqlite.db"
 SERVER_NAME = "sqlite"
 
-sql_database = SqlDatabase(
-    name=DATABASE_NAME,
-    connection=SqliteConnection.create(SERVER_NAME, DATABASE_FILENAME),
-)
-sql_database.initialize()
-session_scope = sql_database.get_session_scope()
 
-with session_scope() as session:
+def database_configurer() -> None:
+    sql_database = SqlDatabase(
+        alias=DATABASE_NAME,
+        connection=SqliteConnection.create(SERVER_NAME, DATABASE_FILENAME),
+    )
+    databases.add(sql_database)
+    databases.initialize()
 
-    stmt = select(SqlUser)
-    users = session.execute(stmt).all()
-    print(f"{users=}")
 
-    session.add(SqlUser(name="Alice", age="3"))
-    session.add(SqlUser(name="Bob", age="10"))
-    session.commit()
+def execution() -> None:
+    session_scope = databases.get(SqlDatabase, alias=DATABASE_NAME).get_session_scope()
 
-    stmt = select(SqlUser).where(SqlUser.name == "Alice")
-    user = session.execute(stmt).first()
-    print(user)
+    with session_scope() as session:
+        stmt = select(SqlUser)
+        users = session.execute(stmt).all()
+        print(f"{users=}")
 
-    stmt = select(SqlUser)
-    users = session.execute(stmt).all()
-    print(f"{users=}")
+        session.add(SqlUser(name="Alice", age="3"))
+        session.add(SqlUser(name="Bob", age="10"))
+        session.commit()
+
+        stmt = select(SqlUser).where(SqlUser.name == "Alice")
+        user = session.execute(stmt).fetchone()
+        print(f"{user=}")
+
+        stmt = select(SqlUser)
+        users = session.execute(stmt).all()
+        print(f"{users=}")
+
+
+database_configurer()
+execution()
 ```
 
 Where `examples/persistence/models/sql_user.py` is:
@@ -282,7 +310,6 @@ class SqlUser(SqlBase[User]):
     __tablename__ = "users"
 
     id: Mapped[int] = Column(Integer, primary_key=True)
-
     name: Mapped[str] = Column(String(30))
     age: Mapped[int] = Column(Integer)
 
@@ -290,7 +317,7 @@ class SqlUser(SqlBase[User]):
         return User(name=self.name, age=self.age)
 
     @staticmethod
-    def from_domain(domain_entity: User) -> "SQLUser":
+    def from_domain(domain_entity: User) -> "SqlUser":
         return SqlUser(name=domain_entity.name, age=domain_entity.age)
 ```
 
@@ -311,7 +338,9 @@ import asyncio
 import os
 
 from sqlalchemy import select
+
 from examples.persistence.models import SqlUser
+from petisco import databases
 from petisco.extra.sqlalchemy import AsyncSqlDatabase, SqliteConnection
 
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -320,13 +349,19 @@ DATABASE_FILENAME = "sqlite.db"
 SERVER_NAME = "sqlite+aiosqlite"
 
 
-async def main():
+async def database_configurer() -> None:
     sql_database = AsyncSqlDatabase(
-        name=DATABASE_NAME,
+        alias=DATABASE_NAME,
         connection=SqliteConnection.create(SERVER_NAME, DATABASE_FILENAME),
     )
-    await sql_database.initialize()
-    session_scope = sql_database.get_session_scope()
+    databases.add(sql_database)
+    await databases.async_initialize()
+
+
+async def execution() -> None:
+    session_scope = databases.get(
+        AsyncSqlDatabase, alias=DATABASE_NAME
+    ).get_session_scope()
 
     async with session_scope() as session:
         stmt = select(SqlUser)
@@ -346,9 +381,171 @@ async def main():
         print(f"{users=}")
 
 
+async def main() -> None:
+    await database_configurer()
+    await execution()
+
+
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
 ```
 
+### Async
+
+Create two databases modifying using two `DeclarativeBase`.
+
+```bash
+cd examples/persistence
+python run_two_sql_databases.py
+```
+
+```python title="examples/persistence/run_two_sql_databases.py"
+from __future__ import annotations
+
+import os
+
+from sqlalchemy import select
+
+from examples.persistence.models.sql_profession import SqlProfession, AlternativeSqlBase
+from examples.persistence.models.sql_user import SqlUser
+from petisco import databases
+from petisco.extra.sqlalchemy import SqlDatabase, SqliteConnection
 
 
+# Initialization
+ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
+DATABASE_NAME_1 = "my-database-1"
+DATABASE_FILENAME_1 = "sqlite_1.db"
+DATABASE_NAME_2 = "my-database-2"
+DATABASE_FILENAME_2 = "sqlite_2.db"
+
+SERVER_NAME = "sqlite"
+
+
+def databases_configurer() -> None:
+    sql_database_1 = SqlDatabase(
+        alias=DATABASE_NAME_1,
+        connection=SqliteConnection.create(SERVER_NAME, DATABASE_FILENAME_1),
+    )
+    sql_database_2 = SqlDatabase(
+        alias=DATABASE_NAME_2,
+        connection=SqliteConnection.create(SERVER_NAME, DATABASE_FILENAME_2),
+    )
+    databases.add(sql_database_1)
+    databases.add(sql_database_2)
+
+    databases.initialize(initialization_arguments={DATABASE_NAME_2: {"base": AlternativeSqlBase}})
+
+
+def execution() -> None:
+    session_scope_1 = databases.get(SqlDatabase, alias=DATABASE_NAME_1).get_session_scope()
+
+    with session_scope_1() as session:
+        stmt = select(SqlUser)
+        users = session.execute(stmt).all()
+        print(f"{users=}")
+
+        session.add(SqlUser(name="Alice", age="3"))
+        session.add(SqlUser(name="Bob", age="10"))
+        session.commit()
+
+        stmt = select(SqlUser).where(SqlUser.name == "Alice")
+        user = session.execute(stmt).fetchone()
+        print(f"{user=}")
+
+        stmt = select(SqlUser)
+        users = session.execute(stmt).all()
+        print(f"{users=}")
+
+    session_scope_2 = databases.get(SqlDatabase, alias=DATABASE_NAME_2).get_session_scope()
+
+    with session_scope_2() as session:
+        stmt = select(SqlProfession)
+        professions = session.execute(stmt).all()
+        print(f"{professions=}")
+
+        session.add(SqlProfession(name="Alice", salary="1000"))
+        session.add(SqlProfession(name="Bob", salary="2000"))
+        session.commit()
+
+        stmt = select(SqlProfession).where(SqlProfession.name == "Alice")
+        profession = session.execute(stmt).fetchone()
+        print(f"{profession=}")
+
+        stmt = select(SqlProfession)
+        professions = session.execute(stmt).all()
+        print(f"{professions=}")
+
+
+databases_configurer()
+execution()
+```
+
+Where `AlternativeSqlBase` is defined in `examples/persistence/models/sql_profession.py` in order to gather other 
+SQLAlchemy models.
+
+```python title="examples/persistence/models/sql_profession.py"
+import inspect
+from abc import abstractmethod
+from typing import Generic, TypeVar
+
+from pydantic import BaseModel
+from sqlalchemy.orm import Mapped, DeclarativeBase
+from sqlalchemy import Column, Integer, String
+
+
+class User(BaseModel):
+    name: str
+    age: int | None
+
+
+T = TypeVar("T")
+
+
+class AlternativeSqlBase(DeclarativeBase, Generic[T]):
+    def __repr__(self) -> str:
+        attributes = ", ".join(
+            f"{key}={value}"
+            for key, value in self.__dict__.items()
+            if not key.startswith("_")
+        )
+        return f"{self.__class__.__name__}({attributes})"
+
+    def info(self) -> dict[str, str]:
+        return {
+            "name": self.__class__.__name__,
+            "module": self.__class__.__module__,
+            "file": inspect.getsourcefile(self.__class__),
+        }
+
+    @abstractmethod
+    def to_domain(self) -> T:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def from_domain(domain_entity: T) -> "AlternativeSqlBase":
+        pass
+
+
+class Profession(BaseModel):
+    name: str
+    salary: int
+
+
+class SqlProfession(AlternativeSqlBase[Profession]):
+    __tablename__ = "users"
+
+    id: Mapped[int] = Column(Integer, primary_key=True)
+
+    name: Mapped[str] = Column(String(30))
+    salary: Mapped[int] = Column(Integer)
+
+    def to_domain(self) -> Profession:
+        return Profession(name=self.name, salary=self.salary)
+
+    @staticmethod
+    def from_domain(domain_entity: User) -> "SqlProfession":
+        return SqlProfession(name=domain_entity.name, salary=domain_entity.salary)
+
+```

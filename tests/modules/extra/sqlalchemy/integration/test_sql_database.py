@@ -63,6 +63,39 @@ class TestSqlDatabase:
             user_models = session.execute(select(SqlUser)).all()
             assert len(user_models) == 2
 
+    def should_success_when_use_initial_statements_filename_and_before_and_after_callables(
+        self,
+    ):
+        global before_spy
+        global after_spy
+        before_spy = False
+        after_spy = False
+
+        def before_statements() -> None:
+            global before_spy
+            before_spy = True
+
+        def after_statements() -> None:
+            global after_spy
+            after_spy = True
+
+        database = SqlDatabase(
+            connection=self.connection,
+            before_initial_statements=before_statements,
+            initial_statements_filename=f"{ROOT_PATH}/initial_statements.sql",
+            after_initial_statements=after_statements,
+        )
+        database.initialize()
+
+        assert before_spy is True
+        assert after_spy is True
+
+        session_scope = database.get_session_scope()
+
+        with session_scope() as session:
+            user_models = session.execute(select(SqlUser)).all()
+            assert len(user_models) == 2
+
     def should_fail_when_use_initial_statements_filename_with_invalid_filename(self):
         with pytest.raises(RuntimeError):
             database = SqlDatabase(

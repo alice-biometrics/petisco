@@ -14,7 +14,6 @@ class SqlUser(SqlBase[User]):
     __tablename__ = "users"
 
     id: Mapped[int] = Column(Integer, primary_key=True)
-
     name: Mapped[str] = Column(String(30))
     age: Mapped[int] = Column(Integer)
 
