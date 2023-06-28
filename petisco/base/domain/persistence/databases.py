@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, TypedDict, TypeVar
+from typing import Any, TypeVar
 
 from petisco.base.domain.persistence.async_database import AsyncDatabase
 from petisco.base.domain.persistence.database import Database
@@ -9,13 +9,11 @@ from petisco.base.domain.persistence.database import Database
 T = TypeVar("T")
 
 
-class InitializationArguments(TypedDict):
-    database_alias: str
-    arguments: dict[str, Any]
-
-
 def get_key(base_type: type[T], alias: str | None = None) -> str:
     return base_type.__name__ if not alias else alias
+
+
+InitializationArguments = dict[str, dict[str, Any]]
 
 
 @dataclass
@@ -28,45 +26,6 @@ class _Databases:
 
     def info(self) -> dict[str, Any]:
         return {name: database.info() for name, database in self._databases.items()}
-
-    # This does no have any sense, we want to check all databases
-    # def _get_databases(self, database_name: str | None = None) -> dict[str, Database] | None:
-    #     if database_name is not None:
-    #         if database_name not in self._databases:
-    #             raise IndexError(
-    #                 f"Database cannot return are_available/async_are_available. {database_name} not exists"
-    #             )
-    #         databases_ = {database_name: self._databases.get(database_name)}
-    #         return databases_
-    #     if len(self._databases) < 1:
-    #         logger.warning("Databases databases are empty")
-    #         return None
-    #
-    # def are_available(self, database_name: str | None = None) -> bool:
-    #     databases_ = self._get_databases(database_name)
-    #     if databases_ is None:
-    #         return False
-    #
-    #     for database_name, database in databases_.items():
-    #         if isinstance(database, AsyncDatabase):
-    #             continue
-    #         if not database.is_available():
-    #             logger.warning(f"Database {database_name} is not available")
-    #             return False
-    #     return True
-    #
-    # async def async_are_available(self, database_name: str | None = None) -> bool:
-    #     databases_ = self._get_databases(database_name)
-    #     if databases_ is None:
-    #         return False
-    #
-    #     for database_name, database in databases_.items():
-    #         if not isinstance(database, AsyncDatabase):
-    #             continue
-    #         if not await database.is_available():
-    #             logger.warning(f"Database {database_name} is not available")
-    #             return False
-    #     return True
 
     def get_databases(self) -> list[Database]:
         return list(self._databases.values())

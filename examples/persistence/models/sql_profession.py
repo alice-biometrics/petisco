@@ -47,7 +47,7 @@ class Profession(BaseModel):
 
 
 class SqlProfession(AlternativeSqlBase[Profession]):
-    __tablename__ = "users"
+    __tablename__ = "professions"
 
     id: Mapped[int] = Column(Integer, primary_key=True)
 
