@@ -33,12 +33,16 @@ class SqlDatabase(Database[Session]):
         alias: str | None = None,
         print_sql_statements: bool = False,
         use_scoped_session: bool = True,
-        initial_statements_filename: str = None,
+        before_initial_statements: Callable[[], None] | None = None,
+        initial_statements_filename: str | None = None,
+        after_initial_statements: Callable[[], None] | None = None,
     ):
         self.connection = connection
         self.print_sql_statements = print_sql_statements
         self.use_scoped_session = use_scoped_session
+        self.before_initial_statements = before_initial_statements
         self.initial_statements_filename = initial_statements_filename
+        self.after_initial_statements = after_initial_statements
         self._check_connection()
         super().__init__(alias)
 
@@ -50,7 +54,7 @@ class SqlDatabase(Database[Session]):
                 "SqlDatabase needs a valid SqliteConnection or MySqlConnection connection"
             )
 
-    def initialize(self, base: DeclarativeBase = SqlBase) -> None:
+    def initialize(self, base: type[DeclarativeBase] = SqlBase) -> None:
         engine = create_engine(
             self.connection.url,
             json_serializer=lambda obj: obj,
@@ -61,7 +65,11 @@ class SqlDatabase(Database[Session]):
         if not database_exists(engine.url):
             create_database(engine.url)
             base.metadata.create_all(engine)
+            if self.before_initial_statements:
+                self.before_initial_statements()
             self._run_initial_statements(engine)
+            if self.after_initial_statements:
+                self.after_initial_statements()
 
         self.session_factory = sessionmaker(bind=engine)
 

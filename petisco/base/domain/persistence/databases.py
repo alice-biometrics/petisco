@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, TypeVar
+from typing import Any, TypedDict, TypeVar
 
 from petisco.base.domain.persistence.async_database import AsyncDatabase
 from petisco.base.domain.persistence.database import Database
 
 T = TypeVar("T")
+
+
+class InitializationArguments(TypedDict):
+    database_alias: str
+    arguments: dict[str, Any]
 
 
 def get_key(base_type: type[T], alias: str | None = None) -> str:
@@ -111,16 +116,36 @@ class _Databases:
             if skip_if_not_exist is False:
                 raise IndexError(f"Database cannot be removed. {key} does not exists")
 
-    def initialize(self) -> None:
+    def initialize(
+        self, initialization_arguments: InitializationArguments | None = None
+    ) -> None:
         for database in self._databases.values():
             if isinstance(database, AsyncDatabase):
                 continue
-            database.initialize()
+            arguments = (
+                initialization_arguments.get(database.alias)
+                if initialization_arguments
+                else None
+            )
+            if arguments:
+                database.initialize(**arguments)
+            else:
+                database.initialize()
 
-    async def async_initialize(self) -> None:
+    async def async_initialize(
+        self, initialization_arguments: InitializationArguments | None = None
+    ) -> None:
         for database in self._databases.values():
             if isinstance(database, AsyncDatabase):
-                await database.initialize()
+                arguments = (
+                    initialization_arguments.get(database.alias)
+                    if initialization_arguments
+                    else None
+                )
+                if arguments:
+                    await database.initialize(**arguments)
+                else:
+                    await database.initialize()
 
     def delete(self) -> None:
         for database in self._databases.values():
