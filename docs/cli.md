@@ -48,6 +48,10 @@ options:
                         show petisco app dependencies.
   -configs, --configurers
                         show petisco app configurers.
+  -sql-models, --sql-models
+                        show petisco sql models.
+  -declarative-base DECLARATIVE_BASE, --declarative-base DECLARATIVE_BASE
+                        path to DeclarativeBase, a class to gather all the SQL models
   --application APPLICATION
                         Module path (default app.application)
 ```
@@ -136,6 +140,8 @@ $ petisco-dev --configurers
 
 ### Show SQL Models
 
+To show SQL models inheriting from `petisco.extra.sqlalchemy.SqlBase` use the following command:
+
 <div class="termy">
 ```console
 $ petisco-dev --sql-models
@@ -145,5 +151,18 @@ $ petisco-dev --sql-models
 │     SqlUser │ app/src/infrastructure/models/sql_user.py    │
 │   SqlClient │ app/src/infrastructure/models/sql_client.py  │
 └─────────────┴──────────────────────────────────────────────┘
+```
+</div>
+
+If you want to specify your own implementation of your `DeclarativeBase` just pass the path to your extension
+
+<div class="termy">
+```console
+$ petisco-dev --sql-models --declarative-base app.models.extended_declarative_base.ExtendedDeclarativeBase
+┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃         Model ┃ Filename                                     ┃
+┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│     OtherUser │ app/models/other_user.py                     │
+└───────────────┴──────────────────────────────────────────────┘
 ```
 </div>
