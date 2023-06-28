@@ -152,11 +152,13 @@ def show_configurers(application) -> None:
         console.print(table)
 
 
-def show_sql_models() -> None:
-    from petisco.extra.sqlalchemy import SqlBase
+def show_sql_models(declarative_base_path: str) -> None:
+    module_name, class_name = declarative_base_path.rsplit(".", 1)
+    module = importlib.import_module(module_name)
+    Base = getattr(module, class_name)
 
     info: list[dict[str, str]] = []
-    for sql_model in SqlBase.__subclasses__():
+    for sql_model in Base.__subclasses__():
         info.append(
             {
                 "name": sql_model.__name__,
@@ -214,6 +216,12 @@ def main() -> None:
         help="show petisco sql models.",
     )
     parser.add_argument(
+        "-declarative-base",
+        "--declarative-base",
+        default="petisco.extra.sqlalchemy.SqlBase",
+        help="path to DeclarativeBase, a class to gather all the SQL models",
+    )
+    parser.add_argument(
         "--application",
         default="app.application",
         help="Module path (default app.application)",
@@ -241,5 +249,5 @@ def main() -> None:
             return
 
         if args.sql_models:
-            show_sql_models()
+            show_sql_models(args.declarative_base)
             return

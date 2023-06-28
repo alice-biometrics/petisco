@@ -13,9 +13,6 @@ def get_key(base_type: type[T], alias: str | None = None) -> str:
     return base_type.__name__ if not alias else alias
 
 
-InitializationArguments = dict[str, dict[str, Any]]
-
-
 @dataclass
 class _Databases:
     def __init__(self) -> None:
@@ -76,7 +73,7 @@ class _Databases:
                 raise IndexError(f"Database cannot be removed. {key} does not exists")
 
     def initialize(
-        self, initialization_arguments: InitializationArguments | None = None
+        self, initialization_arguments: dict[str, dict[str, Any]] | None = None
     ) -> None:
         for database in self._databases.values():
             if isinstance(database, AsyncDatabase):
@@ -92,7 +89,7 @@ class _Databases:
                 database.initialize()
 
     async def async_initialize(
-        self, initialization_arguments: InitializationArguments | None = None
+        self, initialization_arguments: dict[str, dict[str, Any]] | None = None
     ) -> None:
         for database in self._databases.values():
             if isinstance(database, AsyncDatabase):
@@ -120,7 +117,7 @@ class _Databases:
         for database in databases_.values():
             database.clear_data()
 
-    def clear(self):
+    def clear(self) -> None:
         self._databases = {}
 
 
