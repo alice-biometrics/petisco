@@ -70,7 +70,9 @@ class RabbitMqDomainEventBus(DomainEventBus):
         except Exception as exc:  # noqa
             if not self.fallback:
                 raise exc
-            logger.opt(exception=True).error(f"Error publishing events ({len(domain_events)} of type {domain_events[0].get_message_type()}). Reverting to fallback. Exception:")
+            logger.opt(exception=True).error(
+                f"Error publishing events ({len(domain_events)} of type {domain_events[0].get_message_type()}). Reverting to fallback. Exception:"
+            )
             unpublished_domain_events = [
                 event for event in domain_events if event not in published_domain_event
             ]
