@@ -46,7 +46,6 @@ class Application(BaseSettings):
     def configure(
         self, testing: bool = False, overwrite_dependencies: bool = False
     ) -> None:
-
         before_dependencies_configurers = [
             configurer
             for configurer in self.configurers

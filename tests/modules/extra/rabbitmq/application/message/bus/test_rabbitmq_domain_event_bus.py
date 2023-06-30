@@ -70,7 +70,6 @@ class TestRabbitMqDomainEventBus:
 
     @testing_with_rabbitmq
     def should_publish_via_fallback_when_unexpected_exception(self):
-
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
         bus = RabbitMqDomainEventBusMother.default(
             fallback=mock_fallback_domain_event_bus
@@ -108,7 +107,6 @@ class TestRabbitMqDomainEventBus:
 
     @testing_with_rabbitmq
     def should_publish_list_via_fallback_when_unexpected_exception(self):
-
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
         bus = RabbitMqDomainEventBusMother.default(
             fallback=mock_fallback_domain_event_bus

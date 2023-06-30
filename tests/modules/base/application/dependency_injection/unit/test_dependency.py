@@ -12,7 +12,6 @@ from tests.modules.base.application.dependency_injection.unit.dummy_repositories
 @pytest.mark.unit
 class TestDependency:
     def should_return_default_instance(self):
-
         dependency = Dependency(
             BaseRepo,
             envar_modifier="REPOSITORY",
@@ -24,7 +23,6 @@ class TestDependency:
         self,
         monkeypatch,
     ):
-
         monkeypatch.setenv("REPOSITORY", "inmemory")
         dependency = Dependency(
             BaseRepo,
@@ -40,7 +38,6 @@ class TestDependency:
         self,
         monkeypatch,
     ):
-
         monkeypatch.setenv("REPOSITORY", "other")
         dependency = Dependency(
             BaseRepo,
@@ -53,7 +50,6 @@ class TestDependency:
         monkeypatch.undo()
 
     def should_return_default_when_optional_parameters_are_not_used(self):
-
         dependency = Dependency(BaseRepo, builders={"default": Builder(MyRepo)})
 
         assert isinstance(dependency.get_instance(), MyRepo)
@@ -62,7 +58,6 @@ class TestDependency:
         self,
         monkeypatch,
     ):
-
         monkeypatch.setenv("REPOSITORY", "other")
         dependency = Dependency(
             BaseRepo,
@@ -75,7 +70,6 @@ class TestDependency:
         monkeypatch.undo()
 
     def should_return_typed_default_instance(self):
-
         dependency = Dependency(BaseRepo, builders={"default": Builder(MyRepo)})
 
         instance = dependency.get_instance()
@@ -86,14 +80,12 @@ class TestDependency:
     def should_raise_error_when_default_builder_type_is_not_a_subclass_of_generic_type(
         self,
     ):
-
         dependency = Dependency(BaseRepo, builders={"default": Builder(str)})
 
         with pytest.raises(TypeError):
             dependency.get_instance()
 
     def should_raise_error_when_builder_type_is_not_a_subclass_of_generic_type(self):
-
         dependency = Dependency(
             BaseRepo,
             builders={
@@ -109,7 +101,6 @@ class TestDependency:
     def should_not_raise_error_when_builder_type_is_not_a_subclass_of_generic_type_with_strict_false(
         self,
     ):
-
         dependency = Dependency(
             BaseRepo,
             builders={
@@ -123,7 +114,6 @@ class TestDependency:
         dependency.get_instance()
 
     def should_check_default_envar_modifier(self):
-
         dependency = Dependency(BaseRepo, builders={"default": Builder(MyRepo)})
 
         assert dependency.envar_modifier == "BASE_REPO_TYPE"

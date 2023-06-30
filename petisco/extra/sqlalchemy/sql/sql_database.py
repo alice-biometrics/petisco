@@ -23,7 +23,6 @@ SqlSessionScope = Callable[..., ContextManager[Session]]
 
 
 class SqlDatabase(Database[Session]):
-
     session_factory: sessionmaker | None = None
 
     def __init__(

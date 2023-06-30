@@ -17,7 +17,6 @@ class TaskId(Uuid):
 
 @pytest.mark.unit
 def test_uuid_inheritance_should_success_when_construct_and_serialize_with_inner_value():
-
     task_id = TaskId(value="4E6660D7-B037-4C75-Adc8-272D62944Abb")
 
     assert task_id.value == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
@@ -26,7 +25,6 @@ def test_uuid_inheritance_should_success_when_construct_and_serialize_with_inner
 
 @pytest.mark.unit
 def test_uuid_inheritance_should_success_when_use_a_legacy_value_allowed_in_specific_validator():
-
     task_id = TaskId(value="SFHem4THDVnNNQjL447Phieh4rst")
 
     assert task_id.value == "SFHem4THDVnNNQjL447Phieh4rst"
@@ -35,7 +33,6 @@ def test_uuid_inheritance_should_success_when_use_a_legacy_value_allowed_in_spec
 
 @pytest.mark.unit
 def test_uuid_inheritance_should_fail_when_input_is_not_a_valid_uuid():
-
     with pytest.raises(InvalidUuid) as excinfo:
         TaskId(value="non-uuid")
 
@@ -44,7 +41,6 @@ def test_uuid_inheritance_should_fail_when_input_is_not_a_valid_uuid():
 
 @pytest.mark.unit
 def test_uuid_inheritance__should_fail_when_input_is_not_a_valid_uuid_with_classmethod():
-
     with pytest.raises(InvalidUuid) as excinfo:
         TaskId.from_value("non-uuid")
 

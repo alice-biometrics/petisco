@@ -21,7 +21,6 @@ from petisco.base.misc.builder import Builder
 
 
 def get_default_message_dependencies() -> List[Dependency]:
-
     return [
         Dependency(
             DomainEventBus,

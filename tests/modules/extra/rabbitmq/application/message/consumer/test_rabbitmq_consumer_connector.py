@@ -29,7 +29,6 @@ class TestRabbitMqConsumerConnector:
 
     @testing_with_rabbitmq
     def should_get_channel(self):
-
         connector = RabbitMqConsumerConnector(self.channel)
 
         channel = connector.get_channel("test-channel")

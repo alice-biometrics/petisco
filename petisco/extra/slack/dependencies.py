@@ -9,7 +9,6 @@ from petisco.base.misc.builder import Builder
 
 
 def get_default_notifier_dependencies() -> List[Dependency]:
-
     return [
         Dependency(
             Notifier,

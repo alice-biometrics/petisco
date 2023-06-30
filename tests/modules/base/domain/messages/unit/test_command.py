@@ -24,7 +24,6 @@ COMMANDS = [
 class TestCommand:
     @pytest.mark.parametrize("command", COMMANDS)
     def should_create_command_input_and_output(self, command: Command):  # noqa
-
         command_json = command.json()
 
         retrieved_command = MyCommand.from_json(command_json)
@@ -45,7 +44,6 @@ class TestCommand:
         assert command.my_specific_value == retrieved_command.my_specific_value
 
     def should_create_command_with_required_values(self):  # noqa
-
         command = MyCommand(my_specific_value="whatever")
 
         assert hasattr(command, "my_specific_value")

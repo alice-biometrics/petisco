@@ -146,11 +146,9 @@ class RabbitMqMessageConsumer(MessageConsumer):
         """
 
         for SubscriberClass in subscribers:
-
             subscriber: MessageSubscriber = SubscriberClass()
 
             for subscriber_info in subscriber.get_message_subscribers_info():
-
                 if subscriber_info.message_type == "message":
                     self._add_subscriber_instance_on_queue(
                         queue_name="store", subscriber=subscriber, is_store=True
@@ -173,7 +171,6 @@ class RabbitMqMessageConsumer(MessageConsumer):
         """
         instance_subscriber: MessageSubscriber = subscriber()
         for subscriber_info in instance_subscriber.get_message_subscribers_info():
-
             queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
                 subscriber_info, exchange_name=self.exchange_name
             )
@@ -317,7 +314,6 @@ class RabbitMqMessageConsumer(MessageConsumer):
         body: bytes,
         is_store: bool,
     ) -> ConsumerDerivedAction:
-
         if self.has_been_redelivered_too_much(properties):
             derived_action = self.send_to_dead_letter(ch, method, properties, body)
         else:
