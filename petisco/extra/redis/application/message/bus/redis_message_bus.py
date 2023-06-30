@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 
+from loguru import logger
 from redis.client import Redis
 from redis.cluster import RedisCluster
 from redis.exceptions import RedisError
@@ -48,6 +49,9 @@ class RedisMessageBus(MessageBus):
                 pipe.lpush(self.database_name, *data)
                 pipe.execute()
         except (TimeoutError, ConnectionError, RedisError) as ex:
+            logger.opt(exception=True).error(
+                f"Error publishing events ({len(messages)} of type {messages[0].name}). Exception:"
+            )
             raise CriticalError(additional_info={"error message": str(ex)})
 
     def _get_formatted_data(self, message: Message):

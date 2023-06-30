@@ -1,6 +1,7 @@
 from typing import List, Union
 
 from deprecation import deprecated
+from loguru import logger
 from pika.exceptions import ChannelClosedByBroker
 
 from petisco import __version__
@@ -71,7 +72,9 @@ class RabbitMqDomainEventBus(DomainEventBus):
         except Exception as exc:  # noqa
             if not self.fallback:
                 raise exc
-
+            logger.opt(exception=True).error(
+                f"Error publishing events ({len(domain_events)} of type {domain_events[0].name}). Reverting to fallback. Exception:"
+            )
             unpublished_domain_events = [
                 event for event in domain_events if event not in published_domain_event
             ]
