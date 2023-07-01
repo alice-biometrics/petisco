@@ -80,7 +80,6 @@ class TestRabbitMqMessageConfigurer:
 
     @testing_with_rabbitmq
     def should_configure_queues_to_resist_the_absence_of_consumers(self):
-
         configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
         configurer.configure_subscribers(self.subscribers)
 

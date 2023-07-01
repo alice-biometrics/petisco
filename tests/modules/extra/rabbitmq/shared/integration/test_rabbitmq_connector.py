@@ -36,7 +36,6 @@ class TestRabbitMqConnector:
 
     @testing_with_rabbitmq
     def should_get_an_open_connection(self):
-
         connector = RabbitMqConnector()
 
         connection = connector.get_connection("test")
@@ -53,7 +52,6 @@ class TestRabbitMqConnector:
     def should_raise_a_connection_error_exception_when_input_envvars_are_not_valid(
         self,
     ):
-
         connector = RabbitMqConnector()
         original_host = connector.host
         connector.host = "invalid"
@@ -69,7 +67,6 @@ class TestRabbitMqConnector:
     def should_raise_a_connection_error_exception_when_retries_and_is_not_possible_to_obtain_an_open_connection(
         self,
     ):
-
         connector = RabbitMqConnector()
         original_wait_seconds_retry = connector.wait_seconds_retry
         connector.wait_seconds_retry = 0.1
@@ -91,7 +88,6 @@ class TestRabbitMqConnector:
 
     @testing_with_rabbitmq
     def should_recover_from_connection_closed(self):
-
         connector = RabbitMqConnector()
 
         connection = connector.get_connection("test")
@@ -145,7 +141,6 @@ class TestRabbitMqConnector:
 
     @testing_with_rabbitmq
     def should_close_all_connections(self):
-
         connector = RabbitMqConnector()
 
         for key_connection in ["key1", "key2", "key3"]:

@@ -27,7 +27,6 @@ from tests.modules.extra.testing_decorators import testing_with_rabbitmq
 class TestRabbitMqMessageConsumerStartAndStop:
     @testing_with_rabbitmq
     def should_publish_consume_from_store_queue_from_rabbitmq_with_stop_and_start(self):
-
         spy = SpyMessages()
 
         def assert_consumer_event_store(domain_event: DomainEvent) -> BoolResult:
@@ -70,7 +69,6 @@ class TestRabbitMqMessageConsumerStartAndStop:
 
     @testing_with_rabbitmq
     def should_unsubscribe_and_resume_handler_on_store_queue(self):
-
         spy = SpyMessages()
         spy_dead_letter = SpyMessages()
 
@@ -135,7 +133,6 @@ class TestRabbitMqMessageConsumerStartAndStop:
 
     @testing_with_rabbitmq
     def should_unsubscribe_and_resume_handler_on_dead_letter_store_queue(self):
-
         spy_dead_letter = SpyMessages()
 
         def assert_consumer_event_store(domain_event: DomainEvent) -> BoolResult:

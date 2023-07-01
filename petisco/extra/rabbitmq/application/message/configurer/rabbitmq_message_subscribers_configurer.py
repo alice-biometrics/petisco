@@ -67,10 +67,8 @@ class RabbitMqMessageSubcribersConfigurer:
 
     def _delete_queues(self) -> None:
         for SubscriberClass in self._configured_subscribers:
-
             subscriber = SubscriberClass()
             for subscriber_info in subscriber.get_message_subscribers_info():
-
                 if subscriber_info.message_type == "message":
                     # if subscriber_info is subscribed to message it will be consuming from store queue
                     break
@@ -104,7 +102,6 @@ class RabbitMqMessageSubcribersConfigurer:
         dead_letter_exchange_name: str,
         subscribers: List[Type[MessageSubscriber]],
     ) -> None:
-
         for SubscriberClass in subscribers:
             subscriber = SubscriberClass()
             for subscriber_info in subscriber.get_message_subscribers_info():

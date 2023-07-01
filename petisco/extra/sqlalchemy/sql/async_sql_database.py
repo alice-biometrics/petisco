@@ -21,7 +21,6 @@ AsyncSqlSessionScope = Callable[..., AsyncContextManager[AsyncSession]]
 
 
 class AsyncSqlDatabase(SqlDatabase, AsyncDatabase[AsyncSession]):
-
     async_session_factory: async_sessionmaker | None = None
 
     async def initialize(self, base: DeclarativeBase = SqlBase) -> None:
