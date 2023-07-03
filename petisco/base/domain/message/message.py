@@ -49,13 +49,9 @@ class Message(metaclass=MetaMessage):
     _message_type: str = "message"
 
     def __init__(self, **data: Any) -> None:
-        self._message_id: Uuid
-        self._message_name: str
-        self._message_version: int
-        self._message_occurred_on: datetime
-        self._message_attributes: dict[str, Any] = {}
-        self._message_meta: dict[str, Any] = {}
-        self._message_type: str = "message"
+        self._message_attributes = {}
+        self._message_meta = {}
+        self._message_typ = "message"
         self._set_data(**data)
 
     def _set_data(self, **kwargs: dict[str, Any] | None) -> None:
