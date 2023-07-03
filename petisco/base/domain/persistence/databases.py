@@ -113,7 +113,6 @@ class _Databases:
         if key is not None:
             if key not in self._databases:
                 raise IndexError(f"Database cannot clear the data. {key} not exists")
-            databases_ = [self._databases.get(key)]
         for database in databases_.values():
             database.clear_data()
 
