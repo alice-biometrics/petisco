@@ -51,7 +51,6 @@ class SQLModelCrudRepository(
 
     @meiga
     def save(self, aggregate_root: AggregateRootType) -> BoolResult:
-
         with Session(engine) as session:
             model = self.get_sql_model_type()
             statement = select(model).where(

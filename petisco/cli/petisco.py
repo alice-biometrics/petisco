@@ -15,7 +15,6 @@ def has_args(args: Any) -> bool:
 
 
 def rename_template(original_name: str, replacement: str) -> None:
-
     for dname, _, _ in os.walk("."):
         if original_name in dname:
             os.rename(dname, dname.replace(original_name, replacement))

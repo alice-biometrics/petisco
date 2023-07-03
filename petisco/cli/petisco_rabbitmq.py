@@ -139,7 +139,6 @@ def main() -> None:
         return
 
     if args.requeue:
-
         if not args.consuming_queue:
             print(" ➜ Not consuming queue given")
             return

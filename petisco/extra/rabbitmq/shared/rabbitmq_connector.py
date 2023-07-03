@@ -78,7 +78,6 @@ class RabbitMqConnector(metaclass=Singleton):
         return channel
 
     def _create_connection(self, key_connection: str) -> BlockingConnection:
-
         connection = self._create_blocking_connection(key_connection)
 
         self._wait_for_open_connection(connection, key_connection)

@@ -14,7 +14,7 @@ class ValueObject(BaseModel):
     It is small object that represents a simple entity whose equality is not based on identity.
     """
 
-    value: Any
+    value: Any = None
 
     def __init__(self, value: Any, **data: Any) -> None:
         super().__init__(value=value, **data)
@@ -39,8 +39,8 @@ class ValueObject(BaseModel):
         return value
 
     @staticmethod
-    def serializer(attribute_name: str):
-        def _serializer(value_object: ValueObject):
+    def serializer(attribute_name: str) -> Any:
+        def _serializer(value_object: ValueObject) -> Any:
             if value_object:
                 return value_object.value
 

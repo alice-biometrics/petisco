@@ -5,7 +5,6 @@ __all__ = ["get_default_message_dependencies"]
 
 
 if is_pika_available():
-
     from petisco.extra.rabbitmq.application.chaos.rabbitmq_message_chaos import (
         RabbitMqMessageChaos,
     )

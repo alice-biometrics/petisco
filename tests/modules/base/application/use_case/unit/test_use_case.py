@@ -41,7 +41,6 @@ class TestUseCase:
     def should_return_failure_result_when_raise_an_uncontrolled_error_with_executor_and_traceback(
         self,
     ):
-
         expected_exception = TypeError("whatever")
 
         class MyUseCase(UseCase):
@@ -91,7 +90,6 @@ class TestUseCase:
             MyUseCase().other_method()
 
     def should_raise_an_exception_if_execute_method_is_not_implemented(self):
-
         with pytest.raises(NotImplementedError) as excinfo:
 
             class MyUseCase(UseCase):

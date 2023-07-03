@@ -53,7 +53,6 @@ DEFAULT_AVAILABLE_DEPENDENCIES = [
 class TestApplication:
     @testing_with_empty_container
     def should_construct_from_required_variables(self):
-
         deployed_at = datetime(year=2021, month=10, day=25, hour=11, minute=11)
 
         application = Application(
@@ -82,7 +81,6 @@ class TestApplication:
 
     @testing_with_empty_container
     def should_construct_and_configure_with_testing_variable(self):
-
         Application(
             name="service",
             version="1.0.0",
@@ -94,7 +92,6 @@ class TestApplication:
 
     @testing_with_empty_container
     def should_construct_and_instantiate_application_info_singleton(self):
-
         Application(
             name="service",
             version="1.0.0",
@@ -256,7 +253,6 @@ class TestApplication:
 
     @testing_with_empty_container
     def should_construct_and_configure_with_two_provided_dependencies(self):
-
         deployed_at = datetime(year=2021, month=10, day=25, hour=11, minute=11)
 
         def dependencies_provider() -> list[Dependency]:

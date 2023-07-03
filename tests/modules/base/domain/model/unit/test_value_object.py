@@ -12,7 +12,6 @@ class TestValueObject:
         "expected_value", ["any", 1, 0.3, ["1", ["2"]], {"any": 1}]
     )
     def should_construct_and_serialize_with_inner_value(self, expected_value):  # noqa
-
         value_object = ValueObject(value=expected_value)
         assert value_object.value == expected_value
         assert value_object.dict() == expected_value
@@ -32,7 +31,6 @@ class TestValueObject:
         "expected_value", ["any", 1, 0.3, ["1", ["2"]], {"any": 1}]
     )
     def should_equal_when_values_are_equals(self, expected_value):  # noqa
-
         value_object = ValueObject(value=expected_value)
         other = ValueObject(value=expected_value)
 
