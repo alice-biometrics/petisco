@@ -52,5 +52,5 @@ class Controller(metaclass=MetaController):
         )
 
     @abstractmethod
-    def execute(self, *args: tuple[str, ...], **kwargs: dict[str, Any]) -> AnyResult:
+    def execute(self, *args: Any, **kwargs: Any) -> AnyResult:
         return NotImplementedMethodError

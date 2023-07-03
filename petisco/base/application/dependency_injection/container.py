@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+from abc import ABC
 from collections import defaultdict
 from typing import Generic, TypeVar
 
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.misc.singleton import Singleton
 
-T = TypeVar("T")
+T = TypeVar("T", bound=ABC)
 
 
 class Container(Generic[T], metaclass=Singleton):
