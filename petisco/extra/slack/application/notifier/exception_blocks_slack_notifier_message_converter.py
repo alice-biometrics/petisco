@@ -114,7 +114,6 @@ class ExceptionBlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter
         return error_block
 
     def convert(self, notifier_exception_message: NotifierExceptionMessage):
-
         blocks = []
         header_block = self._create_header_block(notifier_exception_message.title)
         message_block = self._create_message_block(notifier_exception_message)

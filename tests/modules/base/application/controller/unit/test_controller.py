@@ -98,7 +98,6 @@ class TestController:
         assert result.transform() == HttpError(status_code=404)
 
     def should_return_transformed_by_shared_error_map(self):  # noqa
-
         expected_http_error = HttpError(status_code=425)
 
         class MySharedError(DomainError):
@@ -121,7 +120,6 @@ class TestController:
     def should_return_transformed_with_priority_for_controller_error_map_instead_of_shared(
         self,
     ):  # noqa
-
         expected_http_error = HttpError(status_code=460)
         not_expected_http_error = HttpError(status_code=404)
 

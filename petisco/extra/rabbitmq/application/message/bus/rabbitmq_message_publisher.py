@@ -20,7 +20,6 @@ class RabbitMqMessagePublisher:
         message: Message,
         routing_key: Union[str, None] = None,
     ) -> None:
-
         if routing_key is None:
             routing_key = RabbitMqMessageQueueNameFormatter.format(
                 message, exchange_name=self._exchange_name

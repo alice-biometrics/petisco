@@ -56,7 +56,6 @@ class Dependency(Generic[T]):
             )
 
     def _set_envar_modifier(self, envar_modifier: str | None = None):
-
         if envar_modifier is None and self.type:
             return (
                 # "PETISCO_" + # TODO this will break compatibility (waiting for v2)
@@ -71,7 +70,6 @@ class Dependency(Generic[T]):
             if self.builders is None:
                 return
             for key, builder in self.builders.items():
-
                 klass = builder.klass
                 if hasattr(builder.klass, "__origin__"):
                     klass = builder.klass.__origin__
