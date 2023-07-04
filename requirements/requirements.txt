@@ -13,4 +13,4 @@ slackclient==2.5.0
 validators==0.15.0
 python-dateutil==2.8.1
 elastic-apm>=6.9.1,<7
-Werkzeug>=2.2.3,<3
+Werkzeug>=2.2.3,<3 # security
