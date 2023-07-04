@@ -5,9 +5,8 @@ from attr import dataclass
 from meiga import BoolResult, Error, Result, Success, isSuccess
 from meiga.decorators import meiga
 
-from petisco import Uuid, ValueObject, databases
-from petisco.extra.sqlalchemy import SqlDatabase
-from petisco.extra.sqlalchemy.sql.base_sql_repository import BaseSqlRepository
+from petisco import Uuid, ValueObject
+from petisco.extra.sqlalchemy.sql.sql_repository import SqlRepository
 from tests.modules.extra.sqlalchemy.ymls.sql.models import ClientModel, UserModel
 
 BASE_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../ymls/"
@@ -80,10 +79,7 @@ class Client:
         return Client(ClientId(kdict.get("client_id")), kdict.get("name"))
 
 
-class MyUserSqlRepository(BaseSqlRepository):
-    def __init__(self):
-        self.session_scope = databases.get(SqlDatabase).get_session_scope()
-
+class MyUserSqlRepository(SqlRepository):
     @meiga
     def save(self, user: User) -> BoolResult:
         with self.session_scope() as session:
@@ -141,10 +137,7 @@ class MyUserSqlRepository(BaseSqlRepository):
             return Success(users)
 
 
-class MyClientSqlRepository(BaseSqlRepository):
-    def __init__(self):
-        self.session_scope = databases.get(SqlDatabase).get_session_scope()
-
+class MyClientSqlRepository(SqlRepository):
     @meiga
     def save(self, client: Client) -> BoolResult:
         with self.session_scope() as session:

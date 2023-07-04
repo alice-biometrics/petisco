@@ -11,9 +11,17 @@ from petisco.base.domain.errors.defaults.not_found import (
     AggregateNotFoundError,
     AggregatesNotFoundError,
 )
+from petisco.base.domain.persistence.databases import databases
+from petisco.extra.elastic.elastic_database import ElasticDatabase, ElasticSessionScope
 
 
-class BaseSqlRepository(Repository):
+class ElasticRepository(Repository):
+    session_scope: ElasticSessionScope
+
+    def __init__(self, database_alias: str):
+        database = databases.get(ElasticDatabase, alias=database_alias)
+        self.session_scope = database.get_session_scope()
+
     @classmethod
     def fail_if_aggregate_already_exist(
         cls, model: Any, aggregate_id: Uuid, result_error: Union[Error, None] = None

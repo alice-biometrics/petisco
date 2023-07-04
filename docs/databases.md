@@ -125,16 +125,13 @@ Once databases are initialized (after `databases.initializes()`), we should be r
 Let's overview how to use it through a repository implementation. Note that uses `databases` instance to retrieve the 
 `get_session_scope` for the specified database name.
 
-```python hl_lines="12 13 14 15"
-from typing import Callable, ContextManager
-
+```python hl_lines="9 10 11 12"
 from meiga import BoolResult, early_return, isSuccess
-from petisco import databases
-from sqlalchemy.orm import Session
+from petisco import databases, Repository
 from app.src.models import SqlUser, User
 
 
-class SqlUserRepository(BaseRepository):
+class SqlUserRepository(Repository):
     session_scope: SqlSessionScope
 
     def __init__(self):
@@ -150,6 +147,31 @@ class SqlUserRepository(BaseRepository):
         return isSuccess
     ...
 ```
+
+If you inherit from `SqlRepository` or `ElasticRepository` you don't need to define the session scope and the 
+`__init__` constructor:
+
+```python hl_lines="6 17 18"
+from meiga import BoolResult, early_return, isSuccess
+from petisco.extra.sqlalchemy import SqlRepository
+from app.src.models import SqlUser, User
+
+
+class SqlUserRepository(SqlRepository):
+
+    @early_return
+    def save(self, user: User) -> BoolResult:
+        with self.session_scope() as session:
+            sql_user = SqlUser.from_domain(user)
+            session.add(sql_user)
+        return isSuccess
+    ...
+
+
+# `DATABASE_NAME = "petisco-sql"` -> same as defined in the configuration 
+sql_user_repository = SqlUserRepository(database_alias=DATABASE_NAME)
+```
+
 
 
 

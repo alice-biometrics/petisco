@@ -11,6 +11,7 @@ if is_elastic_available():
         ElasticDatabase,
         ElasticSessionScope,
     )
+    from petisco.extra.elastic.elastic_repository import ElasticRepository
     from petisco.extra.elastic.legacy_elastic_database import LegacyElasticDatabase
 
     elastic = [
@@ -20,6 +21,7 @@ if is_elastic_available():
         "AsyncElasticDatabase",
         "ElasticSessionScope",
         "AsyncElasticSessionScope",
+        "ElasticRepository",
     ]
 else:
     elastic = []
