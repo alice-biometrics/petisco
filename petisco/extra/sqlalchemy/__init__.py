@@ -12,6 +12,7 @@ if is_sqlalchemy_available():
     from petisco.extra.sqlalchemy.sql.sql_base import SqlBase
     from petisco.extra.sqlalchemy.sql.sql_database import SqlDatabase, SqlSessionScope
     from petisco.extra.sqlalchemy.sql.sql_executor import SqlExecutor
+    from petisco.extra.sqlalchemy.sql.sql_repository import SqlRepository
     from petisco.extra.sqlalchemy.sql.sqlite.legacy_sqlite_database import (
         LegacySqliteDatabase,
     )
@@ -28,6 +29,7 @@ if is_sqlalchemy_available():
         "SqlSessionScope",
         "AsyncSqlSessionScope",
         "SqlBase",
+        "SqlRepository",
     ]
 else:
     __all__ = []
