@@ -3,8 +3,13 @@ from __future__ import annotations
 import json
 import re
 from datetime import datetime
-from typing import Any, Dict, cast
+from typing import Any, cast
 
+from pydantic import BaseModel, model_validator
+
+from petisco.base.domain.message.legacy.use_legacy_implementation import (
+    USE_LEGACY_IMPLEMENTATION,
+)
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
 
@@ -16,71 +21,48 @@ def get_version(config: dict[str, Any] | None) -> int:
     return version
 
 
-def get_message_name(namespace: dict[str, Any]) -> str:
-    message_name = namespace.get("__qualname__", "message")
-
-    if ".<locals>." in message_name:
-        message_name = message_name.split(".<locals>.")[-1]
-
-    return re.sub(r"(?<!^)(?=[A-Z])", "_", message_name).lower().replace("_", ".")
-
-
-class MetaMessage(type):
-    def __new__(
-        mcs, name: str, bases: tuple[Any], namespace: dict[str, Any]
-    ) -> MetaMessage:
-        config = namespace.get("Config")
-
-        namespace["_message_version"] = get_version(config)
-        namespace["_message_name"] = get_message_name(namespace)
-        namespace["_message_attributes"] = {}
-        namespace["_message_meta"] = {}
-
-        return super().__new__(mcs, name, bases, namespace)
-
-
-class Message(metaclass=MetaMessage):
-    _message_id: Uuid
+class Message(BaseModel):
+    _message_id: Uuid = Uuid.v4()
     _message_name: str
-    _message_version: int
-    _message_occurred_on: datetime
-    _message_attributes: dict[str, Any]
-    _message_meta: dict[str, Any]
+    _message_version: int = 1
+    _message_occurred_on: datetime = datetime.utcnow()
+    _message_attributes: dict[str, Any] = dict()
+    _message_meta: dict[str, Any] = dict()
     _message_type: str = "message"
+    _message_formatted_message: dict[str, Any] = None
 
-    def __init__(self, **data: Any) -> None:
-        self._message_attributes = {}
-        self._message_meta = {}
-        self._message_typ = "message"
-        self._set_data(**data)
+    @model_validator(mode="before")
+    def validate_model(cls, values: dict[str, Any]) -> dict[str, Any]:
+        print(f"validate_model: {values}")
 
-    def _set_data(self, **kwargs: dict[str, Any] | None) -> None:
-        if kwargs:
-            self._message_id = (
-                Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
-            )
-            self._message_name = str(kwargs.get("type"))
-            self._message_version = int(kwargs.get("version", 1))
-            self._message_occurred_on = (
-                datetime.strptime(str(kwargs.get("occurred_on")), TIME_FORMAT)
-                if kwargs.get("occurred_on")
-                else datetime.now()
-            )
-            self._message_attributes = cast(Dict[str, Any], kwargs.get("attributes"))
-            self._message_meta = cast(Dict[str, Any], kwargs.get("meta"))
-            self._message_type = str(kwargs.get("type_message", "message"))
-            for key, value in self._message_attributes.items():
-                setattr(self, key, value)
+        # formatted_message = values.get("formatted_message")
+        # if formatted_message:
+        #     cls._message_formatted_message = formatted_message
+        #     values.pop("formatted_message")
+
+        attributes = values
+        print(f"{attributes=}")
+        cls._message_attributes = attributes
+
+        return attributes
+
+    def model_post_init(self, __context: Any) -> None:
+        print("model_post_init")
+
+        if self._message_formatted_message:
+            print("_message_formatted_message exist")
+            self._update_from_formatted_message()
         else:
-            self._message_id = Uuid.v4()
-            self._message_occurred_on = datetime.utcnow()
+            print("_message_formatted_message dont exist")
 
-    def _set_attributes(self, **data: Any) -> None:
-        if self._message_attributes is None:
-            self._message_attributes = {}
-        for k in data:
-            self._message_attributes[k] = data[k]
-            setattr(self, k, data[k])
+        if not hasattr(self, "_message_name"):
+            self._message_name = (
+                re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__)
+                .lower()
+                .replace("_", ".")
+            )
+        if hasattr(self, "Config"):
+            self._message_version = get_version(self.Config)
 
     def add_meta(self, meta: dict[str, Any]) -> None:
         self._message_meta = meta
@@ -89,7 +71,7 @@ class Message(metaclass=MetaMessage):
         if not meta:
             return self
 
-        if not isinstance(meta, Dict):
+        if not isinstance(meta, dict):
             raise TypeError("Message.update_meta() expect a dict")
         if self._message_meta:
             self._message_meta = {**self._message_meta, **meta}
@@ -97,28 +79,7 @@ class Message(metaclass=MetaMessage):
             self._message_meta = meta
         return self
 
-    @staticmethod
-    def from_dict(message_data: dict[str, Any]) -> Message:
-        data = cast(Dict[str, Any], message_data.get("data"))
-        return Message(**data)
-
-    @staticmethod
-    def from_json(message_json: str | bytes) -> Message:
-        event_dict = json.loads(message_json)
-        return Message.from_dict(event_dict)
-
-    def _get_serialized_attributes(self) -> dict[str, Any]:
-        attributes = {}
-        for key, attribute in self._message_attributes.items():
-            serialized_value = attribute
-            if isinstance(attribute, ValueObject):
-                serialized_value = attribute.value
-            if isinstance(attribute, datetime):
-                serialized_value = attribute.strftime(TIME_FORMAT)
-            attributes[key] = serialized_value
-        return attributes
-
-    def dict(self) -> dict[str, dict[str, Any]]:
+    def format(self) -> dict[str, dict[str, Any]]:
         data = {
             "data": {
                 "id": self._message_id.value,
@@ -132,40 +93,70 @@ class Message(metaclass=MetaMessage):
         }
         return data
 
-    def to_str(self, class_name: str = "Message", type: str = "message") -> str:
-        return f"{class_name} [{self._message_id.value} ({type}), {self._message_name} (v{self._message_version}), {self._message_occurred_on}, attributes={self._message_attributes}]"
+    @classmethod
+    def from_format(cls, formatted_message: dict[str, Any] | str | bytes) -> Message:
+        if not isinstance(formatted_message, dict):
+            formatted_message = json.loads(formatted_message)
+        data = cast(dict[str, Any], formatted_message.get("data"))
+        attributes = data.get("attributes", dict())
+        # attributes.update({"formatted_message": data})
 
-    def json(self) -> str:
-        return json.dumps(self.dict())
+        # data = message_data.get("data")
+        # domain_event = target_type()
+        message = cls(**attributes)
+        message._message_formatted_message = data
+        message._update_from_formatted_message()
+        return message
+
+    def _get_serialized_attributes(self) -> dict[str, Any]:
+        attributes = {}
+        for key, attribute in self._message_attributes.items():
+            serialized_value = attribute
+            if isinstance(attribute, ValueObject):
+                serialized_value = attribute.value
+            if isinstance(attribute, datetime):
+                serialized_value = attribute.strftime(TIME_FORMAT)
+            attributes[key] = serialized_value
+        return attributes
+
+    def _update_from_formatted_message(self) -> None:
+        kwargs = self._message_formatted_message
+        print("Message _update_from_formatted_message")
+        self._message_id = (
+            Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
+        )
+        self._message_name = str(kwargs.get("type"))
+        self._message_version = int(kwargs.get("version", 1))
+        self._message_occurred_on = (
+            datetime.strptime(str(kwargs.get("occurred_on")), TIME_FORMAT)
+            if kwargs.get("occurred_on")
+            else datetime.now()
+        )
+
+        attributes = kwargs.get("attributes", dict())
+        self._message_attributes = cast(dict[str, Any], attributes)
+        # for k in attributes:
+        #     self._message_attributes[k] = attributes[k]
+        #     setattr(self, k, attributes[k])
+
+        self._message_meta = cast(dict[str, Any], kwargs.get("meta"))
+        self._message_type = str(kwargs.get("type_message", "message"))
+        # for key, value in self._message_attributes.items():
+        #     setattr(self, key, value)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Message):
             return False
-        return self.dict() == other.dict()
+        return self.format() == other.format()
 
     def __str__(self) -> str:
         return self.__repr__()
 
     def __repr__(self) -> str:
-        return self.to_str()
+        return f"{self._message_type} [{self._message_id.value} ({self._message_type}), {self._message_name} (v{self._message_version}), {self._message_occurred_on}, attributes={self._message_attributes}]"
 
-    def get_message_id(self) -> Uuid:
-        return self._message_id
 
-    def get_message_name(self) -> str:
-        return self._message_name
+if USE_LEGACY_IMPLEMENTATION is True:
+    from petisco.base.domain.message.legacy.legacy_message import LegacyMessage  # noqa
 
-    def get_message_version(self) -> int:
-        return self._message_version
-
-    def get_message_occurred_on(self) -> datetime:
-        return self._message_occurred_on
-
-    def get_message_attributes(self) -> dict[str, Any]:
-        return self._message_attributes
-
-    def get_message_meta(self) -> dict[str, Any]:
-        return self._message_meta
-
-    def get_message_type(self) -> str:
-        return self._message_type
+    Message = LegacyMessage  # noqa

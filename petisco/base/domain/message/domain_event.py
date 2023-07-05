@@ -1,42 +1,20 @@
-from __future__ import annotations
+from typing import Any
 
-import json
-from typing import Any, TypeVar
-
+from petisco.base.domain.message.legacy.use_legacy_implementation import (
+    USE_LEGACY_IMPLEMENTATION,
+)
 from petisco.base.domain.message.message import Message
-
-T = TypeVar("T", bound="DomainEvent")
 
 
 class DomainEvent(Message):
-    """
-    A base class to model your domain events.
-    Define your Domain Events to express what happened in your domain.
-    """
-
-    def __init__(self, **data: Any) -> None:
-        super().__init__()
-        self._set_attributes(**data)
+    def model_post_init(self, __context: Any) -> None:
         self._message_type = "domain_event"
+        super().model_post_init(__context)
 
-    @staticmethod
-    def from_dict(
-        message_data: dict[str, Any],
-        target_type: type[T] | None = None,
-    ) -> T:
-        target_type = DomainEvent if target_type is None else target_type
-        data = message_data.get("data")
-        domain_event = target_type()
-        domain_event._set_data(**data)  # type: ignore
-        return domain_event
 
-    @staticmethod
-    def from_json(
-        message_json: str | bytes,
-        target_type: type[T] | None = None,
-    ) -> T:
-        event_dict = json.loads(message_json)
-        return DomainEvent.from_dict(event_dict, target_type)
+if USE_LEGACY_IMPLEMENTATION is True:
+    from petisco.base.domain.message.legacy.legacy_domain_event import (  # noqa
+        LegacyDomainEvent,
+    )
 
-    def __repr__(self) -> str:
-        return self.to_str(class_name="DomainEvent", type="domain_event")
+    DomainEvent = LegacyDomainEvent  # noqa

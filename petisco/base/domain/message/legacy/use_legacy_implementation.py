@@ -1,0 +1,3 @@
+import os
+
+USE_LEGACY_IMPLEMENTATION = os.getenv("PETISCO_MESSAGE_AS_PYDANTIC_MODEL") == "disable"
