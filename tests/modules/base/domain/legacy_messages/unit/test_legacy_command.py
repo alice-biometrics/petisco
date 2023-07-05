@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from petisco import Uuid
-from petisco.base.domain.message.legacy_command import LegacyCommand
+from petisco.base.domain.message.legacy.legacy_command import LegacyCommand
 from tests.modules.base.domain.legacy_messages.unit.legacy_commands import (
     AttributesCommand,
     MostConflictingCommand,

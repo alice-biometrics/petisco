@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any, TypeVar
 
-from petisco.base.domain.message.legacy_message import LegacyMessage
+from petisco.base.domain.message.legacy.legacy_message import LegacyMessage
 
 T = TypeVar("T", bound="LegacyDomainEvent")
 

@@ -1,6 +1,6 @@
 import pytest
 
-from petisco.base.domain.message.legacy_message import LegacyMessage
+from petisco.base.domain.message.legacy.legacy_message import LegacyMessage
 
 
 class MyMessage(LegacyMessage):

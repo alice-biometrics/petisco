@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from petisco import Uuid
-from petisco.base.domain.message.legacy_domain_event import LegacyDomainEvent
+from petisco.base.domain.message.legacy.legacy_domain_event import LegacyDomainEvent
 from petisco.base.domain.message.message import TIME_FORMAT
 from tests.modules.base.domain.legacy_messages.unit.legacy_domain_events import (
     AttributesDomainEvent,

@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from petisco.base.domain.message.legacy_domain_event import LegacyDomainEvent
+from petisco.base.domain.message.legacy.legacy_domain_event import LegacyDomainEvent
 
 
 class MyDomainEvent(LegacyDomainEvent):

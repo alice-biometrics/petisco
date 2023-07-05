@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from petisco.base.domain.message.legacy_command import LegacyCommand
+from petisco.base.domain.message.legacy.legacy_command import LegacyCommand
 
 
 class MyCommand(LegacyCommand):
