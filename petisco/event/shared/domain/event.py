@@ -109,7 +109,7 @@ class Event:
         else:
             event_dictionary["event_type"] = "domain_event"
 
-        if "version" in data and isinstance(data["version"], str):
+        if "version" in data:
             event_dictionary["event_version"] = int(data["version"])
 
         if "occurred_on" in data and isinstance(data["occurred_on"], str):
