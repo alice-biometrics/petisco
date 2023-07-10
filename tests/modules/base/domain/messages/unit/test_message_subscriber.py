@@ -1,10 +1,10 @@
 from typing import List, Type
 
 import pytest
-from meiga import BoolResult, isFailure, isSuccess
+from meiga import AnyResult, BoolResult, isFailure, isSuccess
 from meiga.assertions import assert_failure, assert_success
 
-from petisco import Message, MessageSubscriber, PrintMiddleware
+from petisco import Message, MessageSubscriber, Middleware, PrintMiddleware
 from tests.modules.base.mothers.message_mother import MessageMother
 
 
@@ -64,3 +64,53 @@ def test_message_subscriber_should_create_command_input_and_output(
     result = message_subscriber.handle(MessageMother.any())
 
     assert_success(result)
+
+
+def should_not_fail_when_middleware_raise_unexpected_error_on_before():
+    class RaiseErrorOnBeforeMiddleware(Middleware):
+        def before(self) -> None:
+            raise RuntimeError("Error in before")
+
+        def after(self, result: AnyResult) -> None:
+            pass
+
+    class MyMessageSubscriber(MessageSubscriber):
+        class Config:
+            middlewares = [RaiseErrorOnBeforeMiddleware]
+
+        def subscribed_to(self) -> List[Type[Message]]:
+            return [Message]
+
+        def handle(self, message: Message) -> BoolResult:
+            return isSuccess
+
+    message_subscriber = MyMessageSubscriber()
+
+    result = message_subscriber.handle(MessageMother.any())
+
+    result.assert_success()
+
+
+def should_not_fail_when_middleware_raise_unexpected_error_on_after():
+    class RaiseErrorOnAfterMiddleware(Middleware):
+        def before(self) -> None:
+            pass
+
+        def after(self, result: AnyResult) -> None:
+            raise RuntimeError("Error in after")
+
+    class MyMessageSubscriber(MessageSubscriber):
+        class Config:
+            middlewares = [RaiseErrorOnAfterMiddleware]
+
+        def subscribed_to(self) -> List[Type[Message]]:
+            return [Message]
+
+        def handle(self, message: Message) -> BoolResult:
+            return isSuccess
+
+    message_subscriber = MyMessageSubscriber()
+
+    result = message_subscriber.handle(MessageMother.any())
+
+    result.assert_success()
