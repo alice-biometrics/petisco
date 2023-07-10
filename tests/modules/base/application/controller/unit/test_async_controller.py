@@ -3,9 +3,9 @@ from __future__ import annotations
 from unittest.mock import patch
 
 import pytest
-from meiga import BoolResult, Error, Failure, Success, isFailure, isSuccess
+from meiga import AnyResult, BoolResult, Error, Failure, Success, isFailure, isSuccess
 
-from petisco import AsyncController, PrintMiddleware, UnknownError
+from petisco import AsyncController, Middleware, PrintMiddleware, UnknownError
 
 
 class MyError(Error):
@@ -230,3 +230,45 @@ class TestAsyncController:
 
         result = await MyAsyncController().execute(2)
         result.assert_failure(value_is_instance_of=UnknownError)
+
+    async def should_not_fail_when_middleware_raise_unexpected_error_on_before(
+        self,
+    ):  # noqa
+        class RaiseErrorOnBeforeMiddleware(Middleware):
+            def before(self) -> None:
+                raise RuntimeError("Error in before")
+
+            def after(self, result: AnyResult) -> None:
+                pass
+
+        class MyAsyncController(AsyncController):
+            class Config:
+                middlewares = [RaiseErrorOnBeforeMiddleware]
+
+            async def execute(self) -> BoolResult:
+                return isSuccess
+
+        result = await MyAsyncController().execute()
+
+        result.assert_success()
+
+    async def should_not_fail_when_middleware_raise_unexpected_error_on_after(
+        self,
+    ):  # noqa
+        class RaiseErrorOnAfterMiddleware(Middleware):
+            def before(self) -> None:
+                pass
+
+            def after(self, result: AnyResult) -> None:
+                raise RuntimeError("Error in after")
+
+        class MyAsyncController(AsyncController):
+            class Config:
+                middlewares = [RaiseErrorOnAfterMiddleware]
+
+            async def execute(self) -> BoolResult:
+                return isSuccess
+
+        result = await MyAsyncController().execute()
+
+        result.assert_success()
