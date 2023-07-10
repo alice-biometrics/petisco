@@ -30,7 +30,7 @@ class TestRedisDomainEventBus:
     ):
         data = self.redis_database.lrange(bus.database_name, 0, -1)
         domain_events = [
-            DomainEvent.from_dict(json.loads(command_data).get("message"))
+            DomainEvent.from_format(json.loads(command_data).get("message"))
             for command_data in data
         ]
         assert domain_events[0] == domain_event

@@ -5,7 +5,7 @@ import re
 from datetime import datetime
 from typing import Any, cast
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel
 
 from petisco.base.domain.message.legacy.use_legacy_implementation import (
     USE_LEGACY_IMPLEMENTATION,
@@ -22,47 +22,53 @@ def get_version(config: dict[str, Any] | None) -> int:
 
 
 class Message(BaseModel):
-    _message_id: Uuid = Uuid.v4()
-    _message_name: str
-    _message_version: int = 1
-    _message_occurred_on: datetime = datetime.utcnow()
-    _message_attributes: dict[str, Any] = dict()
-    _message_meta: dict[str, Any] = dict()
-    _message_type: str = "message"
-    _message_formatted_message: dict[str, Any] = None
-
-    @model_validator(mode="before")
-    def validate_model(cls, values: dict[str, Any]) -> dict[str, Any]:
-        print(f"validate_model: {values}")
-
-        # formatted_message = values.get("formatted_message")
-        # if formatted_message:
-        #     cls._message_formatted_message = formatted_message
-        #     values.pop("formatted_message")
-
-        attributes = values
-        print(f"{attributes=}")
-        cls._message_attributes = attributes
-
-        return attributes
-
     def model_post_init(self, __context: Any) -> None:
-        print("model_post_init")
+        if not hasattr(self, "_message_attributes"):
+            attributes = dict(self)
+            if "_message_type" in attributes:
+                attributes.pop("_message_type")
+            self._message_attributes = attributes
+
+        if not hasattr(self, "_message_formatted_message"):
+            self._message_formatted_message = None  # noqa
 
         if self._message_formatted_message:
-            print("_message_formatted_message exist")
+            # print("_message_formatted_message exist")
             self._update_from_formatted_message()
-        else:
-            print("_message_formatted_message dont exist")
+        # else:
+        # print("_message_formatted_message dont exist")
+
+        if not hasattr(self, "_message_id"):
+            self._message_id = Uuid.v4()  # noqa
 
         if not hasattr(self, "_message_name"):
-            self._message_name = (
+            self._message_name = (  # noqa
                 re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__)
                 .lower()
                 .replace("_", ".")
             )
         if hasattr(self, "Config"):
             self._message_version = get_version(self.Config)
+        else:
+            self._message_version = 1  # noqa
+
+        if not hasattr(self, "_message_occurred_on"):
+            self._message_occurred_on = datetime.utcnow()  # noqa
+
+        if not hasattr(self, "_message_attributes"):
+            self._message_attributes = dict()  # noqa
+
+        if not hasattr(self, "_message_meta"):
+            self._message_meta = dict()  # noqa
+
+        if not hasattr(self, "_message_type"):
+            self._message_type = "message"  # noqa
+
+        # To serialize ValueObjects (seems not working)
+        # for key, attribute in self._message_attributes.items():
+        #     if issubclass(attribute.__class__, ValueObject):
+        #         print(key)
+        #         setattr(self, f"_{key}", ValueObject.serializer(key))
 
     def add_meta(self, meta: dict[str, Any]) -> None:
         self._message_meta = meta
@@ -93,8 +99,15 @@ class Message(BaseModel):
         }
         return data
 
+    def format_json(self) -> str:
+        return json.dumps(self.format())
+
     @classmethod
-    def from_format(cls, formatted_message: dict[str, Any] | str | bytes) -> Message:
+    def from_format(
+        cls,
+        formatted_message: dict[str, Any] | str | bytes,
+        target_type: type | None = None,
+    ) -> Message:
         if not isinstance(formatted_message, dict):
             formatted_message = json.loads(formatted_message)
         data = cast(dict[str, Any], formatted_message.get("data"))
@@ -103,7 +116,8 @@ class Message(BaseModel):
 
         # data = message_data.get("data")
         # domain_event = target_type()
-        message = cls(**attributes)
+        target_type = target_type if target_type else cls
+        message = target_type(**attributes)
         message._message_formatted_message = data
         message._update_from_formatted_message()
         return message
@@ -121,7 +135,7 @@ class Message(BaseModel):
 
     def _update_from_formatted_message(self) -> None:
         kwargs = self._message_formatted_message
-        print("Message _update_from_formatted_message")
+        # print("Message _update_from_formatted_message")
         self._message_id = (
             Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
         )
@@ -154,6 +168,27 @@ class Message(BaseModel):
 
     def __repr__(self) -> str:
         return f"{self._message_type} [{self._message_id.value} ({self._message_type}), {self._message_name} (v{self._message_version}), {self._message_occurred_on}, attributes={self._message_attributes}]"
+
+    def get_message_id(self) -> Uuid:
+        return self._message_id
+
+    def get_message_name(self) -> str:
+        return self._message_name
+
+    def get_message_version(self) -> int:
+        return self._message_version
+
+    def get_message_occurred_on(self) -> datetime:
+        return self._message_occurred_on
+
+    def get_message_attributes(self) -> dict[str, Any]:
+        return self._message_attributes
+
+    def get_message_meta(self) -> dict[str, Any]:
+        return self._message_meta
+
+    def get_message_type(self) -> str:
+        return self._message_type
 
 
 if USE_LEGACY_IMPLEMENTATION is True:

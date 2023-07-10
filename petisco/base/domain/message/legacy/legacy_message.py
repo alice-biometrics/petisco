@@ -107,6 +107,16 @@ class LegacyMessage(metaclass=MetaMessage):
         event_dict = json.loads(message_json)
         return LegacyMessage.from_dict(event_dict)
 
+    @classmethod
+    def from_format(
+        cls,
+        formatted_message: dict[str, Any] | str | bytes,
+        target_type: type | None = None,
+    ) -> LegacyMessage:
+        if not isinstance(formatted_message, dict):
+            formatted_message = json.loads(formatted_message)
+        return cls.from_dict(formatted_message)
+
     def _get_serialized_attributes(self) -> dict[str, Any]:
         attributes = {}
         for key, attribute in self._message_attributes.items():
@@ -131,6 +141,17 @@ class LegacyMessage(metaclass=MetaMessage):
             }
         }
         return data
+
+    def model_dump(self) -> dict[str, dict[str, Any]]:
+        return self.dict()
+
+    def format(self) -> dict[str, dict[str, Any]]:
+        # To improve migration
+        return self.dict()
+
+    def format_json(self) -> str:
+        # To improve migration
+        return json.dumps(self.format())
 
     def to_str(self, class_name: str = "Message", type: str = "message") -> str:
         return f"{class_name} [{self._message_id.value} ({type}), {self._message_name} (v{self._message_version}), {self._message_occurred_on}, attributes={self._message_attributes}]"

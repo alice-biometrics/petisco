@@ -27,8 +27,8 @@ class TestDomainEvent:
     def should_create_domain_event_input_and_output(
         self, domain_event: DomainEvent
     ):  # noqa
-        domain_event_json = domain_event.json()
-        retrieved_domain_event = DomainEvent.from_json(domain_event_json)
+        domain_event_json = domain_event.format_json()
+        retrieved_domain_event = DomainEvent.from_format(domain_event_json)
         assert domain_event == retrieved_domain_event
         assert id(domain_event) != id(retrieved_domain_event)
 
@@ -37,9 +37,9 @@ class TestDomainEvent:
     ):  # noqa
         domain_event = MyDomainEvent(my_specific_value="whatever")
 
-        domain_event_json = domain_event.json()
+        domain_event_json = domain_event.format_json()
 
-        retrieved_domain_event = MyDomainEvent.from_json(
+        retrieved_domain_event = MyDomainEvent.from_format(
             domain_event_json, target_type=MyDomainEvent
         )
 
@@ -79,9 +79,9 @@ class TestDomainEvent:
 
         domain_event = MyDomainEventWithUuid(user_id=user_id, created_at=created_at)
 
-        domain_event_json = domain_event.json()
+        domain_event_json = domain_event.format_json()
 
-        retrieved_domain_event = MyDomainEvent.from_json(domain_event_json)
+        retrieved_domain_event = DomainEvent.from_format(domain_event_json)
 
         assert domain_event == retrieved_domain_event
         assert id(domain_event) != id(retrieved_domain_event)
@@ -93,18 +93,14 @@ class TestDomainEvent:
 
     def should_not_share_attributes_between_instances(self):  # noqa
         domain_event1 = MyDomainEvent(
-            my_specific_value="whatever", foo="hola", bar="mundo"
+            my_specific_value="whatever",
         )
         domain_event2 = MyDomainEvent(
-            my_specific_value="youwant", foo="hola2", bar="mundo2"
+            my_specific_value="youwant",
         )
         assert (
-            domain_event1.get_message_attributes()["foo"]
-            != domain_event2.get_message_attributes()["foo"]
-        )
-        assert (
-            domain_event1.get_message_attributes()["bar"]
-            != domain_event2.get_message_attributes()["bar"]
+            domain_event1.get_message_attributes()["my_specific_value"]
+            != domain_event2.get_message_attributes()["my_specific_value"]
         )
 
     def should_create_domain_event_and_keep_message_version_when_exist_a_message_attribute(  # noqa
@@ -113,8 +109,8 @@ class TestDomainEvent:
         expected_message_version = 2
 
         domain_event = VersionConflictDomainEvent(version=100)
-        domain_event_json = domain_event.json()
-        retrieved_domain_event = DomainEvent.from_json(domain_event_json)
+        domain_event_json = domain_event.format()
+        retrieved_domain_event = DomainEvent.from_format(domain_event_json)
 
         assert domain_event.get_message_version() == expected_message_version
         assert retrieved_domain_event.get_message_version() == expected_message_version
@@ -123,8 +119,8 @@ class TestDomainEvent:
         self,
     ):
         domain_event = NameConflictDomainEvent(name="whatever")
-        domain_event_json = domain_event.json()
-        retrieved_domain_event = DomainEvent.from_json(domain_event_json)
+        domain_event_json = domain_event.format()
+        retrieved_domain_event = DomainEvent.from_format(domain_event_json)
         assert domain_event.get_message_name() == "name.conflict.domain.event"
         assert retrieved_domain_event.get_message_name() == "name.conflict.domain.event"
 

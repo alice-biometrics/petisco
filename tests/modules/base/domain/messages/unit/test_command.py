@@ -24,22 +24,20 @@ COMMANDS = [
 class TestCommand:
     @pytest.mark.parametrize("command", COMMANDS)
     def should_create_command_input_and_output(self, command: Command):  # noqa
-        command_json = command.json()
+        command_json = command.format_json()
 
-        retrieved_command = MyCommand.from_json(command_json)
-
-        assert command.dict() == retrieved_command.dict()
+        retrieved_command = Command.from_format(command_json)
+        assert command == retrieved_command
         assert id(command) != id(retrieved_command)
 
     def should_create_command_input_and_output_with_specific_target_type(self):  # noqa
         command = MyCommand(my_specific_value="whatever")
 
-        command_json = command.json()
+        command_json = command.format_json()
 
-        retrieved_command = MyCommand.from_json(command_json, target_type=MyCommand)
-
+        retrieved_command = MyCommand.from_format(command_json, target_type=MyCommand)
         assert type(command) == type(retrieved_command)
-        assert command.dict() == retrieved_command.dict()
+        assert command == retrieved_command
         assert id(command) != id(retrieved_command)
         assert command.my_specific_value == retrieved_command.my_specific_value
 
@@ -64,21 +62,21 @@ class TestCommand:
     ):
         expected_message_version = 2
 
-        domain_event = VersionConflictCommand(version=100)
-        domain_event_json = domain_event.json()
-        retrieved_domain_event = Command.from_json(domain_event_json)
+        command = VersionConflictCommand(version=100)
+        command_json = command.format_json()
+        retrieved_command = Command.from_format(command_json)
 
-        assert domain_event.get_message_version() == expected_message_version
-        assert retrieved_domain_event.get_message_version() == expected_message_version
+        assert command.get_message_version() == expected_message_version
+        assert retrieved_command.get_message_version() == expected_message_version
 
     def should_create_command_and_keep_message_name_when_exist_a_message_attribute(  # noqa
         self,
     ):
-        domain_event = NameConflictCommand(name="whatever")
-        domain_event_json = domain_event.json()
-        retrieved_domain_event = Command.from_json(domain_event_json)
-        assert domain_event.get_message_name() == "name.conflict.command"
-        assert retrieved_domain_event.get_message_name() == "name.conflict.command"
+        command = NameConflictCommand(name="whatever")
+        command_json = command.format_json()
+        retrieved_command = Command.from_format(command_json)
+        assert command.get_message_name() == "name.conflict.command"
+        assert retrieved_command.get_message_name() == "name.conflict.command"
 
     def should_create_command_with_most_conflicting_domain_event(  # noqa
         self,
