@@ -19,6 +19,12 @@ class ElasticRepository(Repository):
     session_scope: ElasticSessionScope
 
     def __init__(self, database_alias: str):
+        """
+        Constructs the ElasticRepository from a database_alias creating a session_scope (ElasticSessionScope)
+
+        Args:
+            database_alias (str): A str you defined in database_alias the DatabaseConfigurer
+        """
         database = databases.get(ElasticDatabase, alias=database_alias)
         self.session_scope = database.get_session_scope()
 

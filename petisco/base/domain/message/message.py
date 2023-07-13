@@ -5,7 +5,7 @@ import re
 from datetime import datetime
 from typing import Any, cast
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra
 
 from petisco.base.domain.message.legacy.use_legacy_implementation import (
     USE_LEGACY_IMPLEMENTATION,
@@ -21,7 +21,7 @@ def get_version(config: dict[str, Any] | None) -> int:
     return version
 
 
-class Message(BaseModel):
+class Message(BaseModel, extra=Extra.allow):
     def model_post_init(self, __context: Any) -> None:
         if not hasattr(self, "_message_attributes"):
             attributes = dict(self)
@@ -79,7 +79,7 @@ class Message(BaseModel):
 
         if not isinstance(meta, dict):
             raise TypeError("Message.update_meta() expect a dict")
-        if self._message_meta:
+        if hasattr(self, "_message_meta"):
             self._message_meta = {**self._message_meta, **meta}
         else:
             self._message_meta = meta
@@ -149,14 +149,14 @@ class Message(BaseModel):
 
         attributes = kwargs.get("attributes", dict())
         self._message_attributes = cast(dict[str, Any], attributes)
+        if self._message_attributes:
+            for key, value in self._message_attributes.items():
+                setattr(self, key, value)
         # for k in attributes:
         #     self._message_attributes[k] = attributes[k]
         #     setattr(self, k, attributes[k])
-
         self._message_meta = cast(dict[str, Any], kwargs.get("meta"))
         self._message_type = str(kwargs.get("type_message", "message"))
-        # for key, value in self._message_attributes.items():
-        #     setattr(self, key, value)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Message):

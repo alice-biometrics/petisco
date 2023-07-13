@@ -47,7 +47,7 @@ class UnackMessage(MessageSubscriber):
         return [MyDomainEvent]
 
     def handle(self, message: Message) -> BoolResult:
-        print(f"> It will unack the message: {message.dict()}\n")
+        print(f"> It will unack the message: {message.format()}\n")
         return isFailure
 
 

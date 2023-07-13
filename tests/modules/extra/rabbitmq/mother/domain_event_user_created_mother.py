@@ -5,7 +5,7 @@ from tests.modules.extra.rabbitmq.mother.defaults import DEFAULT_USER_ID
 class UserCreated(DomainEvent):
     user_id: Uuid
 
-    _user_id: ValueObject.serializer("user_id")
+    _user_id = ValueObject.serializer("user_id")
 
 
 class DomainEventUserCreatedMother:

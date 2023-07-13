@@ -46,7 +46,7 @@ class SendMailOnUserCreated(DomainEventSubscriber):
         return [UserCreated]
 
     def handle(self, domain_event: DomainEvent) -> BoolResult:
-        print(f"> Send email on {domain_event.dict()}\n")
+        print(f"> Send email on {domain_event.format()}\n")
         return isSuccess  # if fails, returns isFailure
 
 
@@ -55,13 +55,13 @@ class SendSmsOnUserConfirmed(DomainEventSubscriber):
         return [UserConfirmed]
 
     def handle(self, domain_event: DomainEvent) -> BoolResult:
-        print(f"> Send sms on {domain_event.dict()}\n")
+        print(f"> Send sms on {domain_event.format()}\n")
         return isSuccess  # if fails, returns isFailure
 
 
 class StoreOnMessage(AllMessageSubscriber):
     def handle(self, message: Message) -> BoolResult:
-        print(f"> Store {message.dict()}\n")
+        print(f"> Store {message.format()}\n")
         return isSuccess  # if fails, returns isFailure
 
 
@@ -73,7 +73,7 @@ class PersistUserHandler(CommandSubscriber):
         return PersistUser
 
     def handle(self, command: PersistUser) -> BoolResult:
-        print(f"> PersistUser on {command.dict()}\n")
+        print(f"> PersistUser on {command.format()}\n")
         # self.domain_event_bus.publish(UserPersisted(user_id=command.user_id))
         return isSuccess  # if fails, returns isFailure
 

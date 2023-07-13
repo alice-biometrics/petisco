@@ -106,7 +106,7 @@ class Application(BaseSettings):
         Container.clear()
 
     def info(self) -> Dict[str, Any]:
-        info = self.dict()
+        info = self.model_dump()
         info["deployed_at"] = self.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
         info["dependencies"] = {
             dependency.type.__name__: dependency.get_instance().info()

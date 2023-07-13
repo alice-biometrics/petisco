@@ -58,7 +58,7 @@ class RedisMessageBus(MessageBus):
         formatted_data = {
             "organization": self.organization,
             "service": self.service,
-            "message": message.dict(),
+            "message": message.format(),
         }
         return json.dumps(formatted_data)
 

@@ -21,6 +21,12 @@ class SqlRepository(Repository):
     session_scope: SqlSessionScope
 
     def __init__(self, database_alias: str | None = None):
+        """
+        Constructs the SqlRepository from a database_alias creating a session_scope (SqlSessionScope)
+
+        Args:
+            database_alias (str): A str you defined in database_alias the DatabaseConfigurer
+        """
         database = databases.get(SqlDatabase, alias=database_alias)
         self.session_scope = database.get_session_scope()
 

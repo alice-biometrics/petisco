@@ -29,7 +29,7 @@ class TestLegacyCommand:
 
         retrieved_command = MyCommand.from_json(command_json)
 
-        assert command.dict() == retrieved_command.dict()
+        assert command.format() == retrieved_command.format()
         assert id(command) != id(retrieved_command)
         assert retrieved_command._message_type == "command"
 
@@ -41,7 +41,7 @@ class TestLegacyCommand:
         retrieved_command = MyCommand.from_json(command_json, target_type=MyCommand)
 
         assert type(command) == type(retrieved_command)
-        assert command.dict() == retrieved_command.dict()
+        assert command.format() == retrieved_command.format()
         assert id(command) != id(retrieved_command)
         assert command.my_specific_value == retrieved_command.my_specific_value
 

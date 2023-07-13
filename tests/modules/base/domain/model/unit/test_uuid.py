@@ -9,7 +9,7 @@ def test_uuid_should_success_when_construct_and_serialize_with_inner_value():
     uuid = Uuid(value="4E6660D7-B037-4C75-Adc8-272D62944Abb")
 
     assert uuid.value == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
-    assert uuid.dict() == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
+    assert uuid.model_dump() == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
 
 
 @pytest.mark.unit
@@ -17,7 +17,7 @@ def test_uuid_should_success_when_construct_with_classmethod_and_serialize_with_
     uuid = Uuid.from_value("4E6660D7-B037-4C75-Adc8-272D62944Abb")
 
     assert uuid.value == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
-    assert uuid.dict() == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
+    assert uuid.model_dump() == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
 
 
 @pytest.mark.unit

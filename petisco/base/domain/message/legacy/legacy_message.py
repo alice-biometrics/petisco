@@ -69,8 +69,10 @@ class LegacyMessage(metaclass=MetaMessage):
             self._message_attributes = cast(Dict[str, Any], kwargs.get("attributes"))
             self._message_meta = cast(Dict[str, Any], kwargs.get("meta"))
             self._message_type = str(kwargs.get("type_message", "message"))
-            for key, value in self._message_attributes.items():
-                setattr(self, key, value)
+
+            if self._message_attributes:
+                for key, value in self._message_attributes.items():
+                    setattr(self, key, value)
         else:
             self._message_id = Uuid.v4()
             self._message_occurred_on = datetime.utcnow()
@@ -91,7 +93,7 @@ class LegacyMessage(metaclass=MetaMessage):
 
         if not isinstance(meta, Dict):
             raise TypeError("Message.update_meta() expect a dict")
-        if self._message_meta:
+        if hasattr(self, "_message_meta"):
             self._message_meta = {**self._message_meta, **meta}
         else:
             self._message_meta = meta
