@@ -1,9 +1,7 @@
-from __future__ import annotations
-
 import json
 import re
 from datetime import datetime
-from typing import Any, cast
+from typing import Any, Dict, Union, cast
 
 from pydantic import BaseModel, Extra
 
@@ -16,7 +14,7 @@ from petisco.base.domain.model.value_object import ValueObject
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 
-def get_version(config: dict[str, Any] | None) -> int:
+def get_version(config: Union[Dict[str, Any], None]) -> int:
     version = getattr(config, "version", 1) if config else 1
     return version
 
@@ -70,10 +68,10 @@ class Message(BaseModel, extra=Extra.allow):
         #         print(key)
         #         setattr(self, f"_{key}", ValueObject.serializer(key))
 
-    def add_meta(self, meta: dict[str, Any]) -> None:
+    def add_meta(self, meta: Dict[str, Any]) -> None:
         self._message_meta = meta
 
-    def update_meta(self, meta: dict[str, Any]) -> Message:
+    def update_meta(self, meta: Dict[str, Any]) -> "Message":
         if not meta:
             return self
 
@@ -85,7 +83,7 @@ class Message(BaseModel, extra=Extra.allow):
             self._message_meta = meta
         return self
 
-    def format(self) -> dict[str, dict[str, Any]]:
+    def format(self) -> Dict[str, Dict[str, Any]]:
         data = {
             "data": {
                 "id": self._message_id.value,
@@ -105,12 +103,12 @@ class Message(BaseModel, extra=Extra.allow):
     @classmethod
     def from_format(
         cls,
-        formatted_message: dict[str, Any] | str | bytes,
-        target_type: type | None = None,
-    ) -> Message:
+        formatted_message: Union[Dict[str, Any], str, bytes],
+        target_type: Union[type, None] = None,
+    ) -> "Message":
         if not isinstance(formatted_message, dict):
             formatted_message = json.loads(formatted_message)
-        data = cast(dict[str, Any], formatted_message.get("data"))
+        data = cast(Dict[str, Any], formatted_message.get("data"))
         attributes = data.get("attributes", dict())
         # attributes.update({"formatted_message": data})
 
@@ -122,7 +120,7 @@ class Message(BaseModel, extra=Extra.allow):
         message._update_from_formatted_message()
         return message
 
-    def _get_serialized_attributes(self) -> dict[str, Any]:
+    def _get_serialized_attributes(self) -> Dict[str, Any]:
         attributes = {}
         for key, attribute in self._message_attributes.items():
             serialized_value = attribute
@@ -148,14 +146,14 @@ class Message(BaseModel, extra=Extra.allow):
         )
 
         attributes = kwargs.get("attributes", dict())
-        self._message_attributes = cast(dict[str, Any], attributes)
+        self._message_attributes = cast(Dict[str, Any], attributes)
         if self._message_attributes:
             for key, value in self._message_attributes.items():
                 setattr(self, key, value)
         # for k in attributes:
         #     self._message_attributes[k] = attributes[k]
         #     setattr(self, k, attributes[k])
-        self._message_meta = cast(dict[str, Any], kwargs.get("meta"))
+        self._message_meta = cast(Dict[str, Any], kwargs.get("meta"))
         self._message_type = str(kwargs.get("type_message", self._message_type))
 
     def __eq__(self, other: Any) -> bool:
@@ -181,10 +179,10 @@ class Message(BaseModel, extra=Extra.allow):
     def get_message_occurred_on(self) -> datetime:
         return self._message_occurred_on
 
-    def get_message_attributes(self) -> dict[str, Any]:
+    def get_message_attributes(self) -> Dict[str, Any]:
         return self._message_attributes
 
-    def get_message_meta(self) -> dict[str, Any]:
+    def get_message_meta(self) -> Dict[str, Any]:
         return self._message_meta
 
     def get_message_type(self) -> str:

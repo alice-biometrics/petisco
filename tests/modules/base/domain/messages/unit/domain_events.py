@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 from datetime import datetime
-from typing import Any
+from typing import Any, Dict
 
 from petisco import DomainEvent
 
@@ -34,8 +32,8 @@ class MostConflictingDomainEvent(DomainEvent):
     name: str
     version: int
     occurred_on: datetime
-    attributes: dict[str, Any]
-    meta: dict[str, Any]
+    attributes: Dict[str, Any]
+    meta: Dict[str, Any]
     type: str
 
     class Config:
