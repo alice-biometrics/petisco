@@ -51,7 +51,7 @@ class Message(metaclass=MetaMessage):
     def __init__(self, **data: Any) -> None:
         self._message_attributes = {}
         self._message_meta = {}
-        self._message_typ = "message"
+        self._message_type = "message"
         self._set_data(**data)
 
     def _set_data(self, **kwargs: dict[str, Any] | None) -> None:
