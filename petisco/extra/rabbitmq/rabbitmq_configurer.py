@@ -21,7 +21,7 @@ CLEAR_STORE_BEFORE: bool = os.getenv(
 class RabbitMqConfigurer(ApplicationConfigurer):
     def __init__(
         self,
-        subscribers: list[MessageSubscriber],
+        subscribers: list[type[MessageSubscriber]],
         execute_after_dependencies: bool = True,
         start_consuming: bool = True,
         configurer_alias: str = None,
