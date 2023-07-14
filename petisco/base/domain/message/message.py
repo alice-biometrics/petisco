@@ -68,7 +68,7 @@ class Message(metaclass=MetaMessage):
             )
             self._message_attributes = cast(Dict[str, Any], kwargs.get("attributes"))
             self._message_meta = cast(Dict[str, Any], kwargs.get("meta"))
-            self._message_type = str(kwargs.get("type_message", "message"))
+            self._message_type = str(kwargs.get("type_message", self._message_type))
             for key, value in self._message_attributes.items():
                 setattr(self, key, value)
         else:
