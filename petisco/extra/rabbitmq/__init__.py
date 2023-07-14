@@ -21,9 +21,7 @@ if is_pika_available():
         RabbitMqMessageConsumer,
     )
     from petisco.extra.rabbitmq.dependencies import get_rabbitmq_message_dependencies
-    from petisco.extra.rabbitmq.rabbitmq_message_application_configurer import (
-        RabbitMqMessageApplicationConfigurer,
-    )
+    from petisco.extra.rabbitmq.rabbitmq_configurer import RabbitMqConfigurer
     from petisco.extra.rabbitmq.shared.queue_config import QueueConfig
     from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
     from petisco.extra.rabbitmq.shared.rabbitmq_declarer import RabbitMqDeclarer
@@ -44,5 +42,5 @@ if is_pika_available():
         "get_rabbitmq_message_dependencies",
         "RabbitMqMessageChaos",
         "rabbitmq_is_running_locally",
-        "RabbitMqMessageApplicationConfigurer",
+        "RabbitMqConfigurer",
     ]
