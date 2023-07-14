@@ -157,3 +157,23 @@ class TestDomainEvent:
 
         domain_event = MyInnerDomainEvent()
         assert domain_event.get_message_name() == "my.inner.domain.event"
+
+    def should_retrive_message_type_when_event_is_formated_without_type_message(  # noqa
+        self,
+    ):
+        data = {
+            "data": {
+                "id": "d679de7a-d9f3-4572-9ced-4b37c459606b",
+                "type": "button.pressed",
+                "version": "2",
+                "occurred_on": "2023-07-13 18:20:02.174000",
+                "attributes": {},
+                "meta": {
+                    "platform_name": "Chrome (114.0.0.0)",
+                    "system_version": "Mac OS X (Unknown)",
+                },
+            }
+        }
+
+        domain_event = DomainEvent.from_dict(data)
+        assert domain_event.get_message_type() == "domain_event"

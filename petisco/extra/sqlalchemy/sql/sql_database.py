@@ -60,6 +60,7 @@ class SqlDatabase(Database[Session]):
             json_serializer=lambda obj: obj,
             json_deserializer=lambda obj: obj,
             echo=self.print_sql_statements,
+            pool_pre_ping=True,
         )
 
         if not database_exists(engine.url):

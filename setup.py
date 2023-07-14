@@ -60,7 +60,7 @@ setup(
             "elastic-apm<7.0.0,>=6.15.1",
         ],
         "elastic-apm": ["elastic-apm<7.0.0,>=6.15.1"],
-        "fastapi": ["fastapi<1.0.0,>=0.100.0b2"],
+        "fastapi": ["fastapi<1.0.0,>=0.100"],
         "rich": ["rich"],
     },
 )

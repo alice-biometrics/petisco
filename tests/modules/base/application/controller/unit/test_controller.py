@@ -5,13 +5,23 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-from meiga import BoolResult, Error, Failure, Result, Success, isFailure, isSuccess
+from meiga import (
+    AnyResult,
+    BoolResult,
+    Error,
+    Failure,
+    Result,
+    Success,
+    isFailure,
+    isSuccess,
+)
 
 from petisco import (
     Controller,
     DomainError,
     ErrorMap,
     HttpError,
+    Middleware,
     NotFound,
     PrintMiddleware,
     UnknownError,
@@ -340,3 +350,41 @@ class TestController:
         result = MyController().execute()
 
         assert result.transform() == expected_result
+
+    def should_not_fail_when_middleware_raise_unexpected_error_on_before(self):  # noqa
+        class RaiseErrorOnBeforeMiddleware(Middleware):
+            def before(self) -> None:
+                raise RuntimeError("Error in before")
+
+            def after(self, result: AnyResult) -> None:
+                pass
+
+        class MyController(Controller):
+            class Config:
+                middlewares = [RaiseErrorOnBeforeMiddleware]
+
+            def execute(self) -> BoolResult:
+                return isSuccess
+
+        result = MyController().execute()
+
+        result.assert_success()
+
+    def should_not_fail_when_middleware_raise_unexpected_error_on_after(self):  # noqa
+        class RaiseErrorOnAfterMiddleware(Middleware):
+            def before(self) -> None:
+                pass
+
+            def after(self, result: AnyResult) -> None:
+                raise RuntimeError("Error in after")
+
+        class MyController(Controller):
+            class Config:
+                middlewares = [RaiseErrorOnAfterMiddleware]
+
+            def execute(self) -> BoolResult:
+                return isSuccess
+
+        result = MyController().execute()
+
+        result.assert_success()

@@ -4,6 +4,7 @@ from inspect import signature
 from typing import Any, Callable, Dict, List, Type, Union
 
 import elasticapm
+from loguru import logger
 from meiga import Error, Failure
 from meiga.on_failure_exception import OnFailureException
 
@@ -67,8 +68,12 @@ def wrapper(
         arguments.pop("self")
 
         for middleware in middlewares:
-            middleware.set_data(wrapped_class_name, arguments)
-            middleware.before()
+            try:
+                middleware.set_data(wrapped_class_name, arguments)
+                middleware.before()
+            except Exception as exception:
+                logger.error(f"Error in the {wrapped_class_name} middlewares (before).")
+                logger.exception(exception)
 
         try:
             result = execute_func(*args, **kwargs)
@@ -89,7 +94,13 @@ def wrapper(
 
         for middleware in middlewares:
             if result:
-                middleware.after(result)
+                try:
+                    middleware.after(result)
+                except Exception as exception:
+                    logger.error(
+                        f"Error in the {wrapped_class_name} middlewares (after)."
+                    )
+                    logger.exception(exception)
 
         try:
             result.set_transformer(mapper.map)
