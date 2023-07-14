@@ -167,7 +167,7 @@ class TestDomainEvent:
                 "type": "button.pressed",
                 "version": "2",
                 "occurred_on": "2023-07-13 18:20:02.174000",
-                "attributes": {},
+                "attributes": {"my_param": "value"},
                 "meta": {
                     "platform_name": "Chrome (114.0.0.0)",
                     "system_version": "Mac OS X (Unknown)",
@@ -175,5 +175,6 @@ class TestDomainEvent:
             }
         }
 
-        domain_event = DomainEvent.from_dict(data)
+        domain_event = DomainEvent.from_format(data)
         assert domain_event.get_message_type() == "domain_event"
+        assert hasattr(domain_event, "my_param")

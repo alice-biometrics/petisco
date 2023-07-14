@@ -156,7 +156,7 @@ class Message(BaseModel, extra=Extra.allow):
         #     self._message_attributes[k] = attributes[k]
         #     setattr(self, k, attributes[k])
         self._message_meta = cast(dict[str, Any], kwargs.get("meta"))
-        self._message_type = str(kwargs.get("type_message", "message"))
+        self._message_type = str(kwargs.get("type_message", self._message_type))
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Message):
