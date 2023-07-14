@@ -7,6 +7,7 @@ from typing import Any, Dict, Generic, TypeVar
 from petisco.base.domain.message.message import Message
 
 TypeMessage = TypeVar("TypeMessage", bound=Message)
+T = TypeVar("T")
 
 
 class MessageBus(ABC, Generic[TypeMessage]):
@@ -25,7 +26,7 @@ class MessageBus(ABC, Generic[TypeMessage]):
     def _set_additional_meta(self, meta: dict[str, Any]) -> None:
         self.additional_meta = meta
 
-    def with_meta(self, meta: dict[str, Any]) -> MessageBus[Message]:
+    def with_meta(self: T, meta: dict[str, Any]) -> T:
         if not isinstance(meta, Dict):
             raise TypeError("MessageBus.with_meta() expect a dict")
         message_bus = copy.copy(self)

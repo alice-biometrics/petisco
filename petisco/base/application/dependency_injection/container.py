@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections import defaultdict
-from typing import Generic, TypeVar
+from typing import Any, TypeVar
 
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.misc.singleton import Singleton
@@ -10,14 +10,14 @@ from petisco.base.misc.singleton import Singleton
 T = TypeVar("T", bound=ABC)
 
 
-class Container(Generic[T], metaclass=Singleton):
+class Container(metaclass=Singleton):
     """
     Singleton which contains set dependencies (List[Dependency)) prepared to be instantiated in order to be injected
      in the UseCases of our application
     """
 
     def __init__(self) -> None:
-        self.dependencies: dict[str, Dependency] = defaultdict()
+        self.dependencies: dict[str, Dependency[Any]] = defaultdict()
 
     @staticmethod
     def get(base_type: type[T], *, alias: str | None = None) -> T:
@@ -56,7 +56,7 @@ class Container(Generic[T], metaclass=Singleton):
         return [key if isinstance(key, str) else key.__name__ for key in keys]
 
     def _set_dependencies(
-        self, input_dependencies: list[Dependency], overwrite: bool = False
+        self, input_dependencies: list[Dependency[Any]], overwrite: bool = False
     ) -> None:
         for dependency in input_dependencies:
             if dependency.alias:
