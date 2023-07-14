@@ -46,12 +46,13 @@ class Message(metaclass=MetaMessage):
     _message_occurred_on: datetime
     _message_attributes: dict[str, Any]
     _message_meta: dict[str, Any]
-    _message_type: str = "message"
+    _message_type: str
 
     def __init__(self, **data: Any) -> None:
         self._message_attributes = {}
         self._message_meta = {}
-        self._message_type = "message"
+        if not hasattr(self, "_message_type"):
+            self._message_type = "message"
         self._set_data(**data)
 
     def _set_data(self, **kwargs: dict[str, Any] | None) -> None:
