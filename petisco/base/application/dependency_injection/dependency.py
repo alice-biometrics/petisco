@@ -2,16 +2,11 @@ from __future__ import annotations
 
 import os
 import re
-from typing import Any, Generic, TypedDict, TypeVar
+from typing import Any, Generic, TypeVar
 
 from petisco.base.misc.builder import Builder
 
 T = TypeVar("T")
-
-
-class Builders(TypedDict):
-    key: str
-    builder: Builder
 
 
 class Dependency(Generic[T]):
