@@ -6,6 +6,7 @@ from tests.modules.base.application.dependency_injection.unit.dummy_repositories
     MyRepo,
     MyRepoWithBuilderAndDependency,
     MyRepoWithBuilderAndSeveralDependency,
+    OtherBaseRepo,
 )
 
 
@@ -37,14 +38,10 @@ class TestContainer:
 
         Container.set_dependencies(dependencies)
 
-        assert Container.get_available_dependencies() == ["my-alias"]
+        assert Container.get_available_dependencies() == ['BaseRepo (alias="my-alias")']
 
         with pytest.raises(IndexError, match="Invalid dependency"):
             Container.get(BaseRepo)
-
-        instance = Container.get(MyRepo, alias="my-alias")
-
-        assert isinstance(instance, MyRepo)
 
         Container.clear()
 
@@ -58,7 +55,10 @@ class TestContainer:
 
         Container.set_dependencies(dependencies)
 
-        assert Container.get_available_dependencies() == ["BaseRepo", "my-alias"]
+        assert Container.get_available_dependencies() == [
+            "BaseRepo",
+            'BaseRepo (alias="my-alias")',
+        ]
 
         instance_base_type = Container.get(BaseRepo)
         instance_with_alias = Container.get(BaseRepo, alias="my-alias")
@@ -147,7 +147,7 @@ class TestContainer:
                         builders={"default": Builder(MyRepo)},
                     ),
                 ],
-                ["BaseRepo", "inmemory_repo"],
+                ["BaseRepo", 'BaseRepo (alias="inmemory_repo")'],
             ),
         ],
     )
@@ -223,16 +223,49 @@ class TestContainer:
         self,
         dependencies,
     ):
-        expected_dependencies_names = [dependency.alias for dependency in dependencies]
+        expected_dependencies_keys = [
+            dependency.get_key() for dependency in dependencies
+        ]
 
         Container.set_dependencies(dependencies)
 
-        assert (
-            Container.get_available_dependencies().sort()
-            == expected_dependencies_names.sort()
-        )
+        available_dependencies = Container.get_available_dependencies()
+        available_dependencies.sort()
+        expected_dependencies_keys.sort()
+        assert available_dependencies == expected_dependencies_keys
 
-        for name in expected_dependencies_names:
-            assert isinstance(Container.get(name), BaseRepo)
+        expected_dependencies_alias = [dependency.alias for dependency in dependencies]
+        for alias in expected_dependencies_alias:
+            assert isinstance(Container.get(BaseRepo, alias=alias), BaseRepo)
+
+        Container.clear()
+
+    def should_success_when_add_dependencies_whit_same_alias_but_different_base_type(
+        self,
+    ):
+        alias = "same"
+
+        dependencies = [
+            Dependency(
+                BaseRepo,
+                alias=alias,
+                builders={"default": Builder(MyRepo)},
+            ),
+            Dependency(
+                OtherBaseRepo,
+                alias=alias,
+                builders={"default": Builder(MyRepo)},
+            ),
+        ]
+        expected_dependencies_keys = [
+            dependency.get_key() for dependency in dependencies
+        ]
+
+        Container.set_dependencies(dependencies)
+
+        available_dependencies = Container.get_available_dependencies()
+        available_dependencies.sort()
+        expected_dependencies_keys.sort()
+        assert available_dependencies == expected_dependencies_keys
 
         Container.clear()

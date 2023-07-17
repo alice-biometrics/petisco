@@ -55,19 +55,18 @@ class TestRabbitMqConfigurer:
         [(True, True), (True, False), (False, True), (False, False)],
     )
     def should_execute_with_dependencies_with_alias(self, start_consuming, testing):
-        configurer_alias = "message_configurer_alias"
-        consumer_alias = "message_consumer_alias"
+        alias = "other"
         Container.clear()
         Container.set_dependencies(
             [
                 Dependency(
                     MessageConfigurer,
-                    alias=configurer_alias,
+                    alias=alias,
                     builders={"default": Builder(NotImplementedMessageConfigurer)},
                 ),
                 Dependency(
                     MessageConsumer,
-                    alias=consumer_alias,
+                    alias=alias,
                     builders={
                         "default": Builder(
                             NotImplementedMessageConsumer,
@@ -79,20 +78,17 @@ class TestRabbitMqConfigurer:
         configurer = RabbitMqConfigurer(
             subscribers=self.subscribers,
             start_consuming=start_consuming,
-            configurer_alias=configurer_alias,
-            consumer_alias=consumer_alias,
+            alias=alias,
         )
         configurer.execute(testing=testing)
 
     def should_fail_when_message_dependencies_do_not_exist_in_container_with_alias(
         self,
     ):
-        configurer_alias = "message_configurer_alias"
-        consumer_alias = "message_consumer_alias"
+        alias = "other"
         configurer = RabbitMqConfigurer(
             subscribers=self.subscribers,
-            configurer_alias=configurer_alias,
-            consumer_alias=consumer_alias,
+            alias=alias,
         )
         with pytest.raises(IndexError, match="Invalid dependency."):
             configurer.execute()

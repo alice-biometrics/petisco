@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from petisco.base.application.dependency_injection.dependency import Dependency
 from petisco.base.domain.message.command_bus import CommandBus
@@ -46,7 +46,10 @@ def get_default_message_dependencies() -> List[Dependency]:
 
 
 def get_rabbitmq_message_dependencies(
-    organization: str, service: str, max_retries: int = 5
+    organization: str,
+    service: str,
+    max_retries: int = 5,
+    alias: Union[str, None] = None,
 ) -> List[Dependency]:
     from petisco.extra.rabbitmq.application.message.bus.rabbitmq_command_bus import (
         RabbitMqCommandBus,
@@ -64,6 +67,7 @@ def get_rabbitmq_message_dependencies(
     return [
         Dependency(
             DomainEventBus,
+            alias=alias,
             builders={
                 "default": Builder(
                     RabbitMqDomainEventBus, organization=organization, service=service
@@ -74,6 +78,7 @@ def get_rabbitmq_message_dependencies(
         ),
         Dependency(
             CommandBus,
+            alias=alias,
             builders={
                 "default": Builder(
                     RabbitMqCommandBus, organization=organization, service=service
@@ -84,6 +89,7 @@ def get_rabbitmq_message_dependencies(
         ),
         Dependency(
             MessageConfigurer,
+            alias=alias,
             builders={
                 "default": Builder(
                     RabbitMqMessageConfigurer,
@@ -96,6 +102,7 @@ def get_rabbitmq_message_dependencies(
         ),
         Dependency(
             MessageConsumer,
+            alias=alias,
             builders={
                 "default": Builder(
                     RabbitMqMessageConsumer,

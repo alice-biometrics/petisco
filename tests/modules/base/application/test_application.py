@@ -173,7 +173,8 @@ class TestApplication:
         ).configure()
 
         assert (
-            DEFAULT_AVAILABLE_DEPENDENCIES + ["other-domain-event-bus"]
+            DEFAULT_AVAILABLE_DEPENDENCIES
+            + ['DomainEventBus (alias="other-domain-event-bus")']
             == Container.get_available_dependencies()
         )
 

@@ -37,7 +37,7 @@ class MyOtherRepo(OtherBaseRepo):
 class MyRepoWithBuilderAndDependency(BaseRepo):
     @staticmethod
     def build():
-        return MyRepoWithBuilderAndDependency(Container.get("repo"))
+        return MyRepoWithBuilderAndDependency(Container.get(BaseRepo, alias="repo"))
 
     def __init__(self, repository: BaseRepo):
         self.repository = repository
@@ -51,9 +51,9 @@ class MyRepoWithBuilderAndSeveralDependency(BaseRepo):
     def build():
         return MyRepoWithBuilderAndSeveralDependency(
             [
-                Container.get("repo-with-dependency"),
-                Container.get("repo"),
-                Container.get("other-repo"),
+                Container.get(BaseRepo, alias="repo-with-dependency"),
+                Container.get(BaseRepo, alias="repo"),
+                Container.get(BaseRepo, alias="other-repo"),
             ]
         )
 

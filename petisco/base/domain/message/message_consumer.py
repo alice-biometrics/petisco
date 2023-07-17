@@ -20,7 +20,7 @@ class MessageConsumer(Generic[T], Interface):
         return cls.__name__
 
     @abstractmethod
-    def add_subscribers(self, subscribers: list[T]) -> None:
+    def add_subscribers(self, subscribers: list[type[T]]) -> None:
         """
         Add defined subscribers to be connected with main queues.
         """

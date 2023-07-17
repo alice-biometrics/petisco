@@ -10,7 +10,7 @@ class MessageConfigurer(Interface):
     @abstractmethod
     def configure_subscribers(
         self,
-        subscribers: list[MessageSubscriber],
+        subscribers: list[type[MessageSubscriber]],
         *,
         clear_subscriber_before: bool = False,
         clear_store_before: bool = False,

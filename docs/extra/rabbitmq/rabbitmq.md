@@ -334,7 +334,7 @@ This code will start consuming message and calling your defined subscribers for 
 application). If you want to subscribe to messages from, for example, other service you can do it quite similar using 
 alias:
 
-```python hl_lines="5 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 62 63 64 65 66"
+```python hl_lines="5 14 15 16 17 18 38 39 40 41 42"
 
 from petisco.extra.rabbitmq import get_rabbitmq_message_dependencies
 
@@ -349,35 +349,11 @@ def dependencies_provider() -> list[Dependency]:
     message_dependencies = get_rabbitmq_message_dependencies(ORGANIZATION, SERVICE)
     dependencies += message_dependencies
     ---
-    other_message_dependencies =  [
-        Dependency(
-            MessageConfigurer,
-            alias="other_message_configurer",
-            builders={
-                "default": Builder(
-                    RabbitMqMessageConfigurer,
-                    organization=ORGANIZATION,
-                    service=OTHER_SERVICE,
-                ),
-                "not_implemented": Builder(NotImplementedMessageConfigurer),
-            },
-            envar_modifier="PETISCO_MESSAGE_CONFIGURER_TYPE",
-        ),
-        Dependency(
-            MessageConsumer,
-            alias="other_message_consumer",
-            builders={
-                "default": Builder(
-                    RabbitMqMessageConsumer,
-                    organization=ORGANIZATION,
-                    service=OTHER_SERVICE,
-                    max_retries=max_retries,
-                ),
-                "not_implemented": Builder(NotImplementedMessageConsumer),
-            },
-            envar_modifier="PETISCO_MESSAGE_CONSUMER_TYPE",
-        )
-    ]
+    other_message_dependencies = get_rabbitmq_message_dependencies(
+        ORGANIZATION, 
+        OTHER_SERVICE, 
+        alias="other"
+    )
     dependencies += other_message_dependencies
     return dependencies
     
@@ -399,8 +375,8 @@ configurers = [
     )
     RabbitMqConfigurer(
         subscribers=[SendSmsOnUserCreated]
-        configurer_alias="other_message_configurer",
-        consumer_alias="other_message_consumer",
+        configurer_alias="other",
+        consumer_alias="other",
     )
 ]
 
