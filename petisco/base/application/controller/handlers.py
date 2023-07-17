@@ -5,7 +5,7 @@ from typing import Any, Callable
 from meiga import AnyResult, Result
 
 
-def unwrap_result_handler(result: Result) -> Any:
+def unwrap_result_handler(result: AnyResult) -> Any:
     assert isinstance(result, Result), "result_handler input must be a Result"
     return result.unwrap()
 

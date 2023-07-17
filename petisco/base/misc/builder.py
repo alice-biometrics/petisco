@@ -1,4 +1,4 @@
-from typing import Any, Generic, Type, TypeVar
+from typing import Any, Generic, Type, TypeVar, Union
 
 T = TypeVar("T")
 
@@ -11,7 +11,7 @@ class Builder(Generic[T]):
     def __init__(
         self,
         klass: Type[T],
-        name_constructor: str = None,
+        name_constructor: Union[str, None] = None,
         is_builder: bool = False,
         *args: Any,
         **kwargs: Any,
