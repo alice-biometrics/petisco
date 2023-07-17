@@ -113,8 +113,8 @@ def show_dependencies(application) -> None:
 
             implementations = ""
             for key, builder in dependency.builders.items():
-                implementations += f"{key}: {builder.klass.__name__} | "
-            implementations = implementations[:-2]
+                implementations += f"{key}: {builder.klass.__name__}\n"
+            implementations = implementations[:-1]
 
             table.add_row(
                 type, default_implementation, implementations, dependency.envar_modifier
