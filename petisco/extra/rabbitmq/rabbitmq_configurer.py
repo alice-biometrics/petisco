@@ -24,8 +24,7 @@ class RabbitMqConfigurer(ApplicationConfigurer):
         subscribers: list[type[MessageSubscriber]],
         execute_after_dependencies: bool = True,
         start_consuming: bool = True,
-        configurer_alias: str = None,
-        consumer_alias: str = None,
+        alias: str = None,
     ):
         """
         Initializes an instance of RabbitMqConfigurer.
@@ -34,17 +33,15 @@ class RabbitMqConfigurer(ApplicationConfigurer):
             subscribers (list[MessageSubscriber]): A list of MessageSubscriber objects representing the message subscribers.
             execute_after_dependencies (bool, optional): Flag indicating whether to execute after dependencies. Defaults to True.
             start_consuming (bool, optional): Flag indicating whether to start consuming messages. Defaults to True.
-            configurer_alias (str, optional): Alias for the MessageConfigurer (Container.get(MessageConfigurer, alias=self.configurer_alias)). Defaults to None.
-            consumer_alias (str, optional): Alias for the MessageConsumer (Container.get(MessageConsumer, alias=self.consumer_alias)). Defaults to None.
+            alias (str, optional): Alias for the MessageConfigurer and MessageConsumer (Container.get(MessageConfigurer|MessageConsumer, alias=self.alias)). Defaults to None.
         """
         self.subscribers = subscribers
         self.start_consuming = start_consuming
-        self.configurer_alias = configurer_alias
-        self.consumer_alias = consumer_alias
+        self.alias = alias
         super().__init__(execute_after_dependencies)
 
     def execute(self, testing: bool = False) -> None:
-        configurer = Container.get(MessageConfigurer, alias=self.configurer_alias)
+        configurer = Container.get(MessageConfigurer, alias=self.alias)
         configurer.configure_subscribers(
             self.subscribers,
             clear_subscriber_before=CLEAR_SUBSCRIBER_BEFORE,
@@ -52,6 +49,6 @@ class RabbitMqConfigurer(ApplicationConfigurer):
         )
 
         if self.start_consuming:
-            consumer = Container.get(MessageConsumer, alias=self.consumer_alias)
+            consumer = Container.get(MessageConsumer, alias=self.alias)
             consumer.add_subscribers(self.subscribers)
             consumer.start()

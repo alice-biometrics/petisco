@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Type, Union
 
 from petisco.base.domain.message.message_configurer import MessageConfigurer
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
@@ -47,7 +47,7 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
 
     def configure_subscribers(
         self,
-        subscribers: List[MessageSubscriber],
+        subscribers: List[Type[MessageSubscriber]],
         clear_subscriber_before: bool = False,
         clear_store_before: bool = False,
     ) -> None:

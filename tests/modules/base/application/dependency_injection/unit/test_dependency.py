@@ -132,3 +132,14 @@ class TestDependency:
             builders={"default": Builder(MyGenericRepo[int])},
         )
         assert isinstance(dependency.get_instance(), MyGenericRepo)
+
+    def should_compose_key_to_have_alias(self):
+        alias = "fallback"
+        dependency = Dependency(
+            BaseRepo,
+            alias=alias,
+            builders={"default": Builder(MyRepo), "inmemory": Builder(InMemoryRepo)},
+        )
+        assert isinstance(dependency.get_instance(), MyRepo)
+        assert dependency.get_key() == f'BaseRepo (alias="{alias}")'
+        assert dependency.envar_modifier == "BASE_REPO_ALIAS_FALLBACK_TYPE"

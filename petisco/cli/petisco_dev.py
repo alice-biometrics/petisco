@@ -108,7 +108,7 @@ def show_dependencies(application) -> None:
         table.add_column("ENV", style="red")
 
         for dependency in dependencies:
-            type = dependency.type.__name__
+            type = dependency.get_key()
             default_implementation = dependency.builders.pop("default").klass.__name__
 
             implementations = ""

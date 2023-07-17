@@ -23,7 +23,7 @@ class Dependency(Generic[T]):
 
     type: T
     builders: dict[str, Builder[T]]
-    alias: str | None = None  # Use alias instead of deprecated name to identify different dependencies with the same base type
+    alias: str | None = None
     envar_modifier: str | None = None
     strict: bool = True
 
@@ -38,32 +38,42 @@ class Dependency(Generic[T]):
     ):
         self.type = type
         self.alias = alias
-        self.envar_modifier = self._set_envar_modifier(envar_modifier)
+        self._set_envar_modifier(envar_modifier)
         self.builders = builders
         self.strict = strict
         self._check()
 
     def get_key(self) -> str:
         if self.alias:
-            return self.alias
-        return self.type
+            return f'{self.type.__name__} (alias="{self.alias}")'
+        return self.type.__name__
 
-    def _check(self):
+    def _check(self) -> None:
         if self.builders is None or self.builders.get("default") is None:
             raise TypeError(
-                f"Dependency: Define at least one builder for {self.type.__name__} with `default` key. This is "
+                f"Dependency: Define at least one builder for {self.get_key()} with `default` key. This is "
                 f"mandatory. Given builders={self.builders} "
             )
 
     def _set_envar_modifier(self, envar_modifier: str | None = None):
+        self.envar_modifier = None
         if envar_modifier is None and self.type:
-            return (
-                # "PETISCO_" + # TODO this will break compatibility (waiting for v2)
+            self.envar_modifier = (
+                # "PETISCO_" + # TODO this will break compatibility (waiting for new versions)
                 re.sub(r"(?<!^)(?=[A-Z])", "_", self.type.__name__).upper()
                 + "_TYPE"
             )
-
-        return envar_modifier
+            if self.alias:
+                alias_str = (
+                    re.sub(r"(?<!^)(?=[A-Z])", "_", self.alias)
+                    .replace("-", "_")
+                    .upper()
+                )
+                self.envar_modifier = self.envar_modifier.replace(
+                    "_TYPE", f"_ALIAS_{alias_str}_TYPE"
+                )
+        else:
+            self.envar_modifier = envar_modifier
 
     def _validate(self) -> None:
         if self.type and self.strict:

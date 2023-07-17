@@ -37,7 +37,7 @@ class RabbitMqMessageSubcribersConfigurer:
         self._configured_subscribers: List[Any] = []
         self.queue_config = queue_config
 
-    def execute(self, subscribers) -> None:
+    def execute(self, subscribers: List[Type[MessageSubscriber]]) -> None:
         self._configure_exchanges()
         self._declare_queues(
             self._exchange_name,
