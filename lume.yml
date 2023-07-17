@@ -17,8 +17,9 @@ uninstall:
 steps:
   clean:
     run:
-      - rm -rf output
+      - rm -rf output .hypothesis .pytest_cache mysqldata petisco.egg-info site
       - find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+      - rm -rf *.db
   build:
     run: pip install -e .[sqlalchemy,redis,rabbitmq,elastic,slack,fastapi]
   lint:
