@@ -2,9 +2,10 @@ from datetime import datetime
 
 import pytest
 
-from petisco import DomainEvent, Uuid
+from petisco import Uuid
+from petisco.base.domain.message.legacy.legacy_domain_event import LegacyDomainEvent
 from petisco.base.domain.message.message import TIME_FORMAT
-from tests.modules.base.domain.messages.unit.domain_events import (
+from tests.modules.base.domain.legacy_messages.unit.legacy_domain_events import (
     AttributesDomainEvent,
     MostConflictingDomainEvent,
     MyDomainEvent,
@@ -22,24 +23,25 @@ DOMAIN_EVENTS = [
 
 
 @pytest.mark.unit
-class TestDomainEvent:
+class TestLegacyDomainEvent:
     @pytest.mark.parametrize("domain_event", DOMAIN_EVENTS)
     def should_create_domain_event_input_and_output(
-        self, domain_event: DomainEvent
+        self, domain_event: LegacyDomainEvent
     ):  # noqa
-        domain_event_json = domain_event.format_json()
-        retrieved_domain_event = DomainEvent.from_format(domain_event_json)
+        domain_event_json = domain_event.json()
+        retrieved_domain_event = LegacyDomainEvent.from_json(domain_event_json)
         assert domain_event == retrieved_domain_event
         assert id(domain_event) != id(retrieved_domain_event)
+        assert retrieved_domain_event._message_type == "domain_event"
 
     def should_create_domain_event_input_and_output_with_specific_target_type(
         self,
     ):  # noqa
         domain_event = MyDomainEvent(my_specific_value="whatever")
 
-        domain_event_json = domain_event.format_json()
+        domain_event_json = domain_event.json()
 
-        retrieved_domain_event = MyDomainEvent.from_format(
+        retrieved_domain_event = MyDomainEvent.from_json(
             domain_event_json, target_type=MyDomainEvent
         )
 
@@ -70,7 +72,7 @@ class TestDomainEvent:
     def should_create_domain_event_input_and_output_with_complex_atributtes(
         self,
     ):  # noqa
-        class MyDomainEventWithUuid(DomainEvent):
+        class MyDomainEventWithUuid(LegacyDomainEvent):
             user_id: Uuid
             created_at: datetime
 
@@ -79,9 +81,9 @@ class TestDomainEvent:
 
         domain_event = MyDomainEventWithUuid(user_id=user_id, created_at=created_at)
 
-        domain_event_json = domain_event.format_json()
+        domain_event_json = domain_event.json()
 
-        retrieved_domain_event = DomainEvent.from_format(domain_event_json)
+        retrieved_domain_event = MyDomainEvent.from_json(domain_event_json)
 
         assert domain_event == retrieved_domain_event
         assert id(domain_event) != id(retrieved_domain_event)
@@ -93,14 +95,18 @@ class TestDomainEvent:
 
     def should_not_share_attributes_between_instances(self):  # noqa
         domain_event1 = MyDomainEvent(
-            my_specific_value="whatever",
+            my_specific_value="whatever", foo="hola", bar="mundo"
         )
         domain_event2 = MyDomainEvent(
-            my_specific_value="youwant",
+            my_specific_value="youwant", foo="hola2", bar="mundo2"
         )
         assert (
-            domain_event1.get_message_attributes()["my_specific_value"]
-            != domain_event2.get_message_attributes()["my_specific_value"]
+            domain_event1.get_message_attributes()["foo"]
+            != domain_event2.get_message_attributes()["foo"]
+        )
+        assert (
+            domain_event1.get_message_attributes()["bar"]
+            != domain_event2.get_message_attributes()["bar"]
         )
 
     def should_create_domain_event_and_keep_message_version_when_exist_a_message_attribute(  # noqa
@@ -109,8 +115,8 @@ class TestDomainEvent:
         expected_message_version = 2
 
         domain_event = VersionConflictDomainEvent(version=100)
-        domain_event_json = domain_event.format()
-        retrieved_domain_event = DomainEvent.from_format(domain_event_json)
+        domain_event_json = domain_event.json()
+        retrieved_domain_event = LegacyDomainEvent.from_json(domain_event_json)
 
         assert domain_event.get_message_version() == expected_message_version
         assert retrieved_domain_event.get_message_version() == expected_message_version
@@ -119,8 +125,8 @@ class TestDomainEvent:
         self,
     ):
         domain_event = NameConflictDomainEvent(name="whatever")
-        domain_event_json = domain_event.format()
-        retrieved_domain_event = DomainEvent.from_format(domain_event_json)
+        domain_event_json = domain_event.json()
+        retrieved_domain_event = LegacyDomainEvent.from_json(domain_event_json)
         assert domain_event.get_message_name() == "name.conflict.domain.event"
         assert retrieved_domain_event.get_message_name() == "name.conflict.domain.event"
 
@@ -152,29 +158,8 @@ class TestDomainEvent:
     def should_create_domain_event_with_correct_name_defined_inside_a_function(  # noqa
         self,
     ):
-        class MyInnerDomainEvent(DomainEvent):
+        class MyInnerDomainEvent(LegacyDomainEvent):
             ...
 
         domain_event = MyInnerDomainEvent()
         assert domain_event.get_message_name() == "my.inner.domain.event"
-
-    def should_retrive_message_type_when_event_is_formated_without_type_message(  # noqa
-        self,
-    ):
-        data = {
-            "data": {
-                "id": "d679de7a-d9f3-4572-9ced-4b37c459606b",
-                "type": "button.pressed",
-                "version": "2",
-                "occurred_on": "2023-07-13 18:20:02.174000",
-                "attributes": {"my_param": "value"},
-                "meta": {
-                    "platform_name": "Chrome (114.0.0.0)",
-                    "system_version": "Mac OS X (Unknown)",
-                },
-            }
-        }
-
-        domain_event = DomainEvent.from_format(data)
-        assert domain_event.get_message_type() == "domain_event"
-        assert hasattr(domain_event, "my_param")

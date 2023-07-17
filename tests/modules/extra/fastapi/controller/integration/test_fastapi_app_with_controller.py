@@ -44,7 +44,7 @@ def entry_point(x_behavior: Optional[str] = Header("success")):
     return as_fastapi(result)
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 @pytest.mark.parametrize(
     "behavior,expected_status_code",
     [

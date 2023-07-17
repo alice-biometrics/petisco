@@ -14,7 +14,7 @@ class TestValueObject:
     def should_construct_and_serialize_with_inner_value(self, expected_value):  # noqa
         value_object = ValueObject(value=expected_value)
         assert value_object.value == expected_value
-        assert value_object.dict() == expected_value
+        assert value_object.model_dump() == expected_value
 
     @pytest.mark.parametrize(
         "expected_value", ["any", 1, 0.3, ["1", ["2"]], {"any": 1}]
@@ -52,7 +52,7 @@ class TestValueObject:
 
         filename = ".tmp.json"
         path = Path(filename)
-        path.write_text(value_object.json())
+        path.write_text(value_object.model_dump_json())
         value_object_parsed = ValueObject.parse_file(filename)
         assert value_object == value_object_parsed
         path.unlink()

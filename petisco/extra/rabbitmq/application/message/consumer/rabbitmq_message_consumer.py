@@ -244,11 +244,11 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 )
             try:
                 if message_type_expected == "domain_event":
-                    message = DomainEvent.from_json(body)
+                    message = DomainEvent.from_format(body)
                 elif message_type_expected == "command":
-                    message = Command.from_json(body)
+                    message = Command.from_format(body)
                 else:
-                    message = Message.from_json(body)
+                    message = Message.from_format(body)
             except Exception as e:
                 self.consumer_logger.log_parser_error(
                     method, properties, body, subscriber.handle, e

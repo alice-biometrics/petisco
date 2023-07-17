@@ -28,7 +28,7 @@ class TestRedisCommandBus:
     def _assert_command_is_saved_in_bus(self, bus: RedisCommandBus, command: Command):
         data = self.redis_database.lrange(bus.database_name, 0, -1)
         commands = [
-            Command.from_dict(json.loads(command_data).get("message"))
+            Command.from_format(json.loads(command_data).get("message"))
             for command_data in data
         ]
         assert commands[0] == command

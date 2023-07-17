@@ -2,8 +2,9 @@ from datetime import datetime
 
 import pytest
 
-from petisco import Command, Uuid
-from tests.modules.base.domain.messages.unit.commands import (
+from petisco import Uuid
+from petisco.base.domain.message.legacy.legacy_command import LegacyCommand
+from tests.modules.base.domain.legacy_messages.unit.legacy_commands import (
     AttributesCommand,
     MostConflictingCommand,
     MyCommand,
@@ -21,23 +22,26 @@ COMMANDS = [
 
 
 @pytest.mark.unit
-class TestCommand:
+class TestLegacyCommand:
     @pytest.mark.parametrize("command", COMMANDS)
-    def should_create_command_input_and_output(self, command: Command):  # noqa
-        command_json = command.format_json()
+    def should_create_command_input_and_output(self, command: LegacyCommand):  # noqa
+        command_json = command.json()
 
-        retrieved_command = Command.from_format(command_json)
-        assert command == retrieved_command
+        retrieved_command = MyCommand.from_json(command_json)
+
+        assert command.format() == retrieved_command.format()
         assert id(command) != id(retrieved_command)
+        assert retrieved_command._message_type == "command"
 
     def should_create_command_input_and_output_with_specific_target_type(self):  # noqa
         command = MyCommand(my_specific_value="whatever")
 
-        command_json = command.format_json()
+        command_json = command.json()
 
-        retrieved_command = MyCommand.from_format(command_json, target_type=MyCommand)
+        retrieved_command = MyCommand.from_json(command_json, target_type=MyCommand)
+
         assert type(command) == type(retrieved_command)
-        assert command == retrieved_command
+        assert command.format() == retrieved_command.format()
         assert id(command) != id(retrieved_command)
         assert command.my_specific_value == retrieved_command.my_specific_value
 
@@ -62,21 +66,21 @@ class TestCommand:
     ):
         expected_message_version = 2
 
-        command = VersionConflictCommand(version=100)
-        command_json = command.format_json()
-        retrieved_command = Command.from_format(command_json)
+        domain_event = VersionConflictCommand(version=100)
+        domain_event_json = domain_event.json()
+        retrieved_domain_event = LegacyCommand.from_json(domain_event_json)
 
-        assert command.get_message_version() == expected_message_version
-        assert retrieved_command.get_message_version() == expected_message_version
+        assert domain_event.get_message_version() == expected_message_version
+        assert retrieved_domain_event.get_message_version() == expected_message_version
 
     def should_create_command_and_keep_message_name_when_exist_a_message_attribute(  # noqa
         self,
     ):
-        command = NameConflictCommand(name="whatever")
-        command_json = command.format_json()
-        retrieved_command = Command.from_format(command_json)
-        assert command.get_message_name() == "name.conflict.command"
-        assert retrieved_command.get_message_name() == "name.conflict.command"
+        domain_event = NameConflictCommand(name="whatever")
+        domain_event_json = domain_event.json()
+        retrieved_domain_event = LegacyCommand.from_json(domain_event_json)
+        assert domain_event.get_message_name() == "name.conflict.command"
+        assert retrieved_domain_event.get_message_name() == "name.conflict.command"
 
     def should_create_command_with_most_conflicting_domain_event(  # noqa
         self,
@@ -106,7 +110,7 @@ class TestCommand:
     def should_create_command_with_correct_name_defined_inside_a_function(  # noqa
         self,
     ):
-        class MyInnerCommand(Command):
+        class MyInnerCommand(LegacyCommand):
             ...
 
         command = MyInnerCommand()

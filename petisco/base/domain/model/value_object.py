@@ -19,8 +19,11 @@ class ValueObject(BaseModel):
     def __init__(self, value: Any, **data: Any) -> None:
         super().__init__(value=value, **data)
 
-    def dict(self, **kwargs: Any) -> Any:
+    def model_dump(self, **kwargs: Any) -> Any:
         return self.value
+
+    def dict(self, **kwargs: Any) -> Any:
+        return self.model_dump(**kwargs)
 
     def __setattr__(self, name: str, value: Any) -> NoReturn:
         raise TypeError("ValueObject objects are immutable")

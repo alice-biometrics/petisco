@@ -29,6 +29,6 @@ class RabbitMqMessagePublisher:
         channel.basic_publish(
             exchange=self._exchange_name,
             routing_key=routing_key,
-            body=message.json().encode(),
+            body=message.format_json().encode(),
             properties=self._properties,
         )

@@ -1,28 +1,24 @@
 import pytest
 
-from petisco import Message
+from petisco.base.domain.message.legacy.legacy_message import LegacyMessage
 
 
-class MyMessage(Message):
+class MyMessage(LegacyMessage):
     ...
 
 
-class MyMessageWithAttributes(Message):
-    foo: str
-    bar: str
-
-
 @pytest.mark.unit
-class TestMessage:
+class TestLegacyMessage:
     def should_create_message_input_and_output(self):  # noqa
-        message = Message()
-        message_json = message.format_json()
-        retrieved_message = Message.from_format(message_json)
+        message = LegacyMessage()
+        message_json = message.json()
+        retrieved_message = LegacyMessage.from_json(message_json)
         assert message == retrieved_message
         assert id(message) != id(retrieved_message)
+        assert retrieved_message._message_type == "message"
 
     def should_create_message_with_required_values(self):  # noqa
-        message = Message()
+        message = LegacyMessage()
 
         assert hasattr(message, "_message_id")
         assert hasattr(message, "_message_version")
@@ -43,9 +39,11 @@ class TestMessage:
         )
 
     def should_not_share_attributes_between_instances(self):  # noqa
-        message_1 = MyMessageWithAttributes(foo="hola", bar="mundo")
+        message_1 = MyMessage()
+        message_1._set_attributes(foo="hola", bar="mundo")  # noqa
 
-        message_2 = MyMessageWithAttributes(foo="hola2", bar="mundo2")
+        message_2 = MyMessage()
+        message_2._set_attributes(foo="hola2", bar="mundo2")  # noqa
 
         assert (
             message_1.get_message_attributes()["foo"]

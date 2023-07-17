@@ -56,10 +56,10 @@ class SqlDatabase(Database[Session]):
     def initialize(self, base: type[DeclarativeBase] = SqlBase) -> None:
         engine = create_engine(
             self.connection.url,
+            pool_pre_ping=True,
             json_serializer=lambda obj: obj,
             json_deserializer=lambda obj: obj,
             echo=self.print_sql_statements,
-            pool_pre_ping=True,
         )
 
         if not database_exists(engine.url):

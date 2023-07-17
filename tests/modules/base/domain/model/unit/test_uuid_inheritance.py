@@ -20,7 +20,7 @@ def test_uuid_inheritance_should_success_when_construct_and_serialize_with_inner
     task_id = TaskId(value="4E6660D7-B037-4C75-Adc8-272D62944Abb")
 
     assert task_id.value == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
-    assert task_id.dict() == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
+    assert task_id.model_dump() == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
 
 
 @pytest.mark.unit
@@ -28,7 +28,7 @@ def test_uuid_inheritance_should_success_when_use_a_legacy_value_allowed_in_spec
     task_id = TaskId(value="SFHem4THDVnNNQjL447Phieh4rst")
 
     assert task_id.value == "SFHem4THDVnNNQjL447Phieh4rst"
-    assert task_id.dict() == "SFHem4THDVnNNQjL447Phieh4rst"
+    assert task_id.model_dump() == "SFHem4THDVnNNQjL447Phieh4rst"
 
 
 @pytest.mark.unit
