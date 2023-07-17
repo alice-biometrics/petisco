@@ -31,10 +31,7 @@ class Message(BaseModel, extra=Extra.allow):
             self._message_formatted_message = None  # noqa
 
         if self._message_formatted_message:
-            # print("_message_formatted_message exist")
             self._update_from_formatted_message()
-        # else:
-        # print("_message_formatted_message dont exist")
 
         if not hasattr(self, "_message_id"):
             self._message_id = Uuid.v4()  # noqa
@@ -61,12 +58,6 @@ class Message(BaseModel, extra=Extra.allow):
 
         if not hasattr(self, "_message_type"):
             self._message_type = "message"  # noqa
-
-        # To serialize ValueObjects (seems not working)
-        # for key, attribute in self._message_attributes.items():
-        #     if issubclass(attribute.__class__, ValueObject):
-        #         print(key)
-        #         setattr(self, f"_{key}", ValueObject.serializer(key))
 
     def add_meta(self, meta: Dict[str, Any]) -> None:
         self._message_meta = meta
@@ -110,10 +101,6 @@ class Message(BaseModel, extra=Extra.allow):
             formatted_message = json.loads(formatted_message)
         data = cast(Dict[str, Any], formatted_message.get("data"))
         attributes = data.get("attributes", dict())
-        # attributes.update({"formatted_message": data})
-
-        # data = message_data.get("data")
-        # domain_event = target_type()
         target_type = target_type if target_type else cls
         message = target_type(**attributes)
         message._message_formatted_message = data
@@ -133,7 +120,6 @@ class Message(BaseModel, extra=Extra.allow):
 
     def _update_from_formatted_message(self) -> None:
         kwargs = self._message_formatted_message
-        # print("Message _update_from_formatted_message")
         self._message_id = (
             Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
         )
@@ -150,9 +136,7 @@ class Message(BaseModel, extra=Extra.allow):
         if self._message_attributes:
             for key, value in self._message_attributes.items():
                 setattr(self, key, value)
-        # for k in attributes:
-        #     self._message_attributes[k] = attributes[k]
-        #     setattr(self, k, attributes[k])
+
         self._message_meta = cast(Dict[str, Any], kwargs.get("meta"))
         self._message_type = str(kwargs.get("type_message", self._message_type))
 

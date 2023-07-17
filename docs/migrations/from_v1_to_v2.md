@@ -6,6 +6,12 @@ have compiled this documentation to assist you every step of the way.
 
 ## Breaking Changes
 
+Following changes may require modifications to your existing code. While we apologize for any inconvenience, we believe 
+these updates will enhance functionality and improve user experience. Please review the accompanying documentation for 
+specific modifications and reach out to our support team for assistance. We value your feedback and appreciate your 
+understanding during this transition. Thank you for your continued support as we strive to provide you with an improved 
+library experience.
+
 ### Dependencies 
 
 
@@ -41,37 +47,6 @@ have compiled this documentation to assist you every step of the way.
     ````
 
 For more info about new way of defining dependencies, you can check the [Dependency Injection Container section](../../application/#dependency-injection-container).
-
-### MessageBuses 
-
-!!! warning
-
-    `DomainEventBus` and `CommandBus` do not implement `publish_list` anymore. Now is necessary to rename it to `publish`.
-    The new `publish` implementation available in petisco v2 allows to pass individual and list of messages.
-
-=== "Petisco v1 👴"
-
-    ````python hl_lines="7"
-    from petisco import Container, Dependency
-    
-    domain_events = [UserCreated(), UserCompleted()]
-
-    domain_event_bus: DomainEventBus = MyDomainEventBus()  
-
-    domain_event_bus.publish_list(domain_events)
-    ````
-
-=== "Petisco v2 👶"
-
-    ```python hl_lines="7"
-    from petisco import Container, Dependency
-    
-    domain_events = [UserCreated(), UserCompleted()]
-
-    domain_event_bus: DomainEventBus = MyDomainEventBus()  
-
-    domain_event_bus.publish(domain_events)
-    ```
 
 ### Controller Result
 
@@ -162,7 +137,39 @@ To use this in a FastAPI router, is quite easy:
         return as_fastapi(result)
     ```
 
-### DomainEvent and Command
+### MessageBuses 
+
+!!! warning
+
+    `DomainEventBus` and `CommandBus` do not implement `publish_list` anymore. Now is necessary to rename it to `publish`.
+    The new `publish` implementation available in petisco v2 allows to pass individual and list of messages.
+
+=== "Petisco v1 👴"
+
+    ````python hl_lines="7"
+    from petisco import Container, Dependency
+    
+    domain_events = [UserCreated(), UserCompleted()]
+
+    domain_event_bus: DomainEventBus = MyDomainEventBus()  
+
+    domain_event_bus.publish_list(domain_events)
+    ````
+
+=== "Petisco v2 👶"
+
+    ```python hl_lines="7"
+    from petisco import Container, Dependency
+    
+    domain_events = [UserCreated(), UserCompleted()]
+
+    domain_event_bus: DomainEventBus = MyDomainEventBus()  
+
+    domain_event_bus.publish(domain_events)
+    ```
+
+
+### Message Private Properties
 
 !!! warning
 
@@ -224,6 +231,59 @@ Now, the access to private attributes must be performed using a sort of getters.
     print(user_created.get_message_ocurred_on()) 
     print(user_created.get_message_meta()) 
     ```
+
+### Message (From metaclass to Pydantic)
+
+!!! warning
+
+    Petisco `Message` base class is now a `pydantic.BaseModel`. This will help on dev experience improvement of 
+    `DomainEvent` and `Command` and also validation. [https://github.com/alice-biometrics/petisco/issues/360](https://github.com/alice-biometrics/petisco/issues/360)
+
+
+
+To ilustrate main changes we will use the following `DomainEvent` definition:
+
+```python
+from petisco import DomainEvent
+
+class UserCreated(DomainEvent):
+    name: str
+    age: int
+
+user_created = UserCreated(name="acme", age=50)
+```
+
+Main changes:
+
+* Serialization
+  * Use `.format()` instead of `.dict()` to convert your Message to specific message format.
+    ```python
+    {'data': {'id': '01d34093-7b7f-43b0-8cdf-557bb377c331', 'type': 'user.created', 'type_message': 'domain_event', 'version': 1, 'occurred_on': '2023-07-17 15:35:03.518701', 'attributes': {'name': 'acme', 'age': 50}, 'meta': {}}}
+    ```
+  * Use `.format_json()` instead of `.json()` to convert your Message to specific message format and convert to str.
+    ```python
+    "{'data': {'id': '01d34093-7b7f-43b0-8cdf-557bb377c331', 'type': 'user.created', 'type_message': 'domain_event', 'version': 1, 'occurred_on': '2023-07-17 15:35:03.518701', 'attributes': {'name': 'acme', 'age': 50}, 'meta': {}}}"
+    ```
+  * Use `.model_dump()` (old pydantic `.dict()`) to get model attributes dictionary:
+    ```python
+    {'name': 'acme', 'age': 50}
+    ```
+  * Use `.model_dump_json()` (old pydantic `.json()`) to get model attributes dictionary:
+    ```python
+    "{'name': 'acme', 'age': 50}"
+    ```
+* Deserialization
+  * Use `.from_format(formatted_message: dict | str | bytes)` to convert from specific message format (`.format()` and `.format_json()` output). Don't use legacy `.from_dict()`.
+* New features thanks to pydantic
+  * Attribute auto-completion
+  * Atrribute and model validation as we are extending from `pydantic.BaseModel`
+  * Automatic serialization 
+
+If something is wrong with new `Message` class your can change to previous implementation via envar:
+
+```bash
+export PETISCO_MESSAGE_AS_PYDANTIC_MODEL=disable
+```
 
 ## Dev Experience Improvements
 
