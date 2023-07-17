@@ -21,7 +21,7 @@ def entry_point():
     return as_fastapi(result)
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_fastapi_app_with_controller_raise_unknown_error():
     with TestClient(app) as client:
         response = client.get("/test")
