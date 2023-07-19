@@ -274,6 +274,34 @@ Main changes:
     ```
 * Deserialization
   * Use `.from_format(formatted_message: dict | str | bytes)` to convert from specific message format (`.format()` and `.format_json()` output). Don't use legacy `.from_dict()`.
+* envar_modifier with alias
+  
+  The below dependency will automatically creates a `envar_modifier` with value `USER_REPOSITORY_TYPE`
+  ```python
+  Dependency(UserRepository,
+            builders={
+                "default": Builder(SqlUserRepository),
+                "fake": Builder(FakeUserRepository),
+            },
+        ),
+  ```
+  
+  Now, if you uses an alias, envar_modifier will be different as well (in the following case `USER_REPOSITORY_ALIAS_DASHBOARD_TYPE`)
+
+  ```python hl_lines="2"
+  Dependency(UserRepository,
+            alias="dashboard",
+            builders={
+                "default": Builder(SqlUserRepository),
+                "fake": Builder(FakeUserRepository),
+            },
+        ),
+  ```
+  
+  This allows us to have different configuration for different implementation (different alias)
+    
+  ⚠️Check your configurations (maybe you have to add `_ALIAS_{YOUR_ALIAS}` to some env vars)!
+ 
 * New features thanks to pydantic
   * Attribute auto-completion
   * Atrribute and model validation as we are extending from `pydantic.BaseModel`
