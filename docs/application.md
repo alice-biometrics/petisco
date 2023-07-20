@@ -525,7 +525,7 @@ Let's go into more detail in the following points.
     with `custom_message_handler`:
 
     ```python hl_lines="7"
-    from petisco import Controller, unwrap_result_handler
+    from petisco import Controller, custom_message_handler
     from meiga import Result, Success, Error
     import random
 
