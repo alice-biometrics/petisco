@@ -137,7 +137,7 @@ class Message(BaseModel, extra=Extra.allow):
             for key, value in self._message_attributes.items():
                 setattr(self, key, value)
 
-        self._message_meta = cast(Dict[str, Any], kwargs.get("meta"))
+        self._message_meta = cast(Dict[str, Any], kwargs.get("meta", dict()))
         self._message_type = str(kwargs.get("type_message", self._message_type))
 
     def __eq__(self, other: Any) -> bool:
