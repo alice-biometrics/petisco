@@ -20,3 +20,20 @@ class FastAPIController(Controller):
     @abstractmethod
     def execute(self, *args: Any, **kwargs: Any) -> AnyResult:
         return NotImplementedMethodError
+
+    @classmethod
+    def responses(cls) -> Dict[str, Any]:
+        controller = cls()
+
+        if not hasattr(controller, "Config"):
+            return None
+
+        config = controller.Config
+        if not hasattr(config, "error_map"):
+            return None
+
+        expected_responses = {
+            http_error.status_code: {"description": http_error.detail}
+            for http_error in config.error_map.values()
+        }
+        return expected_responses
