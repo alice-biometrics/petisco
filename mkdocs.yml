@@ -50,7 +50,7 @@ nav:
 - application.md
 - domain.md
 - databases.md
-- Infrastructure [Extras]:
+- Extras:
   - FastAPI: extra/fastapi/fastapi.md
   - RabbitMQ: extra/rabbitmq/rabbitmq.md
   - Redis: extra/redis/redis.md

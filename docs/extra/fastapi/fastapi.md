@@ -93,20 +93,61 @@ application = FastApiApplication(
 ## FastAPIController
 
 ```python
-from meiga import BoolResult
+from meiga import Result, Error
 from petisco import Container
 from petisco.extra.fastapi import FastAPIController
 
-from app.src.task.create.application.task_creator import TaskCreator
+from app.src.task.create.application.task_retriever import TaskRetriever
 from app.src.task.shared.domain.task import Task
 
 
-class CreateTaskController(FastAPIController):
-    def execute(self, task: Task) -> BoolResult:
-        task_creator = TaskCreator(
-            labeler=Container.get(TaskLabeler),
+class GetTaskController(FastAPIController):
+    def execute(self, task_id: UUID) -> Result[Task, Error]:
+        task_retriever = TaskRetriever(
             repository=Container.get(TaskRepository),
             domain_event_bus=Container.get(DomainEventBus),
         )
-        return task_creator.execute(task=task)
+        return task_retriever.execute(task_id)
 ```
+
+## FastAPI Example
+
+Continuing with example described above (`GetTaskController`), this is how a petisco controller should be integrated
+in a FastAPI application.
+
+```python
+from fastapi import FastAPI
+from petisco.extra.fastapi import as_fastapi
+
+app = FastAPI()
+
+
+@app.get("/task")
+def get_task(task_id: UUID):
+    result = GetTaskController().execute(task_id)
+    return as_fastapi(result)
+```
+
+We can also use some covinent tools given by FastAPI and petisco to better document and write your application giving a 
+better experience to your users and developers. 
+
+```python 
+from fastapi import FastAPI
+from petisco.extra.fastapi import as_fastapi
+
+app = FastAPI()
+
+
+@app.get(
+    "/task",
+    summary="Return a task from a given task_id",
+    description="Return a task from a given task_id. If not exist it will return an error.",
+    responses=GetTaskController.responses() # (1)
+)
+def get_task(task_id: UUID) -> Task: # (2)
+    result = GetTaskController()
+    return as_fastapi(result, expected_type=Task)
+```
+
+1. Use `responses()` method from `FastAPIController` to get defined error_map in FastAPI format.
+2. Define return Model.
