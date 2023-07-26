@@ -339,3 +339,35 @@ class TestFastApiController:
 
         with pytest.raises(TypeError, match="Controller Error"):
             MyController().execute()
+
+    def should_return_responses_when_error_map_is_defined(self):
+        class MyController(FastAPIController):
+            class Config:
+                error_map = {
+                    NotFound: HttpError(status_code=404, detail="Task not Found")
+                }
+
+            def execute(self) -> BoolResult:
+                return isSuccess
+
+        responses = MyController.responses()
+        assert responses == {404: {"description": "Task not Found"}}
+
+    def should_return_none_responses_when_config_is_not_defined(self):
+        class MyController(FastAPIController):
+            def execute(self) -> BoolResult:
+                return isSuccess
+
+        responses = MyController.responses()
+        assert responses is None
+
+    def should_return_none_responses_when_error_map_is_not_defined(self):
+        class MyController(FastAPIController):
+            class Config:
+                success_handler = lambda result: FASTAPI_DEFAULT_RESPONSE  # noqa E731
+
+            def execute(self) -> BoolResult:
+                return isSuccess
+
+        responses = MyController.responses()
+        assert responses is None
