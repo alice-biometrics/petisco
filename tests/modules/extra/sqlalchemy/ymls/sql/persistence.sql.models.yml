@@ -1,4 +1,0 @@
-models:
-  client: tests.modules.extra.sqlalchemy.ymls.sql.models.ClientModel
-  user: tests.modules.extra.sqlalchemy.ymls.sql.models.UserModel
-  product: tests.modules.extra.sqlalchemy.ymls.sql.models.ProductModel

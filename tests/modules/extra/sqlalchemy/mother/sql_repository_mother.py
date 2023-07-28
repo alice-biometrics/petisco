@@ -7,7 +7,7 @@ from meiga.decorators import meiga
 
 from petisco import Uuid, ValueObject
 from petisco.extra.sqlalchemy.sql.sql_repository import SqlRepository
-from tests.modules.extra.sqlalchemy.ymls.sql.models import ClientModel, UserModel
+from tests.modules.extra.sqlalchemy.mother.models import ClientModel, UserModel
 
 BASE_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../ymls/"
 
