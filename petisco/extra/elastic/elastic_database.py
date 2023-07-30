@@ -39,8 +39,8 @@ class ElasticDatabase(Database):
     session: Elasticsearch | None = None
 
     @staticmethod
-    def local_connection_checker() -> ElasticDatabase:
-        return ElasticDatabase(name="test", connection=ElasticConnection.create_local())
+    def local_connection_checker(alias: str | None = "test") -> ElasticDatabase:
+        return ElasticDatabase(alias=alias, connection=ElasticConnection.create_local())
 
     def __init__(self, alias: str, connection: ElasticConnection) -> None:
         if not connection or not isinstance(connection, ElasticConnection):
