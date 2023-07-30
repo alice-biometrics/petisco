@@ -38,9 +38,9 @@ class AsyncElasticDatabase(AsyncDatabase):
     session: AsyncElasticsearch | None = None
 
     @staticmethod
-    def local_connection_checker() -> AsyncElasticDatabase:
+    def local_connection_checker(alias: str | None = "test") -> AsyncElasticDatabase:
         return AsyncElasticDatabase(
-            name="test", connection=ElasticConnection.create_local()
+            alias=alias, connection=ElasticConnection.create_local()
         )
 
     def __init__(self, alias: str, connection: ElasticConnection) -> None:
