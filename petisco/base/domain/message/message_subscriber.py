@@ -11,7 +11,6 @@ from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.domain.message.command_bus import CommandBus
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
 from petisco.base.domain.message.message import Message
-from petisco.base.domain.message.message_bus import TypeMessage
 from petisco.base.domain.message.message_subscriber_info import MessageSubscriberInfo
 from petisco.base.domain.message.not_implemented_command_bus import (
     NotImplementedCommandBus,
@@ -64,7 +63,7 @@ class MessageSubscriber(metaclass=MetaMessageSubscriber):
         raise NotImplementedError()
 
     @abstractmethod
-    def handle(self, message: TypeMessage) -> BoolResult:
+    def handle(self, message: Any) -> BoolResult:
         raise NotImplementedError()
 
     @classmethod

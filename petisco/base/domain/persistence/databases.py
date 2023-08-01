@@ -24,7 +24,7 @@ class _Databases:
     def info(self) -> dict[str, Any]:
         return {name: database.info() for name, database in self._databases.items()}
 
-    def get_databases(self) -> list[Database]:
+    def get_databases(self) -> list[Database[Any]]:
         return list(self._databases.values())
 
     def get_database_names(self) -> list[str]:
