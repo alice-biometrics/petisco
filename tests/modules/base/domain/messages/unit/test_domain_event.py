@@ -43,7 +43,7 @@ class TestDomainEvent:
             domain_event_json, target_type=MyDomainEvent
         )
 
-        assert type(domain_event) == type(domain_event)
+        assert type(domain_event) is type(domain_event)
         assert domain_event == retrieved_domain_event
         assert id(domain_event) != id(retrieved_domain_event)
         assert (

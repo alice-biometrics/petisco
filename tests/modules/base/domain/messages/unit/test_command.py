@@ -36,7 +36,7 @@ class TestCommand:
         command_json = command.format_json()
 
         retrieved_command = MyCommand.from_format(command_json, target_type=MyCommand)
-        assert type(command) == type(retrieved_command)
+        assert type(command) is type(retrieved_command)
         assert command == retrieved_command
         assert id(command) != id(retrieved_command)
         assert command.my_specific_value == retrieved_command.my_specific_value

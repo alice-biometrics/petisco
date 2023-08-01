@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from meiga import AnyResult, NotImplementedMethodError
 
@@ -22,13 +22,13 @@ class FastAPIController(Controller):
         return NotImplementedMethodError
 
     @classmethod
-    def responses(cls) -> Dict[str, Any]:
+    def responses(cls) -> Union[Dict[str, Any], None]:
         controller = cls()
 
         if not hasattr(controller, "Config"):
             return None
 
-        config = controller.Config
+        config = getattr(controller, "Config")
         if not hasattr(config, "error_map"):
             return None
 
