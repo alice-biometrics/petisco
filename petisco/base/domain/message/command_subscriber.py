@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TypeVar
 
 from meiga import BoolResult
 
@@ -13,8 +12,6 @@ from petisco.base.domain.message.message_subscriber import MessageSubscriber
 # relationship is 1 to 1 and that is why we use Type[Command] instead of List[Type[Command]]
 # and overwrite get_message_subscribers_info base method
 from petisco.base.domain.message.message_subscriber_info import MessageSubscriberInfo
-
-T = TypeVar("T", bound=Command)
 
 
 class CommandSubscriber(MessageSubscriber):
@@ -28,7 +25,7 @@ class CommandSubscriber(MessageSubscriber):
         raise NotImplementedError()
 
     @abstractmethod
-    def handle(self, command: T) -> BoolResult:
+    def handle(self, command: Command) -> BoolResult:
         raise NotImplementedError()
 
     def get_message_subscribers_info(self) -> list[MessageSubscriberInfo]:

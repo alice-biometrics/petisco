@@ -1,14 +1,11 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TypeVar
 
 from meiga import BoolResult
 
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
-
-T = TypeVar("T", bound=DomainEvent)
 
 
 class DomainEventSubscriber(MessageSubscriber):
