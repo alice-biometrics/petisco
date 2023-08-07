@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 from typing import Any, Dict, Union, cast
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 
 from petisco.base.domain.message.legacy.use_legacy_implementation import (
     USE_LEGACY_IMPLEMENTATION,
@@ -19,7 +19,7 @@ def get_version(config: Union[Dict[str, Any], None]) -> int:
     return version
 
 
-class Message(BaseModel, extra=Extra.allow):
+class Message(BaseModel, extra="allow"):
     def model_post_init(self, __context: Any) -> None:
         if not hasattr(self, "_message_attributes"):
             attributes = dict(self)
