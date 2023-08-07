@@ -24,9 +24,19 @@ class AggregateRoot(ABC, BaseModel):
     It is a cluster of associated entities that are treated as a unit for the purpose of data changes.
     """
 
-    aggregate_id: Uuid = Field(default=Uuid.v4())
+    aggregate_id: Uuid = Field(default_factory=Uuid.v4)
     aggregate_version: NonNegativeInt = Field(default=DEFAULT_VERSION)
     _domain_events: List[DomainEvent] = PrivateAttr(default=[])
+
+    # @model_validator(mode="before")
+    # def model_validation(cls, data):
+    #     new_data = dict()
+    #     for key, annotation in cls.__annotations__.items():
+    #         value = data[key]
+    #         if issubclass(annotation, ValueObject) and isinstance(value, str):
+    #             value = annotation(value=value)
+    #         new_data[key] = value
+    #     return new_data
 
     @field_serializer("aggregate_id")
     def serialize_aggregate_id(self, aggregate_id: Uuid):
