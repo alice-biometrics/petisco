@@ -32,12 +32,12 @@ class AggregateRoot(ABC, BaseModel):
 
     @model_validator(mode="before")
     def model_validation(cls, data):
-        new_data = dict()
+        new_data = copy(data)
         for key, annotation in cls.__annotations__.items():
             value = data[key]
             if issubclass(annotation, ValueObject) and isinstance(value, str):
-                value = annotation(value=value)
-            new_data[key] = value
+                new_value = annotation(value=value)
+                new_data[key] = new_value
         return new_data
 
     @field_serializer("aggregate_id")
