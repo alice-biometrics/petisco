@@ -9,10 +9,12 @@ from pydantic import (
     PrivateAttr,
     field_serializer,
     field_validator,
+    model_validator,
 )
 
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.model.uuid import Uuid
+from petisco.base.domain.model.value_object import ValueObject
 
 DEFAULT_VERSION = 1
 
@@ -24,9 +26,19 @@ class AggregateRoot(ABC, BaseModel):
     It is a cluster of associated entities that are treated as a unit for the purpose of data changes.
     """
 
-    aggregate_id: Uuid = Field(default=Uuid.v4())
+    aggregate_id: Uuid = Field(default_factory=Uuid.v4)
     aggregate_version: NonNegativeInt = Field(default=DEFAULT_VERSION)
     _domain_events: List[DomainEvent] = PrivateAttr(default=[])
+
+    @model_validator(mode="before")
+    def model_validation(cls, data):
+        new_data = copy(data)
+        for key, annotation in cls.__annotations__.items():
+            value = data[key]
+            if issubclass(annotation, ValueObject) and isinstance(value, str):
+                new_value = annotation(value=value)
+                new_data[key] = new_value
+        return new_data
 
     @field_serializer("aggregate_id")
     def serialize_aggregate_id(self, aggregate_id: Uuid):

@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 from typing import Any, Dict, Union, cast
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
@@ -21,7 +21,7 @@ class MessageInfo(BaseModel):
     version: int
 
 
-class Message(BaseModel, extra=Extra.allow):
+class Message(BaseModel, extra="allow"):
     def model_post_init(self, __context: Any) -> None:
         if not hasattr(self, "_message_attributes"):
             attributes = dict(self)
