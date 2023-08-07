@@ -5,9 +5,6 @@ from typing import Any, Dict, Union, cast
 
 from pydantic import BaseModel
 
-from petisco.base.domain.message.legacy.use_legacy_implementation import (
-    USE_LEGACY_IMPLEMENTATION,
-)
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
 
@@ -17,6 +14,11 @@ TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 def get_version(config: Union[Dict[str, Any], None]) -> int:
     version = getattr(config, "version", 1) if config else 1
     return version
+
+
+class MessageInfo(BaseModel):
+    name: str
+    version: int
 
 
 class Message(BaseModel, extra="allow"):
@@ -100,7 +102,9 @@ class Message(BaseModel, extra="allow"):
         if not isinstance(formatted_message, dict):
             formatted_message = json.loads(formatted_message)
         data = cast(Dict[str, Any], formatted_message.get("data"))
-        attributes = data.get("attributes", dict())
+        attributes = (
+            data.get("attributes") if data.get("attributes") is not None else dict()
+        )
         target_type = target_type if target_type else cls
         message = target_type(**attributes)
         message._message_formatted_message = data
@@ -131,7 +135,9 @@ class Message(BaseModel, extra="allow"):
             else datetime.now()
         )
 
-        attributes = kwargs.get("attributes", dict())
+        attributes = (
+            kwargs.get("attributes") if kwargs.get("attributes") is not None else dict()
+        )
         self._message_attributes = cast(Dict[str, Any], attributes)
         if self._message_attributes:
             for key, value in self._message_attributes.items():
@@ -172,8 +178,13 @@ class Message(BaseModel, extra="allow"):
     def get_message_type(self) -> str:
         return self._message_type
 
+    @classmethod
+    def info(cls) -> MessageInfo:
+        message_name = (  # noqa
+            re.sub(r"(?<!^)(?=[A-Z])", "_", cls.__name__).lower().replace("_", ".")
+        )
+        message_version = 1
+        if hasattr(cls, "Config") and hasattr(cls.Config, "version"):
+            message_version = int(cls.Config.version)
 
-if USE_LEGACY_IMPLEMENTATION is True:
-    from petisco.base.domain.message.legacy.legacy_message import LegacyMessage  # noqa
-
-    Message = LegacyMessage  # noqa
+        return MessageInfo(name=message_name, version=message_version)

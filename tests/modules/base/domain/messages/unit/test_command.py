@@ -111,3 +111,9 @@ class TestCommand:
 
         command = MyInnerCommand()
         assert command.get_message_name() == "my.inner.command"
+
+    @pytest.mark.parametrize("command", COMMANDS)
+    def should_get_message_info(self, command: Command):  # noqa
+        message_info = type(command).info()
+        assert message_info.name == command.get_message_name()
+        assert message_info.version == command.get_message_version()

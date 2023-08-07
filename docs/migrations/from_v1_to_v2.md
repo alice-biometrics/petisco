@@ -304,14 +304,10 @@ Main changes:
  
 * New features thanks to pydantic
   * Attribute auto-completion
-  * Atrribute and model validation as we are extending from `pydantic.BaseModel`
+  * Attribute and model validation as we are extending from `pydantic.BaseModel`
   * Automatic serialization 
 
-If something is wrong with new `Message` class your can change to previous implementation via envar:
 
-```bash
-export PETISCO_MESSAGE_AS_PYDANTIC_MODEL=disable
-```
 
 ## Dev Experience Improvements
 

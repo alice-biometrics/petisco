@@ -178,3 +178,15 @@ class TestDomainEvent:
         domain_event = DomainEvent.from_format(data)
         assert domain_event.get_message_type() == "domain_event"
         assert hasattr(domain_event, "my_param")
+
+    def should_be_prepared_to_serialize_a_message_without_attributes(self):
+        data_with_null_attributes = '{"data": {"id": "3504bb75-98f9-4073-977c-c2521bebf7c0", "type": "no.attributes.domain.event", "type_message": "domain_event", "version": 1, "occurred_on": "2023-08-07 14:21:47.215225", "attributes": null, "meta": {}}}'
+        domain_event = DomainEvent.from_format(data_with_null_attributes)
+
+        assert domain_event.get_message_attributes() == {}
+
+    @pytest.mark.parametrize("domain_event", DOMAIN_EVENTS)
+    def should_get_message_info(self, domain_event: DomainEvent):  # noqa
+        message_info = type(domain_event).info()
+        assert message_info.name == domain_event.get_message_name()
+        assert message_info.version == domain_event.get_message_version()
