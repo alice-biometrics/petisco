@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from petisco import AggregateRoot, DomainEvent, Uuid
+from petisco import AggregateRoot, DomainEvent, Uuid, ValueObject
 
 
 class MyAggregateRootCreated(DomainEvent):
@@ -77,3 +77,20 @@ class TestAggregateRoot:
         instance_2 = MyAggregateRoot(name="instance_1")
 
         assert instance_1.aggregate_id != instance_2.aggregate_id
+
+    def should_model_validate_from_serializer_input(self):  # noqa
+        serialized_object = {"my_value_object": "my_expected_value"}
+
+        class MyValueObject(ValueObject):
+            ...
+
+        class MyAggregateRoot(AggregateRoot):
+            my_value_object: MyValueObject
+            _my_value_object = ValueObject.serializer("my_value_object")
+
+        model = MyAggregateRoot.model_validate(serialized_object)
+
+        assert (
+            model.model_dump()["my_value_object"]
+            == serialized_object["my_value_object"]
+        )

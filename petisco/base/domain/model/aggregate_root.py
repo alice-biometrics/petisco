@@ -9,10 +9,12 @@ from pydantic import (
     PrivateAttr,
     field_serializer,
     field_validator,
+    model_validator,
 )
 
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.model.uuid import Uuid
+from petisco.base.domain.model.value_object import ValueObject
 
 DEFAULT_VERSION = 1
 
@@ -28,15 +30,15 @@ class AggregateRoot(ABC, BaseModel):
     aggregate_version: NonNegativeInt = Field(default=DEFAULT_VERSION)
     _domain_events: List[DomainEvent] = PrivateAttr(default=[])
 
-    # @model_validator(mode="before")
-    # def model_validation(cls, data):
-    #     new_data = dict()
-    #     for key, annotation in cls.__annotations__.items():
-    #         value = data[key]
-    #         if issubclass(annotation, ValueObject) and isinstance(value, str):
-    #             value = annotation(value=value)
-    #         new_data[key] = value
-    #     return new_data
+    @model_validator(mode="before")
+    def model_validation(cls, data):
+        new_data = dict()
+        for key, annotation in cls.__annotations__.items():
+            value = data[key]
+            if issubclass(annotation, ValueObject) and isinstance(value, str):
+                value = annotation(value=value)
+            new_data[key] = value
+        return new_data
 
     @field_serializer("aggregate_id")
     def serialize_aggregate_id(self, aggregate_id: Uuid):
