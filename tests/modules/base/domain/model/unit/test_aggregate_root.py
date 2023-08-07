@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict
 
 import pytest
 
@@ -86,6 +87,46 @@ class TestAggregateRoot:
 
         class MyAggregateRoot(AggregateRoot):
             my_value_object: MyValueObject
+            _my_value_object = ValueObject.serializer("my_value_object")
+
+        model = MyAggregateRoot.model_validate(serialized_object)
+
+        assert (
+            model.model_dump()["my_value_object"]
+            == serialized_object["my_value_object"]
+        )
+
+    @pytest.mark.parametrize(
+        "serialized_object",
+        [
+            {
+                "my_value_object": "my_expected_value",
+                "my_optional_value_object": "my_expected_value",
+                "my_optional_name": "my_expected_value",
+            },
+            {
+                "my_value_object": "my_expected_value",
+                "my_optional_value_object": None,
+                "my_optional_name": "my_expected_value",
+            },
+            {
+                "my_value_object": "my_expected_value",
+                "my_optional_value_object": "my_expected_value",
+                "my_optional_name": None,
+            },
+        ],
+    )
+    def should_model_validate_with_union_values(
+        self, serialized_object: Dict[str, str]
+    ):  # noqa
+        class MyValueObject(ValueObject):
+            ...
+
+        class MyAggregateRoot(AggregateRoot):
+            my_value_object: MyValueObject
+            my_optional_value_object: MyValueObject | None
+            my_optional_name: str | None
+
             _my_value_object = ValueObject.serializer("my_value_object")
 
         model = MyAggregateRoot.model_validate(serialized_object)
