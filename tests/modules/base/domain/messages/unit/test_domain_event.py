@@ -184,3 +184,9 @@ class TestDomainEvent:
         domain_event = DomainEvent.from_format(data_with_null_attributes)
 
         assert domain_event.get_message_attributes() == {}
+
+    @pytest.mark.parametrize("domain_event", DOMAIN_EVENTS)
+    def should_get_message_info(self, domain_event: DomainEvent):  # noqa
+        message_info = type(domain_event).info()
+        assert message_info.name == domain_event.get_message_name()
+        assert message_info.version == domain_event.get_message_version()

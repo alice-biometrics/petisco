@@ -5,9 +5,6 @@ from typing import Any, Dict, Union, cast
 
 from pydantic import BaseModel, Extra
 
-from petisco.base.domain.message.legacy.use_legacy_implementation import (
-    USE_LEGACY_IMPLEMENTATION,
-)
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
 
@@ -21,7 +18,7 @@ def get_version(config: Union[Dict[str, Any], None]) -> int:
 
 class MessageInfo(BaseModel):
     name: str
-    version: str
+    version: int
 
 
 class Message(BaseModel, extra=Extra.allow):
@@ -181,11 +178,13 @@ class Message(BaseModel, extra=Extra.allow):
     def get_message_type(self) -> str:
         return self._message_type
 
-    # @classmethod
-    # def info(cls) -> MessageInfo:
+    @classmethod
+    def info(cls) -> MessageInfo:
+        message_name = (  # noqa
+            re.sub(r"(?<!^)(?=[A-Z])", "_", cls.__name__).lower().replace("_", ".")
+        )
+        message_version = 1
+        if hasattr(cls, "Config") and hasattr(cls.Config, "version"):
+            message_version = int(cls.Config.version)
 
-
-if USE_LEGACY_IMPLEMENTATION is True:
-    from petisco.base.domain.message.legacy.legacy_message import LegacyMessage  # noqa
-
-    Message = LegacyMessage  # noqa
+        return MessageInfo(name=message_name, version=message_version)
