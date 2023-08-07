@@ -114,6 +114,9 @@ class TestAggregateRoot:
                 "my_optional_value_object": "my_expected_value",
                 "my_optional_name": None,
             },
+            {
+                "my_value_object": "my_expected_value",
+            },
         ],
     )
     def should_model_validate_with_union_values(
@@ -124,8 +127,8 @@ class TestAggregateRoot:
 
         class MyAggregateRoot(AggregateRoot):
             my_value_object: MyValueObject
-            my_optional_value_object: MyValueObject | None
-            my_optional_name: str | None
+            my_optional_value_object: MyValueObject | None = None
+            my_optional_name: str | None = None
 
             _my_value_object = ValueObject.serializer("my_value_object")
 

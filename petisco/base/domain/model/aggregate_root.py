@@ -1,6 +1,6 @@
 from abc import ABC
 from copy import copy
-from typing import List, Union, get_args
+from typing import Any, Dict, List, Union, get_args
 
 from pydantic import (
     BaseModel,
@@ -31,10 +31,12 @@ class AggregateRoot(ABC, BaseModel):
     _domain_events: List[DomainEvent] = PrivateAttr(default=[])
 
     @model_validator(mode="before")
-    def model_validation(cls, data):
+    def model_validation(cls, data: Dict[str, Any]) -> Dict[str, Any]:
         new_data = copy(data)
         for key, annotation in cls.__annotations__.items():
-            value = data[key]
+            value = data.get(key)
+            if value is None:
+                continue
 
             union_annotations = get_args(annotation)
             if len(union_annotations) > 0:
