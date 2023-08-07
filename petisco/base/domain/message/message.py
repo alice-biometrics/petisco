@@ -19,6 +19,11 @@ def get_version(config: Union[Dict[str, Any], None]) -> int:
     return version
 
 
+class MessageInfo(BaseModel):
+    name: str
+    version: str
+
+
 class Message(BaseModel, extra=Extra.allow):
     def model_post_init(self, __context: Any) -> None:
         if not hasattr(self, "_message_attributes"):
@@ -100,7 +105,9 @@ class Message(BaseModel, extra=Extra.allow):
         if not isinstance(formatted_message, dict):
             formatted_message = json.loads(formatted_message)
         data = cast(Dict[str, Any], formatted_message.get("data"))
-        attributes = data.get("attributes", dict())
+        attributes = (
+            data.get("attributes") if data.get("attributes") is not None else dict()
+        )
         target_type = target_type if target_type else cls
         message = target_type(**attributes)
         message._message_formatted_message = data
@@ -131,7 +138,9 @@ class Message(BaseModel, extra=Extra.allow):
             else datetime.now()
         )
 
-        attributes = kwargs.get("attributes", dict())
+        attributes = (
+            kwargs.get("attributes") if kwargs.get("attributes") is not None else dict()
+        )
         self._message_attributes = cast(Dict[str, Any], attributes)
         if self._message_attributes:
             for key, value in self._message_attributes.items():
@@ -171,6 +180,9 @@ class Message(BaseModel, extra=Extra.allow):
 
     def get_message_type(self) -> str:
         return self._message_type
+
+    # @classmethod
+    # def info(cls) -> MessageInfo:
 
 
 if USE_LEGACY_IMPLEMENTATION is True:
