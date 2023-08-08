@@ -1,6 +1,6 @@
 from abc import ABC
 from copy import copy
-from typing import List, Union
+from typing import Any, Dict, List, Union, get_args
 
 from pydantic import (
     BaseModel,
@@ -31,13 +31,25 @@ class AggregateRoot(ABC, BaseModel):
     _domain_events: List[DomainEvent] = PrivateAttr(default=[])
 
     @model_validator(mode="before")
-    def model_validation(cls, data):
+    def model_validation(cls, data: Dict[str, Any]) -> Dict[str, Any]:
         new_data = copy(data)
         for key, annotation in cls.__annotations__.items():
-            value = data[key]
-            if issubclass(annotation, ValueObject) and isinstance(value, str):
-                new_value = annotation(value=value)
-                new_data[key] = new_value
+            value = data.get(key)
+            if value is None:
+                continue
+
+            union_annotations = get_args(annotation)
+            if len(union_annotations) > 0:
+                for union_annotation in union_annotations:
+                    if issubclass(union_annotation, ValueObject) and isinstance(
+                        value, str
+                    ):
+                        new_value = union_annotation(value=value)
+                        new_data[key] = new_value
+            else:
+                if issubclass(annotation, ValueObject) and isinstance(value, str):
+                    new_value = annotation(value=value)
+                    new_data[key] = new_value
         return new_data
 
     @field_serializer("aggregate_id")
@@ -46,7 +58,7 @@ class AggregateRoot(ABC, BaseModel):
 
     @field_validator("aggregate_id", mode="before")
     def set_aggregate_id(cls, v: Union[str, Uuid]) -> Uuid:
-        v = Uuid(v) if isinstance(v, str) else v
+        v = Uuid(value=v) if isinstance(v, str) else v
         return v or Uuid.v4()
 
     @field_validator("aggregate_version", mode="before")
