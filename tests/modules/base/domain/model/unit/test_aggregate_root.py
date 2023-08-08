@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Union
 
 import pytest
 
@@ -127,8 +127,8 @@ class TestAggregateRoot:
 
         class MyAggregateRoot(AggregateRoot):
             my_value_object: MyValueObject
-            my_optional_value_object: MyValueObject | None = None
-            my_optional_name: str | None = None
+            my_optional_value_object: Union[MyValueObject, None] = None
+            my_optional_name: Union[str, None] = None
 
             _my_value_object = ValueObject.serializer("my_value_object")
 
