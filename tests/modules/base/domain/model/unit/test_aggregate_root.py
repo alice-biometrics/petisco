@@ -1,7 +1,9 @@
+import sys
 from pathlib import Path
 from typing import Dict, Union
 
 import pytest
+from pydantic import StringConstraints
 
 from petisco import AggregateRoot, DomainEvent, Uuid, ValueObject
 
@@ -101,35 +103,54 @@ class TestAggregateRoot:
         [
             {
                 "my_value_object": "my_expected_value",
+                "annotated_object": "name",
                 "my_optional_value_object": "my_expected_value",
                 "my_optional_name": "my_expected_value",
             },
             {
                 "my_value_object": "my_expected_value",
+                "annotated_object": "name",
                 "my_optional_value_object": None,
                 "my_optional_name": "my_expected_value",
             },
             {
                 "my_value_object": "my_expected_value",
+                "annotated_object": "name",
                 "my_optional_value_object": "my_expected_value",
                 "my_optional_name": None,
             },
             {
                 "my_value_object": "my_expected_value",
+                "annotated_object": "name",
+            },
+            {
+                "my_value_object": "my_expected_value",
+                "annotated_object": "name",
+                "my_optional_annotated_object": "name",
             },
         ],
+    )
+    @pytest.mark.skipif(
+        sys.version_info < (3, 9), reason="Requires Python 3.9 or higher"
     )
     def should_model_validate_with_union_values(
         self, serialized_object: Dict[str, str]
     ):  # noqa
+        from typing import Annotated  # noqa (available in Python 3.9)
+
         class MyValueObject(ValueObject):
             ...
 
         class MyAggregateRoot(AggregateRoot):
             my_value_object: MyValueObject
+            annotated_object: Annotated[
+                str, StringConstraints(min_length=2, max_length=50)
+            ]
+            my_optional_annotated_object: Union[
+                Annotated[str, StringConstraints(min_length=2, max_length=50)], None
+            ] = None
             my_optional_value_object: Union[MyValueObject, None] = None
             my_optional_name: Union[str, None] = None
-
             _my_value_object = ValueObject.serializer("my_value_object")
 
         model = MyAggregateRoot.model_validate(serialized_object)
