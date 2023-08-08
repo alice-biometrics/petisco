@@ -1,5 +1,6 @@
+import sys
 from pathlib import Path
-from typing import Annotated, Dict, Union
+from typing import Dict, Union
 
 import pytest
 from pydantic import StringConstraints
@@ -129,9 +130,14 @@ class TestAggregateRoot:
             },
         ],
     )
+    @pytest.mark.skipif(
+        sys.version_info < (3, 9), reason="Requires Python 3.9 or higher"
+    )
     def should_model_validate_with_union_values(
         self, serialized_object: Dict[str, str]
     ):  # noqa
+        from typing import Annotated  # noqa (available in Python 3.9)
+
         class MyValueObject(ValueObject):
             ...
 
