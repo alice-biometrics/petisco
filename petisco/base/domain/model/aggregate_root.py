@@ -1,5 +1,6 @@
 from abc import ABC
 from copy import copy
+from inspect import isclass
 from typing import Any, Dict, List, Union, get_args
 
 from pydantic import (
@@ -41,19 +42,25 @@ class AggregateRoot(ABC, BaseModel):
             union_annotations = get_args(annotation)
             if len(union_annotations) > 0:
                 for union_annotation in union_annotations:
-                    if issubclass(union_annotation, ValueObject) and isinstance(
-                        value, str
+                    if (
+                        isclass(union_annotation)
+                        and issubclass(union_annotation, ValueObject)
+                        and isinstance(value, str)
                     ):
                         new_value = union_annotation(value=value)
                         new_data[key] = new_value
             else:
-                if issubclass(annotation, ValueObject) and isinstance(value, str):
+                if (
+                    isclass(annotation)
+                    and issubclass(annotation, ValueObject)
+                    and isinstance(value, str)
+                ):
                     new_value = annotation(value=value)
                     new_data[key] = new_value
         return new_data
 
     @field_serializer("aggregate_id")
-    def serialize_aggregate_id(self, aggregate_id: Uuid):
+    def serialize_aggregate_id(self, aggregate_id: Uuid) -> str:
         return aggregate_id.value
 
     @field_validator("aggregate_id", mode="before")
