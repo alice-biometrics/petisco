@@ -22,7 +22,7 @@ class FastAPIController(Controller):
         return NotImplementedMethodError
 
     @classmethod
-    def responses(cls) -> Union[Dict[str, Any], None]:
+    def responses(cls) -> Union[Dict[Union[int, str], Dict[str, Any]], None]:
         controller = cls()
 
         if not hasattr(controller, "Config"):
