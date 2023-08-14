@@ -57,6 +57,37 @@ class TaskId(Uuid): ...
 task_id = TaskId.v4()
 ```
 
+!!! Help
+
+    Use this class to interoperate with `uuid.UUID` and `pydantid.UUID4`. Those are very useful to document OpenAPI
+    documentation.
+
+    ```python hl_lines="19"
+    from uuid import uuid4
+    
+    from pydantic import BaseModel, UUID4, Field
+    
+    from petisco import AggregateRoot, Uuid
+    
+    
+    class TaskIn(BaseModel):
+        id: UUID4 = Field(default_factory=uuid4)
+        name: str
+    
+    
+    class Task(AggregateRoot):
+        name: str
+    
+        @staticmethod
+        def from_task_in(task_in: TaskIn) -> "Task":
+            return Task(
+                aggregate_id=Uuid.from_uuid(task_in.id),
+                name=task_in.name
+            )
+
+    ```
+
+
 ### Value Objects
 
 Create your Value Objects extending from `ValueObject` base class.
@@ -91,10 +122,28 @@ class Description(ValueObject):
 
 !!! Note
 
-    To update 
+    Sometimes we want to keep only the wrapped value when serializing. In other words, we don't want to keep `{"value": 
+    "my-value"}`. To do this, you can use Annotated write with:
+
+    ```python
+    from typing import Annotated
+    from pydantic import BaseModel
+    from petisco import ValueObjectSerializer
+
+    class MyModel(BaseModel):
+      model_id: Annotated[Uuid, ValueObjectSerializer] # (1)
+
+    ```
+    
+    1. `ValueObjectSerializer` is equivalent to `PlainSerializer(lambda value_object: value_object.value if value_object else None)`
+
+
+    Otherwise, you can also use `field_serializer` to solve this with:
 
     ```python
     from pydantic import BaseModel
+    from petisco import Uuid, ValueObject
+
 
     class MyModel(BaseModel):
       model_id: Uuid

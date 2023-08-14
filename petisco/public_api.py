@@ -82,7 +82,7 @@ from petisco.base.domain.message.not_implemented_message_configurer import (
 )
 from petisco.base.domain.model.aggregate_root import AggregateRoot
 from petisco.base.domain.model.uuid import Uuid
-from petisco.base.domain.model.value_object import ValueObject
+from petisco.base.domain.model.value_object import ValueObject, ValueObjectSerializer
 from petisco.base.domain.persistence.database import Database
 from petisco.base.domain.persistence.databases import databases
 from petisco.base.misc.builder import Builder
@@ -126,6 +126,7 @@ __all__ = [
     "MessageConsumer",
     "AggregateRoot",
     "ValueObject",
+    "ValueObjectSerializer",
     "Uuid",
     "Interface",
     "DomainEventSubscriber",
