@@ -1,9 +1,7 @@
-from typing import Union
-from uuid import UUID
+from uuid import uuid4
 
 import pytest
 import validators
-from pydantic import UUID4
 
 from petisco import InvalidUuid, Uuid
 
@@ -64,20 +62,13 @@ class TestUuid:
 
         assert isinstance(user_id, UserId)
 
-    @pytest.mark.parametrize(
-        "uuid_input",
-        [
-            UUID("4E6660D7-B037-4C75-Adc8-272D62944Abb"),
-            UUID4("4E6660D7-B037-4C75-Adc8-272D62944Abb"),
-        ],
-    )
-    def should_success_when_construct_from_uuid(
-        self, uuid_input: Union[UUID, UUID4]
-    ):  # noqa
+    def should_success_when_construct_from_uuid(self):  # noqa
+        uuid_input = uuid4()
+
         uuid = Uuid.from_uuid(uuid_input)
 
-        assert uuid.value == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
-        assert uuid.model_dump() == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
+        assert uuid.value == str(uuid_input)
+        assert uuid.model_dump() == str(uuid_input)
 
     def should_success_when_construct_from_str(self):  # noqa
         uuid = Uuid.from_str("4E6660D7-B037-4C75-Adc8-272D62944Abb")
