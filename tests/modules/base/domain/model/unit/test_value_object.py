@@ -1,5 +1,5 @@
+import sys
 from pathlib import Path
-from typing import Annotated
 
 import pytest
 from pydantic import BaseModel
@@ -75,7 +75,12 @@ class TestValueObject:
 
         assert my_model.model_dump() == {"my_value_object": expected_value}
 
+    @pytest.mark.skipif(
+        sys.version_info < (3, 9), reason="Requires Python 3.9 or higher"
+    )
     def should_check_value_object_annotated_serializer(self):  # noqa
+        from typing import Annotated  # noqa (available in Python 3.9)
+
         expected_value = "my_expected_value"
 
         class MyValueObject(ValueObject):
