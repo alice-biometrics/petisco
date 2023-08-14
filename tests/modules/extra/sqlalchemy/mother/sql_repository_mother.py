@@ -61,7 +61,7 @@ class Client:
 
     @staticmethod
     def random():
-        return Client(ClientId("ACME"), "ACME")
+        return Client(ClientId(value="ACME"), "ACME")
 
     def to_dict(self):
         return {"client_id": self.client_id.value, "name": self.name}
