@@ -75,3 +75,10 @@ class TestUuid:
 
         assert uuid.value == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
         assert uuid.model_dump() == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
+
+    def should_success_when_to_uuid(self):  # noqa
+        raw_uuid = uuid4()
+
+        uuid = Uuid.from_uuid(raw_uuid)
+
+        assert uuid.to_uuid() == raw_uuid
