@@ -7,8 +7,7 @@ from pydantic import BaseModel
 
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject
-
-TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+from petisco.base.misc.time_format import TIME_FORMAT
 
 
 def get_version(config: Union[Dict[str, Any], None]) -> int:

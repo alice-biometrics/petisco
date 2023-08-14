@@ -1,9 +1,10 @@
+import sys
 from pathlib import Path
 
 import pytest
 from pydantic import BaseModel
 
-from petisco import InvalidValueObject, ValueObject
+from petisco import InvalidValueObject, ValueObject, ValueObjectSerializer
 
 
 @pytest.mark.unit
@@ -53,7 +54,9 @@ class TestValueObject:
         filename = ".tmp.json"
         path = Path(filename)
         path.write_text(value_object.model_dump_json())
-        value_object_parsed = ValueObject.parse_file(filename)
+
+        data = path.read_text()
+        value_object_parsed = ValueObject.model_validate_json(data)
         assert value_object == value_object_parsed
         path.unlink()
 
@@ -68,6 +71,24 @@ class TestValueObject:
 
             _my_value_object = ValueObject.serializer("my_value_object")
 
-        my_model = MyModel(my_value_object=MyValueObject(expected_value))
+        my_model = MyModel(my_value_object=MyValueObject(value=expected_value))
+
+        assert my_model.model_dump() == {"my_value_object": expected_value}
+
+    @pytest.mark.skipif(
+        sys.version_info < (3, 9), reason="Requires Python 3.9 or higher"
+    )
+    def should_check_value_object_annotated_serializer(self):  # noqa
+        from typing import Annotated  # noqa (available in Python 3.9)
+
+        expected_value = "my_expected_value"
+
+        class MyValueObject(ValueObject):
+            ...
+
+        class MyModel(BaseModel):
+            my_value_object: Annotated[MyValueObject, ValueObjectSerializer]
+
+        my_model = MyModel(my_value_object=MyValueObject(value=expected_value))
 
         assert my_model.model_dump() == {"my_value_object": expected_value}

@@ -1,10 +1,15 @@
 from typing import Any, NoReturn, Type, TypeVar
 
-from pydantic import BaseModel, field_serializer, field_validator
+from pydantic import BaseModel, PlainSerializer, field_serializer, field_validator
 
 from petisco.base.domain.errors.defaults.invalid_value_object import InvalidValueObject
 
 TypeValueObject = TypeVar("TypeValueObject", bound="ValueObject")
+
+
+ValueObjectSerializer = PlainSerializer(
+    lambda value_object: value_object.value if value_object else None
+)
 
 
 class ValueObject(BaseModel):
@@ -24,6 +29,29 @@ class ValueObject(BaseModel):
 
     def dict(self, **kwargs: Any) -> Any:
         return self.model_dump(**kwargs)
+
+    # The following is working serializing but it is a problem deserializing
+    # @model_serializer
+    # def serialize_model(self) -> Any:
+    #     return self.value
+    #
+    # if TYPE_CHECKING:
+    #     # Ensure type checkers see the correct return type
+    #     # from https://docs.pydantic.dev/latest/usage/serialization/#overriding-the-return-type-when-dumping-a-model
+    #     def model_dump(
+    #         self,
+    #         *,
+    #         mode: Literal['json', 'python'] | str = 'python',
+    #         include: Any = None,
+    #         exclude: Any = None,
+    #         by_alias: bool = False,
+    #         exclude_unset: bool = False,
+    #         exclude_defaults: bool = False,
+    #         exclude_none: bool = False,
+    #         round_trip: bool = False,
+    #         warnings: bool = True,
+    #     ) -> Any:
+    #         ...
 
     def __setattr__(self, name: str, value: Any) -> NoReturn:
         raise TypeError("ValueObject objects are immutable")
