@@ -96,6 +96,12 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self.chaos = chaos
         self.subscribers: Dict[str, SubscriberItem] = {}
         self._thread: Union[threading.Thread, None] = None
+        self.inner_bus_organization = None
+        self.inner_bus_service = None
+
+    def set_inner_bus_config(self, organization: str, service: str):
+        self.inner_bus_organization = organization
+        self.inner_bus_service = service
 
     def start(self) -> NoReturn:
         """
@@ -265,11 +271,22 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 result = Failure(MessageChaosError())
             else:
                 connector = RabbitMqConsumerConnector(ch)
+                bus_organization = (
+                    self.organization
+                    if self.inner_bus_organization is None
+                    else self.inner_bus_organization
+                )
+                bus_service = (
+                    self.service
+                    if self.inner_bus_service is None
+                    else self.inner_bus_service
+                )
+
                 domain_event_bus = RabbitMqDomainEventBus(
-                    self.organization, self.service, connector
+                    bus_organization, bus_service, connector
                 )
                 command_bus = RabbitMqCommandBus(
-                    self.organization, self.service, connector
+                    bus_organization, bus_service, connector
                 )
                 subscriber.set_domain_event_bus(domain_event_bus)
                 subscriber.set_command_bus(command_bus)

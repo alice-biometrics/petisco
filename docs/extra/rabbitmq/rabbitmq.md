@@ -366,8 +366,8 @@ class SendSmsOnUserCreated(DomainEventSubscriber):
         return [UserCreated]
 
     def handle(self, domain_event: UserCreated) -> BoolResult:
-       ## do your stuff
-       return isSuccess
+       ## do your s`tuff
+       return isSuccess`
 
 configurers = [
     RabbitMqConfigurer(
@@ -397,6 +397,54 @@ also from the other service (`SERVICE=my-other-app`) using the following configu
 
 * `alice.my_app.1.user_created.send_sms_on_user_created`: SendSmsOnUserCreated will handle domain event published by the `my_app` service.
 * `alice.my_other_app.1.user_created.send_sms_on_user_created`: SendSmsOnUserCreated will handle domain event published by the `my_other_ºrrapp` service.
+
+
+!!! Note
+
+    Imagine your are consuming from a `ORGANIZATION="acme"` and `SERVICE="my-app` and you want to publish a derived domain
+    event in your subscriber. You can do it with the inner domain_event_bus (this pre-loaded domain event bus is already
+    configured and shares connection to avoid thread errors)
+
+
+    ```python hl_lines="8"
+
+    class UserSmailed(DomainEvent): ...
+
+    class SendSmsOnUserCreated(DomainEventSubscriber):
+        def subscribed_to(self) -> list[type[DomainEvent]]:
+            return [UserCreated]
+    
+        def handle(self, domain_event: UserCreated) -> BoolResult:
+           self.domain_event_bus.publish(UserSmiled())
+           return isSuccess
+    ```
+
+    And maybe you don't want to publish to the same exchange `acme.my-app` (from `{ORGANIZATION}.{SERVICE}`) and you want to
+    publish to `petisco.my-other-service`. So you can configure this inner bus using RabbitMqConfigurer parameters:
+
+    ```python hl_lines="7 8"
+    INNER_BUS_ORGANIZATION = "petisco"
+    INNER_BUS_SERVICE = "my-other-service"
+
+    configurers = [
+        RabbitMqConfigurer(
+            subscribers=[SendSmsOnUserCreated]
+            inner_bus_organization=INNER_BUS_ORGANIZATION,
+            inner_bus_service=INNER_BUS_SERVICE
+        )
+    ]
+    
+    application = Application(
+        name=SERVICE,
+        version="1.0.0",
+        organization=ORGANIZATION,
+        deployed_at=str(datetime.utcnow()),
+        environment="staging",
+        dependencies_provider=dependencies_provider,  # <==== Adding dependencies ➕
+        configurers=configurers # <==== Adding configurers ➕
+    )
+    application.configure()
+    ```
 
 
 ### Testing 
