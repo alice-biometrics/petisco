@@ -9,7 +9,6 @@ on:
       - '.github/workflows/coverage.yml'
     branches: 
       - main
-      - v2
 
 jobs:
   ci:

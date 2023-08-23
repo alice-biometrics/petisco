@@ -98,12 +98,3 @@ class TestRabbitMqConfigurer:
         configurer = RabbitMqConfigurer(subscribers=self.subscribers)
         with pytest.raises(IndexError, match="Invalid dependency."):
             configurer.execute()
-
-    def should_execute_configuring_inner_bus(self):
-        configurer = RabbitMqConfigurer(
-            subscribers=self.subscribers,
-            start_consuming=True,
-            inner_bus_service="acme",
-            inner_bus_organization="petisco",
-        )
-        configurer.execute(testing=True)

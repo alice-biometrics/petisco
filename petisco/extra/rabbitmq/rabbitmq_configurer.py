@@ -7,7 +7,9 @@ from petisco.base.application.dependency_injection.container import Container
 from petisco.base.domain.message.message_configurer import MessageConfigurer
 from petisco.base.domain.message.message_consumer import MessageConsumer
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
-from petisco.extra.rabbitmq import RabbitMqMessageConsumer
+from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_message_consumer import (
+    RabbitMqMessageConsumer,
+)
 
 MAX_RETRIES = 5
 
@@ -28,6 +30,8 @@ class RabbitMqConfigurer(ApplicationConfigurer):
         alias: str | None = None,
         inner_bus_organization: str | None = None,
         inner_bus_service: str | None = None,
+        clear_subscriber_before: bool | None = None,
+        clear_store_before: bool | None = None,
     ):
         """
         Initializes an instance of RabbitMqConfigurer.
@@ -45,23 +49,37 @@ class RabbitMqConfigurer(ApplicationConfigurer):
         self.alias = alias
         self.inner_bus_organization = inner_bus_organization
         self.inner_bus_service = inner_bus_service
+        self.consumer: MessageConsumer | None = None
+        self.clear_subscriber_before = (
+            clear_subscriber_before
+            if clear_subscriber_before
+            else CLEAR_SUBSCRIBER_BEFORE
+        )
+        self.clear_store_before = (
+            clear_store_before if clear_store_before else CLEAR_STORE_BEFORE
+        )
+
         super().__init__(execute_after_dependencies)
 
     def execute(self, testing: bool = False) -> None:
         configurer = Container.get(MessageConfigurer, alias=self.alias)
         configurer.configure_subscribers(
             self.subscribers,
-            clear_subscriber_before=CLEAR_SUBSCRIBER_BEFORE,
-            clear_store_before=CLEAR_STORE_BEFORE,
+            clear_subscriber_before=self.clear_subscriber_before,
+            clear_store_before=self.clear_store_before,
         )
 
         if self.start_consuming:
-            consumer = Container.get(MessageConsumer, alias=self.alias)
+            self.consumer = Container.get(MessageConsumer, alias=self.alias)
 
-            if isinstance(consumer, RabbitMqMessageConsumer):
-                consumer.set_inner_bus_config(
+            if isinstance(self.consumer, RabbitMqMessageConsumer):
+                self.consumer.set_inner_bus_config(
                     self.inner_bus_organization, self.inner_bus_service
                 )
 
-            consumer.add_subscribers(self.subscribers)
-            consumer.start()
+            self.consumer.add_subscribers(self.subscribers)
+            self.consumer.start()
+
+    def stop(self):
+        if self.consumer:
+            self.consumer.stop()
