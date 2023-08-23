@@ -366,7 +366,7 @@ class SendSmsOnUserCreated(DomainEventSubscriber):
         return [UserCreated]
 
     def handle(self, domain_event: UserCreated) -> BoolResult:
-       ## do your s`tuff
+       ## do your stuff
        return isSuccess`
 
 configurers = [
