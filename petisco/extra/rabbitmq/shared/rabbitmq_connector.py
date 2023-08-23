@@ -27,6 +27,7 @@ class RabbitMqConnector(metaclass=Singleton):
         self.wait_seconds_retry = float(
             os.environ.get("RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY", 1)
         )
+        self.prefetch_count = int(os.environ.get("RABBITMQ_PREFETCH_COUNT", 1))
         self.open_connections: Dict[str, BlockingConnection] = dict()
 
     @staticmethod
@@ -68,7 +69,7 @@ class RabbitMqConnector(metaclass=Singleton):
         connection = self.get_connection(key_connection)
         try:
             channel = connection.channel()
-            channel.basic_qos(prefetch_size=1, prefetch_count=1, global_qos=True)
+            channel.basic_qos(prefetch_count=self.prefetch_count, global_qos=True)
         except StreamLostError:
             connection = self.get_connection(key_connection)
             channel = connection.channel()
