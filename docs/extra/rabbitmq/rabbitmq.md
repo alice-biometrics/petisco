@@ -367,7 +367,7 @@ class SendSmsOnUserCreated(DomainEventSubscriber):
 
     def handle(self, domain_event: UserCreated) -> BoolResult:
        ## do your stuff
-       return isSuccess`
+       return isSuccess
 
 configurers = [
     RabbitMqConfigurer(
