@@ -90,6 +90,25 @@ application = FastApiApplication(
 )
 ```
 
+!!! tip
+
+    In some applications you want to ensure all FastAPI routers are defined as `async`. You can force this with the 
+    parameter `ensure_async_routers`.
+
+    
+    ```python hl_lines="8"
+    application = FastApiApplication(
+        name=APPLICATION_NAME,
+        version=APPLICATION_VERSION,
+        organization=ORGANIZATION,
+        deployed_at=APPLICATION_LATEST_DEPLOY,
+        dependencies_provider=dependencies_provider,
+        fastapi_configurer=fastapi_configurer,
+        ensure_async_routers=True
+    )
+    ```
+    
+
 ## FastAPIController
 
 ```python
