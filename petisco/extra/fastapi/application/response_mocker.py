@@ -15,6 +15,10 @@ class ResponseMocker:
         header_key: str = "X-Status-Code-Mock-Response",
         responses: Union[Dict[Union[int, str], Dict[str, Any]], None] = None,
     ) -> None:
+        """
+        header_key: by default "X-Status-Code-Mock-Response", but you can modify with this parameter.
+        responses: This will be added automatically by the FastapiApplication if you define responses to router.
+        """
         self.header_key = header_key
         self.responses = responses
 
@@ -30,5 +34,6 @@ class ResponseMocker:
                     status_code=status_code,
                 )
             else:
-                detail = self.responses.get(status_code) if self.responses else None
+                detail = self.responses.get(status_code, {}) if self.responses else {}
+                detail["is_mocked"] = True
                 raise HTTPException(status_code=status_code, detail=detail)

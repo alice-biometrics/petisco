@@ -49,7 +49,7 @@ class TestResponseMocker:
 
         exception = exc_info.value
         assert exception.status_code == 400
-        assert exception.detail == {"detail": "my_detail"}
+        assert exception.detail == {"detail": "my_detail", "is_mocked": True}
 
     def should_return_json_response_when_modify_header_key_and_mocked_value_is_200(
         self,
