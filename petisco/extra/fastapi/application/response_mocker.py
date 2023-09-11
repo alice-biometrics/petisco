@@ -28,9 +28,7 @@ class ResponseMocker:
             status_code = int(status_code)
             if 200 <= status_code < 300:
                 return JSONResponse(
-                    content={
-                        "message": "mocked with X-Alice-Mock-Response-Status-Code headers"
-                    },
+                    content={"message": f"mocked with {self.header_key} headers"},
                     status_code=status_code,
                 )
             else:
