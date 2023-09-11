@@ -90,24 +90,65 @@ application = FastApiApplication(
 )
 ```
 
-!!! tip
+#### Ensure that all FastAPI entry point are `async`
 
-    In some applications you want to ensure all FastAPI routers are defined as `async`. You can force this with the 
-    parameter `ensure_async_routers`.
+In some applications you want to ensure all FastAPI routers are defined as `async`. You can force this with the 
+parameter `ensure_async_routers`.
 
+
+```python hl_lines="8"
+application = FastApiApplication(
+    name=APPLICATION_NAME,
+    version=APPLICATION_VERSION,
+    organization=ORGANIZATION,
+    deployed_at=APPLICATION_LATEST_DEPLOY,
+    dependencies_provider=dependencies_provider,
+    fastapi_configurer=fastapi_configurer,
+    ensure_async_routers=True
+)
+```
     
-    ```python hl_lines="8"
-    application = FastApiApplication(
-        name=APPLICATION_NAME,
-        version=APPLICATION_VERSION,
-        organization=ORGANIZATION,
-        deployed_at=APPLICATION_LATEST_DEPLOY,
-        dependencies_provider=dependencies_provider,
-        fastapi_configurer=fastapi_configurer,
-        ensure_async_routers=True
-    )
-    ```
-    
+#### Add a mock response guided by headers
+
+The main idea here is to add a FastAPI dependency to all the defined routers in order to check specific header (By default `X-Status-Code-Mock-Response`).
+This dependency will check given value through request headers returning defined status code. 
+
+To add this behaviour to all the router we can add `ResponseMocker` dependency to global `FastAPI` app definition. 
+
+```python hl_lines="9"
+from fastapi import Depends, FastAPI
+from petisco.extra.fastapi import ResponseMocker
+
+app = FastAPI(
+    title=APPLICATION_NAME,
+    openapi_tags=OPENAPI_TAGS,
+    docs_url=docs_url,
+    openapi_url=f"{FASTAPI_PREFIX}/openapi.json",
+    dependencies=[Depends(ResponseMocker())]
+)
+```
+
+The following example illustrates how to use it as a client:
+
+```python
+expected_status_code = 200
+response = client.get("path", headers={"X-Status-Code-Mock-Response": 200})
+assert response.status_code == expected_status_code
+```
+
+If you want to override default header, use `header_key` parameter (e.g `ResponseMocker(header_key="MY-HEADER")`), and use it
+as follows:
+
+```python
+expected_status_code = 200
+response = client.get("path", headers={"MY-HEADER": 200})
+assert response.status_code == expected_status_code
+```
+
+
+
+
+
 
 ## FastAPIController
 
