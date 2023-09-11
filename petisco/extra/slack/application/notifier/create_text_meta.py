@@ -6,5 +6,5 @@ def create_text_meta(meta: Dict[str, Any]) -> Union[str, None]:
     if meta:
         text = ""
         for key, value in meta.items():
-            text += f"\n>{key}: {value}"
+            text += f"\n>{key}: `{value}`"
     return text
