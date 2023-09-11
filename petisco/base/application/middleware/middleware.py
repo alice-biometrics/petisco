@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Union
+from typing import Any, Dict, Union
 
 from loguru import logger
 from meiga import AnyResult
@@ -28,7 +28,7 @@ class Middleware(ABC):
     def after(self, result: AnyResult) -> None:
         pass
 
-    def get_meta_from_input(self) -> dict[str, Any]:
+    def get_meta_from_input(self) -> Dict[str, Any]:
         # This method get info from legacy info_id model to keep compatibility
         meta = {}
 
