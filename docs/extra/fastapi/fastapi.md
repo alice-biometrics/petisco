@@ -90,24 +90,32 @@ application = FastApiApplication(
 )
 ```
 
-!!! tip
+#### Ensure that all FastAPI entry point are `async`
 
-    In some applications you want to ensure all FastAPI routers are defined as `async`. You can force this with the 
-    parameter `ensure_async_routers`.
+In some applications you want to ensure all FastAPI routers are defined as `async`. You can force this with the 
+parameter `ensure_async_routers`.
 
+
+```python hl_lines="8"
+application = FastApiApplication(
+    name=APPLICATION_NAME,
+    version=APPLICATION_VERSION,
+    organization=ORGANIZATION,
+    deployed_at=APPLICATION_LATEST_DEPLOY,
+    dependencies_provider=dependencies_provider,
+    fastapi_configurer=fastapi_configurer,
+    ensure_async_routers=True
+)
+```
     
-    ```python hl_lines="8"
-    application = FastApiApplication(
-        name=APPLICATION_NAME,
-        version=APPLICATION_VERSION,
-        organization=ORGANIZATION,
-        deployed_at=APPLICATION_LATEST_DEPLOY,
-        dependencies_provider=dependencies_provider,
-        fastapi_configurer=fastapi_configurer,
-        ensure_async_routers=True
-    )
-    ```
-    
+#### Add a mock response guided by headers
+
+The main idea here is to add a FastAPI dependency to all the defined routers in order to check specific header (By default `X-Mock-Reponse-Status-Code`).
+This dependency will check given value through request headers returning defined status code. 
+
+
+
+
 
 ## FastAPIController
 
