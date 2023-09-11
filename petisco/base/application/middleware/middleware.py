@@ -36,7 +36,9 @@ class Middleware(ABC):
             info_id = self.wrapped_class_input_arguments.get("info_id")
             if info_id and hasattr(info_id, "to_meta"):
                 meta = info_id.to_meta().get("info_id", {})
-        except Exception:
-            logger.error("Middleware error getting info_id on get_meta_from_input")
+        except Exception as exc:
+            logger.error(
+                f"Middleware error getting info_id on get_meta_from_input: {str(exc)}"
+            )
 
         return meta
