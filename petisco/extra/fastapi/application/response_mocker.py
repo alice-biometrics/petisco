@@ -2,7 +2,6 @@ from typing import Any, Dict, Union
 
 from fastapi import HTTPException
 from starlette.requests import Request
-from starlette.responses import JSONResponse
 
 
 class ResponseMocker:
@@ -22,16 +21,10 @@ class ResponseMocker:
         self.header_key = header_key
         self.responses = responses
 
-    def __call__(self, request: Request) -> Union[JSONResponse, None]:
+    def __call__(self, request: Request) -> None:
         status_code = request.headers.get(self.header_key)
         if status_code:
             status_code = int(status_code)
-            if 200 <= status_code < 300:
-                return JSONResponse(
-                    content={"message": f"mocked with {self.header_key} headers"},
-                    status_code=status_code,
-                )
-            else:
-                detail = self.responses.get(status_code, {}) if self.responses else {}
-                detail["is_mocked"] = True
-                raise HTTPException(status_code=status_code, detail=detail)
+            detail = self.responses.get(status_code, {}) if self.responses else {}
+            detail["is_mocked"] = True
+            raise HTTPException(status_code=status_code, detail=detail)
