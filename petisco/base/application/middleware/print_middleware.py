@@ -11,7 +11,3 @@ class PrintMiddleware(Middleware):
 
     def after(self, result: AnyResult) -> None:
         print(f"{self.wrapped_class_name} -> End | {result}")
-        print(f"meta_from_input: {str(self.get_meta_from_input())}")
-
-        # if "info_id" in self.wrapped_class_input_arguments:
-        #     breakpoint()

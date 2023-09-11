@@ -24,7 +24,7 @@ gke_accessory = {
 }
 notifier = SlackNotifier(
     token=token,
-    channel="feed-staging",
+    channel="warnings-staging",
     converter=BlocksSlackNotifierMessageConverter(slack_accessory=gke_accessory),
     exception_converter=ExceptionBlocksSlackNotifierMessageConverter(
         slack_accessory=gke_accessory,
