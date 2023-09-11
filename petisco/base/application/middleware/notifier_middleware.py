@@ -30,11 +30,15 @@ class NotifierMiddleware(Middleware):
         if result.is_failure:
             error = result.value
 
-            meta = {
+            app_meta = {
                 "petisco": __version__,
                 "application_name": ApplicationInfo().name,
                 "application_version": ApplicationInfo().version,
             }
+            input_meta = self.get_meta_from_input()
+
+            meta = {**app_meta, **input_meta}
+
             if issubclass(error.__class__, UnknownError):
                 notifier_exception_message = (
                     NotifierExceptionMessage.from_unknown_error(
