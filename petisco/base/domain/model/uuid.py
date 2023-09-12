@@ -8,7 +8,7 @@ from pydantic import field_validator
 from petisco.base.domain.errors.defaults.invalid_uuid import InvalidUuid
 from petisco.base.domain.model.value_object import ValueObject
 
-USE_NEW_UUID = bool(os.getenv("USE_NEW_UUID", "False").lower() == "false")
+USE_NEW_UUID = bool(os.getenv("USE_NEW_UUID", "False").lower() == "true")
 
 if USE_NEW_UUID:
     from pydantic import GetCoreSchemaHandler  # noqa
