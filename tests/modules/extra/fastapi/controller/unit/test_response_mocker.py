@@ -4,7 +4,6 @@ import pytest
 from fastapi import HTTPException
 from starlette.datastructures import Headers
 from starlette.requests import Request
-from starlette.responses import JSONResponse
 
 from petisco.extra.fastapi import ResponseMocker
 
@@ -22,8 +21,12 @@ class TestResponseMocker:
         request = Mock(Request)
         request.headers = Headers(headers={"X-Status-Code-Mock-Response": "200"})
         dependency = ResponseMocker()
-        response = dependency(request=request)
-        assert isinstance(response, JSONResponse)
+
+        with pytest.raises(HTTPException) as exc_info:
+            dependency(request=request)
+
+        exception = exc_info.value
+        assert exception.status_code == 200
 
     @pytest.mark.parametrize("status_code", [300, 400, 500])
     def should_raise_http_exception_when_mocked_value_is_an_error(self, status_code):
@@ -58,5 +61,8 @@ class TestResponseMocker:
         request = Mock(Request)
         request.headers = Headers(headers={other_header_key: "200"})
         dependency = ResponseMocker(header_key=other_header_key)
-        response = dependency(request=request)
-        assert isinstance(response, JSONResponse)
+        with pytest.raises(HTTPException) as exc_info:
+            dependency(request=request)
+
+        exception = exc_info.value
+        assert exception.status_code == 200
