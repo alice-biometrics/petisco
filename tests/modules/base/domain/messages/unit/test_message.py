@@ -55,3 +55,17 @@ class TestMessage:
             message_1.get_message_attributes()["bar"]
             != message_2.get_message_attributes()["bar"]
         )
+
+    def should_check_timestamp_from_ocurred_on_datetime(self):  # noqa
+        message = Message()
+
+        original_timestamp = message.get_message_occurred_on().timestamp()
+
+        message_json = message.format_json()
+        retrieved_message = Message.from_format(message_json)
+
+        retrieved_timestamp = message.get_message_occurred_on().timestamp()
+
+        assert message == retrieved_message
+        assert id(message) != id(retrieved_message)
+        assert original_timestamp == retrieved_timestamp
