@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 
@@ -127,7 +127,7 @@ class TestDomainEvent:
     def should_create_domain_event_with_most_conflicting_domain_event(  # noqa
         self,
     ):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         domain_event = MostConflictingDomainEvent(
             name="given-name",
             version=2,
