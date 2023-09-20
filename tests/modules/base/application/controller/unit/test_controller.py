@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 from unittest.mock import patch
 
@@ -40,7 +40,7 @@ def set_shared_error_map(shared_error_map: ErrorMap) -> None:
         name="test_controller",
         organization="test",
         version="1",
-        deployed_at=datetime.utcnow(),
+        deployed_at=datetime.now(timezone.utc),
         force_recreation=True,
         shared_error_map=shared_error_map,
     )

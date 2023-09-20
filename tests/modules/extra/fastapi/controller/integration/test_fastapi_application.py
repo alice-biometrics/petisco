@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 from fastapi import Depends, FastAPI
@@ -52,7 +52,7 @@ class TestFastapiApplication:
             name="Test",
             version="1.0.0",
             organization="petisco",
-            deployed_at=datetime.utcnow(),
+            deployed_at=datetime.now(timezone.utc),
             fastapi_configurer=fastapi_configurer,
         )
         application.get_app()
@@ -65,7 +65,7 @@ class TestFastapiApplication:
                 name="Test",
                 version="1.0.0",
                 organization="petisco",
-                deployed_at=datetime.utcnow(),
+                deployed_at=datetime.now(timezone.utc),
                 fastapi_configurer=fastapi_configurer,
                 ensure_async_routers=True,
             )
@@ -76,7 +76,7 @@ class TestFastapiApplication:
             name="Test",
             version="1.0.0",
             organization="petisco",
-            deployed_at=datetime.utcnow(),
+            deployed_at=datetime.now(timezone.utc),
             fastapi_configurer=fastapi_configurer,
         )
         app = application.get_app()
@@ -97,7 +97,7 @@ class TestFastapiApplication:
             name="Test",
             version="1.0.0",
             organization="petisco",
-            deployed_at=datetime.utcnow(),
+            deployed_at=datetime.now(timezone.utc),
             fastapi_configurer=fastapi_configurer,
         )
         app = application.get_app()

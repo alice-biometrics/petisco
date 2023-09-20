@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 
@@ -81,7 +81,7 @@ class TestCommand:
     def should_create_command_with_most_conflicting_domain_event(  # noqa
         self,
     ):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         command = MostConflictingCommand(
             name="given-name",
             version=2,

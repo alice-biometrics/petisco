@@ -1,6 +1,6 @@
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, Union, cast
 
 from pydantic import BaseModel
@@ -49,7 +49,7 @@ class Message(BaseModel, extra="allow"):
             self._message_version = 1  # noqa
 
         if not hasattr(self, "_message_occurred_on"):
-            self._message_occurred_on = datetime.utcnow()  # noqa
+            self._message_occurred_on = datetime.now(timezone.utc)  # noqa
 
         if not hasattr(self, "_message_attributes"):
             self._message_attributes = dict()  # noqa
@@ -129,9 +129,11 @@ class Message(BaseModel, extra="allow"):
         self._message_name = str(kwargs.get("type"))
         self._message_version = int(kwargs.get("version", 1))
         self._message_occurred_on = (
-            datetime.strptime(str(kwargs.get("occurred_on")), TIME_FORMAT)
+            datetime.strptime(str(kwargs.get("occurred_on")), TIME_FORMAT).replace(
+                tzinfo=timezone.utc
+            )
             if kwargs.get("occurred_on")
-            else datetime.now()
+            else datetime.now(timezone.utc)
         )
 
         attributes = (
