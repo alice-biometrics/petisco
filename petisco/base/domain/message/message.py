@@ -49,7 +49,7 @@ class Message(BaseModel, extra="allow"):
             self._message_version = 1  # noqa
 
         if not hasattr(self, "_message_occurred_on"):
-            self._message_occurred_on = datetime.utcnow()  # noqa
+            self._message_occurred_on = datetime.now(timezone.utc)  # noqa
 
         if not hasattr(self, "_message_attributes"):
             self._message_attributes = dict()  # noqa
