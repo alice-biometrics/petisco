@@ -3,6 +3,7 @@ from datetime import timezone
 import pytest
 
 from petisco import Message
+from tests.modules.base.mothers.message_mother import MessageMother
 
 
 class MyMessage(Message):
@@ -92,3 +93,31 @@ class TestMessage:
         retrieved_occurred_on = retrieved_message.get_message_occurred_on()
 
         assert retrieved_occurred_on.tzinfo == timezone.utc
+
+    def should_share_same_hash_when_same_message(self):  # noqa
+        message_1 = MessageMother.any()
+        message_2 = Message.from_format(message_1.format())
+
+        assert hash(message_1) == hash(message_2)
+
+    def should_have_different_hash_when_different_message(self):  # noqa
+        message_1 = MessageMother.any()
+        message_2 = MessageMother.other()
+
+        assert hash(message_1) != hash(message_2)
+
+    def should_set_a_list_to_messages_to_keep_unique_values(self):  # noqa
+        message_1 = MessageMother.any()
+        message_2 = Message.from_format(message_1.format())
+        messages = [
+            message_1,
+            message_2,
+            MessageMother.other("other_1"),
+            MessageMother.other("other_2"),
+            MessageMother.other("other_3"),
+        ]
+
+        unique_messages = list(set(messages))
+
+        assert len(messages) == 5
+        assert len(unique_messages) == 4
