@@ -147,6 +147,9 @@ class Message(BaseModel, extra="allow"):
         self._message_meta = cast(Dict[str, Any], kwargs.get("meta", dict()))
         self._message_type = str(kwargs.get("type_message", self._message_type))
 
+    def __hash__(self) -> int:
+        return hash(self.format_json())
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Message):
             return False
