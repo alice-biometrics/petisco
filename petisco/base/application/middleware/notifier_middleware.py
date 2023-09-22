@@ -49,7 +49,7 @@ class NotifierMiddleware(Middleware):
                 self.notifier.publish_exception(notifier_exception_message)
             if issubclass(error.__class__, CriticalError):
                 notifier_message = NotifierMessage(
-                    title=error.get_specify_detail(),
+                    title=error.get_specific_detail(),
                     message=error.__repr__(),
                     meta=meta,
                 )
