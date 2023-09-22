@@ -55,7 +55,9 @@ steps:
       - docker run -d --rm --name petisco-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
       - docker run -d --rm --platform linux/x86_64 -v "$PWD/mysqldata":/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root --name petisco-mysql -p 3307:3306 mysql:5.7
       - docker run -d --rm --name petisco-elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.10.2
-    wait_http_200: http://localhost:9200
+    wait_http_200:
+      - http://localhost:15672
+      - http://localhost:9200
     run: pytest
     teardown:
       - docker stop petisco-rabbitmq
