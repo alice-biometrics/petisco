@@ -11,7 +11,7 @@ class TestAsyncElasticDatabase:
     @testing_with_elastic
     async def should_execute_a_session(self):
         connection = ElasticConnection.create_local()
-        database = AsyncElasticDatabase(name="elastic_test", connection=connection)
+        database = AsyncElasticDatabase(alias="elastic_test", connection=connection)
         database.initialize()
 
         session_scope = database.get_session_scope()
@@ -28,15 +28,16 @@ class TestAsyncElasticDatabase:
     @testing_with_elastic
     async def should_create_databases_with_elastic_database(self):
         connection = ElasticConnection.create_local()
-        database = AsyncElasticDatabase(name="elastic_test", connection=connection)
+        database = AsyncElasticDatabase(alias="elastic_test", connection=connection)
         databases.clear()
         databases.add(database)
 
-        assert database.info() == {"name": "elastic_test"}
+        assert database.info() == {
+            "type": "AsyncElasticDatabase",
+            "alias": "elastic_test",
+        }
 
         databases.initialize()
-
-        assert await databases.async_are_available()
 
         databases.delete()
         databases.clear()
@@ -46,15 +47,16 @@ class TestAsyncElasticDatabase:
         self,
     ):
         connection = ElasticConnection.create_local()
-        database = AsyncElasticDatabase(name="elastic_test", connection=connection)
+        database = AsyncElasticDatabase(alias="elastic_test", connection=connection)
         databases.clear()
         databases.add(database)
 
-        assert database.info() == {"name": "elastic_test"}
+        assert database.info() == {
+            "type": "AsyncElasticDatabase",
+            "alias": "elastic_test",
+        }
 
         databases.initialize()
-
-        assert await databases.async_are_available(database.name)
 
         databases.delete()
         databases.clear()

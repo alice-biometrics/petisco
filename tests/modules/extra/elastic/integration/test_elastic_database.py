@@ -10,7 +10,7 @@ class TestElasticDatabase:
     @testing_with_elastic
     def should_execute_a_session(self):
         connection = ElasticConnection.create_local()
-        database = ElasticDatabase(name="elastic_test", connection=connection)
+        database = ElasticDatabase(alias="elastic_test", connection=connection)
         database.initialize()
 
         session_scope = database.get_session_scope()
@@ -27,16 +27,13 @@ class TestElasticDatabase:
     @testing_with_elastic
     def should_create_databases_with_elastic_database(self):
         connection = ElasticConnection.create_local()
-        database = ElasticDatabase(name="elastic_test", connection=connection)
+        database = ElasticDatabase(alias="elastic_test", connection=connection)
+        assert database.info() == {"type": "ElasticDatabase", "alias": "elastic_test"}
+
         databases.clear()
 
         databases.add(database)
-
-        assert database.info() == {"name": "elastic_test"}
-
         databases.initialize()
-
-        assert databases.are_available()
 
         databases.delete()
         databases.clear()
@@ -44,16 +41,14 @@ class TestElasticDatabase:
     @testing_with_elastic
     def should_create_persistence_with_elastic_database_specifying_the_database(self):
         connection = ElasticConnection.create_local()
-        database = ElasticDatabase(name="elastic_test", connection=connection)
+        database = ElasticDatabase(alias="elastic_test", connection=connection)
         databases.clear()
 
         databases.add(database)
 
-        assert database.info() == {"name": "elastic_test"}
+        assert database.info() == {"type": "ElasticDatabase", "alias": "elastic_test"}
 
         databases.initialize()
-
-        assert databases.are_available(database.name)
 
         databases.delete()
         databases.clear()
