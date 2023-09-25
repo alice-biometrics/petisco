@@ -99,7 +99,10 @@ def wrapper(
             )
 
         if isinstance(result.value, CriticalError) and len(arguments) > 0:
-            formatted_args = {k: str(v) for k, v in arguments.items()}
+            formatted_args = {
+                k: str(v) if type(v) is not bytes else "bytes"
+                for k, v in arguments.items()
+            }
             result.value.set_additional_info(formatted_args)
 
         for middleware in middlewares:
