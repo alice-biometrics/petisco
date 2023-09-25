@@ -5,12 +5,13 @@ from typing import Any, Callable, Dict, List, Type, Union
 
 import elasticapm
 from loguru import logger
-from meiga import Error, Failure
+from meiga import Error, Failure, Result
 from meiga.on_failure_exception import OnFailureException
 
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
+from petisco.base.domain.errors.critical_error import CriticalError
 from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.misc.result_mapper import ResultMapper
 
@@ -92,6 +93,18 @@ def wrapper(
             if client:
                 client.capture_exception()
 
+        if not isinstance(result, Result):
+            raise TypeError(
+                f"Controller Error: Return value `{result}` ({type(result)}) must be a `meiga.Result`"
+            )
+
+        if isinstance(result.value, CriticalError) and len(arguments) > 0:
+            formatted_args = {
+                k: str(v) if type(v) is not bytes else "bytes"
+                for k, v in arguments.items()
+            }
+            result.value.set_additional_info(formatted_args)
+
         for middleware in middlewares:
             if result:
                 try:
@@ -102,13 +115,7 @@ def wrapper(
                     )
                     logger.exception(exception)
 
-        try:
-            result.set_transformer(mapper.map)
-        except AttributeError:  # noqa
-            raise TypeError(
-                f"Controller Error: Return value `{result}` ({type(result)}) must be a `meiga.Result` to "
-                f"transform values to success and failure handlers."
-            )
+        result.set_transformer(mapper.map)
         return result
 
     return wrapped

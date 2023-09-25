@@ -27,6 +27,12 @@ class DomainError(Error):
         if self.additional_info:
             self._additional_detail += f" [{self.additional_info}]"
 
+    def set_additional_info(self, info: Optional[Dict[str, str]]) -> None:
+        if self.additional_info:
+            self.additional_info = dict(self.additional_info, **info)
+        else:
+            self.additional_info = info
+
     @classmethod
     @deprecated(
         "get_specify_detail is deprecated. Use the `get_specific_detail` instead."
