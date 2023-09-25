@@ -22,7 +22,7 @@ class TestAggregateRoot:
             def create(name: str):
                 aggregate_root = MyAggregateRoot(
                     aggregate_id=Uuid.from_value(
-                        "0De49A24-C65A-4E8C-9917-125C067Eba2C"
+                        "4e6660d7-b037-4c75-adc8-272d62944abb"
                     ),
                     name=name,
                 )
@@ -33,7 +33,7 @@ class TestAggregateRoot:
 
         assert len(aggregate_root.pull_domain_events()) == 1
         assert aggregate_root.model_dump() == {
-            "aggregate_id": "0De49A24-C65A-4E8C-9917-125C067Eba2C",
+            "aggregate_id": "4e6660d7-b037-4c75-adc8-272d62944abb",
             "aggregate_version": 1,
             "name": "name",
         }

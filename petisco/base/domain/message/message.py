@@ -114,7 +114,7 @@ class Message(BaseModel, extra="allow"):
         attributes = {}
         for key, attribute in self._message_attributes.items():
             serialized_value = attribute
-            if isinstance(attribute, ValueObject):
+            if isinstance(attribute, (Uuid, ValueObject)):
                 serialized_value = attribute.value
             if isinstance(attribute, datetime):
                 serialized_value = attribute.strftime(TIME_FORMAT)
