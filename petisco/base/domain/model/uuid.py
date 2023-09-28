@@ -84,3 +84,9 @@ class Uuid:
     ) -> JsonSchemaValue:
         # Use the same schema that would be used for `uuid`
         return handler(core_schema.uuid_schema())
+
+
+if USE_LEGACY_UUID is True:
+    from petisco.base.domain.model.legacy_uuid import LegacyUuid  # noqa
+
+    Uuid = LegacyUuid  # noqa
