@@ -1,5 +1,5 @@
 import os
-from typing import Any
+from typing import Any, Union
 from uuid import UUID, uuid4
 
 import validators
@@ -13,7 +13,7 @@ USE_LEGACY_UUID = bool(os.getenv("USE_LEGACY_UUID", "False").lower() == "true")
 
 
 class Uuid(str):
-    def __new__(cls, value: str | UUID) -> "Uuid":
+    def __new__(cls, value: Union[str, UUID]) -> "Uuid":
         if value is None or not validators.uuid(str(value)):
             raise InvalidUuid(uuid_value=str(value))
         return super().__new__(cls, str(value))
@@ -73,7 +73,7 @@ class Uuid(str):
         return handler(core_schema.uuid_schema())
 
 
-# if USE_LEGACY_UUID is True:
-#     from petisco.base.domain.model.legacy_uuid import LegacyUuid  # noqa
-#
-#     Uuid = LegacyUuid  # noqa
+if USE_LEGACY_UUID is True:
+    from petisco.base.domain.model.legacy_uuid import LegacyUuid  # noqa
+
+    Uuid = LegacyUuid  # noqa

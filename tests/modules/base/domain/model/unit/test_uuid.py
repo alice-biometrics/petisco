@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import pytest
 import validators
 from pydantic import BaseModel
@@ -89,3 +91,10 @@ class TestUuid:
 
         assert isinstance(user, User)
         assert isinstance(user.id, Uuid)
+
+    def should_success_when_init_with_standard_uuid(self):  # noqa
+        standard_uuid = uuid4()
+        uuid = Uuid(standard_uuid)
+
+        assert isinstance(uuid, Uuid)
+        assert uuid == str(standard_uuid)
