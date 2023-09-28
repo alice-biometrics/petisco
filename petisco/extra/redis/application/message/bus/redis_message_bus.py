@@ -7,7 +7,7 @@ from redis.client import Redis
 from redis.cluster import RedisCluster
 from redis.exceptions import RedisError
 
-from petisco.base.domain.errors.critical_error import CriticalError
+from petisco.base.domain.errors.defaults.bus import BusCannotPublish
 from petisco.base.domain.message.message import Message
 from petisco.base.domain.message.message_bus import MessageBus, TypeMessage
 
@@ -52,7 +52,7 @@ class RedisMessageBus(MessageBus):
             logger.opt(exception=True).error(
                 f"Error publishing events ({len(messages)} of type {messages[0].get_message_type()}). Exception traceback:"
             )
-            raise CriticalError(additional_info={"error message": str(ex)})
+            raise BusCannotPublish(additional_info={"error message": str(ex)})
 
     def _get_formatted_data(self, message: Message):
         formatted_data = {

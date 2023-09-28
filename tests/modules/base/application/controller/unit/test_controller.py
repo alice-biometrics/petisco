@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 from unittest.mock import patch
 
@@ -18,6 +18,7 @@ from meiga import (
 
 from petisco import (
     Controller,
+    CriticalError,
     DomainError,
     ErrorMap,
     HttpError,
@@ -40,7 +41,7 @@ def set_shared_error_map(shared_error_map: ErrorMap) -> None:
         name="test_controller",
         organization="test",
         version="1",
-        deployed_at=datetime.utcnow(),
+        deployed_at=datetime.now(timezone.utc),
         force_recreation=True,
         shared_error_map=shared_error_map,
     )
@@ -67,6 +68,38 @@ class TestController:
 
         result = MyController().execute()
         result.assert_failure()
+
+    def should_return_failure_result_with_critical_error_enriched_with_controller_parameters(  # noqa
+        self,
+    ):
+        class MyCriticalError(CriticalError):
+            pass
+
+        class ControllerThatReturnEmptyCriticalError(Controller):
+            def execute(
+                self, param1: str, param2: int, param3: bytes
+            ) -> Failure[MyCriticalError]:
+                return Failure(MyCriticalError())
+
+        class ControllerThatReturnEnrichedCriticalError(Controller):
+            def execute(self, param1: str, param2: int) -> Failure[MyCriticalError]:
+                return Failure(MyCriticalError(additional_info={"message": "error"}))
+
+        result = ControllerThatReturnEmptyCriticalError().execute(
+            param1="param1", param2=2, param3=b"abc"
+        )
+        result.assert_failure(value_is_instance_of=MyCriticalError)
+        assert result.value.additional_info.get("param1") == "param1"
+        assert result.value.additional_info.get("param2") == "2"
+        assert result.value.additional_info.get("param3") == "bytes"
+
+        result = ControllerThatReturnEnrichedCriticalError().execute(
+            param1="param1", param2=2
+        )
+        result.assert_failure(value_is_instance_of=MyCriticalError)
+        assert result.value.additional_info.get("message") == "error"
+        assert result.value.additional_info.get("param1") == "param1"
+        assert result.value.additional_info.get("param2") == "2"
 
     def should_return_transformed_success_handler(self):  # noqa
         expected_result = {"message": "ok"}

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import functools
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, NoReturn
 
 import pytest
@@ -85,7 +85,7 @@ class TestApplication:
             name="service",
             version="1.0.0",
             organization="acme",
-            deployed_at=datetime.utcnow(),
+            deployed_at=datetime.now(timezone.utc),
         ).configure(testing=True)
 
         assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
@@ -96,7 +96,7 @@ class TestApplication:
             name="service",
             version="1.0.0",
             organization="acme",
-            deployed_at=datetime.utcnow(),
+            deployed_at=datetime.now(timezone.utc),
         )
 
         assert ApplicationInfo().name == "service"
@@ -115,7 +115,7 @@ class TestApplication:
             version="1.0.0",
             organization="acme",
             dependencies_provider=dependencies_provider,
-            deployed_at=datetime.utcnow(),
+            deployed_at=datetime.now(timezone.utc),
         ).configure()
 
         assert (
@@ -135,7 +135,7 @@ class TestApplication:
                 version="1.0.0",
                 organization="acme",
                 dependencies_provider=dependencies_provider,
-                deployed_at=datetime.utcnow(),
+                deployed_at=datetime.now(timezone.utc),
             ).configure()
 
     @testing_with_empty_container
@@ -148,7 +148,7 @@ class TestApplication:
             version="1.0.0",
             organization="acme",
             dependencies_provider=dependencies_provider,
-            deployed_at=datetime.utcnow(),
+            deployed_at=datetime.now(timezone.utc),
         ).configure(overwrite_dependencies=True)
 
         assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
@@ -169,7 +169,7 @@ class TestApplication:
             version="1.0.0",
             organization="acme",
             dependencies_provider=dependencies_provider,
-            deployed_at=datetime.utcnow(),
+            deployed_at=datetime.now(timezone.utc),
         ).configure()
 
         assert (
@@ -192,7 +192,7 @@ class TestApplication:
                 MyApplicationConfigurer(),
                 MyApplicationConfigurer(execute_after_dependencies=True),
             ],
-            deployed_at=datetime.utcnow(),
+            deployed_at=datetime.now(timezone.utc),
         ).configure()
 
     @testing_with_empty_container
@@ -207,7 +207,7 @@ class TestApplication:
                 version="1.0.0",
                 organization="acme",
                 configurers=[MyApplicationConfigurer()],
-                deployed_at=datetime.utcnow(),
+                deployed_at=datetime.now(timezone.utc),
             ).configure()
         assert "Our Error" in str(excinfo.value)
 
@@ -221,7 +221,7 @@ class TestApplication:
             version="1.0.0",
             organization="acme",
             dependencies_provider=dependencies_provider,
-            deployed_at=datetime.utcnow(),
+            deployed_at=datetime.now(timezone.utc),
         )
         application.configure(overwrite_dependencies=True)
 

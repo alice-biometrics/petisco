@@ -42,6 +42,7 @@ from petisco.base.domain.errors.defaults.already_exists import (
     ClientAlreadyExists,
     UserAlreadyExists,
 )
+from petisco.base.domain.errors.defaults.bus import BusCannotPublish
 from petisco.base.domain.errors.defaults.invalid_uuid import InvalidUuid
 from petisco.base.domain.errors.defaults.invalid_value_object import InvalidValueObject
 from petisco.base.domain.errors.defaults.not_allowed import NotAllowed
@@ -168,4 +169,5 @@ __all__ = [
     "InvalidValueObject",
     "HttpError",
     "ErrorMap",
+    "BusCannotPublish",
 ]

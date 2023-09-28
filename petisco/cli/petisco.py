@@ -1,6 +1,6 @@
 import argparse
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from petisco import __version__
@@ -83,7 +83,7 @@ def main() -> None:
             return
 
         if args.utcnow:
-            print(datetime.utcnow())
+            print(datetime.now(timezone.utc))
             return
 
         if args.rename_template_replacement:

@@ -15,9 +15,8 @@ class Database(Generic[T], ABC):
     def get_key(self) -> str:
         return type(self).__name__ if not self.alias else self.alias
 
-    @classmethod
-    def info(cls) -> dict[str, Any]:
-        return {"type": cls.__name__, "alias": cls.alias}
+    def info(self) -> dict[str, Any]:
+        return {"type": self.__class__.__name__, "alias": self.alias}
 
     @abstractmethod
     def initialize(self, *args: Any, **kwargs: Any) -> None:

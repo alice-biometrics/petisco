@@ -10,7 +10,7 @@ app = FastAPI(title="test-app")
 
 
 class AuthFail(DomainError):
-    def get_specify_detail(self) -> str:
+    def get_specific_detail(self) -> str:
         return "Auth Fail"
 
 

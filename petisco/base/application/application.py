@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Dict, List, Union
 
 from loguru import logger
@@ -118,7 +118,9 @@ class Application(BaseSettings):
         return info
 
     def was_deploy_few_minutes_ago(self, minutes: int = 25) -> bool:
-        return datetime.utcnow() < self.deployed_at + timedelta(minutes=minutes)
+        return datetime.now(timezone.utc) < self.deployed_at + timedelta(
+            minutes=minutes
+        )
 
     def publish_domain_event(self, domain_event: DomainEvent) -> None:
         try:
