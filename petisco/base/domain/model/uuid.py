@@ -3,97 +3,84 @@ from typing import Any
 from uuid import uuid4
 
 import validators
-from pydantic import UUID4, GetCoreSchemaHandler
-from pydantic_core import CoreSchema
-from pydantic_core.core_schema import (
-    no_info_after_validator_function,
-    plain_serializer_function_ser_schema,
-    uuid_schema,
-)
+from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import core_schema
 
 from petisco.base.domain.errors.defaults.invalid_uuid import InvalidUuid
 
 USE_LEGACY_UUID = bool(os.getenv("USE_LEGACY_UUID", "False").lower() == "true")
 
 
-class Uuid(str):
-    """
-    A base class to define Uuid
-
-    Use it to identify domain entities
-    """
-
-    def __new__(cls, value: str) -> "Uuid":
-        if value is None or not validators.uuid(value):
+class Uuid:
+    def __init__(self, value: str):
+        if value is None or not validators.uuid(str(value)):
             raise InvalidUuid(uuid_value=value)
-        return str.__new__(cls, value)
-
-    def __repr__(self) -> str:
-        return self
-
-    # def __init__(self, value: str) -> None:
-    #     if value is None or not validators.uuid(value):
-    #         raise InvalidUuid(uuid_value=value)
-    #     #super().__init__(str(value))
-    #     self._value = value
+        self.value = str(value)
 
     @classmethod
     def v4(cls) -> "Uuid":
-        return cls(value=str(uuid4()))
+        return cls(str(uuid4()))
 
-    def to_str(self) -> str:
-        return self
+    def __repr__(self):
+        return self.value
+
+    def __eq__(self, other) -> bool:
+        return self.value == other.value
+
+    def __hash__(self):
+        return hash(self.value)
 
     @staticmethod
     def from_str(value: str) -> "Uuid":
         return Uuid(value)
 
-    @property
-    def value(self) -> str:
-        return self.to_str()
-
     @classmethod
     def from_value(cls, value: str) -> "Uuid":
         return cls(value)
 
-    # @classmethod
-    # def __get_pydantic_core_schema__(
-    #     cls, source: Any, handler: GetCoreSchemaHandler
-    # ) -> CoreSchema:
-    #     return uuid_schema(version=4)
-
     @classmethod
     def __get_pydantic_core_schema__(
-        cls, source: Any, handler: GetCoreSchemaHandler
-    ) -> CoreSchema:
-        # assert source is Uuid
-        return no_info_after_validator_function(
-            cls._validate,
-            uuid_schema(version=4, strict=False),
-            serialization=plain_serializer_function_ser_schema(
-                cls._serialize,
-                info_arg=False,
-                return_schema=uuid_schema(version=4, strict=False),
+        cls,
+        _source_type: Any,
+        _handler: GetCoreSchemaHandler,
+    ) -> core_schema.CoreSchema:
+        """
+        We return a pydantic_core.CoreSchema that behaves in the following ways:
+
+        * str will be parsed as `Uuid` instances with the str as the value attribute
+        * `Uuid` instances will be parsed as `Uuid` instances without any changes
+        * Nothing else will pass validation
+        * Serialization will always return just a str
+        """
+
+        def validate_from_str(value: str) -> "Uuid":
+            return Uuid(value)
+
+        from_uuid_schema = core_schema.chain_schema(
+            [
+                core_schema.uuid_schema(),
+                core_schema.no_info_plain_validator_function(validate_from_str),
+            ]
+        )
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_uuid_schema,
+            python_schema=core_schema.union_schema(
+                [
+                    # check if it's an instance first before doing any further work
+                    core_schema.is_instance_schema(Uuid),
+                    from_uuid_schema,
+                ]
+            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda instance: instance.value
             ),
         )
 
-    @staticmethod
-    def _validate(value: UUID4) -> "Uuid":
-        return Uuid(str(value))
-        # if isinstance(value, str):
-        #     return Uuid(value
-        #                 )
-        # if isinstance(value, dict):
-        #     return Uuid(value["value"])
-        # else:
-        #     return Uuid(value.value)
-
-    @staticmethod
-    def _serialize(value: "Uuid") -> str:
-        return value.value
-
-
-if USE_LEGACY_UUID:
-    from petisco.base.domain.model.legacy_uuid import LegacyUuid  # noqa
-
-    Uuid = LegacyUuid  # noqa
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls, _core_schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        # Use the same schema that would be used for `uuid`
+        return handler(core_schema.uuid_schema())
