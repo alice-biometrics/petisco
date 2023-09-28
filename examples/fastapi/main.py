@@ -15,6 +15,7 @@ def create_user(user: User) -> None:
     print(f"{user.id=}")
     print(f"type {type(user.id)}")
     print(f"value {user.id.value}")
+    print(f"uuid {user.id}")
 
     print(f"{Uuid.v4()}")
 

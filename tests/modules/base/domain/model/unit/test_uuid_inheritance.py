@@ -42,7 +42,7 @@ def test_uuid_inheritance_should_fail_when_input_is_not_a_valid_uuid():
 @pytest.mark.unit
 def test_uuid_inheritance__should_fail_when_input_is_not_a_valid_uuid_with_classmethod():
     with pytest.raises(InvalidUuid) as excinfo:
-        TaskId.from_value("non-uuid")
+        TaskId("non-uuid")
 
     assert "InvalidUuid (non-uuid)" in str(excinfo.value)
 

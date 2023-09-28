@@ -123,9 +123,7 @@ class Message(BaseModel, extra="allow"):
 
     def _update_from_formatted_message(self) -> None:
         kwargs = self._message_formatted_message
-        self._message_id = (
-            Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
-        )
+        self._message_id = Uuid(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
         self._message_name = str(kwargs.get("type"))
         self._message_version = int(kwargs.get("version", 1))
         self._message_occurred_on = (

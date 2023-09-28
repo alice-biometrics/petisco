@@ -1,6 +1,6 @@
 import os
 from typing import Any
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import validators
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
@@ -12,32 +12,19 @@ from petisco.base.domain.errors.defaults.invalid_uuid import InvalidUuid
 USE_LEGACY_UUID = bool(os.getenv("USE_LEGACY_UUID", "False").lower() == "true")
 
 
-class Uuid:
-    def __init__(self, value: str):
+class Uuid(str):
+    def __new__(cls, value: str | UUID) -> "Uuid":
         if value is None or not validators.uuid(str(value)):
-            raise InvalidUuid(uuid_value=value)
-        self.value = str(value)
+            raise InvalidUuid(uuid_value=str(value))
+        return super().__new__(cls, str(value))
 
     @classmethod
     def v4(cls) -> "Uuid":
         return cls(str(uuid4()))
 
-    def __repr__(self):
-        return self.value
-
-    def __eq__(self, other) -> bool:
-        return self.value == other.value
-
-    def __hash__(self):
-        return hash(self.value)
-
-    @staticmethod
-    def from_str(value: str) -> "Uuid":
-        return Uuid(value)
-
-    @classmethod
-    def from_value(cls, value: str) -> "Uuid":
-        return cls(value)
+    @property
+    def value(self) -> str:
+        return self
 
     @classmethod
     def __get_pydantic_core_schema__(
@@ -86,7 +73,7 @@ class Uuid:
         return handler(core_schema.uuid_schema())
 
 
-if USE_LEGACY_UUID is True:
-    from petisco.base.domain.model.legacy_uuid import LegacyUuid  # noqa
-
-    Uuid = LegacyUuid  # noqa
+# if USE_LEGACY_UUID is True:
+#     from petisco.base.domain.model.legacy_uuid import LegacyUuid  # noqa
+#
+#     Uuid = LegacyUuid  # noqa

@@ -74,7 +74,7 @@ class TestDomainEvent:
             user_id: Uuid
             created_at: datetime
 
-        user_id = Uuid.from_value("4e6660d7-b037-4c75-adc8-272d62944abb")
+        user_id = Uuid("4e6660d7-b037-4c75-adc8-272d62944abb")
         created_at = datetime.strptime("2021-06-14 18:15:05.329569", TIME_FORMAT)
 
         domain_event = MyDomainEventWithUuid(user_id=user_id, created_at=created_at)
