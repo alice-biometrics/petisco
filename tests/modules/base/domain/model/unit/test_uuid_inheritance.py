@@ -2,10 +2,10 @@ import pytest
 import validators
 from pydantic import field_validator
 
-from petisco import InvalidUuid, Uuid
+from petisco import InvalidUuid, LegacyUuid
 
 
-class TaskId(Uuid):
+class TaskId(LegacyUuid):
     @field_validator("value")
     def validate_value(cls, value):
         if value is None or not validators.uuid(value):
@@ -17,10 +17,10 @@ class TaskId(Uuid):
 
 @pytest.mark.unit
 def test_uuid_inheritance_should_success_when_construct_and_serialize_with_inner_value():
-    task_id = TaskId(value="4E6660D7-B037-4C75-Adc8-272D62944Abb")
+    task_id = TaskId(value="4e6660d7-b037-4c75-adc8-272d62944abb")
 
-    assert task_id.value == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
-    assert task_id.model_dump() == "4E6660D7-B037-4C75-Adc8-272D62944Abb"
+    assert task_id.value == "4e6660d7-b037-4c75-adc8-272d62944abb"
+    assert task_id.model_dump() == "4e6660d7-b037-4c75-adc8-272d62944abb"
 
 
 @pytest.mark.unit
@@ -42,7 +42,7 @@ def test_uuid_inheritance_should_fail_when_input_is_not_a_valid_uuid():
 @pytest.mark.unit
 def test_uuid_inheritance__should_fail_when_input_is_not_a_valid_uuid_with_classmethod():
     with pytest.raises(InvalidUuid) as excinfo:
-        TaskId.from_value("non-uuid")
+        TaskId("non-uuid")
 
     assert "InvalidUuid (non-uuid)" in str(excinfo.value)
 

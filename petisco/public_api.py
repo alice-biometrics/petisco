@@ -82,6 +82,7 @@ from petisco.base.domain.message.not_implemented_message_configurer import (
     NotImplementedMessageConfigurer,
 )
 from petisco.base.domain.model.aggregate_root import AggregateRoot
+from petisco.base.domain.model.legacy_uuid import LegacyUuid
 from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject, ValueObjectSerializer
 from petisco.base.domain.persistence.database import Database
@@ -133,6 +134,7 @@ __all__ = [
     "DatetimeSerializer",
     "TIME_FORMAT",
     "Uuid",
+    "LegacyUuid",
     "Interface",
     "DomainEventSubscriber",
     "CommandSubscriber",

@@ -114,7 +114,7 @@ class Message(BaseModel, extra="allow"):
         attributes = {}
         for key, attribute in self._message_attributes.items():
             serialized_value = attribute
-            if isinstance(attribute, ValueObject):
+            if isinstance(attribute, (Uuid, ValueObject)):
                 serialized_value = attribute.value
             if isinstance(attribute, datetime):
                 serialized_value = attribute.strftime(TIME_FORMAT)
@@ -123,9 +123,7 @@ class Message(BaseModel, extra="allow"):
 
     def _update_from_formatted_message(self) -> None:
         kwargs = self._message_formatted_message
-        self._message_id = (
-            Uuid.from_value(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
-        )
+        self._message_id = Uuid(kwargs.get("id")) if kwargs.get("id") else Uuid.v4()
         self._message_name = str(kwargs.get("type"))
         self._message_version = int(kwargs.get("version", 1))
         self._message_occurred_on = (
