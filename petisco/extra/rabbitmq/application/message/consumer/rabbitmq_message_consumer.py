@@ -3,7 +3,7 @@ import threading
 import traceback
 from dataclasses import dataclass
 from time import sleep
-from typing import Any, Callable, Dict, List, NoReturn, Optional, Type, Union
+from typing import Any, Callable, Dict, List, NoReturn, Optional, Tuple, Type, Union
 
 from loguru import logger
 from meiga import Failure
@@ -18,8 +18,10 @@ from petisco.base.domain.message.chaos.not_implemented_message_chaos import (
     NotImplementedMessageChaos,
 )
 from petisco.base.domain.message.command import Command
+from petisco.base.domain.message.command_bus import CommandBus
 from petisco.base.domain.message.consumer_derived_action import ConsumerDerivedAction
 from petisco.base.domain.message.domain_event import DomainEvent
+from petisco.base.domain.message.domain_event_bus import DomainEventBus
 from petisco.base.domain.message.message import Message
 from petisco.base.domain.message.message_consumer import MessageConsumer
 from petisco.base.domain.message.message_handler_returns_none_error import (
@@ -82,6 +84,8 @@ class RabbitMqMessageConsumer(MessageConsumer):
         chaos: MessageChaos = NotImplementedMessageChaos(),
         logger: Optional[Logger] = NotImplementedLogger(),
         rabbitmq_key_prefix: str = "consumer",
+        domain_event_bus_builder: Optional[Callable[[], DomainEventBus]] = None,
+        command_bus_builder: Optional[Callable[[], CommandBus]] = None,
     ) -> None:
         self.connector = connector
         self.organization = organization
@@ -98,6 +102,8 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self._thread: Union[threading.Thread, None] = None
         self.inner_bus_organization = None
         self.inner_bus_service = None
+        self.domain_event_bus_builder = domain_event_bus_builder
+        self.command_bus_builder = command_bus_builder
 
     def set_inner_bus_config(self, organization: str, service: str):
         self.inner_bus_organization = organization
@@ -221,6 +227,41 @@ class RabbitMqMessageConsumer(MessageConsumer):
             message_type_expected=message_type_expected,
         )
 
+    def _configure_inner_buses(
+        self, ch: BlockingChannel
+    ) -> Tuple[DomainEventBus, CommandBus]:
+        connector = RabbitMqConsumerConnector(ch)
+        bus_organization = (
+            self.organization
+            if self.inner_bus_organization is None
+            else self.inner_bus_organization
+        )
+        bus_service = (
+            self.service if self.inner_bus_service is None else self.inner_bus_service
+        )
+
+        if self.domain_event_bus_builder is None:
+            domain_event_bus = RabbitMqDomainEventBus(
+                bus_organization, bus_service, connector
+            )
+            logger.warning(
+                "RabbitMqMessageConsumer: using an inner DomainEventBus with hardcoded implementation (RabbitMqDomainEventBus)"
+            )
+        else:
+            domain_event_bus = self.domain_event_bus_builder()
+            domain_event_bus.connector = connector
+
+        if self.domain_event_bus_builder is None:
+            command_bus = RabbitMqCommandBus(bus_organization, bus_service, connector)
+            logger.warning(
+                "RabbitMqMessageConsumer: using an inner CommandBus with hardcoded implementation (RabbitMqCommandBus)"
+            )
+        else:
+            command_bus = self.command_bus_builder()
+            domain_event_bus.connector = connector
+
+        return domain_event_bus, command_bus
+
     def consumer(
         self,
         subscriber: MessageSubscriber,
@@ -270,24 +311,8 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 )
                 result = Failure(MessageChaosError())
             else:
-                connector = RabbitMqConsumerConnector(ch)
-                bus_organization = (
-                    self.organization
-                    if self.inner_bus_organization is None
-                    else self.inner_bus_organization
-                )
-                bus_service = (
-                    self.service
-                    if self.inner_bus_service is None
-                    else self.inner_bus_service
-                )
+                domain_event_bus, command_bus = self._configure_inner_buses(ch)
 
-                domain_event_bus = RabbitMqDomainEventBus(
-                    bus_organization, bus_service, connector
-                )
-                command_bus = RabbitMqCommandBus(
-                    bus_organization, bus_service, connector
-                )
                 subscriber.set_domain_event_bus(domain_event_bus)
                 subscriber.set_command_bus(command_bus)
                 result = subscriber.handle(message)

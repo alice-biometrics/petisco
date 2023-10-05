@@ -8,13 +8,13 @@ class UserCreated(DomainEvent):
 
 class DomainEventUserCreatedMother:
     @staticmethod
-    def random():
+    def random() -> UserCreated:
         return UserCreated(user_id=Uuid.v4())
 
     @staticmethod
-    def default():
+    def default() -> UserCreated:
         return UserCreated(user_id=DEFAULT_USER_ID)
 
     @staticmethod
-    def with_user_id(user_id: Uuid):
+    def with_user_id(user_id: Uuid) -> UserCreated:
         return UserCreated(user_id=user_id)
