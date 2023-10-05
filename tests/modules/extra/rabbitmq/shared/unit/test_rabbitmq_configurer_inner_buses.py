@@ -30,7 +30,7 @@ class TestRabbitMqConfigurerInnerBuses:
         self.inner_organization = "inner_organization"
         self.inner_service = "inner_service"
 
-        dependencies = get_rabbitmq_message_dependencies(
+        store_dependencies = get_rabbitmq_message_dependencies(
             organization=DEFAULT_ORGANIZATION,
             service=DEFAULT_SERVICE,
             alias=self.store_alias,
@@ -40,7 +40,13 @@ class TestRabbitMqConfigurerInnerBuses:
             service=self.inner_service,
             alias=self.derived_alias,
         )
-        Container.set_dependencies(dependencies + inner_dependencies)
+        main_dependencies = get_rabbitmq_message_dependencies(
+            organization=self.inner_organization,
+            service=self.inner_service,
+        )
+        Container.set_dependencies(
+            store_dependencies + main_dependencies + inner_dependencies
+        )
 
     def teardown_method(self):
         Container.clear()
