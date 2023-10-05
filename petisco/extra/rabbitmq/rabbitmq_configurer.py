@@ -4,6 +4,8 @@ import os
 
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.dependency_injection.container import Container
+from petisco.base.domain.message.command_bus import CommandBus
+from petisco.base.domain.message.domain_event_bus import DomainEventBus
 from petisco.base.domain.message.message_configurer import MessageConfigurer
 from petisco.base.domain.message.message_consumer import MessageConsumer
 from petisco.base.domain.message.message_subscriber import MessageSubscriber
@@ -32,6 +34,7 @@ class RabbitMqConfigurer(ApplicationConfigurer):
         inner_bus_service: str | None = None,
         clear_subscriber_before: bool | None = None,
         clear_store_before: bool | None = None,
+        use_container_buses: bool = True,
     ):
         """
         Initializes an instance of RabbitMqConfigurer.
@@ -43,6 +46,7 @@ class RabbitMqConfigurer(ApplicationConfigurer):
             alias (str, optional): Alias for the MessageConfigurer and MessageConsumer (Container.get(MessageConfigurer|MessageConsumer, alias=self.alias)). Defaults to None.
             inner_bus_organization (str, optional): configured organization for inner buses (DomainEventBus and CommandBus). If None will configure consumer organization.
             inner_bus_service (str, optional): configured service for inner buses (DomainEventBus and CommandBus). If None will configure consumer service.
+            use_container_buses (bool, optional): configure buses from petisco.Container.
         """
         self.subscribers = subscribers
         self.start_consuming = start_consuming
@@ -58,6 +62,7 @@ class RabbitMqConfigurer(ApplicationConfigurer):
         self.clear_store_before = (
             clear_store_before if clear_store_before else CLEAR_STORE_BEFORE
         )
+        self.use_container_buses = use_container_buses
 
         super().__init__(execute_after_dependencies)
 
@@ -76,10 +81,20 @@ class RabbitMqConfigurer(ApplicationConfigurer):
                 self.consumer.set_inner_bus_config(
                     self.inner_bus_organization, self.inner_bus_service
                 )
+                if self.use_container_buses is True:
+
+                    def domain_event_bus_builder() -> DomainEventBus:
+                        return Container.get(DomainEventBus)
+
+                    def command_bus_builder() -> CommandBus:
+                        return Container.get(CommandBus)
+
+                    self.consumer.domain_event_bus_builder = domain_event_bus_builder
+                    self.consumer.command_bus_builder = command_bus_builder
 
             self.consumer.add_subscribers(self.subscribers)
             self.consumer.start()
 
-    def stop(self):
+    def stop(self) -> None:
         if self.consumer:
             self.consumer.stop()
