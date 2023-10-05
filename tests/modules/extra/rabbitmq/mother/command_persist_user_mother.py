@@ -8,13 +8,13 @@ class PersistUser(Command):
 
 class CommandPersistUserMother:
     @staticmethod
-    def random():
+    def random() -> PersistUser:
         return PersistUser(user_id=Uuid.v4())
 
     @staticmethod
-    def default():
+    def default() -> PersistUser:
         return PersistUser(user_id=DEFAULT_USER_ID)
 
     @staticmethod
-    def with_user_id(user_id: Uuid):
+    def with_user_id(user_id: Uuid) -> PersistUser:
         return PersistUser(user_id=user_id)

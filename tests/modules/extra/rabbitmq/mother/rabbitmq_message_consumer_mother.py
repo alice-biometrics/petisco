@@ -1,3 +1,6 @@
+from typing import Callable
+
+from petisco import CommandBus, DomainEventBus
 from petisco.base.domain.message.chaos.message_chaos import MessageChaos
 from petisco.extra.logger.logger import Logger
 from petisco.extra.logger.not_implemented_logger import NotImplementedLogger
@@ -42,6 +45,24 @@ class RabbitMqMessageConsumerMother:
             max_retries,
             connector,
             DEFAULT_VERBOSE,
+        )
+
+    @staticmethod
+    def with_bus_builders(
+        domain_event_bus_builder: Callable[[], DomainEventBus],
+        command_bus_builder: Callable[[], CommandBus],
+        max_retries: int,
+        connector: RabbitMqConnector = None,
+    ):
+        connector = RabbitMqConnector() if not connector else connector
+        return RabbitMqMessageConsumer(
+            DEFAULT_ORGANIZATION,
+            DEFAULT_SERVICE,
+            max_retries,
+            connector,
+            DEFAULT_VERBOSE,
+            domain_event_bus_builder=domain_event_bus_builder,
+            command_bus_builder=command_bus_builder,
         )
 
     @staticmethod
