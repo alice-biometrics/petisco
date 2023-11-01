@@ -62,5 +62,6 @@ setup(
         "elastic-apm": ["elastic-apm<7.0.0,>=6.15.1"],
         "fastapi": ["fastapi<1.0.0,>=0.100"],
         "rich": ["rich"],
+        "graphviz": ["graphviz"],
     },
 )
