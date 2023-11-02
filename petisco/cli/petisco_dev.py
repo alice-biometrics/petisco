@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import importlib.util
 import inspect
@@ -189,7 +191,7 @@ def show_sql_models(declarative_base_path: str) -> None:
         console.print(table)
 
 
-def generate_sql_models_diagram(declarative_base_path: str):
+def generate_sql_models_diagram(declarative_base_path: str) -> None:
     try:
         import graphviz  # noqa
     except (RuntimeError, ImportError):
@@ -211,7 +213,7 @@ def generate_sql_models_diagram(declarative_base_path: str):
 
 def generate_data_model_diagram(
     models: list[tuple], output_file: str = "petisco_sql_models_diagram.svg"
-):
+) -> None:
     import graphviz
 
     # Initialize graph with more advanced visual settings
