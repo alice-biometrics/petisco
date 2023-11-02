@@ -196,7 +196,7 @@ def generate_sql_models_diagram(declarative_base_path: str) -> None:
         import graphviz  # noqa
     except (RuntimeError, ImportError):
         print(
-            "\n⚠️ If you want to generate a SVG diagram of Petisco SQL models you need to install graphviz. Try to install graphviz or just install petisco[graphviz]"
+            "\n⚠️ If you want to generate a SVG diagram of Petisco SQL models you need to install graphviz. Try to install graphviz or just install petisco[dev]"
         )
         return
 
@@ -208,7 +208,15 @@ def generate_sql_models_diagram(declarative_base_path: str) -> None:
     for sql_model in Base.__subclasses__():
         models.append((sql_model.__module__, sql_model.__name__))
 
-    generate_data_model_diagram(models)
+    try:
+        generate_data_model_diagram(models)
+    except graphviz.ExecutableNotFound as exc:
+        print(exc)
+        print(
+            "\n⚠️ The Graphviz Python package has already been installed, but it requires an executable to be available.\n🍎 If you're using macOS, please ensure that the Graphviz executable is installed. You can do this by running 'brew install graphviz' in your terminal."
+        )
+    except Exception as exc:
+        raise exc
 
 
 def generate_data_model_diagram(
@@ -304,16 +312,16 @@ def main() -> None:
         help="show petisco sql models.",
     )
     parser.add_argument(
-        "-declarative-base",
-        "--declarative-base",
-        default="petisco.extra.sqlalchemy.SqlBase",
-        help="path to DeclarativeBase, a class to gather all the SQL models",
-    )
-    parser.add_argument(
         "--sql-models-diagram",
         "--sql-models-diagram",
         action="store_true",
         help="generate petisco SQL models diagram.",
+    )
+    parser.add_argument(
+        "-declarative-base",
+        "--declarative-base",
+        default="petisco.extra.sqlalchemy.SqlBase",
+        help="path to DeclarativeBase, a class to gather all the SQL models",
     )
     parser.add_argument(
         "--application",
