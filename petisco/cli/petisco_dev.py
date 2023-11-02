@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import importlib.util
 import inspect
@@ -5,6 +7,7 @@ import sys
 from typing import Any
 
 from loguru import logger
+from sqlalchemy import inspect as sql_inspect
 
 
 def has_args(args: Any) -> bool:
@@ -188,6 +191,99 @@ def show_sql_models(declarative_base_path: str) -> None:
         console.print(table)
 
 
+def generate_sql_models_diagram(declarative_base_path: str) -> None:
+    try:
+        import graphviz  # noqa
+    except (RuntimeError, ImportError):
+        print(
+            "\n⚠️ If you want to generate a SVG diagram of Petisco SQL models you need to install graphviz. Try to install graphviz or just install petisco[dev]"
+        )
+        return
+
+    module_name, class_name = declarative_base_path.rsplit(".", 1)
+    module = importlib.import_module(module_name)
+    Base = getattr(module, class_name)
+
+    models: list[tuple] = []
+    for sql_model in Base.__subclasses__():
+        models.append((sql_model.__module__, sql_model.__name__))
+
+    try:
+        generate_data_model_diagram(models)
+    except graphviz.ExecutableNotFound as exc:
+        print(exc)
+        print(
+            "\n⚠️ The Graphviz Python package has already been installed, but it requires an executable to be available.\n🍎 If you're using macOS, please ensure that the Graphviz executable is installed. You can do this by running 'brew install graphviz' in your terminal."
+        )
+    except Exception as exc:
+        raise exc
+
+
+def generate_data_model_diagram(
+    models: list[tuple], output_file: str = "petisco_sql_models_diagram.svg"
+) -> None:
+    import graphviz
+
+    # Initialize graph with more advanced visual settings
+    dot = graphviz.Digraph(
+        comment="Interactive Data Models",
+        format="svg",
+        graph_attr={"bgcolor": "#EEEEEE", "rankdir": "TB", "splines": "spline"},
+        node_attr={"shape": "none", "fontsize": "12", "fontname": "Roboto"},
+        edge_attr={"fontsize": "10", "fontname": "Roboto"},
+    )
+
+    # Iterate through each SQLAlchemy model
+    for model in models:
+        module = importlib.import_module(model[0])
+        model_instance = getattr(module, model[1])
+        insp = sql_inspect(model_instance)
+        name = insp.class_.__name__
+
+        # Create an HTML-like label for each model as a rich table
+        label = f"""<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+        <TR><TD COLSPAN="2" BGCOLOR="#3F51B5"><FONT COLOR="white">{name}</FONT></TD></TR>
+        """
+
+        for column in insp.columns:
+            constraints = []
+            if column.primary_key:
+                constraints.append("PK")
+            if column.unique:
+                constraints.append("Unique")
+            if column.index:
+                constraints.append("Index")
+
+            constraint_str = ",".join(constraints)
+            color = "#BBDEFB"
+
+            label += f"""<TR>
+                         <TD BGCOLOR="{color}">{column.name}</TD>
+                         <TD BGCOLOR="{color}">{column.type} ({constraint_str})</TD>
+                         </TR>"""
+
+        label += "</TABLE>>"
+
+        # Create the node with added hyperlink to detailed documentation
+        dot.node(name, label=label, URL=f"http://{name}_details.html")
+
+        # Add relationships with tooltips and advanced styling
+        for rel in insp.relationships:
+            target_name = rel.mapper.class_.__name__
+            tooltip = f"Relation between {name} and {target_name}"
+            dot.edge(
+                name,
+                target_name,
+                label=rel.key,
+                tooltip=tooltip,
+                color="#1E88E5",
+                style="dashed",
+            )
+
+    dot.render(output_file, view=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="petisco-dev 🍪",
@@ -214,6 +310,12 @@ def main() -> None:
         "--sql-models",
         action="store_true",
         help="show petisco sql models.",
+    )
+    parser.add_argument(
+        "--sql-models-diagram",
+        "--sql-models-diagram",
+        action="store_true",
+        help="generate petisco SQL models diagram.",
     )
     parser.add_argument(
         "-declarative-base",
@@ -250,4 +352,8 @@ def main() -> None:
 
         if args.sql_models:
             show_sql_models(args.declarative_base)
+            return
+
+        if args.sql_models_diagram:
+            generate_sql_models_diagram(args.declarative_base)
             return
