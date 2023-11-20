@@ -11,15 +11,6 @@
 
 <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png?raw=true" width=auto>
 
-> **Warning**
-> 
-> Current version now is v1 (*v1 branch*). 
-> 
-> v0 is now deprecated (*legacy branch*)
-> 
-> v2 is about to be release (*main branch*). 1 release candidate
-
-
 ---
 
 **Documentation**: <a href="https://alice-biometrics.github.io/petisco/" target="_blank">https://alice-biometrics.github.io/petisco/</a>
