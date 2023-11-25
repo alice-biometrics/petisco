@@ -1,8 +1,15 @@
+import meiga
 import pytest
 from meiga import BoolResult, Error, Failure, Result, Success, isSuccess
-from meiga.on_failure_exception import OnFailureException
 
 from petisco import UseCase, UseCaseUncontrolledError
+
+if meiga.__version__ < "1.9.4":
+    from meiga.on_failure_exception import (
+        OnFailureException as WaitingForEarlyReturn,  # type: ignore
+    )
+else:
+    from meiga.failures import WaitingForEarlyReturn
 
 
 class MyError(Error):
@@ -32,7 +39,7 @@ class TestUseCase:
     def should_return_failure_result_when_raise_on_failure_exception_from_meiga(self):
         class MyUseCase(UseCase):
             def execute(self) -> BoolResult:
-                raise OnFailureException(Failure(MyError()))
+                raise WaitingForEarlyReturn(Failure(MyError()))
 
         result = MyUseCase().execute()
 
