@@ -6,7 +6,6 @@ from typing import Any, Callable, Dict, List, Type, Union
 import elasticapm
 from loguru import logger
 from meiga import Error, Failure, Result
-from meiga.on_failure_exception import OnFailureException
 
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
@@ -14,6 +13,7 @@ from petisco.base.application.middleware.print_middleware import PrintMiddleware
 from petisco.base.domain.errors.critical_error import CriticalError
 from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.misc.result_mapper import ResultMapper
+from petisco.extra.meiga import WaitingForEarlyReturn
 
 
 def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:
@@ -78,7 +78,7 @@ def wrapper(
 
         try:
             result = execute_func(*args, **kwargs)
-        except OnFailureException as exc:
+        except WaitingForEarlyReturn as exc:
             result = exc.result
         except Error as error:
             result = Failure(error)

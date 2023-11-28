@@ -1,8 +1,8 @@
 import pytest
 from meiga import AnyResult, BoolResult, Error, Failure, Result, Success, isSuccess
-from meiga.on_failure_exception import OnFailureException
 
 from petisco import AsyncAppService, AsyncUseCase, UseCaseUncontrolledError
+from petisco.extra.meiga import WaitingForEarlyReturn
 
 
 class MyError(Error):
@@ -35,7 +35,7 @@ class TestAsyncUseCase:
     ):
         class MyUseCase(AsyncUseCase):
             async def execute(self) -> BoolResult:
-                raise OnFailureException(Failure(MyError()))
+                raise WaitingForEarlyReturn(Failure(MyError()))
 
         result = await MyUseCase().execute()
 

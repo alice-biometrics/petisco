@@ -5,11 +5,11 @@ from typing import Any, Callable
 import elasticapm
 from loguru import logger
 from meiga import Error, Failure
-from meiga.on_failure_exception import OnFailureException
 
 from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.base.misc.wrapper import get_middleware_instances
+from petisco.extra.meiga import WaitingForEarlyReturn
 
 
 def async_wrapper(
@@ -34,7 +34,7 @@ def async_wrapper(
 
         try:
             result = await execute_func(*args, **kwargs)
-        except OnFailureException as exc:
+        except WaitingForEarlyReturn as exc:
             result = exc.result
         except Error as error:
             result = Failure(error)

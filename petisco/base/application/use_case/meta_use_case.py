@@ -6,11 +6,11 @@ from typing import Any, Callable, Dict, Tuple
 
 import elasticapm
 from meiga import AnyResult, Error, Failure, NotImplementedMethodError
-from meiga.on_failure_exception import OnFailureException
 
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
     UseCaseUncontrolledError,
 )
+from petisco.extra.meiga import WaitingForEarlyReturn
 
 
 def use_case_wrapper(
@@ -20,7 +20,7 @@ def use_case_wrapper(
     def wrapped(*args: Any, **kwargs: Any) -> AnyResult:
         try:
             return method(*args, **kwargs)
-        except OnFailureException as exception:
+        except WaitingForEarlyReturn as exception:
             return exception.result
         except Error as error:
             return Failure(error)
@@ -46,7 +46,7 @@ def async_use_case_wrapper(
     async def wrapped(*args: Any, **kwargs: Any) -> AnyResult:
         try:
             return await method(*args, **kwargs)
-        except OnFailureException as exception:
+        except WaitingForEarlyReturn as exception:
             return exception.result
         except Error as error:
             return Failure(error)
