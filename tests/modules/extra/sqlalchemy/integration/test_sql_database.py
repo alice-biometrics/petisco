@@ -2,7 +2,7 @@ import os
 
 import pytest
 from _pytest.logging import LogCaptureFixture
-from meiga import AnyResult, Error, Failure, Success
+from meiga import AnyResult, Error, Failure, Success, early_return
 from meiga.failures import WaitingForEarlyReturn
 from sqlalchemy import Column, Integer, String, select
 from sqlalchemy.exc import OperationalError
@@ -164,7 +164,9 @@ class TestSqlDatabase:
             user_models = inner_function(session).unwrap_or_return()
             assert len(user_models) == 2
 
-    def should_session_deal_with_failure_unwrap_or_return_style(self):
+    def should_session_deal_with_failure_unwrap_or_return_style(
+        self, caplog: LogCaptureFixture
+    ):
         database = SqlDatabase(
             connection=self.connection,
             initial_statements_filename=f"{ROOT_PATH}/initial_statements.sql",
@@ -175,8 +177,15 @@ class TestSqlDatabase:
         class NotFoundError(Error):
             pass
 
-        def inner_function(session: Session) -> AnyResult:
-            return Failure(NotFoundError())
+        @early_return
+        def main() -> AnyResult:
+            def inner_function(session: Session) -> AnyResult:
+                return Failure(NotFoundError())
 
-        with session_scope() as session:
-            inner_function(session).unwrap_or_return()
+            with session_scope() as session:
+                inner_function(session).unwrap_or_return()
+
+        result = main()
+        result.assert_failure(value_is_instance_of=NotFoundError)
+
+        assert len(caplog.record_tuples) == 0

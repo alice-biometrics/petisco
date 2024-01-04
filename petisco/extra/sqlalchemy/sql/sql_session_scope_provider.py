@@ -17,19 +17,14 @@ def sql_session_scope_provider(
         try:
             yield session
             session.commit()
-        except OperationalError as e:
-            logger.error(e)
-            session.rollback()
-            raise e
         except WaitingForEarlyReturn as e:
             session.rollback()
             raise e
-        except Exception as e:
+        except (OperationalError, Exception) as e:
             logger.error(e)
             session.rollback()
             raise e
         finally:
             session.close()
-        # session.delete()
 
     return session_scope
