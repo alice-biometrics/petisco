@@ -1,15 +1,11 @@
 from contextlib import contextmanager
 from typing import Callable, ContextManager, Iterator
 
-import meiga
 from loguru import logger
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
-if meiga.__version__ < "1.9.4":
-    from meiga.on_failure_exception import OnFailureException as WaitingForEarlyReturn
-else:
-    from meiga.failures import WaitingForEarlyReturn
+from petisco.extra.meiga import WaitingForEarlyReturn
 
 
 def sql_session_scope_provider(
