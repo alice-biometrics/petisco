@@ -4,7 +4,6 @@ from inspect import signature
 from typing import Any, Callable, Dict, List, Type, Union
 
 import elasticapm
-import meiga
 from loguru import logger
 from meiga import Error, Failure, Result
 
@@ -14,13 +13,7 @@ from petisco.base.application.middleware.print_middleware import PrintMiddleware
 from petisco.base.domain.errors.critical_error import CriticalError
 from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.misc.result_mapper import ResultMapper
-
-if meiga.__version__ < "1.9.4":
-    from meiga.on_failure_exception import (
-        OnFailureException as WaitingForEarlyReturn,  # type: ignore
-    )
-else:
-    from meiga.failures import WaitingForEarlyReturn
+from petisco.extra.meiga import WaitingForEarlyReturn
 
 
 def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:

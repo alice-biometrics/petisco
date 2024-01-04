@@ -5,19 +5,12 @@ from types import FunctionType
 from typing import Any, Callable, Dict, Tuple
 
 import elasticapm
-import meiga
 from meiga import AnyResult, Error, Failure, NotImplementedMethodError
 
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
     UseCaseUncontrolledError,
 )
-
-if meiga.__version__ < "1.9.4":
-    from meiga.on_failure_exception import (
-        OnFailureException as WaitingForEarlyReturn,  # type: ignore
-    )
-else:
-    from meiga.failures import WaitingForEarlyReturn
+from petisco.extra.meiga import WaitingForEarlyReturn
 
 
 def use_case_wrapper(
