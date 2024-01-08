@@ -12,6 +12,12 @@ from pika.adapters.blocking_connection import BlockingChannel
 from pika.exceptions import ConnectionClosedByBroker
 from pika.spec import Basic
 
+from petisco.base.application.dependency_injection.container import Container
+from petisco.base.application.notifier.notifier import Notifier
+from petisco.base.application.notifier.notifier_exception_message import (
+    NotifierExceptionMessage,
+)
+from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.domain.message.chaos.message_chaos import MessageChaos
 from petisco.base.domain.message.chaos.message_chaos_error import MessageChaosError
 from petisco.base.domain.message.chaos.not_implemented_message_chaos import (
@@ -124,7 +130,14 @@ class RabbitMqMessageConsumer(MessageConsumer):
         try:
             self._channel.start_consuming()
         except ConnectionClosedByBroker:
-            self._re_connect(attempt=1)
+            try:
+                self._re_connect(attempt=1)
+            except Exception as exception:
+                self.notify_lost_connection_exception(exception=exception)
+                raise exception
+        except Exception as exception:
+            self.notify_lost_connection_exception(exception=exception)
+            raise exception
 
     def _re_connect(self, attempt: int):
         if attempt >= MAX_ATTEMPTS_TO_RECONNECT:
@@ -151,6 +164,17 @@ class RabbitMqMessageConsumer(MessageConsumer):
             logger.info(
                 f"Consumer '{self.rabbitmq_key}' reconnected after {attempt} attempts"
             )
+
+    def notify_lost_connection_exception(self, exception: Exception) -> None:
+        notifier = Container.get(Notifier)
+        error = UnknownError.from_exception(
+            exception=exception,
+            arguments={"exchange": self.exchange_name, "service": self.service},
+        )
+        notifier_exception_message = NotifierExceptionMessage.from_unknown_error(
+            error, title="Lost connection exception in RabbitMQ consumer"
+        )
+        notifier.publish_exception(notifier_exception_message)
 
     def add_subscribers(self, subscribers: List[Type[MessageSubscriber]]) -> None:
         """
