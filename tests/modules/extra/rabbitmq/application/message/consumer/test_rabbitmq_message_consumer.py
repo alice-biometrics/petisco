@@ -85,6 +85,7 @@ class TestRabbitMqMessageConsumer:
         notifier_mock.assert_called_once()
 
         consumer.stop()
+        application.clear()
 
     @testing_with_rabbitmq
     def should_fail_and_notify_after_try_to_reconnect_max_specified_attempts(self):
@@ -123,6 +124,7 @@ class TestRabbitMqMessageConsumer:
 
         consumer.stop()
         configurer.clear()
+        application.clear()
         notifier_mock.assert_called_once()
         assert "Impossible to reconnect consumer" in str(exc_info.value)
 
