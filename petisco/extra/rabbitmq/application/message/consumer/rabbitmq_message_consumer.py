@@ -134,8 +134,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 self._re_connect(attempt=1)
             except Exception as exception:
                 self.notify_lost_connection_exception(exception=exception)
+                raise exception
         except Exception as exception:
             self.notify_lost_connection_exception(exception=exception)
+            raise exception
 
     def _re_connect(self, attempt: int):
         if attempt >= MAX_ATTEMPTS_TO_RECONNECT:

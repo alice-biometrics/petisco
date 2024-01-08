@@ -87,7 +87,15 @@ class TestRabbitMqMessageConsumer:
         consumer.stop()
 
     @testing_with_rabbitmq
-    def should_fail_after_try_to_reconnect_max_allowed_attempts(self):
+    def should_fail_and_notify_after_try_to_reconnect_max_specified_attempts(self):
+        application = Application(
+            name="service",
+            version="1.0.0",
+            organization="acme",
+            deployed_at=datetime.now(),
+            dependencies_provider=get_default_notifier_dependencies,
+        )
+        application.configure()
         subscribers = [
             MessageSubscriberMother.domain_event_subscriber(
                 domain_event_type=type(DomainEventUserCreatedMother.random()),
@@ -104,12 +112,18 @@ class TestRabbitMqMessageConsumer:
                 "pika.adapters.blocking_connection.BlockingChannel.start_consuming",
                 side_effect=[ConnectionClosedByBroker(1, "")],
             ):
-                consumer.connector = Mock(RabbitMqConnector)
-                consumer.connector.get_channel.side_effect = [ConnectionError()] * 20
-                consumer._start()
+                with patch.object(
+                    NotImplementedNotifier, "publish_exception"
+                ) as notifier_mock:
+                    consumer.connector = Mock(RabbitMqConnector)
+                    consumer.connector.get_channel.side_effect = [
+                        ConnectionError()
+                    ] * 20
+                    consumer._start()
 
         consumer.stop()
         configurer.clear()
+        notifier_mock.assert_called_once()
         assert "Impossible to reconnect consumer" in str(exc_info.value)
 
     @testing_with_rabbitmq
