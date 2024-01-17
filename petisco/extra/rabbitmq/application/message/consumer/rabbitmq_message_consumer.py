@@ -169,7 +169,14 @@ class RabbitMqMessageConsumer(MessageConsumer):
         notifier = Container.get(Notifier)
         error = UnknownError.from_exception(
             exception=exception,
-            arguments={"exchange": self.exchange_name, "service": self.service},
+            arguments={
+                "exchange": self.exchange_name,
+                "service": self.service,
+                "subscribers": {
+                    queue: str(item.subscriber)
+                    for queue, item in self.subscribers.items()
+                },
+            },
         )
         notifier_exception_message = NotifierExceptionMessage.from_unknown_error(
             error, title="Lost connection exception in RabbitMQ consumer"

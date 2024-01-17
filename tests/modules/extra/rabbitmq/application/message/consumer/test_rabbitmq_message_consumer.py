@@ -72,6 +72,14 @@ class TestRabbitMqMessageConsumer:
             dependencies_provider=get_default_notifier_dependencies,
         )
         application.configure()
+        subscribers = [
+            MessageSubscriberMother.domain_event_subscriber(
+                domain_event_type=type(DomainEventUserCreatedMother.random()),
+                handler=lambda a: a,
+            )
+        ]
+        consumer = RabbitMqMessageConsumerMother.default()
+        consumer.add_subscribers(subscribers)
         with pytest.raises(ConnectionClosedByClient):
             with patch(
                 "pika.adapters.blocking_connection.BlockingChannel.start_consuming",
@@ -80,7 +88,6 @@ class TestRabbitMqMessageConsumer:
                 with patch.object(
                     NotImplementedNotifier, "publish_exception"
                 ) as notifier_mock:
-                    consumer = RabbitMqMessageConsumerMother.default()
                     consumer._start()
 
         notifier_mock.assert_called_once()
