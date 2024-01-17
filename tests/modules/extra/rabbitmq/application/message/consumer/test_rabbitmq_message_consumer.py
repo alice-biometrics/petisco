@@ -72,6 +72,16 @@ class TestRabbitMqMessageConsumer:
             dependencies_provider=get_default_notifier_dependencies,
         )
         application.configure()
+        subscribers = [
+            MessageSubscriberMother.domain_event_subscriber(
+                domain_event_type=type(DomainEventUserCreatedMother.random()),
+                handler=lambda a: a,
+            )
+        ]
+        configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
+        configurer.configure_subscribers(subscribers)
+        consumer = RabbitMqMessageConsumerMother.default()
+        consumer.add_subscribers(subscribers)
         with pytest.raises(ConnectionClosedByClient):
             with patch(
                 "pika.adapters.blocking_connection.BlockingChannel.start_consuming",
@@ -80,13 +90,13 @@ class TestRabbitMqMessageConsumer:
                 with patch.object(
                     NotImplementedNotifier, "publish_exception"
                 ) as notifier_mock:
-                    consumer = RabbitMqMessageConsumerMother.default()
                     consumer._start()
 
         notifier_mock.assert_called_once()
 
         consumer.stop()
         application.clear()
+        configurer.clear()
 
     @testing_with_rabbitmq
     def should_fail_and_notify_after_try_to_reconnect_max_specified_attempts(self):
