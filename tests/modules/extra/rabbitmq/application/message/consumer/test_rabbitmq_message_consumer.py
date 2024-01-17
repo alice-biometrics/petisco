@@ -78,6 +78,8 @@ class TestRabbitMqMessageConsumer:
                 handler=lambda a: a,
             )
         ]
+        configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
+        configurer.configure_subscribers(subscribers)
         consumer = RabbitMqMessageConsumerMother.default()
         consumer.add_subscribers(subscribers)
         with pytest.raises(ConnectionClosedByClient):
@@ -94,6 +96,7 @@ class TestRabbitMqMessageConsumer:
 
         consumer.stop()
         application.clear()
+        configurer.clear()
 
     @testing_with_rabbitmq
     def should_fail_and_notify_after_try_to_reconnect_max_specified_attempts(self):
