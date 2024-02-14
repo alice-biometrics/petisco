@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from petisco import (
@@ -7,9 +9,11 @@ from petisco import (
     MessageConsumer,
     NotImplementedMessageConfigurer,
     NotImplementedMessageConsumer,
+    NotImplementedNotifier,
 )
 from petisco.base.domain.message.message_configurer import MessageConfigurer
 from petisco.extra.rabbitmq import RabbitMqConfigurer
+from petisco.extra.slack import get_default_notifier_dependencies
 
 
 @pytest.mark.unit
@@ -34,6 +38,7 @@ class TestRabbitMqConfigurer:
                     },
                 ),
             ]
+            + get_default_notifier_dependencies()
         )
         self.subscribers = []
 
@@ -98,3 +103,17 @@ class TestRabbitMqConfigurer:
         configurer = RabbitMqConfigurer(subscribers=self.subscribers)
         with pytest.raises(IndexError, match="Invalid dependency."):
             configurer.execute()
+
+    def should_notify_and_not_fail_when_there_is_a_connection_error(self):
+        configurer = RabbitMqConfigurer(subscribers=self.subscribers)
+        with patch.object(
+            NotImplementedMessageConfigurer,
+            "configure_subscribers",
+            side_effect=ConnectionError(),
+        ) as mock_message_configurer:
+            with patch.object(
+                NotImplementedNotifier, "publish_exception"
+            ) as notifier_mock:
+                configurer.execute()
+        mock_message_configurer.assert_called_once()
+        notifier_mock.assert_called_once()

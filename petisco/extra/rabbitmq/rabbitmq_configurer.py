@@ -2,8 +2,15 @@ from __future__ import annotations
 
 import os
 
+from loguru import logger
+
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.dependency_injection.container import Container
+from petisco.base.application.notifier.notifier import Notifier
+from petisco.base.application.notifier.notifier_exception_message import (
+    NotifierExceptionMessage,
+)
+from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.domain.message.command_bus import CommandBus
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
 from petisco.base.domain.message.message_configurer import MessageConfigurer
@@ -68,33 +75,55 @@ class RabbitMqConfigurer(ApplicationConfigurer):
 
     def execute(self, testing: bool = False) -> None:
         configurer = Container.get(MessageConfigurer, alias=self.alias)
-        configurer.configure_subscribers(
-            self.subscribers,
-            clear_subscriber_before=self.clear_subscriber_before,
-            clear_store_before=self.clear_store_before,
-        )
+        try:
+            configurer.configure_subscribers(
+                self.subscribers,
+                clear_subscriber_before=self.clear_subscriber_before,
+                clear_store_before=self.clear_store_before,
+            )
 
-        if self.start_consuming:
-            self.consumer = Container.get(MessageConsumer, alias=self.alias)
+            if self.start_consuming:
+                self.consumer = Container.get(MessageConsumer, alias=self.alias)
 
-            if isinstance(self.consumer, RabbitMqMessageConsumer):
-                self.consumer.set_inner_bus_config(
-                    self.inner_bus_organization, self.inner_bus_service
-                )
-                if self.use_container_buses is True:
+                if isinstance(self.consumer, RabbitMqMessageConsumer):
+                    self.consumer.set_inner_bus_config(
+                        self.inner_bus_organization, self.inner_bus_service
+                    )
+                    if self.use_container_buses is True:
 
-                    def domain_event_bus_builder() -> DomainEventBus:
-                        return Container.get(DomainEventBus)
+                        def domain_event_bus_builder() -> DomainEventBus:
+                            return Container.get(DomainEventBus)
 
-                    def command_bus_builder() -> CommandBus:
-                        return Container.get(CommandBus)
+                        def command_bus_builder() -> CommandBus:
+                            return Container.get(CommandBus)
 
-                    self.consumer.domain_event_bus_builder = domain_event_bus_builder
-                    self.consumer.command_bus_builder = command_bus_builder
+                        self.consumer.domain_event_bus_builder = (
+                            domain_event_bus_builder
+                        )
+                        self.consumer.command_bus_builder = command_bus_builder
 
-            self.consumer.add_subscribers(self.subscribers)
-            self.consumer.start()
+                self.consumer.add_subscribers(self.subscribers)
+                self.consumer.start()
+        except ConnectionError as ex:
+            logger.error(
+                f"Connection error with rabbit when trying to configure it. Message {str(ex)}"
+            )
+            self.notify_connection_error(ex)
 
     def stop(self) -> None:
         if self.consumer:
             self.consumer.stop()
+
+    def notify_connection_error(self, exception: Exception) -> None:
+        notifier = Container.get(Notifier)
+        error = UnknownError.from_exception(
+            exception=exception,
+            arguments={
+                "service": self.inner_bus_service,
+                "subscribers": self.subscribers,
+            },
+        )
+        notifier_exception_message = NotifierExceptionMessage.from_unknown_error(
+            error, title="Connection error trying to configure RabbitMQ"
+        )
+        notifier.publish_exception(notifier_exception_message)
