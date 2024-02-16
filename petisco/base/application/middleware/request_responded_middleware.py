@@ -21,7 +21,7 @@ class RequestRespondedMiddleware(Middleware):
     def __init__(self) -> None:
         self.event_bus = Container.get(DomainEventBus)
 
-    def get_info_id_from_input(self) -> Any | None:
+    def get_info_id_from_input(self) -> Any:
         try:
             return self.wrapped_class_input_arguments.get("info_id", None)
         except Exception as exc:

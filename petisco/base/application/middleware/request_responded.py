@@ -1,6 +1,6 @@
 import json
 from json import JSONDecodeError
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from loguru import logger
 from meiga import Result
@@ -24,8 +24,8 @@ class RequestResponded(DomainEvent):
     is_success: bool
     http_response: Dict[str, Any]
     elapsed_time: float
-    event_version: str | None = None
-    info_id: str | None = None
+    event_version: Union[str, None] = None
+    info_id: Union[str, None] = None
 
     @staticmethod
     def create(
@@ -35,7 +35,7 @@ class RequestResponded(DomainEvent):
         is_success: bool,
         http_response: Dict[str, Any],
         elapsed_time: float,
-        info_id: str | None,
+        info_id: Union[str, None] = None,
     ) -> "RequestResponded":
         app_name = app_name
         app_version = app_version
@@ -57,7 +57,7 @@ class RequestResponded(DomainEvent):
 
     @staticmethod
     def _get_content(
-        is_success: bool, response: dict[str, Any] | str
+        is_success: bool, response: Union[dict[str, Any], str]
     ) -> dict[str, Any]:
         content = response
         if isinstance(content, str):
