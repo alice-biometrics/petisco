@@ -24,7 +24,6 @@ class RequestResponded(DomainEvent):
     is_success: bool
     http_response: Dict[str, Any]
     elapsed_time: float
-    event_version: Union[str, None] = None
     info_id: Union[str, None] = None
 
     @staticmethod
