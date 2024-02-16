@@ -22,7 +22,7 @@ class RequestResponded(DomainEvent):
     app_version: str
     controller: str
     is_success: bool
-    http_response: dict[str, Any]
+    http_response: Dict[str, Any]
     elapsed_time: float
     event_version: str | None = None
     info_id: str | None = None
