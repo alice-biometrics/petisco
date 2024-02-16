@@ -4,11 +4,11 @@ from typing import Any
 from loguru import logger
 from meiga import AnyResult
 
-from petisco import DomainEventBus
 from petisco.base.application.application_info import ApplicationInfo
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.request_responded import RequestResponded
+from petisco.base.domain.message.domain_event_bus import DomainEventBus
 
 
 class RequestRespondedMiddleware(Middleware):

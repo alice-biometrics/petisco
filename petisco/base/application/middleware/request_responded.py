@@ -5,7 +5,9 @@ from typing import Any, Dict, Union
 from loguru import logger
 from meiga import Result
 
-from petisco import DomainError, DomainEvent, HttpError
+from petisco.base.application.controller.http_error import HttpError
+from petisco.base.domain.errors.domain_error import DomainError
+from petisco.base.domain.message.domain_event import DomainEvent
 
 REQUEST_RESPONDED_UNWRAP_ERROR = (
     {
