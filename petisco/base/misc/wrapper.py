@@ -105,6 +105,7 @@ def wrapper(
             }
             result.value.set_additional_info(formatted_args)
 
+        result.set_transformer(mapper.map)
         for middleware in middlewares:
             if result:
                 try:
@@ -115,7 +116,6 @@ def wrapper(
                     )
                     logger.exception(exception)
 
-        result.set_transformer(mapper.map)
         return result
 
     return wrapped
