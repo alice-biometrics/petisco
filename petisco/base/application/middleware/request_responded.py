@@ -56,8 +56,8 @@ class RequestResponded(DomainEvent):
 
     @staticmethod
     def _get_content(
-        is_success: bool, response: Union[dict[str, Any], str]
-    ) -> dict[str, Any]:
+        is_success: bool, response: Union[Dict[str, Any], str]
+    ) -> Dict[str, Any]:
         content = response
         if isinstance(content, str):
             try:
@@ -102,7 +102,7 @@ class RequestResponded(DomainEvent):
         return content
 
     @staticmethod
-    def set_http_response(is_success: bool, http_response: Any) -> dict[str, Any]:
+    def set_http_response(is_success: bool, http_response: Any) -> Dict[str, Any]:
         try:
             _http_response = {
                 "content": REQUEST_RESPONDED_UNWRAP_ERROR,
