@@ -1,6 +1,6 @@
 import json
 from json import JSONDecodeError
-from typing import Any
+from typing import Any, Dict
 
 from loguru import logger
 from meiga import Result
@@ -33,7 +33,7 @@ class RequestResponded(DomainEvent):
         app_version: str,
         controller: str,
         is_success: bool,
-        http_response: dict[str, Any],
+        http_response: Dict[str, Any],
         elapsed_time: float,
         info_id: str | None,
     ) -> "RequestResponded":
