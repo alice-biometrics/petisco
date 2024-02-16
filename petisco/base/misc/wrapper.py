@@ -10,6 +10,9 @@ from meiga import Error, Failure, Result
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
+from petisco.base.application.middleware.request_responded_middleware import (
+    RequestRespondedMiddleware,
+)
 from petisco.base.domain.errors.critical_error import CriticalError
 from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.misc.result_mapper import ResultMapper
@@ -36,6 +39,7 @@ def get_middlewares_configuration_from_environment():
     def gettype(name: str) -> Type[Middleware]:
         lookup_table = {
             "NotifierMiddleware": NotifierMiddleware,
+            "RequestRespondedMiddleware": RequestRespondedMiddleware,
             "PrintMiddleware": PrintMiddleware,
         }
         my_type = lookup_table.get(name)
