@@ -26,7 +26,6 @@ jobs:
           cache: pip
           cache-dependency-path: '**/*requirements.txt'
       - name: Setup Python (uv)
-        if: ${{ inputs.use_uv == true}}
         run: | # from https://github.com/astral-sh/uv/issues/1386
           curl -LsSf https://astral.sh/uv/install.sh | sh
           uv venv .venv
