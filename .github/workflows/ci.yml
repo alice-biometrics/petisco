@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
     runs-on: ${{matrix.os}}
 
     steps:
@@ -24,13 +24,13 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-          cache-dependency-path: '**/*requirements.txt'
       - name: Setup Python (uv)
         run: | # from https://github.com/astral-sh/uv/issues/1386
           curl -LsSf https://astral.sh/uv/install.sh | sh
           uv venv .venv
           echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
           echo "$PWD/.venv/bin" >> $GITHUB_PATH
+          mkdir -p $(pip cache dir)
       - name: Install dependencies
         run: |
           uv pip install lume
