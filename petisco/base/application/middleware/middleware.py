@@ -4,6 +4,8 @@ from typing import Any, Dict, Union
 from loguru import logger
 from meiga import AnyResult
 
+from petisco.base.domain.value_objects.operation_type import OperationType
+
 
 class Middleware(ABC):
     """
@@ -13,12 +15,17 @@ class Middleware(ABC):
 
     wrapped_class_name: Union[str, None] = None
     wrapped_class_input_arguments: Union[str, None] = None
+    operation_affected: OperationType = OperationType.ALL
 
     def set_data(
-        self, wrapped_class_name: str, wrapped_class_input_arguments: Any
+        self,
+        wrapped_class_name: str,
+        wrapped_class_input_arguments: Any,
+        operation_affected: OperationType = OperationType.ALL,
     ) -> None:
         self.wrapped_class_name = wrapped_class_name
         self.wrapped_class_input_arguments = wrapped_class_input_arguments
+        self.operation_affected = operation_affected
 
     @abstractmethod
     def before(self) -> None:
