@@ -7,6 +7,7 @@ from loguru import logger
 from meiga import Error, Failure
 
 from petisco.base.domain.errors.unknown_error import UnknownError
+from petisco.base.domain.value_objects.operation_type import OperationType
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.base.misc.wrapper import get_middleware_instances
 from petisco.extra.meiga import WaitingForEarlyReturn
@@ -20,11 +21,24 @@ def async_wrapper(
 ) -> Callable[..., Any]:
     @wraps(execute_func)
     async def wrapped(*args: Any, **kwargs: Any) -> Any:
+        from petisco import Controller, MessageSubscriber
+
         middlewares = get_middleware_instances(config)
         arguments = signature(execute_func).bind(*args, **kwargs).arguments
         arguments.pop("self")
 
         for middleware in middlewares:
+            if (
+                middleware.operation_affected == OperationType.ALL
+                or middleware.operation_affected == OperationType.CONTROLLER
+                and issubclass(args[0].__class__, Controller)
+                or middleware.operation_affected == OperationType.SUBSCRIBER
+                and issubclass(args[0].__class__, MessageSubscriber)
+            ):
+                pass
+            else:
+                continue
+
             try:
                 middleware.set_data(wrapped_class_name, arguments)
                 middleware.before()
@@ -58,6 +72,17 @@ def async_wrapper(
             )
 
         for middleware in middlewares:
+            if (
+                middleware.operation_affected == OperationType.ALL
+                or middleware.operation_affected == OperationType.CONTROLLER
+                and issubclass(args[0].__class__, Controller)
+                or middleware.operation_affected == OperationType.SUBSCRIBER
+                and issubclass(args[0].__class__, MessageSubscriber)
+            ):
+                pass
+            else:
+                continue
+
             if result:
                 try:
                     middleware.after(result)
