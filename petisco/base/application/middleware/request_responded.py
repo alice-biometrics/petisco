@@ -1,5 +1,4 @@
 import json
-from json import JSONDecodeError
 from typing import Any, Dict, Union
 
 from loguru import logger
@@ -57,50 +56,21 @@ class RequestResponded(DomainEvent):
         )
 
     @staticmethod
-    def _get_content(
-        is_success: bool, response: Union[Dict[str, Any], str]
-    ) -> Dict[str, Any]:
-        content = response
-        if isinstance(content, str):
-            try:
-                content = json.loads(content)
-            except JSONDecodeError:
-                pass
-            except Exception as e:
-                logger.error(e)
-                raise e
-        content_size = len(str(content))
+    def _get_content(response: Union[Dict[str, Any], str]) -> Dict[str, Any]:
+        content = {"message": str(response)}
 
-        if content_size > 300:
-            if is_success:
+        if isinstance(response, dict):
+            content = {"message": json.dumps(response)}
+        elif isinstance(response, HttpError):
+            content = {"message": response.detail}
+        elif isinstance(response, Result):
+            if isinstance(response.value, DomainError):
                 content = {
-                    "message": f"Response OK (Trimmed message: {content[:300]})",
-                    "message_size": content_size,
+                    "message": response.value.detail(),
                 }
             else:
-                error_type = "Error"
-                if isinstance(content, dict):
-                    error_type = content.get("error", {}).get("type", "Error")
-                content = {
-                    "error_type": error_type,
-                    "message": f"Response Error (Trimmed message: {content.value[:300]})",
-                    "message_size": content_size,
-                }
-        else:
-            if isinstance(content, dict):
-                content = {"message": json.dumps(content), "message_size": content_size}
-            elif isinstance(content, HttpError):
-                content = {"message": content.detail, "message_size": content_size}
-            elif isinstance(content, Result):
-                if isinstance(content.value, DomainError):
-                    content = {
-                        "message": content.value.detail(),
-                        "message_size": content_size,
-                    }
-                else:
-                    content = {"message": content.value, "message_size": content_size}
-            else:
-                content = {"message": content, "message_size": content_size}
+                content = {"message": str(response.value)}
+        content["message"] = content["message"][:300]
         return content
 
     @staticmethod
@@ -110,27 +80,14 @@ class RequestResponded(DomainEvent):
                 "content": REQUEST_RESPONDED_UNWRAP_ERROR,
                 "status_code": 500,
             }
+
+            _http_response["content"] = RequestResponded._get_content(http_response)
             if is_success:
-                if isinstance(http_response, Result):
-                    _http_response["content"] = RequestResponded._get_content(
-                        is_success, http_response.value
-                    )
-                else:
-                    _http_response["content"] = RequestResponded._get_content(
-                        is_success, http_response
-                    )
                 _http_response["status_code"] = 200
+            elif isinstance(http_response, HttpError):
+                _http_response["status_code"] = http_response.status_code
             else:
-                if isinstance(http_response, HttpError):
-                    _http_response["content"] = RequestResponded._get_content(
-                        is_success, http_response.detail
-                    )
-                    _http_response["status_code"] = http_response.status_code
-                else:
-                    _http_response["content"] = RequestResponded._get_content(
-                        is_success, http_response
-                    )
-                    _http_response["status_code"] = 500
+                _http_response["status_code"] = 500
         except Exception as e:
             logger.error(e)
             raise e
