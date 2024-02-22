@@ -32,7 +32,7 @@ class RequestResponded(DomainEvent):
         app_version: str,
         controller: str,
         is_success: bool,
-        http_response: Dict[str, Any],
+        http_response: Union[HttpError, Any],
         elapsed_time: float,
     ) -> "RequestResponded":
         app_name = app_name
@@ -70,7 +70,9 @@ class RequestResponded(DomainEvent):
         return content
 
     @staticmethod
-    def set_http_response(is_success: bool, http_response: Any) -> Dict[str, Any]:
+    def set_http_response(
+        is_success: bool, http_response: Union[HttpError, Any]
+    ) -> Dict[str, Any]:
         try:
             _http_response = {
                 "content": REQUEST_RESPONDED_UNWRAP_ERROR,

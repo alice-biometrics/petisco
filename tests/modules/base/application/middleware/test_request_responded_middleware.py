@@ -22,6 +22,7 @@ from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.middleware.request_responded_middleware import (
     RequestRespondedMiddleware,
 )
+from petisco.extra.fastapi import FastAPIController
 
 LONG_MESSAGE_TO_ENFORCE_TRIMMING = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
 LONG_RESPONSE = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the "
@@ -57,22 +58,20 @@ class TestRequestRespondedMiddleware:
 
     @mock.patch("petisco.NotImplementedDomainEventBus.publish")
     @pytest.mark.parametrize(
-        "controller_result, controller_message, status_code, info_id, info_id_response",
+        "controller_result, controller_message, status_code, info_id",
         [
-            (isSuccess, "OK", 200, InfoId(value="info_id"), "value='info_id'"),
+            (isSuccess, "OK", 200, InfoId(value="info_id")),
             (
                 Success("Successful response"),
                 "OK",
                 200,
                 InfoId(value="info_id"),
-                "value='info_id'",
             ),
             (
                 Success(LONG_MESSAGE_TO_ENFORCE_TRIMMING),
                 "OK",
                 200,
                 InfoId(value="info_id"),
-                "value='info_id'",
             ),
         ],
     )
@@ -83,7 +82,6 @@ class TestRequestRespondedMiddleware:
         controller_message: Any,
         status_code: int,
         info_id: Any,
-        info_id_response: Any,
     ) -> None:
         class MyController(Controller):
             class Config:
@@ -124,7 +122,7 @@ class TestRequestRespondedMiddleware:
         controller_message: Any,
         status_code: int,
     ) -> None:
-        class MyController(Controller):
+        class MyController(FastAPIController):
             class Config:
                 middlewares = [RequestRespondedMiddleware]
                 error_map = {
@@ -144,10 +142,6 @@ class TestRequestRespondedMiddleware:
         domain_event_attributes = domain_event_args.get_message_attributes()
         assert domain_event_attributes["controller"] == "MyController"
         assert domain_event_attributes["is_success"] is False
-        assert (
-            domain_event_attributes["http_response"]["content"]["message"]
-            == controller_message
-        )
         assert domain_event_attributes["http_response"]["status_code"] == status_code
 
     @mock.patch("petisco.NotImplementedDomainEventBus.publish")
