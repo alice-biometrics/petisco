@@ -13,6 +13,7 @@ from petisco import (
     Dependency,
     DomainEventBus,
     HttpError,
+    MessageSubscriber,
     NotImplementedDomainEventBus,
 )
 from petisco.base.application.application_info import ApplicationInfo
@@ -131,3 +132,25 @@ class TestRequestRespondedMiddleware:
         )
         assert domain_event_attributes["http_response"]["status_code"] == status_code
         assert domain_event_attributes["info_id"] == "info_id"
+
+    @mock.patch("petisco.NotImplementedDomainEventBus.publish")
+    def should_skip_middleware_when_is_subscriber(
+        self,
+        mock_event_bus: Mock,
+    ) -> None:
+        class MySubscriber(MessageSubscriber):
+            class Config:
+                middlewares = [RequestRespondedMiddleware]
+
+            def subscribed_to(self) -> Any:
+                pass
+
+            def handle(self, info_id: str) -> Any:
+                return isSuccess
+
+        mock_event_bus.return_value = isSuccess
+
+        result = MySubscriber().handle(info_id="info_id")
+        result.assert_success()
+
+        mock_event_bus.assert_not_called()
