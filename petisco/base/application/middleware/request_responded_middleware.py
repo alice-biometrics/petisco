@@ -1,11 +1,13 @@
 import time
 from typing import Union
 
+from fastapi import HTTPException
 from loguru import logger
 from meiga import AnyResult
 from pydantic import BaseModel
 
 from petisco.base.application.application_info import ApplicationInfo
+from petisco.base.application.controller.http_error import HttpError
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.request_responded import RequestResponded
@@ -44,7 +46,12 @@ class RequestRespondedMiddleware(Middleware):
         if info_id:
             self.event_bus.with_meta(dict(info_id=info_id.model_dump()))
 
-        result_transform = result.transform()
+        try:
+            result_transform = result.transform()
+        except HTTPException as exception:
+            result_transform = HttpError(
+                status_code=exception.status_code, detail=exception.detail
+            )
 
         request_responded = RequestResponded.create(
             app_name=application_info.name,
