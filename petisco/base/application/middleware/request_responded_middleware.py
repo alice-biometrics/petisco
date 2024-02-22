@@ -25,7 +25,10 @@ class RequestRespondedMiddleware(Middleware):
 
     def get_info_id_from_input(self) -> Any:
         try:
-            return self.wrapped_class_input_arguments.get("info_id", None)
+            info_id = self.wrapped_class_input_arguments.get("info_id", None)
+            if info_id and not isinstance(info_id, str):
+                info_id = str(info_id)
+            return info_id
         except Exception as exc:
             logger.error(
                 f"Middleware error getting info_id on get_meta_from_input: {str(exc)}"

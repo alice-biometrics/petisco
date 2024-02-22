@@ -4,6 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 from meiga import Failure, Success, isSuccess
+from pydantic import BaseModel
 
 from petisco import (
     AlreadyExists,
@@ -30,6 +31,10 @@ class MyCriticalError(CriticalError):
     pass
 
 
+class InfoId(BaseModel):
+    value: str
+
+
 @pytest.mark.unit
 class TestRequestRespondedMiddleware:
     request_responded_middleware: RequestRespondedMiddleware
@@ -52,11 +57,24 @@ class TestRequestRespondedMiddleware:
 
     @mock.patch("petisco.NotImplementedDomainEventBus.publish")
     @pytest.mark.parametrize(
-        "controller_result, controller_message, status_code",
+        "controller_result, controller_message, status_code, info_id, info_id_response",
         [
-            (isSuccess, "True", 200),
-            (Success("Successful response"), "Successful response", 200),
-            (Success(LONG_MESSAGE_TO_ENFORCE_TRIMMING), LONG_RESPONSE, 200),
+            (isSuccess, "True", 200, "info_id", "info_id"),
+            (isSuccess, "True", 200, InfoId(value="info_id"), "value='info_id'"),
+            (
+                Success("Successful response"),
+                "Successful response",
+                200,
+                "info_id",
+                "info_id",
+            ),
+            (
+                Success(LONG_MESSAGE_TO_ENFORCE_TRIMMING),
+                LONG_RESPONSE,
+                200,
+                "info_id",
+                "info_id",
+            ),
         ],
     )
     def should_publish_event_with_success_response(
@@ -65,17 +83,19 @@ class TestRequestRespondedMiddleware:
         controller_result: Any,
         controller_message: Any,
         status_code: int,
+        info_id: Any,
+        info_id_response: Any,
     ) -> None:
         class MyController(Controller):
             class Config:
                 middlewares = [RequestRespondedMiddleware]
 
-            def execute(self, info_id: str) -> Any:
+            def execute(self, info_id: Any) -> Any:
                 return controller_result
 
         mock_event_bus.return_value = isSuccess
 
-        result = MyController().execute(info_id="info_id")
+        result = MyController().execute(info_id=info_id)
         result.assert_success()
 
         mock_event_bus.assert_called_once()
@@ -88,7 +108,7 @@ class TestRequestRespondedMiddleware:
             == controller_message
         )
         assert domain_event_attributes["http_response"]["status_code"] == status_code
-        assert domain_event_attributes["info_id"] == "info_id"
+        assert domain_event_attributes["info_id"] == info_id_response
 
     @mock.patch("petisco.NotImplementedDomainEventBus.publish")
     @pytest.mark.parametrize(
