@@ -59,21 +59,20 @@ class TestRequestRespondedMiddleware:
     @pytest.mark.parametrize(
         "controller_result, controller_message, status_code, info_id, info_id_response",
         [
-            (isSuccess, "True", 200, "info_id", "info_id"),
-            (isSuccess, "True", 200, InfoId(value="info_id"), "value='info_id'"),
+            (isSuccess, "OK", 200, InfoId(value="info_id"), "value='info_id'"),
             (
                 Success("Successful response"),
-                "Successful response",
+                "OK",
                 200,
-                "info_id",
-                "info_id",
+                InfoId(value="info_id"),
+                "value='info_id'",
             ),
             (
                 Success(LONG_MESSAGE_TO_ENFORCE_TRIMMING),
-                LONG_RESPONSE,
+                "OK",
                 200,
-                "info_id",
-                "info_id",
+                InfoId(value="info_id"),
+                "value='info_id'",
             ),
         ],
     )
@@ -108,7 +107,6 @@ class TestRequestRespondedMiddleware:
             == controller_message
         )
         assert domain_event_attributes["http_response"]["status_code"] == status_code
-        assert domain_event_attributes["info_id"] == info_id_response
 
     @mock.patch("petisco.NotImplementedDomainEventBus.publish")
     @pytest.mark.parametrize(
@@ -135,10 +133,10 @@ class TestRequestRespondedMiddleware:
                     ),
                 }
 
-            def execute(self, info_id: str) -> Any:
+            def execute(self) -> Any:
                 return controller_result
 
-        result = MyController().execute(info_id="info_id")
+        result = MyController().execute()
         result.assert_failure()
 
         mock_event_bus.assert_called_once()
@@ -151,7 +149,6 @@ class TestRequestRespondedMiddleware:
             == controller_message
         )
         assert domain_event_attributes["http_response"]["status_code"] == status_code
-        assert domain_event_attributes["info_id"] == "info_id"
 
     @mock.patch("petisco.NotImplementedDomainEventBus.publish")
     def should_skip_middleware_when_is_subscriber(

@@ -1,8 +1,9 @@
 import time
-from typing import Any
+from typing import Union
 
 from loguru import logger
 from meiga import AnyResult
+from pydantic import BaseModel
 
 from petisco.base.application.application_info import ApplicationInfo
 from petisco.base.application.dependency_injection.container import Container
@@ -23,12 +24,9 @@ class RequestRespondedMiddleware(Middleware):
         self.event_bus = Container.get(DomainEventBus)
         self.operation_affected = OperationType.CONTROLLER
 
-    def get_info_id_from_input(self) -> Any:
+    def get_info_id_from_input(self) -> Union[BaseModel, None]:
         try:
-            info_id = self.wrapped_class_input_arguments.get("info_id", None)
-            if info_id and not isinstance(info_id, str):
-                info_id = str(info_id)
-            return info_id
+            return self.wrapped_class_input_arguments.get("info_id", None)
         except Exception as exc:
             logger.error(
                 f"Middleware error getting info_id on get_meta_from_input: {str(exc)}"
@@ -43,6 +41,8 @@ class RequestRespondedMiddleware(Middleware):
 
         elapsed_time = time.time() - self.start_time
         info_id = self.get_info_id_from_input()
+        if info_id:
+            self.event_bus.with_meta(dict(info_id=info_id.model_dump()))
 
         result_transform = result.transform()
 
@@ -53,6 +53,5 @@ class RequestRespondedMiddleware(Middleware):
             is_success=result.is_success,
             http_response=result_transform,
             elapsed_time=elapsed_time,
-            info_id=info_id,
         )
         self.event_bus.publish(request_responded)
