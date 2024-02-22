@@ -25,7 +25,6 @@ class RequestResponded(DomainEvent):
     is_success: bool
     http_response: Dict[str, Any]
     elapsed_time: float
-    info_id: Union[str, None] = None
 
     @staticmethod
     def create(
@@ -35,7 +34,6 @@ class RequestResponded(DomainEvent):
         is_success: bool,
         http_response: Dict[str, Any],
         elapsed_time: float,
-        info_id: Union[str, None] = None,
     ) -> "RequestResponded":
         app_name = app_name
         app_version = app_version
@@ -43,7 +41,6 @@ class RequestResponded(DomainEvent):
         is_success = is_success
         elapsed_time = elapsed_time
         http_response = RequestResponded.set_http_response(is_success, http_response)
-        info_id = info_id
 
         return RequestResponded(
             app_name=app_name,
@@ -52,11 +49,10 @@ class RequestResponded(DomainEvent):
             is_success=is_success,
             elapsed_time=elapsed_time,
             http_response=http_response,
-            info_id=info_id,
         )
 
     @staticmethod
-    def _get_content(response: Union[Dict[str, Any], str]) -> Dict[str, Any]:
+    def _get_content(response: Union[Any, str]) -> Dict[str, Any]:
         content = {"message": str(response)}
 
         if isinstance(response, dict):
@@ -81,12 +77,14 @@ class RequestResponded(DomainEvent):
                 "status_code": 500,
             }
 
-            _http_response["content"] = RequestResponded._get_content(http_response)
             if is_success:
+                _http_response["content"] = {"message": "OK"}
                 _http_response["status_code"] = 200
             elif isinstance(http_response, HttpError):
+                _http_response["content"] = RequestResponded._get_content(http_response)
                 _http_response["status_code"] = http_response.status_code
             else:
+                _http_response["content"] = RequestResponded._get_content(http_response)
                 _http_response["status_code"] = 500
         except Exception as e:
             logger.error(e)
