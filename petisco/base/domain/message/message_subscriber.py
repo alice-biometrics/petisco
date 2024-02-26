@@ -27,6 +27,7 @@ class MetaMessageSubscriber(type, Interface):
     domain_event_bus: DomainEventBus = NotImplementedDomainEventBus()
     command_bus: CommandBus = NotImplementedCommandBus()
     middlewares: list[Middleware] = []
+    use_global_middlewares: bool = True
 
     def __new__(
         mcs, name: str, bases: tuple[Any, ...], namespace: dict[str, Any]

@@ -1,18 +1,16 @@
 import os
 from functools import wraps
 from inspect import signature
-from typing import Any, Callable, Dict, List, Type, Union
+from typing import Any, Callable, Dict, List, Union
 
 import elasticapm
 from loguru import logger
 from meiga import Error, Failure, Result
 
+from petisco.base.application.application_info import ApplicationInfo
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.notifier_middleware import NotifierMiddleware
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
-from petisco.base.application.middleware.request_responded_middleware import (
-    RequestRespondedMiddleware,
-)
 from petisco.base.domain.errors.critical_error import CriticalError
 from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.domain.value_objects.operation_type import OperationType
@@ -24,8 +22,10 @@ def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:
     middlewares_instances: List[Middleware] = []
 
     middlewares_configs = getattr(config, "middlewares", [])
-    if not middlewares_configs:
-        middlewares_configs = get_middlewares_configuration_from_environment()
+    use_global_middlewares = getattr(config, "use_global_middlewares", True)
+    if use_global_middlewares:
+        global_middlewares = get_global_middlewares()
+        middlewares_configs = list(set(middlewares_configs + global_middlewares))
 
     for middlewares_config in middlewares_configs:
         if not isinstance(middlewares_config, Middleware):
@@ -36,11 +36,17 @@ def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:
     return middlewares_instances
 
 
-def get_middlewares_configuration_from_environment():
-    def gettype(name: str) -> Type[Middleware]:
+def get_global_middlewares() -> List[Middleware]:
+    environment_middlewares = get_middlewares_configuration_from_environment()
+    shared_middlewares = ApplicationInfo().shared_middlewares
+
+    return list(set(environment_middlewares + shared_middlewares))
+
+
+def get_middlewares_configuration_from_environment() -> List[Middleware]:
+    def gettype(name: str) -> Middleware:
         lookup_table = {
             "NotifierMiddleware": NotifierMiddleware,
-            "RequestRespondedMiddleware": RequestRespondedMiddleware,
             "PrintMiddleware": PrintMiddleware,
         }
         my_type = lookup_table.get(name)
