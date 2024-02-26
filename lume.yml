@@ -3,6 +3,7 @@ name: petisco
 envs:
   PACKAGE_NAME: petisco
 
+
 install:
   run:
     - pip install -U -r requirements/dev-requirements.txt -r requirements/requirements.txt
