@@ -87,6 +87,7 @@ from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.model.value_object import ValueObject, ValueObjectSerializer
 from petisco.base.domain.persistence.database import Database
 from petisco.base.domain.persistence.databases import databases
+from petisco.base.domain.value_objects.middleware_scope import MiddlewareScope
 from petisco.base.misc.builder import Builder
 from petisco.base.misc.datetime_serializer import DatetimeSerializer
 from petisco.base.misc.interface import Interface
@@ -103,6 +104,7 @@ __all__ = [
     "custom_message_handler",
     "ResultMapper",
     "Middleware",
+    "MiddlewareScope",
     "NotifierMiddleware",
     "Notifier",
     "NotifierMessage",
