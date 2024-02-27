@@ -486,35 +486,73 @@ Let's go into more detail in the following points.
       !!! tip "Define the middleware scope (is it going to be used on Controller or/and Subscribers?)"
   
         
-          Example of Scope to Controller Middleware
+          Example of Middleware to be used only in Controllers (`scope = MiddlewareScope.CONTROLLER`).
 
           ```python hl_lines="5"
           from petisco import MiddlewareScope
       
       
           class MyScopedControllerMiddleware(Middleware):
-              scope = MiddlewareScope.CONTROLLER
+            scope = MiddlewareScope.CONTROLLER
+
+            def before(self) -> None:
+                pass
+        
+            def after(self, result: AnyResult) -> None:
+                pass
           ```
 
-          Example of Scope to Subscriber Middleware
+          Example of Middleware to be used only in Subscribers (`scope = MiddlewareScope.SUBSCRIBER`).
 
           ```python hl_lines="5"
           from petisco import MiddlewareScope
       
       
           class MyScopedSubscriberMiddleware(Middleware):
-              scope = MiddlewareScope.SUBSCRIBER
+            scope = MiddlewareScope.SUBSCRIBER
+
+            def before(self) -> None:
+                pass
+        
+            def after(self, result: AnyResult) -> None:
+                pass
           ```
 
-          If you want to use your middleware in Subscribers and Controllers you don't need to specify anything
+          If you want to use your middleware in Subscribers and Controllers you don't need to specify anything.
 
-          ```python hl_lines="5"
+          ```python 
           from petisco import MiddlewareScope
       
       
           class MyGeneralMiddleware(Middleware):
-              pass
+              
+            def before(self) -> None:
+                pass
+        
+            def after(self, result: AnyResult) -> None:
+                pass
           ```
+
+      ??? warning "Do not use parametrized constructors on your Middlewares implementations"
+
+  
+          The following implementation is not valid:
+
+          ```python hl_lines="5 6"
+          from petisco import MiddlewareScope
+
+
+          class InvalidMiddleware(Middleware):
+            def __init__(self, my_fancy_parameter: str):
+                self.my_fancy_parameter = my_fancy_parameter
+        
+            def before(self) -> None:
+                pass
+        
+            def after(self, result: AnyResult) -> None:
+                pass
+          ```
+  
 
     
   !!! note "Configure `shared_middlewares` for all Controllers and Subscribers"
