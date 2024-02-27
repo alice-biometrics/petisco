@@ -12,7 +12,7 @@ from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.middleware.request_responded import RequestResponded
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
-from petisco.base.domain.value_objects.operation_type import OperationType
+from petisco.base.domain.value_objects.middleware_scope import MiddlewareScope
 
 
 class RequestRespondedMiddleware(Middleware):
@@ -24,7 +24,7 @@ class RequestRespondedMiddleware(Middleware):
 
     def __init__(self) -> None:
         self.event_bus = Container.get(DomainEventBus)
-        self.operation_affected = OperationType.CONTROLLER
+        self.scope = MiddlewareScope.CONTROLLER
 
     def get_info_id_from_input(self) -> Union[BaseModel, None]:
         try:

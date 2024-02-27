@@ -32,6 +32,7 @@ def get_mapper(bases: tuple[Any], config: dict[str, Any] | None) -> ResultMapper
 
 class MetaController(type, ABC):
     middlewares: list[Middleware] = []
+    use_global_middlewares: bool = True
 
     def __new__(
         mcs, name: str, bases: tuple[Any], namespace: dict[str, Any]

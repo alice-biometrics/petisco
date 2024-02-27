@@ -450,43 +450,176 @@ Let's go into more detail in the following points.
     | `PrintMiddleware`         | Print something before and after the controller            | 
     | `NotifierMiddleware`      | Notify a message if the result of a controller is a failure |
 
-    To create your own Middleware is necessary to extend from `Middleware` as following code:
- 
-    ```python
-    from meiga import Result
+  !!! note "Define your middleware"
+
+
+      To create your own Middleware is necessary to extend from `Middleware` as following code:
+   
+      ```python
+      from meiga import Result
+      
+      from petisco import Middleware
+      
+      
+      class MyFirstMiddleware(Middleware):
+          def before(self):
+              print(
+                  f"{self.wrapped_class_name} -> Start | Params {dict(self.wrapped_class_input_arguments)}"
+              )
+      
+          def after(self, result: Result):
+              print(f"{self.wrapped_class_name} -> End | {result}")
+      ```
     
-    from petisco.base.application.middleware.middleware import Middleware
-    
-    
-    class MyFirstMiddleware(Middleware):
-        def before(self):
-            print(
-                f"{self.wrapped_class_name} -> Start | Params {dict(self.wrapped_class_input_arguments)}"
-            )
-    
-        def after(self, result: Result):
-            print(f"{self.wrapped_class_name} -> End | {result}")
-    ```
+      Then, you can add it to your controller with:
   
-    Then, you can add it to your controller with:
+      ```python hl_lines="3"
+      class MyController(Controller):
+        class Config: 
+          middlewares = [PrintMiddleware]
+          
+      def execute(self) -> Result[bool, Error]:
+          return Success(random.choice([True, False]))
+      ```
+
+
+      !!! tip "Define the middleware scope (is it going to be used on Controller or/and Subscribers?)"
+  
+        
+          Example of Middleware to be used only in Controllers (`scope = MiddlewareScope.CONTROLLER`).
+
+          ```python hl_lines="5"
+          from petisco import MiddlewareScope
+      
+      
+          class MyScopedControllerMiddleware(Middleware):
+            scope = MiddlewareScope.CONTROLLER
+
+            def before(self) -> None:
+                pass
+        
+            def after(self, result: AnyResult) -> None:
+                pass
+          ```
+
+          Example of Middleware to be used only in Subscribers (`scope = MiddlewareScope.SUBSCRIBER`).
+
+          ```python hl_lines="5"
+          from petisco import MiddlewareScope
+      
+      
+          class MyScopedSubscriberMiddleware(Middleware):
+            scope = MiddlewareScope.SUBSCRIBER
+
+            def before(self) -> None:
+                pass
+        
+            def after(self, result: AnyResult) -> None:
+                pass
+          ```
+
+          If you want to use your middleware in Subscribers and Controllers you don't need to specify anything.
+
+          ```python 
+          from petisco import MiddlewareScope
+      
+      
+          class MyGeneralMiddleware(Middleware):
+              
+            def before(self) -> None:
+                pass
+        
+            def after(self, result: AnyResult) -> None:
+                pass
+          ```
+
+      ??? warning "Do not use parametrized constructors on your Middlewares implementations"
+
+  
+          The following implementation is not valid:
+
+          ```python hl_lines="5 6"
+          from petisco import MiddlewareScope
+
+
+          class InvalidMiddleware(Middleware):
+            def __init__(self, my_fancy_parameter: str):
+                self.my_fancy_parameter = my_fancy_parameter
+        
+            def before(self) -> None:
+                pass
+        
+            def after(self, result: AnyResult) -> None:
+                pass
+          ```
+  
+
+    
+  !!! note "Configure `shared_middlewares` for all Controllers and Subscribers"
+  
+
+      If you want to set a default middleware for every Controller and Subscriber, you can do it when defining your `Application` with the input `shared_middlewares`
+  
+      ```python hl_lines="3"
+        from petisco.extra.fastapi import FastApiApplication
+        
+        from app import (
+            APPLICATION_LATEST_DEPLOY,
+            APPLICATION_NAME,
+            APPLICATION_VERSION,
+            ORGANIZATION,
+        )
+        from app.fastapi import fastapi_configurer
+        from app.petisco.dependencies.dependencies import dependencies_provider
+    
+        application = FastApiApplication(
+            name=APPLICATION_NAME,
+            version=APPLICATION_VERSION,
+            organization=ORGANIZATION,
+            deployed_at=APPLICATION_LATEST_DEPLOY,
+            dependencies_provider=dependencies_provider,
+            fastapi_configurer=fastapi_configurer,
+            shared_middlewares=[
+                NotifierMiddleware,
+                PrintMiddleware
+            ]
+        )
+      ```
+
+      ??? warning "Deprecated way for configuring middelwares with envar"
+
+    
+          There is also a deprecated way of configure shared middlewares using the envvar `PETISCO_DEFAULT_MIDDLEWARES`:
+      
+            * `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware`: to configure PrintMiddleware
+
+            * `PETISCO_DEFAULT_MIDDLEWARES=NotifierMiddleware`: to configure NotifierMiddleware
+
+            * `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware,NotifierMiddleware`: to configure several middlewares (using comma to separate)
+
+
+* **use_shared_middlewares**: When you have middlewares configured through `shared_middlewares`, but you have some Controller/Subscriber that you don't want to be affected by they, you can use the field **use_shared_middlewares** and set it to `False` (default is `True`.
+
+  ```python hl_lines="3"
+    class MyController(FastAPIController):
+        class Config:
+            use_shared_middlewares = False
+    
+        def execute(self) -> Result[dict, Error]:
+            ...
+  ```
+  
+  In that way the Controller/Subscriber only will be affected by the Middlewares defined in the Config (`MyNewMiddleware` in the below example).
 
     ```python hl_lines="3"
-    class MyController(Controller):
-      class Config: 
-        middlewares = [PrintMiddleware]
-        
-    def execute(self) -> Result[bool, Error]:
-        return Success(random.choice([True, False]))
-    ```
-
+    class MyController(FastAPIController):
+        class Config:
+            middlewares = [MyNewMiddleware]
+            use_shared_middlewares = False
     
-  !!! note
-      
-      If you want to set a default middleware for every Controller, you can use the envvar `PETISCO_DEFAULT_MIDDLEWARES`:
-  
-      - `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware`: to configure PrintMiddleware
-      - `PETISCO_DEFAULT_MIDDLEWARES=NotifierMiddleware`: to configure NotifierMiddleware
-      - `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware,NotifierMiddleware`: to configure several middlewares (using comma to separate)
+        def execute(self) -> Result[dict, Error]:
+            ...
+    ```
 
 * **success_handler**: you can modify the result of a controller when the result is a success with the `success_handler` Config argument.
 
@@ -647,7 +780,6 @@ Let's go into more detail in the following points.
       while leveraging the shared and default error maps for consistency and convenience. It empowers you to fine-tune 
       error mappings according to your application's requirements without sacrificing the benefits provided by petisco's 
       predefined error mappings.
-
 
 
 #### FastAPI ⚡️

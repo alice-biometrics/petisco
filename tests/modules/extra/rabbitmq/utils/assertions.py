@@ -4,10 +4,10 @@ from petisco.base.domain.message.chaos.message_chaos_error import MessageChaosEr
 from petisco.extra.logger import DEBUG
 
 
-def assert_logger_represents_simulated_failure_scenario(logger):
+def assert_logger_represents_simulated_failure_scenario(logger) -> None:
     def assert_redelivered_message(
         logging_message, expected_derived_action, check_headers: bool
-    ):
+    ) -> None:
         assert logging_message[0] == DEBUG
         assert logging_message[1]["meta"] == {
             "layer": "rabbitmq_message_consumer",
@@ -20,13 +20,18 @@ def assert_logger_represents_simulated_failure_scenario(logger):
 
         if check_headers:
             derived_action["headers"].pop("x-death")
+            derived_action["headers"].pop("x-last-death-exchange")
+            derived_action["headers"].pop("x-last-death-queue")
+            derived_action["headers"].pop("x-last-death-reason")
             derived_action["headers"].pop("x-first-death-exchange")
             derived_action["headers"].pop("x-first-death-queue")
             derived_action["headers"].pop("x-first-death-reason")
 
-        assert derived_action == expected_derived_action
+        assert (
+            derived_action == expected_derived_action
+        ), f"{derived_action=} does not match with {expected_derived_action=}"
 
-    def assert_send_to_retry(logging_message, redelivery_count, check_headers):
+    def assert_send_to_retry(logging_message, redelivery_count, check_headers) -> None:
         expected_derived_action = {
             "action": "send_to_retry",
             "exchange_name": "retry.alice.petisco",
@@ -40,7 +45,9 @@ def assert_logger_represents_simulated_failure_scenario(logger):
             logging_message, expected_derived_action, check_headers
         )
 
-    def assert_send_to_dead_leter(logging_message, redelivery_count, check_headers):
+    def assert_send_to_dead_leter(
+        logging_message, redelivery_count, check_headers
+    ) -> None:
         expected_derived_action = {
             "action": "send_to_dead_letter",
             "exchange_name": "dead_letter.alice.petisco",
@@ -54,7 +61,7 @@ def assert_logger_represents_simulated_failure_scenario(logger):
             logging_message, expected_derived_action, check_headers
         )
 
-    def assert_failure_simulator(logging_message):
+    def assert_failure_simulator(logging_message) -> None:
         assert (
             logging_message[1]["data"]["message"]["chaos_action"] == "failure simulated"
         )

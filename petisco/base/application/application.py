@@ -10,6 +10,7 @@ from petisco.base.application.application_info import ApplicationInfo
 from petisco.base.application.controller.error_map import ErrorMap
 from petisco.base.application.dependency_injection.container import Container
 from petisco.base.application.dependency_injection.dependency import Dependency
+from petisco.base.application.middleware.middleware import Middleware
 from petisco.base.application.notifier.notifier import Notifier
 from petisco.base.application.notifier.notifier_message import NotifierMessage
 from petisco.base.domain.message.domain_event import DomainEvent
@@ -27,6 +28,7 @@ class Application(BaseSettings):
     dependencies_provider: Callable[..., List[Dependency]] = lambda: []
     configurers: List[ApplicationConfigurer] = []
     shared_error_map: Union[ErrorMap, None] = Field(default=dict())
+    shared_middlewares: Union[List[Middleware], None] = Field(default=list())
 
     def __init__(self, **data: Any) -> None:
         info = ApplicationInfo(
@@ -36,6 +38,7 @@ class Application(BaseSettings):
             deployed_at=data.get("deployed_at"),
             force_recreation=True,
             shared_error_map=data.get("shared_error_map", dict()),
+            shared_middlewares=data.get("shared_middlewares", list()),
         )
         deployed_at = info.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
         logger.info(
@@ -115,6 +118,7 @@ class Application(BaseSettings):
         del info["dependencies_provider"]
         del info["configurers"]
         del info["shared_error_map"]
+        del info["shared_middlewares"]
         return info
 
     def was_deploy_few_minutes_ago(self, minutes: int = 25) -> bool:
