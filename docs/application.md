@@ -480,13 +480,64 @@ Let's go into more detail in the following points.
     ```
 
     
-  !!! note
-      
-      If you want to set a default middleware for every Controller, you can use the envvar `PETISCO_DEFAULT_MIDDLEWARES`:
-  
+  !!! note. If you want to set a default middleware for every Controller, you have two ways to do it:
+
+  1. You can use the envvar `PETISCO_DEFAULT_MIDDLEWARES`:
+
       - `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware`: to configure PrintMiddleware
       - `PETISCO_DEFAULT_MIDDLEWARES=NotifierMiddleware`: to configure NotifierMiddleware
       - `PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware,NotifierMiddleware`: to configure several middlewares (using comma to separate)
+
+  2. You can use the `shared_middlewares` field of `Application`:
+
+  ```python hl_lines="3"
+    from petisco.extra.fastapi import FastApiApplication
+    
+    from app import (
+        APPLICATION_LATEST_DEPLOY,
+        APPLICATION_NAME,
+        APPLICATION_VERSION,
+        ORGANIZATION,
+    )
+    from app.fastapi import fastapi_configurer
+    from app.petisco.dependencies.dependencies import dependencies_provider
+
+    application = FastApiApplication(
+        name=APPLICATION_NAME,
+        version=APPLICATION_VERSION,
+        organization=ORGANIZATION,
+        deployed_at=APPLICATION_LATEST_DEPLOY,
+        dependencies_provider=dependencies_provider,
+        fastapi_configurer=fastapi_configurer,
+        shared_middlewares=[
+            NotifierMiddleware,
+            PrintMiddleware
+        ]
+    )
+  ```
+
+* **use_shared_middlewares**: When you have middlewares configured through `PETISCO_DEFAULT_MIDDLEWARES` or `shared_middlewares`, but you have some Controller/Subscriber that you don't want to be affected by they, you can use the field **use_shared_middlewares** and set it to False.
+
+  ```python hl_lines="3"
+    class MyController(FastAPIController):
+        class Config:
+            use_shared_middlewares = False
+    
+        def execute(self) -> Result[dict, Error]:
+            ...
+  ```
+  
+  In that way the Controller/Subscriber only will be affected by the Middlewares defined in the Config.
+
+    ```python hl_lines="3"
+    class MyController(FastAPIController):
+        class Config:
+            middlewares = [MyNewMiddleware]
+            use_shared_middlewares = False
+    
+        def execute(self) -> Result[dict, Error]:
+            ...
+    ```
 
 * **success_handler**: you can modify the result of a controller when the result is a success with the `success_handler` Config argument.
 
@@ -648,7 +699,16 @@ Let's go into more detail in the following points.
       error mappings according to your application's requirements without sacrificing the benefits provided by petisco's 
       predefined error mappings.
 
+* **operation_affected**: you can define if your middleware will affect to Controllers, Subscribers or by defect to both of them
 
+    ```python hl_lines="9"
+    from petisco.base.domain.value_objects.operation_type import OperationType
+
+
+    class MyNewMiddleware(Middleware):
+        def __init__(self) -> None:
+            self.operation_affected = OperationType.CONTROLLER
+    ```
 
 #### FastAPI ⚡️
 
