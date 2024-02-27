@@ -19,6 +19,7 @@ def assert_logger_represents_simulated_failure_scenario(logger) -> None:
         derived_action = logging_message[1]["data"]["message"]["derived_action"]
 
         if check_headers:
+            derived_action["headers"].pop("x-death")
             derived_action["headers"].pop("x-last-death-exchange")
             derived_action["headers"].pop("x-last-death-queue")
             derived_action["headers"].pop("x-last-death-reason")
