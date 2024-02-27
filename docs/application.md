@@ -486,16 +486,34 @@ Let's go into more detail in the following points.
       !!! tip "Define the middleware scope (is it going to be used on Controller or/and Subscribers?)"
   
         
-          * **operation_affected**: you can define if your middleware will affect to Controllers, Subscribers or by defect to both of them
-    
-          ```python hl_lines="8"
+          Example of Scope to Controller Middleware
+
+          ```python hl_lines="5"
           from petisco import MiddlewareScope
       
       
           class MyScopedControllerMiddleware(Middleware):
               scope = MiddlewareScope.CONTROLLER
-              
+          ```
+
+          Example of Scope to Subscriber Middleware
+
+          ```python hl_lines="5"
+          from petisco import MiddlewareScope
       
+      
+          class MyScopedSubscriberMiddleware(Middleware):
+              scope = MiddlewareScope.SUBSCRIBER
+          ```
+
+          If you want to use your middleware in Subscribers and Controllers you don't need to specify anything
+
+          ```python hl_lines="5"
+          from petisco import MiddlewareScope
+      
+      
+          class MyGeneralMiddleware(Middleware):
+              pass
           ```
 
     
