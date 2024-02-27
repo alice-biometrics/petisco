@@ -1,45 +1,37 @@
 from typing import Any
-from unittest import mock
-from unittest.mock import Mock
 
 import pytest
 from meiga import AnyResult, isSuccess
 
 from petisco import (
+    AsyncController,
     Controller,
-    DomainEvent,
-    DomainEventBus,
     MessageSubscriber,
     Middleware,
     MiddlewareScope,
-    NotImplementedDomainEventBus,
 )
 
 
-class MyDomainEvent(DomainEvent):
-    pass
-
-
-class TestScopeMiddleware(Middleware):
-    def __init__(self) -> None:
-        self.event_bus: DomainEventBus = NotImplementedDomainEventBus()
+class MockMiddleware(Middleware):
+    before_is_executed = False
+    after_is_executed = False
 
     def before(self) -> None:
-        self.event_bus.publish(MyDomainEvent)
+        self.before_is_executed = True
 
     def after(self, result: AnyResult) -> None:
-        self.event_bus.publish(MyDomainEvent)
+        self.after_is_executed = True
 
 
-class AllScopeMiddleware(TestScopeMiddleware):
+class AllScopeMiddleware(MockMiddleware):
     pass
 
 
-class OnlyControllerMiddleware(TestScopeMiddleware):
+class OnlyControllerMiddleware(MockMiddleware):
     scope = MiddlewareScope.CONTROLLER
 
 
-class OnlySubscriberMiddleware(TestScopeMiddleware):
+class OnlySubscriberMiddleware(MockMiddleware):
     scope = MiddlewareScope.SUBSCRIBER
 
 
@@ -48,9 +40,8 @@ class TestScopeMiddleware:
     @pytest.mark.parametrize(
         "middleware", [AllScopeMiddleware, OnlySubscriberMiddleware]
     )
-    @mock.patch("petisco.NotImplementedDomainEventBus.publish")
     def should_execute_middleware_when_is_subscriber_when_subscribed_is_in_scope(
-        self, mock_event_bus: Mock, middleware
+        self, middleware
     ) -> None:
         class MySubscriber(MessageSubscriber):
             class Config:
@@ -66,14 +57,14 @@ class TestScopeMiddleware:
         result = subscriber.handle("")
         result.assert_success()
 
-        assert mock_event_bus.call_count == 2
+        assert subscriber.Config.middlewares[0].before_is_executed is True
+        assert subscriber.Config.middlewares[0].after_is_executed is True
 
     @pytest.mark.parametrize(
         "middleware", [AllScopeMiddleware, OnlyControllerMiddleware]
     )
-    @mock.patch("petisco.NotImplementedDomainEventBus.publish")
     def should_execute_middleware_when_is_controller_when_subscribed_is_in_scope(
-        self, mock_event_bus: Mock, middleware
+        self, middleware
     ) -> None:
         class MyController(Controller):
             class Config:
@@ -86,12 +77,11 @@ class TestScopeMiddleware:
         result = controller.execute()
         result.assert_success()
 
-        assert mock_event_bus.call_count == 2
+        assert controller.Config.middlewares[0].before_is_executed is True
+        assert controller.Config.middlewares[0].after_is_executed is True
 
-    @mock.patch("petisco.NotImplementedDomainEventBus.publish")
     def should_skip_middleware_when_is_subscriber_when_only_controller_middleware(
         self,
-        mock_event_bus: Mock,
     ) -> None:
         class MySubscriber(MessageSubscriber):
             class Config:
@@ -107,12 +97,11 @@ class TestScopeMiddleware:
         result = subscriber.handle("")
         result.assert_success()
 
-        mock_event_bus.assert_not_called()
+        assert subscriber.Config.middlewares[0].before_is_executed is False
+        assert subscriber.Config.middlewares[0].after_is_executed is False
 
-    @mock.patch("petisco.NotImplementedDomainEventBus.publish")
     def should_skip_middleware_when_is_controller_when_only_subscriber_middleware(
         self,
-        mock_event_bus: Mock,
     ) -> None:
         class MyController(Controller):
             class Config:
@@ -125,4 +114,42 @@ class TestScopeMiddleware:
         result = controller.execute()
         result.assert_success()
 
-        mock_event_bus.assert_not_called()
+        assert controller.Config.middlewares[0].before_is_executed is False
+        assert controller.Config.middlewares[0].after_is_executed is False
+
+    @pytest.mark.parametrize(
+        "middleware", [AllScopeMiddleware, OnlyControllerMiddleware]
+    )
+    async def should_execute_middleware_when_is_async_controller_when_subscribed_is_in_scope(
+        self, middleware
+    ) -> None:
+        class MyController(AsyncController):
+            class Config:
+                middlewares = [middleware]
+
+            async def execute(self) -> Any:
+                return isSuccess
+
+        controller = MyController()
+        result = await controller.execute()
+        result.assert_success()
+
+        assert controller.Config.middlewares[0].before_is_executed is True
+        assert controller.Config.middlewares[0].after_is_executed is True
+
+    async def should_skip_middleware_when_is_async_controller_when_only_subscriber_middleware(
+        self,
+    ) -> None:
+        class MyController(Controller):
+            class Config:
+                middlewares = [OnlySubscriberMiddleware]
+
+            async def execute(self) -> Any:
+                return isSuccess
+
+        controller = MyController()
+        result = await controller.execute()
+        result.assert_success()
+
+        assert controller.Config.middlewares[0].before_is_executed is False
+        assert controller.Config.middlewares[0].after_is_executed is False

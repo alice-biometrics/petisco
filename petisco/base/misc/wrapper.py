@@ -36,6 +36,11 @@ def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:
     return middlewares_instances
 
 
+def update_middlewares(config: Dict[str, Any], middlewares: List[Middleware]) -> None:
+    if config is not None and hasattr(config, "middlewares"):
+        setattr(config, "middlewares", middlewares)
+
+
 def get_global_middlewares() -> List[Middleware]:
     environment_middlewares = get_middlewares_configuration_from_environment()
     shared_middlewares = ApplicationInfo().shared_middlewares
@@ -151,7 +156,7 @@ def wrapper(
                     )
                     logger.exception(exception)
 
-        # update_middlewares(config, middlewares)
+        update_middlewares(config, middlewares)
         return result
 
     return wrapped

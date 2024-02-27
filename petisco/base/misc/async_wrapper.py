@@ -9,7 +9,7 @@ from meiga import Error, Failure
 from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.domain.value_objects.middleware_scope import MiddlewareScope
 from petisco.base.misc.result_mapper import ResultMapper
-from petisco.base.misc.wrapper import get_middleware_instances
+from petisco.base.misc.wrapper import get_middleware_instances, update_middlewares
 from petisco.extra.meiga import WaitingForEarlyReturn
 
 
@@ -92,6 +92,7 @@ def async_wrapper(
                     )
                     logger.exception(exception)
 
+        update_middlewares(config, middlewares)
         return result
 
     return wrapped
