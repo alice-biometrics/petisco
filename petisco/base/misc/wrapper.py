@@ -29,7 +29,12 @@ def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:
 
     for middlewares_config in middlewares_configs:
         if not isinstance(middlewares_config, Middleware):
-            middlewares_instances.append(middlewares_config())
+            try:
+                middlewares_instances.append(middlewares_config())
+            except TypeError as exc:
+                raise TypeError(
+                    f"Middlewares cannot have configurable constructor, please review your petisco extension.\n{str(exc)}"
+                )
         else:
             middlewares_instances.append(middlewares_config)
 
