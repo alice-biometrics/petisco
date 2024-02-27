@@ -482,6 +482,22 @@ Let's go into more detail in the following points.
           return Success(random.choice([True, False]))
       ```
 
+
+      !!! tip "Define the middleware scope (is it going to be used on Controller or/and Subscribers?)"
+  
+        
+          * **operation_affected**: you can define if your middleware will affect to Controllers, Subscribers or by defect to both of them
+    
+          ```python hl_lines="8"
+          from petisco import MiddlewareScope
+      
+      
+          class MyScopedControllerMiddleware(Middleware):
+              scope = MiddlewareScope.CONTROLLER
+              
+      
+          ```
+
     
   !!! note "Configure `shared_middlewares` for all Controllers and Subscribers"
   
@@ -709,16 +725,6 @@ Let's go into more detail in the following points.
       error mappings according to your application's requirements without sacrificing the benefits provided by petisco's 
       predefined error mappings.
 
-* **operation_affected**: you can define if your middleware will affect to Controllers, Subscribers or by defect to both of them
-
-    ```python hl_lines="9"
-    from petisco.base.domain.value_objects.operation_type import OperationType
-
-
-    class MyNewMiddleware(Middleware):
-        def __init__(self) -> None:
-            self.operation_affected = OperationType.CONTROLLER
-    ```
 
 #### FastAPI ⚡️
 

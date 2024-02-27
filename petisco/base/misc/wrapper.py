@@ -13,7 +13,7 @@ from petisco.base.application.middleware.notifier_middleware import NotifierMidd
 from petisco.base.application.middleware.print_middleware import PrintMiddleware
 from petisco.base.domain.errors.critical_error import CriticalError
 from petisco.base.domain.errors.unknown_error import UnknownError
-from petisco.base.domain.value_objects.operation_type import OperationType
+from petisco.base.domain.value_objects.middleware_scope import MiddlewareScope
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.extra.meiga import WaitingForEarlyReturn
 
@@ -34,6 +34,10 @@ def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:
             middlewares_instances.append(middlewares_config)
 
     return middlewares_instances
+
+
+def update_middlewares(config: Dict[str, Any], middlewares: List[Middleware]) -> None:
+    setattr(config, "middlewares", middlewares)
 
 
 def get_global_middlewares() -> List[Middleware]:
@@ -83,10 +87,10 @@ def wrapper(
 
         for middleware in middlewares:
             if (
-                middleware.operation_affected == OperationType.ALL
-                or middleware.operation_affected == OperationType.CONTROLLER
+                middleware.scope == MiddlewareScope.ALL
+                or middleware.scope == MiddlewareScope.CONTROLLER
                 and issubclass(args[0].__class__, Controller)
-                or middleware.operation_affected == OperationType.SUBSCRIBER
+                or middleware.scope == MiddlewareScope.SUBSCRIBER
                 and issubclass(args[0].__class__, MessageSubscriber)
             ):
                 pass
@@ -132,10 +136,10 @@ def wrapper(
         result.set_transformer(mapper.map)
         for middleware in middlewares:
             if (
-                middleware.operation_affected == OperationType.ALL
-                or middleware.operation_affected == OperationType.CONTROLLER
+                middleware.scope == MiddlewareScope.ALL
+                or middleware.scope == MiddlewareScope.CONTROLLER
                 and issubclass(args[0].__class__, Controller)
-                or middleware.operation_affected == OperationType.SUBSCRIBER
+                or middleware.scope == MiddlewareScope.SUBSCRIBER
                 and issubclass(args[0].__class__, MessageSubscriber)
             ):
                 pass
@@ -151,6 +155,7 @@ def wrapper(
                     )
                     logger.exception(exception)
 
+        update_middlewares(config, middlewares)
         return result
 
     return wrapped

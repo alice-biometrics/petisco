@@ -7,7 +7,7 @@ from loguru import logger
 from meiga import Error, Failure
 
 from petisco.base.domain.errors.unknown_error import UnknownError
-from petisco.base.domain.value_objects.operation_type import OperationType
+from petisco.base.domain.value_objects.middleware_scope import MiddlewareScope
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.base.misc.wrapper import get_middleware_instances
 from petisco.extra.meiga import WaitingForEarlyReturn
@@ -29,10 +29,10 @@ def async_wrapper(
 
         for middleware in middlewares:
             if (
-                middleware.operation_affected == OperationType.ALL
-                or middleware.operation_affected == OperationType.CONTROLLER
+                middleware.scope == MiddlewareScope.ALL
+                or middleware.scope == MiddlewareScope.CONTROLLER
                 and issubclass(args[0].__class__, Controller)
-                or middleware.operation_affected == OperationType.SUBSCRIBER
+                or middleware.scope == MiddlewareScope.SUBSCRIBER
                 and issubclass(args[0].__class__, MessageSubscriber)
             ):
                 pass
@@ -73,10 +73,10 @@ def async_wrapper(
 
         for middleware in middlewares:
             if (
-                middleware.operation_affected == OperationType.ALL
-                or middleware.operation_affected == OperationType.CONTROLLER
+                middleware.scope == MiddlewareScope.ALL
+                or middleware.scope == MiddlewareScope.CONTROLLER
                 and issubclass(args[0].__class__, Controller)
-                or middleware.operation_affected == OperationType.SUBSCRIBER
+                or middleware.scope == MiddlewareScope.SUBSCRIBER
                 and issubclass(args[0].__class__, MessageSubscriber)
             ):
                 pass
