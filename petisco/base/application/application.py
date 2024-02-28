@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, Type, Union
 
 from loguru import logger
 from pydantic import Field
@@ -28,7 +28,7 @@ class Application(BaseSettings):
     dependencies_provider: Callable[..., List[Dependency]] = lambda: []
     configurers: List[ApplicationConfigurer] = []
     shared_error_map: Union[ErrorMap, None] = Field(default=dict())
-    shared_middlewares: Union[List[Middleware], None] = Field(default=list())
+    shared_middlewares: Union[List[Type[Middleware]], None] = Field(default=list())
 
     def __init__(self, **data: Any) -> None:
         info = ApplicationInfo(
