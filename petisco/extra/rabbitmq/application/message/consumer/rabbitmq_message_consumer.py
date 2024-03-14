@@ -100,7 +100,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self.rabbitmq_key = f"{rabbitmq_key_prefix}-{self.exchange_name}"
         self._fallback_store_exchange_name = f"retry.{organization}.store"
         self.max_retries = max_retries
-        self._channel = self.connector.get_channel(self.rabbitmq_key)
+        self._prefetch_count = int(os.environ.get("RABBITMQ_PREFETCH_COUNT", 1))
+        self._channel = self.connector.get_channel(
+            self.rabbitmq_key, prefetch_count=self._prefetch_count, global_qos=True
+        )
         self.printer = RabbitMqEventConsumerPrinter(verbose)
         self.consumer_logger = RabbitMqMessageConsumerLogger(logger)
         self.chaos = chaos
@@ -150,7 +153,9 @@ class RabbitMqMessageConsumer(MessageConsumer):
         )
 
         try:
-            self._channel = self.connector.get_channel(self.rabbitmq_key)
+            self._channel = self.connector.get_channel(
+                self.rabbitmq_key, prefetch_count=self._prefetch_count, global_qos=True
+            )
         except ConnectionError:
             sleep(WAIT_SECONDS_TO_RECONNECT)
             attempt += 1
