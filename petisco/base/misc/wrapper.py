@@ -22,8 +22,8 @@ def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:
     middlewares_instances: List[Middleware] = []
 
     middlewares_configs = getattr(config, "middlewares", [])
-    use_global_middlewares = getattr(config, "use_global_middlewares", True)
-    if use_global_middlewares:
+    use_shared_middlewares = getattr(config, "use_shared_middlewares", True)
+    if use_shared_middlewares:
         global_middlewares = get_global_middlewares()
         middlewares_configs = list(set(middlewares_configs + global_middlewares))
 
