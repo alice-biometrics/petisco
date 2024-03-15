@@ -6,7 +6,7 @@ on:
 
 jobs:
   get-version:
-    uses: alice-biometrics/actions/.github/workflows/get-version.yml@main
+    uses: alice-biometrics/actions/.github/workflows/get-version.yml@v1.42
     with:
       type: release
   publish:
