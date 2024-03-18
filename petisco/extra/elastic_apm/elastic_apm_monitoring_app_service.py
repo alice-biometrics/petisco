@@ -5,7 +5,7 @@ from typing import Any, Dict
 from elasticapm.traces import Transaction, execution_context
 from meiga import AnyResult, NotImplementedMethodError
 
-from petisco import AppService
+from petisco.base.application.patterns.app_service import AppService
 
 
 class ElasticApmMonitoringAppService(AppService):

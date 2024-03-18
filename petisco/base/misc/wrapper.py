@@ -3,7 +3,6 @@ from functools import wraps
 from inspect import signature
 from typing import Any, Callable, Dict, List, Union
 
-import elasticapm
 from loguru import logger
 from meiga import Error, Failure, Result
 
@@ -15,6 +14,7 @@ from petisco.base.domain.errors.critical_error import CriticalError
 from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.domain.value_objects.middleware_scope import MiddlewareScope
 from petisco.base.misc.result_mapper import ResultMapper
+from petisco.extra.elastic_apm.capture_exception import capture_exception
 from petisco.extra.meiga import WaitingForEarlyReturn
 
 
@@ -123,9 +123,7 @@ def wrapper(
                 class_name=wrapped_class_name,
             )
             result = Failure(unknown_error)
-            client = elasticapm.get_client()
-            if client:
-                client.capture_exception()
+            capture_exception()
 
         if not isinstance(result, Result):
             raise TypeError(

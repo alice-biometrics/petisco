@@ -2,7 +2,6 @@ from functools import wraps
 from inspect import signature
 from typing import Any, Callable
 
-import elasticapm
 from loguru import logger
 from meiga import Error, Failure
 
@@ -10,6 +9,7 @@ from petisco.base.domain.errors.unknown_error import UnknownError
 from petisco.base.domain.value_objects.middleware_scope import MiddlewareScope
 from petisco.base.misc.result_mapper import ResultMapper
 from petisco.base.misc.wrapper import get_middleware_instances, update_middlewares
+from petisco.extra.elastic_apm.capture_exception import capture_exception
 from petisco.extra.meiga import WaitingForEarlyReturn
 
 
@@ -59,10 +59,7 @@ def async_wrapper(
                 class_name=wrapped_class_name,
             )
             result = Failure(unknown_error)
-            client = elasticapm.get_client()
-            if client:
-                client.capture_exception()
-
+            capture_exception()
         try:
             result.set_transformer(mapper.map)
         except AttributeError:  # noqa

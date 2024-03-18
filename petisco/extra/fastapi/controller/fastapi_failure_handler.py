@@ -1,6 +1,5 @@
 from typing import NoReturn
 
-import elasticapm
 from fastapi import HTTPException
 from loguru import logger
 from meiga import AnyResult
@@ -13,6 +12,7 @@ from petisco.base.application.controller.http_error import (
 )
 from petisco.base.domain.errors.domain_error import DomainError
 from petisco.base.domain.errors.unknown_error import UnknownError
+from petisco.extra.elastic_apm.is_elastic_apm_available import is_elastic_apm_available
 
 
 def fastapi_failure_handler(result: AnyResult, error_map: ErrorMap) -> NoReturn:
@@ -20,7 +20,10 @@ def fastapi_failure_handler(result: AnyResult, error_map: ErrorMap) -> NoReturn:
     error_type = type(domain_error)
     http_error = error_map.get(error_type, HttpError())
 
-    elasticapm.set_custom_context({"http_response": str(http_error)})
+    if is_elastic_apm_available():
+        import elasticapm  # noqa
+
+        elasticapm.set_custom_context({"http_response": str(http_error)})
 
     internal_error_message = None
     if isinstance(result.value, UnknownError):
@@ -32,9 +35,12 @@ def fastapi_failure_handler(result: AnyResult, error_map: ErrorMap) -> NoReturn:
 
     if internal_error_message is not None:
         logger.error(internal_error_message)
-        elasticapm.set_custom_context(
-            {"internal_error_message": internal_error_message}
-        )
+        if is_elastic_apm_available():
+            import elasticapm  # noqa
+
+            elasticapm.set_custom_context(
+                {"internal_error_message": internal_error_message}
+            )
 
     detail = http_error.detail
     if isinstance(domain_error, DomainError):

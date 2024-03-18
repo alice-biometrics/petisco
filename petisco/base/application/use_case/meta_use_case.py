@@ -4,12 +4,12 @@ from inspect import iscoroutinefunction, signature
 from types import FunctionType
 from typing import Any, Callable, Dict, Tuple
 
-import elasticapm
 from meiga import AnyResult, Error, Failure, NotImplementedMethodError
 
 from petisco.base.application.use_case.use_case_uncontrolled_error import (
     UseCaseUncontrolledError,
 )
+from petisco.extra.elastic_apm.capture_exception import capture_exception
 from petisco.extra.meiga import WaitingForEarlyReturn
 
 
@@ -30,9 +30,7 @@ def use_case_wrapper(
             uncontrolled_error = UseCaseUncontrolledError.from_exception(
                 exception=exception, arguments=arguments, class_name=wrapped_class_name
             )
-            client = elasticapm.get_client()
-            if client:
-                client.capture_exception()
+            capture_exception()
 
             return Failure(uncontrolled_error)
 
@@ -56,10 +54,7 @@ def async_use_case_wrapper(
             uncontrolled_error = UseCaseUncontrolledError.from_exception(
                 exception=exception, arguments=arguments, class_name=wrapped_class_name
             )
-            client = elasticapm.get_client()
-            if client:
-                client.capture_exception()
-
+            capture_exception()
             return Failure(uncontrolled_error)
 
     return wrapped
