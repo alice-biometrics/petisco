@@ -2,7 +2,6 @@ from typing import Any, Union
 
 from meiga import BoolResult, Error, Failure, isSuccess
 
-from petisco import Uuid
 from petisco.base.application.patterns.repository import Repository
 from petisco.base.domain.errors.defaults.already_exists import (
     AggregateAlreadyExistError,
@@ -11,6 +10,7 @@ from petisco.base.domain.errors.defaults.not_found import (
     AggregateNotFoundError,
     AggregatesNotFoundError,
 )
+from petisco.base.domain.model.uuid import Uuid
 from petisco.base.domain.persistence.databases import databases
 from petisco.extra.elastic.elastic_database import ElasticDatabase, ElasticSessionScope
 
