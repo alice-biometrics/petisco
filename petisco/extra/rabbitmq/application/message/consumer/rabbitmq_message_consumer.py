@@ -276,13 +276,13 @@ class RabbitMqMessageConsumer(MessageConsumer):
                 bus_organization, bus_service, connector
             )
             logger.warning(
-                "RabbitMqMessageConsumer: using an inner DomainEventBus with hardcoded implementation (RabbitMqDomainEventBus)"
+                "RabbitMqMessageConsumer: using an inner DomainEventBus with hardcoded implementation (RabbitMqDomainEventBus)\n"
             )
         else:
             domain_event_bus = self.domain_event_bus_builder()
             domain_event_bus.connector = connector
 
-        if self.domain_event_bus_builder is None:
+        if self.command_bus_builder is None:
             command_bus = RabbitMqCommandBus(bus_organization, bus_service, connector)
             logger.warning(
                 "RabbitMqMessageConsumer: using an inner CommandBus with hardcoded implementation (RabbitMqCommandBus)"
