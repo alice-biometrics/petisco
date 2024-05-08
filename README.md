@@ -9,13 +9,19 @@
 [![license](https://img.shields.io/github/license/alice-biometrics/petisco.svg)](https://github.com/alice-biometrics/petisco/blob/main/LICENSE)
 [![versions](https://img.shields.io/pypi/pyversions/petisco.svg)](https://github.com/alice-biometrics/petisco)
 
+<div align="center">
+    <img src="https://github.com/alice-biometrics/custom-emojis/blob/chore/petisco-logo/images/petisco.jpg?raw=true" style="width: 60%">
+
+ [Alice] | [Getting Started] | [Documentation] | [Source Code] | [Examples]
+</div>
+
+[Alice]: https://alicebiometrics.com/
+[Getting Started]: https://alice-biometrics.github.io/petisco/getting_started/
+[Documentation]: https://alice-biometrics.github.io/petisco/
+[Source Code]: ./petisco
+[Examples]: ./examples
+
 <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png?raw=true" width=auto>
-
----
-
-**Documentation**: <a href="https://alice-biometrics.github.io/petisco/" target="_blank">https://alice-biometrics.github.io/petisco/</a>
-
-**Source Code**: <a href="https://github.com/alice-biometrics/petisco" target="_blank">https://github.com/alice-biometrics/petisco</a>
 
 ---
 
@@ -27,20 +33,19 @@ petisco is a framework for helping Python developers to build clean Applications
 
 petisco provides several handy classes to help you on defining your domain with hexagonal architecture, event streaming and CQRS.
 
-
 ## Installation 💻
 
 ```console
 pip install petisco
 ```
 
-Installation with Extras 
+Installation with Extras
 
 ```console
 pip install petisco[fastapi,sqlalchemy,elastic,elastic-apm,rabbitmq,slack,redis]
 ```
 
-## Contribute 
+## Contribute
 
 We'd love you to contribute to *petisco* 🥳🥳🥳🥳🥳🥳️️!
 
@@ -48,4 +53,4 @@ For more information, check our [documentation](https://alice-biometrics.github.
 
 ## Contact 📬
 
-support@alicebiometrics.com
+<support@alicebiometrics.com>
