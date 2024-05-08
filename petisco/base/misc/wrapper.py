@@ -127,7 +127,9 @@ def wrapper(
             )
 
         if isinstance(result.value, CriticalError) and len(arguments) > 0:
-            formatted_args = {k: str(v) if isinstance(v, bytes) else "bytes" for k, v in arguments.items()}
+            formatted_args = {
+                k: str(v) if not isinstance(v, bytes) else "bytes" for k, v in arguments.items()
+            }
             result.value.set_additional_info(formatted_args)
 
         result.set_transformer(mapper.map)
