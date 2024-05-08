@@ -8,10 +8,8 @@ from petisco import InvalidUuid, LegacyUuid
 class TaskId(LegacyUuid):
     @field_validator("value")
     def validate_value(cls, value):
-        if value is None or not validators.uuid(value):
-            # Check Legacy
-            if value is None or len(value) != 28:
-                raise InvalidUuid(uuid_value=value)
+        if value is None or not validators.uuid(value) and (value is None or len(value) != 28):
+            raise InvalidUuid(uuid_value=value)
         return value
 
 

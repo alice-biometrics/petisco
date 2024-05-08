@@ -30,19 +30,13 @@ SQLModel.metadata.create_all(engine)
 SQLModelType = TypeVar("SQLModelType", bound=SQLModel)
 
 
-class SQLModelCrudRepository(
-    Generic[SQLModelType, AggregateRootType], CrudRepository[AggregateRootType]
-):
+class SQLModelCrudRepository(Generic[SQLModelType, AggregateRootType], CrudRepository[AggregateRootType]):
     @abstractmethod
-    def get_aggregate_root(
-        self, sql_model: SQLModel
-    ) -> Result[AggregateRootType, Error]:
+    def get_aggregate_root(self, sql_model: SQLModel) -> Result[AggregateRootType, Error]:
         return NotImplementedMethodError
 
     @abstractmethod
-    def get_sql_model(
-        self, aggregate_root: AggregateRootType
-    ) -> Result[SQLModel, Error]:
+    def get_sql_model(self, aggregate_root: AggregateRootType) -> Result[SQLModel, Error]:
         return NotImplementedMethodError
 
     @abstractmethod
@@ -53,9 +47,7 @@ class SQLModelCrudRepository(
     def save(self, aggregate_root: AggregateRootType) -> BoolResult:
         with Session(engine) as session:
             model = self.get_sql_model_type()
-            statement = select(model).where(
-                model.aggregate_id == aggregate_root.aggregate_id.value
-            )
+            statement = select(model).where(model.aggregate_id == aggregate_root.aggregate_id.value)
             sql_model = session.exec(statement).first()
             if sql_model:
                 return Failure(AggregateAlreadyExistError(aggregate_root.aggregate_id))
@@ -81,9 +73,7 @@ class SQLModelCrudRepository(
     def update(self, aggregate_root: AggregateRootType) -> BoolResult:
         with Session(engine) as session:
             model = self.get_sql_model_type()
-            statement = select(model).where(
-                model.aggregate_id == aggregate_root.aggregate_id.value
-            )
+            statement = select(model).where(model.aggregate_id == aggregate_root.aggregate_id.value)
             sql_model = session.exec(statement).first()
             if sql_model is None:
                 return Failure(AggregateNotFoundError(aggregate_root.aggregate_id))
@@ -112,8 +102,5 @@ class SQLModelCrudRepository(
             statement = select(model)
             sql_models = session.exec(statement)
 
-            all = [
-                self.get_aggregate_root(sql_model).unwrap_or_return()
-                for sql_model in sql_models
-            ]
+            all = [self.get_aggregate_root(sql_model).unwrap_or_return() for sql_model in sql_models]
             return Success(all)

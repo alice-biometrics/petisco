@@ -34,17 +34,13 @@ class MetaController(type, ABC):
     middlewares: list[Middleware] = []
     use_global_middlewares: bool = True
 
-    def __new__(
-        mcs, name: str, bases: tuple[Any], namespace: dict[str, Any]
-    ) -> MetaController:
+    def __new__(mcs, name: str, bases: tuple[Any], namespace: dict[str, Any]) -> MetaController:
         config = namespace.get("Config")
 
         mapper = get_mapper(bases, config)
 
         if "execute" not in namespace:
-            raise NotImplementedError(
-                "Petisco Controller must implement an execute method"
-            )
+            raise NotImplementedError("Petisco Controller must implement an execute method")
 
         new_namespace = {}
         for attributeName, attribute in namespace.items():

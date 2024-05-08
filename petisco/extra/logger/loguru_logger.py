@@ -37,9 +37,6 @@ class LoguruLogger(Logger):
         elif logging_level == ERROR:
             message["meta"]["level"] = "error"
             logger.error(message)
-        elif logging_level == WARN:
-            message["meta"]["level"] = "warning"
-            logger.warning(message)
-        elif logging_level == WARNING:
+        elif logging_level in (WARN, WARNING):
             message["meta"]["level"] = "warning"
             logger.warning(message)

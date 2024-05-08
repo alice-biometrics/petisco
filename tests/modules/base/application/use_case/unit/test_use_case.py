@@ -95,7 +95,4 @@ class TestUseCase:
             class MyUseCase(UseCase):
                 pass
 
-            assert (
-                excinfo.value.message
-                == "Petisco UseCase must implement an execute method"
-            )
+            assert excinfo.value.message == "Petisco UseCase must implement an execute method"

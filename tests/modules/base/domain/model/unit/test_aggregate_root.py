@@ -82,8 +82,7 @@ class TestAggregateRoot:
     def should_model_validate_from_serializer_input(self):  # noqa
         serialized_object = {"my_value_object": "my_expected_value"}
 
-        class MyValueObject(ValueObject):
-            ...
+        class MyValueObject(ValueObject): ...
 
         class MyAggregateRoot(AggregateRoot):
             my_value_object: MyValueObject
@@ -91,10 +90,7 @@ class TestAggregateRoot:
 
         model = MyAggregateRoot.model_validate(serialized_object)
 
-        assert (
-            model.model_dump()["my_value_object"]
-            == serialized_object["my_value_object"]
-        )
+        assert model.model_dump()["my_value_object"] == serialized_object["my_value_object"]
 
     @pytest.mark.parametrize(
         "serialized_object",
@@ -128,22 +124,15 @@ class TestAggregateRoot:
             },
         ],
     )
-    @pytest.mark.skipif(
-        sys.version_info < (3, 9), reason="Requires Python 3.9 or higher"
-    )
-    def should_model_validate_with_union_values(
-        self, serialized_object: Dict[str, str]
-    ):  # noqa
+    @pytest.mark.skipif(sys.version_info < (3, 9), reason="Requires Python 3.9 or higher")
+    def should_model_validate_with_union_values(self, serialized_object: Dict[str, str]):  # noqa
         from typing import Annotated  # noqa (available in Python 3.9)
 
-        class MyValueObject(ValueObject):
-            ...
+        class MyValueObject(ValueObject): ...
 
         class MyAggregateRoot(AggregateRoot):
             my_value_object: MyValueObject
-            annotated_object: Annotated[
-                str, StringConstraints(min_length=2, max_length=50)
-            ]
+            annotated_object: Annotated[str, StringConstraints(min_length=2, max_length=50)]
             my_optional_annotated_object: Union[
                 Annotated[str, StringConstraints(min_length=2, max_length=50)], None
             ] = None
@@ -153,7 +142,4 @@ class TestAggregateRoot:
 
         model = MyAggregateRoot.model_validate(serialized_object)
 
-        assert (
-            model.model_dump()["my_value_object"]
-            == serialized_object["my_value_object"]
-        )
+        assert model.model_dump()["my_value_object"] == serialized_object["my_value_object"]

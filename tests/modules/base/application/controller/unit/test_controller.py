@@ -76,26 +76,20 @@ class TestController:
             pass
 
         class ControllerThatReturnEmptyCriticalError(Controller):
-            def execute(
-                self, param1: str, param2: int, param3: bytes
-            ) -> Failure[MyCriticalError]:
+            def execute(self, param1: str, param2: int, param3: bytes) -> Failure[MyCriticalError]:
                 return Failure(MyCriticalError())
 
         class ControllerThatReturnEnrichedCriticalError(Controller):
             def execute(self, param1: str, param2: int) -> Failure[MyCriticalError]:
                 return Failure(MyCriticalError(additional_info={"message": "error"}))
 
-        result = ControllerThatReturnEmptyCriticalError().execute(
-            param1="param1", param2=2, param3=b"abc"
-        )
+        result = ControllerThatReturnEmptyCriticalError().execute(param1="param1", param2=2, param3=b"abc")
         result.assert_failure(value_is_instance_of=MyCriticalError)
         assert result.value.additional_info.get("param1") == "param1"
         assert result.value.additional_info.get("param2") == "2"
         assert result.value.additional_info.get("param3") == "bytes"
 
-        result = ControllerThatReturnEnrichedCriticalError().execute(
-            param1="param1", param2=2
-        )
+        result = ControllerThatReturnEnrichedCriticalError().execute(param1="param1", param2=2)
         result.assert_failure(value_is_instance_of=MyCriticalError)
         assert result.value.additional_info.get("message") == "error"
         assert result.value.additional_info.get("param1") == "param1"
@@ -132,9 +126,7 @@ class TestController:
     def should_return_transformed_by_default_error_map(self):  # noqa
         class MyController(Controller):
             def execute(self) -> BoolResult:
-                return Failure(
-                    NotFound()
-                )  # NotFound is available in petisco.DEFAULT_HTTP_ERROR_MAP
+                return Failure(NotFound())  # NotFound is available in petisco.DEFAULT_HTTP_ERROR_MAP
 
         result = MyController().execute()
 
@@ -143,16 +135,13 @@ class TestController:
     def should_return_transformed_by_shared_error_map(self):  # noqa
         expected_http_error = HttpError(status_code=425)
 
-        class MySharedError(DomainError):
-            ...
+        class MySharedError(DomainError): ...
 
         set_shared_error_map({MySharedError: expected_http_error})
 
         class MyController(Controller):
             def execute(self) -> BoolResult:
-                return Failure(
-                    MySharedError()
-                )  # MySharedError is defined in SHARED_ERROR_MAP
+                return Failure(MySharedError())  # MySharedError is defined in SHARED_ERROR_MAP
 
         result = MyController().execute()
 
@@ -166,8 +155,7 @@ class TestController:
         expected_http_error = HttpError(status_code=460)
         not_expected_http_error = HttpError(status_code=404)
 
-        class MySharedAndConfiguredError(DomainError):
-            ...
+        class MySharedAndConfiguredError(DomainError): ...
 
         set_shared_error_map({MySharedAndConfiguredError: not_expected_http_error})
 
@@ -235,11 +223,10 @@ class TestController:
 
         with patch.object(
             PrintMiddleware, "before", return_value=isSuccess
-        ) as mock_middleware_before:
-            with patch.object(
-                PrintMiddleware, "after", return_value=isSuccess
-            ) as mock_middleware_after:
-                result = MyController().execute()
+        ) as mock_middleware_before, patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            result = MyController().execute()
 
         assert result == controller_result
         mock_middleware_before.assert_called()
@@ -255,11 +242,10 @@ class TestController:
 
         with patch.object(
             PrintMiddleware, "before", return_value=isSuccess
-        ) as mock_middleware_before:
-            with patch.object(
-                PrintMiddleware, "after", return_value=isSuccess
-            ) as mock_middleware_after:
-                result = MyController().execute()
+        ) as mock_middleware_before, patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            result = MyController().execute()
 
         result.assert_failure()
         mock_middleware_before.assert_called()
@@ -288,9 +274,7 @@ class TestController:
         with pytest.raises(TypeError) as excinfo:
             MyController().execute()
 
-        assert " in PETISCO_DEFAULT_MIDDLEWARES is not valid. Please, use" in str(
-            excinfo.value
-        )
+        assert " in PETISCO_DEFAULT_MIDDLEWARES is not valid. Please, use" in str(excinfo.value)
 
         monkeypatch.undo()
 
@@ -303,11 +287,10 @@ class TestController:
 
         with patch.object(
             PrintMiddleware, "before", return_value=isSuccess
-        ) as mock_middleware_before:
-            with patch.object(
-                PrintMiddleware, "after", return_value=isSuccess
-            ) as mock_middleware_after:
-                result = MyController().execute()
+        ) as mock_middleware_before, patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            result = MyController().execute()
 
         result.assert_success()
         mock_middleware_before.assert_called()
@@ -338,10 +321,7 @@ class TestController:
             class MyController(Controller):
                 pass
 
-            assert (
-                excinfo.value.message
-                == "Petisco Controller must implement an execute method"
-            )
+            assert excinfo.value.message == "Petisco Controller must implement an execute method"
 
     def should_return_unknown_error(self):  # noqa
         class MyController(Controller):

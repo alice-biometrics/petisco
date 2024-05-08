@@ -82,15 +82,11 @@ class TestRabbitMqMessageConsumer:
         configurer.configure_subscribers(subscribers)
         consumer = RabbitMqMessageConsumerMother.default()
         consumer.add_subscribers(subscribers)
-        with pytest.raises(ConnectionClosedByClient):
-            with patch(
-                "pika.adapters.blocking_connection.BlockingChannel.start_consuming",
-                side_effect=ConnectionClosedByClient(1, ""),
-            ):
-                with patch.object(
-                    NotImplementedNotifier, "publish_exception"
-                ) as notifier_mock:
-                    consumer._start()
+        with pytest.raises(ConnectionClosedByClient), patch(
+            "pika.adapters.blocking_connection.BlockingChannel.start_consuming",
+            side_effect=ConnectionClosedByClient(1, ""),
+        ), patch.object(NotImplementedNotifier, "publish_exception") as notifier_mock:
+            consumer._start()
 
         notifier_mock.assert_called_once()
 
@@ -119,19 +115,13 @@ class TestRabbitMqMessageConsumer:
         consumer = RabbitMqMessageConsumerMother.default()
         consumer.add_subscribers(subscribers)
 
-        with pytest.raises(ConnectionError) as exc_info:
-            with patch(
-                "pika.adapters.blocking_connection.BlockingChannel.start_consuming",
-                side_effect=[ConnectionClosedByBroker(1, "")],
-            ):
-                with patch.object(
-                    NotImplementedNotifier, "publish_exception"
-                ) as notifier_mock:
-                    consumer.connector = Mock(RabbitMqConnector)
-                    consumer.connector.get_channel.side_effect = [
-                        ConnectionError()
-                    ] * 20
-                    consumer._start()
+        with pytest.raises(ConnectionError) as exc_info, patch(
+            "pika.adapters.blocking_connection.BlockingChannel.start_consuming",
+            side_effect=[ConnectionClosedByBroker(1, "")],
+        ), patch.object(NotImplementedNotifier, "publish_exception") as notifier_mock:
+            consumer.connector = Mock(RabbitMqConnector)
+            consumer.connector.get_channel.side_effect = [ConnectionError()] * 20
+            consumer._start()
 
         consumer.stop()
         configurer.clear()
@@ -417,9 +407,7 @@ class TestRabbitMqMessageConsumer:
             MessageSubscriberMother.domain_event_subscriber(
                 domain_event_type=type(domain_event), handler=assert_consumer_handler
             ),
-            MessageSubscriberMother.all_messages_subscriber(
-                handler=assert_consumer_event_store
-            ),
+            MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_event_store),
         ]
 
         configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
@@ -440,9 +428,7 @@ class TestRabbitMqMessageConsumer:
 
         spy_consumer_event_store.assert_number_unique_messages(1)
         spy_consumer_event_store.assert_first_message(domain_event)
-        spy_consumer_event_store.assert_count_by_message_id(
-            domain_event.get_message_id(), 1
-        )
+        spy_consumer_event_store.assert_count_by_message_id(domain_event.get_message_id(), 1)
 
         spy_consumer_handler.assert_number_unique_messages(1)
         spy_consumer_handler.assert_first_message(domain_event)
@@ -484,10 +470,8 @@ class TestRabbitMqMessageConsumer:
             spy_dead_letter.append(domain_event)
             return isSuccess
 
-        dead_letter_message_subscriber = (
-            MessageSubscriberMother.domain_event_subscriber(
-                domain_event_type=type(domain_event), handler=dead_letter_consumer
-            )
+        dead_letter_message_subscriber = MessageSubscriberMother.domain_event_subscriber(
+            domain_event_type=type(domain_event), handler=dead_letter_consumer
         )
 
         consumer.add_subscriber_on_dead_letter(dead_letter_message_subscriber)
@@ -501,9 +485,7 @@ class TestRabbitMqMessageConsumer:
 
         spy.assert_number_unique_messages(1)
         spy.assert_first_message(domain_event)
-        spy.assert_count_by_message_id(
-            domain_event.get_message_id(), expected_number_event_consumed
-        )
+        spy.assert_count_by_message_id(domain_event.get_message_id(), expected_number_event_consumed)
 
         spy_dead_letter.assert_number_unique_messages(1)
         spy_dead_letter.assert_first_message(domain_event)
@@ -572,9 +554,7 @@ class TestRabbitMqMessageConsumer:
             MessageSubscriberMother.other_domain_event_subscriber(
                 domain_event_type=type(domain_event), handler=assert_consumer_handler_2
             ),
-            MessageSubscriberMother.all_messages_subscriber(
-                handler=assert_consumer_event_store
-            ),
+            MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_event_store),
         ]
 
         configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()

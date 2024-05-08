@@ -50,11 +50,7 @@ class AggregateRoot(ABC, BaseModel):
                         new_value = union_annotation(value=value)
                         new_data[key] = new_value
             else:
-                if (
-                    isclass(annotation)
-                    and issubclass(annotation, ValueObject)
-                    and isinstance(value, str)
-                ):
+                if isclass(annotation) and issubclass(annotation, ValueObject) and isinstance(value, str):
                     new_value = annotation(value=value)
                     new_data[key] = new_value
         return new_data

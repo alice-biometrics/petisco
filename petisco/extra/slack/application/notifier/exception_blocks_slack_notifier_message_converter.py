@@ -30,9 +30,7 @@ class ExceptionBlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter
             },
         }
 
-    def _create_message_block(
-        self, notifier_exception_message: NotifierExceptionMessage
-    ):
+    def _create_message_block(self, notifier_exception_message: NotifierExceptionMessage):
         text_meta = create_text_meta(notifier_exception_message.meta)
         message_block = None
         if text_meta:
@@ -47,9 +45,7 @@ class ExceptionBlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter
                 message_block["accessory"] = self.slack_accessory
         return message_block
 
-    def _create_executor_block(
-        self, notifier_exception_message: NotifierExceptionMessage
-    ):
+    def _create_executor_block(self, notifier_exception_message: NotifierExceptionMessage):
         executor_block = {
             "type": "section",
         }

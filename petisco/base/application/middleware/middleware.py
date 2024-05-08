@@ -44,8 +44,6 @@ class Middleware(ABC):
             if info_id and hasattr(info_id, "to_meta"):
                 meta = info_id.to_meta().get("info_id", {})
         except Exception as exc:
-            logger.error(
-                f"Middleware error getting info_id on get_meta_from_input: {str(exc)}"
-            )
+            logger.error(f"Middleware error getting info_id on get_meta_from_input: {str(exc)}")
 
         return meta

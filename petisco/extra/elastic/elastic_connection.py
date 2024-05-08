@@ -23,9 +23,7 @@ class ElasticConnection:
         return http_auth
 
     @staticmethod
-    def create(
-        username: str, password: str, host: str, port: str
-    ) -> "ElasticConnection":
+    def create(username: str, password: str, host: str, port: str) -> "ElasticConnection":
         return ElasticConnection(username, password, host, port)
 
     @staticmethod

@@ -1,3 +1,4 @@
+import contextlib
 from typing import Any, Dict
 
 
@@ -15,7 +16,5 @@ class Singleton(type):
         return cls._instances[cls]
 
     def clear(cls) -> None:
-        try:
+        with contextlib.suppress(KeyError):
             del Singleton._instances[cls]
-        except KeyError:
-            pass

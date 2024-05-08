@@ -39,15 +39,11 @@ class AsyncElasticDatabase(AsyncDatabase):
 
     @staticmethod
     def local_connection_checker(alias: str | None = "test") -> AsyncElasticDatabase:
-        return AsyncElasticDatabase(
-            alias=alias, connection=ElasticConnection.create_local()
-        )
+        return AsyncElasticDatabase(alias=alias, connection=ElasticConnection.create_local())
 
     def __init__(self, alias: str, connection: ElasticConnection) -> None:
         if not connection or not isinstance(connection, ElasticConnection):
-            raise ConnectionError(
-                "ElasticDatabase needs a valid ElasticConnection connection"
-            )
+            raise ConnectionError("ElasticDatabase needs a valid ElasticConnection connection")
         self.connection = connection
         super().__init__(alias)
 

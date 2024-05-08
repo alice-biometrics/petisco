@@ -8,9 +8,7 @@ class TestSqlExecutor:
     database: SqlDatabase
 
     def setup_method(self):
-        connection = SqliteConnection.create(
-            server_name="sqlite", database_name="petisco.db"
-        )
+        connection = SqliteConnection.create(server_name="sqlite", database_name="petisco.db")
         self.database = SqlDatabase(connection=connection)
         self.database.initialize()
 
@@ -29,9 +27,5 @@ class TestSqlExecutor:
         session_scope = self.database.get_session_scope()
         sql_executor = SqlExecutor(session_scope)
 
-        sql_executor.execute_from_filename(
-            "tests/modules/extra/sqlalchemy/sql/client_create.sql"
-        )
-        sql_executor.execute_from_filename(
-            "tests/modules/extra/sqlalchemy/sql/client_delete.sql"
-        )
+        sql_executor.execute_from_filename("tests/modules/extra/sqlalchemy/sql/client_create.sql")
+        sql_executor.execute_from_filename("tests/modules/extra/sqlalchemy/sql/client_delete.sql")

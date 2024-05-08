@@ -26,9 +26,7 @@ class TestAsyncSqlDatabase:
     database: AsyncSqlDatabase
 
     def setup_method(self):
-        self.connection = SqliteConnection.create(
-            server_name="sqlite+aiosqlite", database_name="petisco.db"
-        )
+        self.connection = SqliteConnection.create(server_name="sqlite+aiosqlite", database_name="petisco.db")
         self.database = AsyncSqlDatabase(connection=self.connection)
 
     def teardown_method(self):

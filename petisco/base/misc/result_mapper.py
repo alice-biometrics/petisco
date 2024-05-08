@@ -9,9 +9,7 @@ from petisco.base.application.controller.http_error import HttpError
 from petisco.base.domain.errors.domain_error import DomainError
 
 
-def default_failure_handler(
-    result: AnyResult, error_map: ErrorMap
-) -> Union[HttpError, AnyResult]:
+def default_failure_handler(result: AnyResult, error_map: ErrorMap) -> Union[HttpError, AnyResult]:
     error_type = type(result.value)
     mapped_result = error_map.get(error_type, result)
     return mapped_result
@@ -26,7 +24,7 @@ class ResultMapper(ABC):
             [Result[DomainError, Error], Union[ErrorMap, None]], Any
         ] = default_failure_handler,
     ):
-        self.error_map = error_map if error_map is not None else dict()
+        self.error_map = error_map if error_map is not None else {}
         self.success_handler = success_handler
         self.failure_handler = failure_handler
 
@@ -39,8 +37,8 @@ class ResultMapper(ABC):
                     return self.failure_handler(result, self.error_map)
                 else:
                     return self.failure_handler(result)  # noqa
-        except AttributeError:  # noqa
+        except AttributeError as err:
             raise TypeError(
                 f"Controller Error: Return value `{result}` ({type(result)}) must be a `meiga.Result` to "
                 f"map values to success and failure handlers."
-            )
+            ) from err

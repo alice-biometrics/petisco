@@ -27,9 +27,7 @@ class SlackNotifier(Notifier):
         self,
         token: str,
         channel: str,
-        converter: Optional[
-            SlackNotifierMessageConverter
-        ] = BlocksSlackNotifierMessageConverter(),
+        converter: Optional[SlackNotifierMessageConverter] = BlocksSlackNotifierMessageConverter(),
         exception_converter: Optional[
             SlackNotifierMessageConverter
         ] = ExceptionBlocksSlackNotifierMessageConverter(),
@@ -46,12 +44,10 @@ class SlackNotifier(Notifier):
                 blocks=self.converter.convert(notifier_message),
                 text=notifier_message.title,
             )
-        except SlackApiError as e:
-            raise SlackError(e.response["error"])
+        except SlackApiError as err:
+            raise SlackError(err.response["error"]) from err
 
-    def publish_exception(
-        self, notifier_exception_message: NotifierExceptionMessage
-    ) -> None:
+    def publish_exception(self, notifier_exception_message: NotifierExceptionMessage) -> None:
         try:
             self.client.chat_postMessage(
                 channel=self.channel,
@@ -59,4 +55,4 @@ class SlackNotifier(Notifier):
                 text=notifier_exception_message.title,
             )
         except SlackApiError as e:
-            raise SlackError(e.response["error"])
+            raise SlackError(e.response["error"]) from e

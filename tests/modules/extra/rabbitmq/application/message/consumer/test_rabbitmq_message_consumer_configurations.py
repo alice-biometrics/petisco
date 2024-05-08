@@ -44,9 +44,7 @@ class TestRabbitMqMessageConsumerConfigurations:
         bus.publish(domain_event)
 
         consumer = RabbitMqMessageConsumerMother.default()
-        consumer.add_subscribers(
-            [MessageSubscriberMother.all_messages_subscriber(handler=assert_store)]
-        )
+        consumer.add_subscribers([MessageSubscriberMother.all_messages_subscriber(handler=assert_store)])
         consumer.start()
 
         sleep(1.0)
@@ -112,9 +110,7 @@ class TestRabbitMqMessageConsumerConfigurations:
         publish_event(bus_service_2, publish_events_service_2)
 
         consumer = RabbitMqMessageConsumerMother.with_service("service1")
-        consumer.add_subscribers(
-            [MessageSubscriberMother.all_messages_subscriber(handler=assert_store)]
-        )
+        consumer.add_subscribers([MessageSubscriberMother.all_messages_subscriber(handler=assert_store)])
         consumer.start()
 
         sleep(1.0)

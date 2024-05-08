@@ -9,7 +9,7 @@ from petisco.extra.meiga import WaitingForEarlyReturn
 
 
 def sql_session_scope_provider(
-    session_factory: Callable[[], Session]
+    session_factory: Callable[[], Session],
 ) -> Callable[[], ContextManager[Session]]:
     @contextmanager
     def session_scope() -> Iterator[Session]:

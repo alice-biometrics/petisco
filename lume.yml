@@ -21,13 +21,11 @@ steps:
       - find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
       - rm -rf *.db
   build:
-    run: pip install -e .[sqlalchemy,redis,rabbitmq,elastic,slack,fastapi]
+    run: uv pip install -e .[sqlalchemy,redis,rabbitmq,elastic,slack,fastapi]
   lint:
     run:
-      - black --check $PACKAGE_NAME tests
-      - flake8 $PACKAGE_NAME tests
-      - pyupgrade --py37-plus `find $PACKAGE_NAME tests -name "*.py" -type f`
-      - isort $PACKAGE_NAME tests
+      - ruff check --fix $PACKAGE_NAME tests
+      - ruff format $PACKAGE_NAME tests
   check-requirements:
     run: pip-audit -v -r requirements/requirements.txt
   static-analysis:

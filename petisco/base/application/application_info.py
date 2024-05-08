@@ -19,5 +19,5 @@ class ApplicationInfo(metaclass=Singleton):
         self.organization = str(kwargs.get("organization"))
         self.version = str(kwargs.get("version"))
         self.deployed_at = cast(datetime, kwargs.get("deployed_at"))
-        self.shared_error_map = cast(dict, kwargs.get("shared_error_map", dict()))
-        self.shared_middlewares = cast(list, kwargs.get("shared_middlewares", list()))
+        self.shared_error_map = cast(dict, kwargs.get("shared_error_map", {}))
+        self.shared_middlewares = cast(list, kwargs.get("shared_middlewares", []))

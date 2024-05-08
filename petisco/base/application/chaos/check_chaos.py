@@ -3,8 +3,7 @@ from random import random
 from petisco.base.application.chaos.chaos_config import chaos_config
 
 
-class ChaosInvalidMessagePublication(Exception):
-    ...
+class ChaosInvalidMessagePublication(Exception): ...
 
 
 def check_chaos_publication():

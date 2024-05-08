@@ -12,14 +12,12 @@ from tests.modules.extra.rabbitmq.mother.defaults import (
 class RabbitMqMessageConfigurerMother:
     @staticmethod
     def default(connector: RabbitMqConnector = None):
-        connector = RabbitMqConnector() if not connector else connector
-        return RabbitMqMessageConfigurer(
-            DEFAULT_ORGANIZATION, DEFAULT_SERVICE, connector
-        )
+        connector = connector if connector else RabbitMqConnector()
+        return RabbitMqMessageConfigurer(DEFAULT_ORGANIZATION, DEFAULT_SERVICE, connector)
 
     @staticmethod
     def with_retry_ttl_10ms(connector: RabbitMqConnector = None):
-        connector = RabbitMqConnector() if not connector else connector
+        connector = connector if connector else RabbitMqConnector()
         return RabbitMqMessageConfigurer(
             DEFAULT_ORGANIZATION,
             DEFAULT_SERVICE,
@@ -29,7 +27,7 @@ class RabbitMqMessageConfigurerMother:
 
     @staticmethod
     def with_main_and_retry_ttl_10ms(connector: RabbitMqConnector = None):
-        connector = RabbitMqConnector() if not connector else connector
+        connector = connector if connector else RabbitMqConnector()
         return RabbitMqMessageConfigurer(
             DEFAULT_ORGANIZATION,
             DEFAULT_SERVICE,
@@ -39,7 +37,7 @@ class RabbitMqMessageConfigurerMother:
 
     @staticmethod
     def with_main_and_retry_ttl_100ms(connector: RabbitMqConnector = None):
-        connector = RabbitMqConnector() if not connector else connector
+        connector = connector if connector else RabbitMqConnector()
         return RabbitMqMessageConfigurer(
             DEFAULT_ORGANIZATION,
             DEFAULT_SERVICE,
@@ -49,7 +47,7 @@ class RabbitMqMessageConfigurerMother:
 
     @staticmethod
     def with_service(service: str, connector: RabbitMqConnector = None):
-        connector = RabbitMqConnector() if not connector else connector
+        connector = connector if connector else RabbitMqConnector()
         return RabbitMqMessageConfigurer(
             DEFAULT_ORGANIZATION,
             service,
@@ -59,7 +57,7 @@ class RabbitMqMessageConfigurerMother:
 
     @staticmethod
     def with_ttl_1s(connector: RabbitMqConnector = None):
-        connector = RabbitMqConnector() if not connector else connector
+        connector = connector if connector else RabbitMqConnector()
         return RabbitMqMessageConfigurer(
             DEFAULT_ORGANIZATION,
             DEFAULT_SERVICE,
@@ -68,10 +66,6 @@ class RabbitMqMessageConfigurerMother:
         )
 
     @staticmethod
-    def with_queue_config(
-        queue_config: QueueConfig, connector: RabbitMqConnector = None
-    ):
-        connector = RabbitMqConnector() if not connector else connector
-        return RabbitMqMessageConfigurer(
-            DEFAULT_ORGANIZATION, DEFAULT_SERVICE, connector, queue_config
-        )
+    def with_queue_config(queue_config: QueueConfig, connector: RabbitMqConnector = None):
+        connector = connector if connector else RabbitMqConnector()
+        return RabbitMqMessageConfigurer(DEFAULT_ORGANIZATION, DEFAULT_SERVICE, connector, queue_config)

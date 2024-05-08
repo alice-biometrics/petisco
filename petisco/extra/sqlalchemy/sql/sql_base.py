@@ -12,9 +12,7 @@ T = TypeVar("T")
 class SqlBase(DeclarativeBase, Generic[T]):
     def __repr__(self):
         attributes = ", ".join(
-            f"{key}={value}"
-            for key, value in self.__dict__.items()
-            if not key.startswith("_")
+            f"{key}={value}" for key, value in self.__dict__.items() if not key.startswith("_")
         )
         return f"{self.__class__.__name__}({attributes})"
 

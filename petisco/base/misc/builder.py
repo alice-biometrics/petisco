@@ -32,8 +32,6 @@ class Builder(Generic[T]):
             else:
                 instance: T = self.klass(*self.args, **self.kwargs)
         except Exception as exc:
-            raise RuntimeError(
-                f"Error instantiating {self.klass.__name__}\n{repr(exc)}"
-            )
+            raise RuntimeError(f"Error instantiating {self.klass.__name__}\n{repr(exc)}") from exc
 
         return instance

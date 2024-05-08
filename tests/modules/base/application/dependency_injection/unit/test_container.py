@@ -30,11 +30,7 @@ class TestContainer:
     def should_success_when_access_one_dynamic_attr_representing_a_dependency_with_alias(
         self,
     ):
-        dependencies = [
-            Dependency(
-                BaseRepo, alias="my-alias", builders={"default": Builder(MyRepo)}
-            )
-        ]
+        dependencies = [Dependency(BaseRepo, alias="my-alias", builders={"default": Builder(MyRepo)})]
 
         Container.set_dependencies(dependencies)
 
@@ -48,9 +44,7 @@ class TestContainer:
     def should_success_when_define_two_dependencies_with_the_same_base_type(self):
         dependencies = [
             Dependency(BaseRepo, builders={"default": Builder(MyRepo)}),
-            Dependency(
-                BaseRepo, alias="my-alias", builders={"default": Builder(MyRepo)}
-            ),
+            Dependency(BaseRepo, alias="my-alias", builders={"default": Builder(MyRepo)}),
         ]
 
         Container.set_dependencies(dependencies)
@@ -107,9 +101,7 @@ class TestContainer:
             ),
         ],
     )
-    def should_raise_exception_if_there_is_duplicated_dependencies_when_overwrite_false(
-        self, dependencies
-    ):
+    def should_raise_exception_if_there_is_duplicated_dependencies_when_overwrite_false(self, dependencies):
         with pytest.raises(IndexError):
             Container.set_dependencies(dependencies, overwrite=False)
 
@@ -117,12 +109,8 @@ class TestContainer:
 
     def should_raise_exception_if_repeat_alias_when_overwrite_false(self):
         dependencies = [
-            Dependency(
-                BaseRepo, alias="my-alias", builders={"default": Builder(MyRepo)}
-            ),
-            Dependency(
-                BaseRepo, alias="my-alias", builders={"default": Builder(MyRepo)}
-            ),
+            Dependency(BaseRepo, alias="my-alias", builders={"default": Builder(MyRepo)}),
+            Dependency(BaseRepo, alias="my-alias", builders={"default": Builder(MyRepo)}),
         ]
 
         with pytest.raises(IndexError):
@@ -151,9 +139,7 @@ class TestContainer:
             ),
         ],
     )
-    def should_return_several_available_dependencies(
-        self, dependencies, expected_available_dependencies
-    ):
+    def should_return_several_available_dependencies(self, dependencies, expected_available_dependencies):
         Container.set_dependencies(dependencies)
 
         assert Container.get_available_dependencies() == expected_available_dependencies
@@ -167,54 +153,30 @@ class TestContainer:
                 Dependency(
                     BaseRepo,
                     alias="repo-with-dependency",
-                    builders={
-                        "default": Builder(
-                            MyRepoWithBuilderAndDependency, is_builder=True
-                        )
-                    },
+                    builders={"default": Builder(MyRepoWithBuilderAndDependency, is_builder=True)},
                 ),
-                Dependency(
-                    BaseRepo, alias="repo", builders={"default": Builder(MyRepo)}
-                ),
+                Dependency(BaseRepo, alias="repo", builders={"default": Builder(MyRepo)}),
             ],
             [
-                Dependency(
-                    BaseRepo, alias="repo", builders={"default": Builder(MyRepo)}
-                ),
+                Dependency(BaseRepo, alias="repo", builders={"default": Builder(MyRepo)}),
                 Dependency(
                     BaseRepo,
                     alias="repo-with-dependency",
-                    builders={
-                        "default": Builder(
-                            MyRepoWithBuilderAndDependency, is_builder=True
-                        )
-                    },
+                    builders={"default": Builder(MyRepoWithBuilderAndDependency, is_builder=True)},
                 ),
             ],
             [
-                Dependency(
-                    BaseRepo, alias="repo", builders={"default": Builder(MyRepo)}
-                ),
-                Dependency(
-                    BaseRepo, alias="other-repo", builders={"default": Builder(MyRepo)}
-                ),
+                Dependency(BaseRepo, alias="repo", builders={"default": Builder(MyRepo)}),
+                Dependency(BaseRepo, alias="other-repo", builders={"default": Builder(MyRepo)}),
                 Dependency(
                     BaseRepo,
                     alias="repo-with-dependency",
-                    builders={
-                        "default": Builder(
-                            MyRepoWithBuilderAndDependency, is_builder=True
-                        )
-                    },
+                    builders={"default": Builder(MyRepoWithBuilderAndDependency, is_builder=True)},
                 ),
                 Dependency(
                     BaseRepo,
                     alias="repo-with-3-dependencies",
-                    builders={
-                        "default": Builder(
-                            MyRepoWithBuilderAndSeveralDependency, is_builder=True
-                        )
-                    },
+                    builders={"default": Builder(MyRepoWithBuilderAndSeveralDependency, is_builder=True)},
                 ),
             ],
         ],
@@ -223,9 +185,7 @@ class TestContainer:
         self,
         dependencies,
     ):
-        expected_dependencies_keys = [
-            dependency.get_key() for dependency in dependencies
-        ]
+        expected_dependencies_keys = [dependency.get_key() for dependency in dependencies]
 
         Container.set_dependencies(dependencies)
 
@@ -257,9 +217,7 @@ class TestContainer:
                 builders={"default": Builder(MyRepo)},
             ),
         ]
-        expected_dependencies_keys = [
-            dependency.get_key() for dependency in dependencies
-        ]
+        expected_dependencies_keys = [dependency.get_key() for dependency in dependencies]
 
         Container.set_dependencies(dependencies)
 

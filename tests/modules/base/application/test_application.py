@@ -62,7 +62,7 @@ class TestApplication:
             deployed_at=deployed_at,
         )
         application.configure()
-        assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
+        assert Container.get_available_dependencies() == DEFAULT_AVAILABLE_DEPENDENCIES
         expected_info = {
             "name": "service",
             "version": "1.0.0",
@@ -88,7 +88,7 @@ class TestApplication:
             deployed_at=datetime.now(timezone.utc),
         ).configure(testing=True)
 
-        assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
+        assert Container.get_available_dependencies() == DEFAULT_AVAILABLE_DEPENDENCIES
 
     @testing_with_empty_container
     def should_construct_and_instantiate_application_info_singleton(self):
@@ -118,10 +118,7 @@ class TestApplication:
             deployed_at=datetime.now(timezone.utc),
         ).configure()
 
-        assert (
-            DEFAULT_AVAILABLE_DEPENDENCIES + ["BaseRepo"]
-            == Container.get_available_dependencies()
-        )
+        assert DEFAULT_AVAILABLE_DEPENDENCIES + ["BaseRepo"] == Container.get_available_dependencies()
 
     @testing_with_empty_container
     @pytest.mark.skip  # We have to define how this is going to work on v2 (default or not default dependencies)
@@ -151,7 +148,7 @@ class TestApplication:
             deployed_at=datetime.now(timezone.utc),
         ).configure(overwrite_dependencies=True)
 
-        assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
+        assert Container.get_available_dependencies() == DEFAULT_AVAILABLE_DEPENDENCIES
 
     @testing_with_empty_container
     def should_construct_adding_an_existent_dependency_with_an_alias(self):
@@ -173,8 +170,7 @@ class TestApplication:
         ).configure()
 
         assert (
-            DEFAULT_AVAILABLE_DEPENDENCIES
-            + ['DomainEventBus (alias="other-domain-event-bus")']
+            DEFAULT_AVAILABLE_DEPENDENCIES + ['DomainEventBus (alias="other-domain-event-bus")']
             == Container.get_available_dependencies()
         )
 
@@ -280,8 +276,7 @@ class TestApplication:
 
     @testing_with_empty_container
     def should_construct_with_shared_error_map(self):
-        class MyNotFoundError(DomainError):
-            ...
+        class MyNotFoundError(DomainError): ...
 
         shared_error_map = {MyNotFoundError: HttpError(status_code=404)}
 
@@ -310,7 +305,7 @@ class TestApplication:
             deployed_at=deployed_at,
         )
         application.configure()
-        assert DEFAULT_AVAILABLE_DEPENDENCIES == Container.get_available_dependencies()
+        assert Container.get_available_dependencies() == DEFAULT_AVAILABLE_DEPENDENCIES
         expected_info = {
             "name": "service",
             "version": "1.0.0",

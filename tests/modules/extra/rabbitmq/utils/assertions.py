@@ -5,17 +5,13 @@ from petisco.extra.logger import DEBUG
 
 
 def assert_logger_represents_simulated_failure_scenario(logger) -> None:
-    def assert_redelivered_message(
-        logging_message, expected_derived_action, check_headers: bool
-    ) -> None:
+    def assert_redelivered_message(logging_message, expected_derived_action, check_headers: bool) -> None:
         assert logging_message[0] == DEBUG
         assert logging_message[1]["meta"] == {
             "layer": "rabbitmq_message_consumer",
             "operation": "handle",
         }
-        assert logging_message[1]["data"]["message"]["result"] == Failure(
-            MessageChaosError()
-        )
+        assert logging_message[1]["data"]["message"]["result"] == Failure(MessageChaosError())
         derived_action = logging_message[1]["data"]["message"]["derived_action"]
 
         if check_headers:
@@ -41,13 +37,9 @@ def assert_logger_represents_simulated_failure_scenario(logger) -> None:
                 "redelivery_count": redelivery_count,
             },
         }
-        assert_redelivered_message(
-            logging_message, expected_derived_action, check_headers
-        )
+        assert_redelivered_message(logging_message, expected_derived_action, check_headers)
 
-    def assert_send_to_dead_leter(
-        logging_message, redelivery_count, check_headers
-    ) -> None:
+    def assert_send_to_dead_leter(logging_message, redelivery_count, check_headers) -> None:
         expected_derived_action = {
             "action": "send_to_dead_letter",
             "exchange_name": "dead_letter.alice.petisco",
@@ -57,14 +49,10 @@ def assert_logger_represents_simulated_failure_scenario(logger) -> None:
                 "redelivery_count": redelivery_count,
             },
         }
-        assert_redelivered_message(
-            logging_message, expected_derived_action, check_headers
-        )
+        assert_redelivered_message(logging_message, expected_derived_action, check_headers)
 
     def assert_failure_simulator(logging_message) -> None:
-        assert (
-            logging_message[1]["data"]["message"]["chaos_action"] == "failure simulated"
-        )
+        assert logging_message[1]["data"]["message"]["chaos_action"] == "failure simulated"
 
     # filter received_message logs
     logging_messages = [

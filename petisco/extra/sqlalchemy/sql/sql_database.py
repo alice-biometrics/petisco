@@ -46,12 +46,8 @@ class SqlDatabase(Database[Session]):
         super().__init__(alias)
 
     def _check_connection(self) -> None:
-        if not self.connection or not isinstance(
-            self.connection, (SqliteConnection, MySqlConnection)
-        ):
-            raise ConnectionError(
-                "SqlDatabase needs a valid SqliteConnection or MySqlConnection connection"
-            )
+        if not self.connection or not isinstance(self.connection, (SqliteConnection, MySqlConnection)):
+            raise ConnectionError("SqlDatabase needs a valid SqliteConnection or MySqlConnection connection")
 
     def initialize(self, base: type[DeclarativeBase] = SqlBase) -> None:
         engine = create_engine(
@@ -76,8 +72,8 @@ class SqlDatabase(Database[Session]):
     def _run_initial_statements(self, engine) -> None:
         if self.initial_statements_filename:
             try:
-                file = open(self.initial_statements_filename)
-                statements = re.split(r";\s*$", file.read(), flags=re.MULTILINE)
+                with open(self.initial_statements_filename) as file:
+                    statements = re.split(r";\s*$", file.read(), flags=re.MULTILINE)
                 with engine.connect() as conn:
                     for statement in statements:
                         if statement:
@@ -86,16 +82,14 @@ class SqlDatabase(Database[Session]):
             except Exception as exc:  # noqa
                 raise RuntimeError(
                     f"Error loading the initial_statements_filename={self.initial_statements_filename}. {str(exc)}"
-                )
+                ) from exc
 
     def delete(self):
         if isinstance(self.connection, SqliteConnection):
             if os.path.exists(self.connection.database_name):
                 os.remove(self.connection.database_name)
         else:
-            logger.warning(
-                "SqlDatabase do not implement delete to mitigate possible problems in production"
-            )
+            logger.warning("SqlDatabase do not implement delete to mitigate possible problems in production")
 
     def clear_data(self, base: DeclarativeBase = SqlBase) -> None:
         if isinstance(self.connection, SqliteConnection):
@@ -110,14 +104,10 @@ class SqlDatabase(Database[Session]):
 
     def get_session_scope(self) -> Callable[..., ContextManager[Session]]:
         if self.session_factory is None:
-            raise RuntimeError(
-                "SqlDatabase must run initialize() before get_session_scope()"
-            )
+            raise RuntimeError("SqlDatabase must run initialize() before get_session_scope()")
 
         if self.use_scoped_session:
-            Session: Callable[..., Session] = scoped_session(
-                self.session_factory
-            )  # noqa
+            Session: Callable[..., Session] = scoped_session(self.session_factory)  # noqa
         else:
             Session: Callable[..., Session] = self.session_factory  # noqa
         return sql_session_scope_provider(Session)

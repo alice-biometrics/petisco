@@ -28,9 +28,7 @@ class TestBaseSqlRepository:
 
     def _configure_db(self) -> None:
         # filename = ModelFilenameMother.get("sql/persistence.sql.models.yml")
-        connection = SqliteConnection.create(
-            server_name="sqlite", database_name="petisco.db"
-        )
+        connection = SqliteConnection.create(server_name="sqlite", database_name="petisco.db")
         databases.add(SqlDatabase(connection=connection))
         databases.initialize()
 

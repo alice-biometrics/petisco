@@ -19,9 +19,7 @@ from tests.modules.extra.fastapi.controller.integration.test_fastapi_app_with_co
 
 class MyController(FastAPIController):
     class Config:
-        error_map = {
-            OtherMappedError: HttpError(status_code=425, detail="OtherMappedError")
-        }
+        error_map = {OtherMappedError: HttpError(status_code=425, detail="OtherMappedError")}
 
     def execute(self) -> BoolResult:
         return isSuccess
@@ -58,9 +56,7 @@ class TestFastapiApplication:
         application.get_app()
 
     def should_raise_an_errror_when_ensure_async_routers_is_true(self):
-        with pytest.raises(
-            SystemError, match="Router of /test/sync is not using async definition"
-        ):
+        with pytest.raises(SystemError, match="Router of /test/sync is not using async definition"):
             application = FastApiApplication(
                 name="Test",
                 version="1.0.0",
@@ -109,6 +105,4 @@ class TestFastapiApplication:
                 headers={"X-Status-Code-Mock-Response": str(expected_status_code)},
             )
             assert response.status_code == expected_status_code
-            assert response.json() == {
-                "detail": {"description": "OtherMappedError", "is_mocked": True}
-            }
+            assert response.json() == {"detail": {"description": "OtherMappedError", "is_mocked": True}}

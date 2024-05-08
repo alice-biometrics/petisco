@@ -7,4 +7,7 @@ def assert_http_exception(
     assert (
         http_exception_current.status_code == http_exception_expected.status_code
         and http_exception_current.detail == http_exception_expected.detail
-    ), f"| status_code: {http_exception_current.status_code} - {http_exception_expected.status_code} | -> | detail: {http_exception_current.detail} - {http_exception_expected.detail}|"
+    ), (
+        f"| status_code: {http_exception_current.status_code} - {http_exception_expected.status_code} | -> "
+        f"| detail: {http_exception_current.detail} - {http_exception_expected.detail}|"
+    )

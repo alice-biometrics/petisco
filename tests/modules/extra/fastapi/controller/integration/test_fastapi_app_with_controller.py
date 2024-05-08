@@ -11,12 +11,10 @@ from petisco.extra.fastapi import FastAPIController, as_fastapi
 app = FastAPI(title="test-app")
 
 
-class OtherError(DomainError):
-    ...
+class OtherError(DomainError): ...
 
 
-class OtherMappedError(DomainError):
-    ...
+class OtherMappedError(DomainError): ...
 
 
 result_from_expected_behavior = {
@@ -30,9 +28,7 @@ result_from_expected_behavior = {
 
 class MyController(FastAPIController):
     class Config:
-        error_map = {
-            OtherMappedError: HttpError(status_code=401, detail="OtherMappedError")
-        }
+        error_map = {OtherMappedError: HttpError(status_code=401, detail="OtherMappedError")}
 
     def execute(self, expected_behavior: str) -> BoolResult:
         return result_from_expected_behavior.get(expected_behavior, isSuccess)
@@ -55,9 +51,7 @@ def entry_point(x_behavior: Optional[str] = Header("success")):
         ("failure_other_mapped_error", 401),
     ],
 )
-def test_fastapi_app_with_controller_should_return_expected_values(
-    behavior, expected_status_code
-):
+def test_fastapi_app_with_controller_should_return_expected_values(behavior, expected_status_code):
     with TestClient(app) as client:
         response = client.get("/test", headers={"x-behavior": behavior})
         assert_http(response, expected_status_code)

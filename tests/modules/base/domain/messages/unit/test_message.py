@@ -6,8 +6,7 @@ from petisco import Message
 from tests.modules.base.mothers.message_mother import MessageMother
 
 
-class MyMessage(Message):
-    ...
+class MyMessage(Message): ...
 
 
 class MyMessageWithAttributes(Message):
@@ -41,23 +40,15 @@ class TestMessage:
         message_2 = MyMessage()
 
         assert message_1.get_message_id() != message_2.get_message_id()
-        assert (
-            message_1.get_message_occurred_on() != message_2.get_message_occurred_on()
-        )
+        assert message_1.get_message_occurred_on() != message_2.get_message_occurred_on()
 
     def should_not_share_attributes_between_instances(self):  # noqa
         message_1 = MyMessageWithAttributes(foo="hola", bar="mundo")
 
         message_2 = MyMessageWithAttributes(foo="hola2", bar="mundo2")
 
-        assert (
-            message_1.get_message_attributes()["foo"]
-            != message_2.get_message_attributes()["foo"]
-        )
-        assert (
-            message_1.get_message_attributes()["bar"]
-            != message_2.get_message_attributes()["bar"]
-        )
+        assert message_1.get_message_attributes()["foo"] != message_2.get_message_attributes()["foo"]
+        assert message_1.get_message_attributes()["bar"] != message_2.get_message_attributes()["bar"]
 
     def should_check_ocurred_on_datetime_has_timezone(self):  # noqa
         message = Message()
@@ -87,9 +78,7 @@ class TestMessage:
     def should_check_ocurred_on_datetime_has_timezone_when_is_old_format(self):  # noqa
         message_json_with_occurred_on_without_timezone = '{"data": {"id": "69d71598-4920-4a59-b006-e4caa3316932", "type": "message", "type_message": "message", "version": 1, "occurred_on": "2023-09-20 10:09:57.220432", "attributes": {}, "meta": {}}}'
 
-        retrieved_message = Message.from_format(
-            message_json_with_occurred_on_without_timezone
-        )
+        retrieved_message = Message.from_format(message_json_with_occurred_on_without_timezone)
         retrieved_occurred_on = retrieved_message.get_message_occurred_on()
 
         assert retrieved_occurred_on.tzinfo == timezone.utc

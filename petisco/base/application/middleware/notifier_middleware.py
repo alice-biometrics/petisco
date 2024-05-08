@@ -40,10 +40,8 @@ class NotifierMiddleware(Middleware):
             meta = {**app_meta, **input_meta}
 
             if issubclass(error.__class__, UnknownError):
-                notifier_exception_message = (
-                    NotifierExceptionMessage.from_unknown_error(
-                        error, title="Uncontrolled Exception"
-                    )
+                notifier_exception_message = NotifierExceptionMessage.from_unknown_error(
+                    error, title="Uncontrolled Exception"
                 )
                 notifier_exception_message.update_meta(meta)
                 self.notifier.publish_exception(notifier_exception_message)

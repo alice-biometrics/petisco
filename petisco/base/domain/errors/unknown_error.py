@@ -41,30 +41,21 @@ class UnknownError(Error):
                 for i, param in enumerate(input_parameters)
             }
         elif isinstance(input_parameters, dict):
-            return {
-                k: v if not isinstance(v, bytes) else "bytes"
-                for k, v in input_parameters.items()
-            }
+            return {k: v if not isinstance(v, bytes) else "bytes" for k, v in input_parameters.items()}
         else:
             return None
 
-    def _filter_input_parameters(
-        self, filter_parameters: Union[List[str], None] = None
-    ) -> None:
+    def _filter_input_parameters(self, filter_parameters: Union[List[str], None] = None) -> None:
         if filter_parameters:
             self.input_parameters = {
-                k: v
-                for k, v in self.input_parameters.items()
-                if k not in filter_parameters
+                k: v for k, v in self.input_parameters.items() if k not in filter_parameters
             }
 
     def __repr__(self) -> str:
         executor_str = f" ({self.executor})" if self.executor else ""
         traceback_str = f"\n{self.traceback}" if self.traceback else ""
         input_parameters_str = (
-            f"\nInput Parameters: {str(self.input_parameters)}"
-            if self.input_parameters
-            else ""
+            f"\nInput Parameters: {str(self.input_parameters)}" if self.input_parameters else ""
         )
         filename_str = f"\n{self.filename}" if self.filename else ""
         lineno_str = f"\n{self.lineno}" if self.lineno else ""

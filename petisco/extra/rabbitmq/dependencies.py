@@ -69,9 +69,7 @@ def get_rabbitmq_message_dependencies(
             DomainEventBus,
             alias=alias,
             builders={
-                "default": Builder(
-                    RabbitMqDomainEventBus, organization=organization, service=service
-                ),
+                "default": Builder(RabbitMqDomainEventBus, organization=organization, service=service),
                 "not_implemented": Builder(NotImplementedDomainEventBus),
             },
             envar_modifier="PETISCO_DOMAIN_EVENT_BUS_TYPE",
@@ -80,9 +78,7 @@ def get_rabbitmq_message_dependencies(
             CommandBus,
             alias=alias,
             builders={
-                "default": Builder(
-                    RabbitMqCommandBus, organization=organization, service=service
-                ),
+                "default": Builder(RabbitMqCommandBus, organization=organization, service=service),
                 "not_implemented": Builder(NotImplementedCommandBus),
             },
             envar_modifier="PETISCO_COMMAND_BUS_TYPE",

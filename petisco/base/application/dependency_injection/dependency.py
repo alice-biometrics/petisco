@@ -55,18 +55,11 @@ class Dependency(Generic[T]):
         if envar_modifier is None and self.type:
             self.envar_modifier = (
                 # "PETISCO_" + # TODO this will break compatibility (waiting for new versions)
-                re.sub(r"(?<!^)(?=[A-Z])", "_", self.type.__name__).upper()
-                + "_TYPE"
+                re.sub(r"(?<!^)(?=[A-Z])", "_", self.type.__name__).upper() + "_TYPE"
             )
             if self.alias:
-                alias_str = (
-                    re.sub(r"(?<!^)(?=[A-Z])", "_", self.alias)
-                    .replace("-", "_")
-                    .upper()
-                )
-                self.envar_modifier = self.envar_modifier.replace(
-                    "_TYPE", f"_ALIAS_{alias_str}_TYPE"
-                )
+                alias_str = re.sub(r"(?<!^)(?=[A-Z])", "_", self.alias).replace("-", "_").upper()
+                self.envar_modifier = self.envar_modifier.replace("_TYPE", f"_ALIAS_{alias_str}_TYPE")
         else:
             self.envar_modifier = envar_modifier
 
@@ -102,9 +95,7 @@ class Dependency(Generic[T]):
             builder = self.builders.get(modifier)
             if not builder:
                 builder = self._get_default_builder()
-            assert isinstance(
-                builder, Builder
-            ), "Oh no! Dependency builder is corrupted!"
+            assert isinstance(builder, Builder), "Oh no! Dependency builder is corrupted!"
             instance = builder.build()
             return instance
 

@@ -42,21 +42,19 @@ class AsyncSqlDatabase(SqlDatabase, AsyncDatabase[AsyncSession]):
     async def _async_run_initial_statements(self, conn) -> None:
         if self.initial_statements_filename:
             try:
-                file = open(self.initial_statements_filename)
-                statements = re.split(r";\s*$", file.read(), flags=re.MULTILINE)
+                with open(self.initial_statements_filename) as file:
+                    statements = re.split(r";\s*$", file.read(), flags=re.MULTILINE)
                 for statement in statements:
                     if statement:
                         await conn.execute(text(statement))
             except Exception as exc:  # noqa
                 raise RuntimeError(
                     f"Error loading the initial_statements_filename={self.initial_statements_filename}. {str(exc)}"
-                )
+                ) from exc
 
     def get_session_scope(self) -> Callable[..., AsyncContextManager[AsyncSession]]:
         if self.async_session_factory is None:
-            raise RuntimeError(
-                "AsyncSqlDatabase must run initialize() before get_session_scope()"
-            )
+            raise RuntimeError("AsyncSqlDatabase must run initialize() before get_session_scope()")
 
         if self.use_scoped_session:
             Session = scoped_session(self.async_session_factory)  # noqa

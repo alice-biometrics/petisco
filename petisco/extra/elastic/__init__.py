@@ -1,6 +1,6 @@
 from petisco.extra.elastic.is_elastic_available import is_elastic_available
 
-elastic = list()
+elastic = []
 if is_elastic_available():
     from petisco.extra.elastic.async_elastic_database import (
         AsyncElasticDatabase,

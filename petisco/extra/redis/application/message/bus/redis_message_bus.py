@@ -48,11 +48,11 @@ class RedisMessageBus(MessageBus):
             with self.redis_database.pipeline() as pipe:
                 pipe.lpush(self.database_name, *data)
                 pipe.execute()
-        except (TimeoutError, ConnectionError, RedisError) as ex:
+        except (TimeoutError, ConnectionError, RedisError) as exc:
             logger.opt(exception=True).error(
                 f"Error publishing events ({len(messages)} of type {messages[0].get_message_type()}). Exception traceback:"
             )
-            raise BusCannotPublish(additional_info={"error message": str(ex)})
+            raise BusCannotPublish(additional_info={"error message": str(exc)}) from exc
 
     def _get_formatted_data(self, message: Message):
         formatted_data = {

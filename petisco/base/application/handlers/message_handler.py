@@ -27,14 +27,10 @@ def wrapper(method: Callable[..., AnyResult]) -> Callable[..., Any]:
 
 
 class MetaUseCase(type, ABC):
-    def __new__(
-        mcs, name: str, bases: Tuple[Any], namespace: Dict[str, Any]
-    ) -> "MetaUseCase":
+    def __new__(mcs, name: str, bases: Tuple[Any], namespace: Dict[str, Any]) -> "MetaUseCase":
         new_class_dict = {}
         if "execute" not in namespace:
-            raise NotImplementedError(
-                "Petisco UseCase must implement an execute method"
-            )
+            raise NotImplementedError("Petisco UseCase must implement an execute method")
 
         for attributeName, attribute in namespace.items():
             if isinstance(attribute, FunctionType) and attribute.__name__ == "execute":

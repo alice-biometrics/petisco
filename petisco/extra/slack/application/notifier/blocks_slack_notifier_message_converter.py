@@ -27,9 +27,7 @@ class BlocksSlackNotifierMessageConverter(SlackNotifierMessageConverter):
             },
         }
 
-    def _create_message_block(
-        self, notifier_message: NotifierMessage
-    ) -> Dict[str, Any]:
+    def _create_message_block(self, notifier_message: NotifierMessage) -> Dict[str, Any]:
         text_message = ""
         if notifier_message.message:
             text_message += f"{notifier_message.message}"

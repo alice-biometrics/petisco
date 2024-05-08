@@ -24,8 +24,8 @@ def get_shared_and_default_error_map() -> ErrorMap:
 class Controller(metaclass=MetaController):
     """
     A base class for creating controllers.
-    Inherit from this class to convert to domain the request values, configure middlewares and instantiate and execute
-     a UseCase.
+    Inherit from this class to convert to domain the request values,
+    configure middlewares and instantiate and execute a UseCase.
     """
 
     @staticmethod
@@ -36,7 +36,7 @@ class Controller(metaclass=MetaController):
     @staticmethod
     def get_config_mapper(config: dict[str, Any]) -> ResultMapper:
         shared_and_default_error_map = get_shared_and_default_error_map()
-        controller_error_map = cast(ErrorMap, getattr(config, "error_map", dict()))
+        controller_error_map = cast(ErrorMap, getattr(config, "error_map", {}))
 
         # This merged_dependencies will give preference to controller_error_map (given in the controller) over
         # shared_and_default_error_map

@@ -50,11 +50,9 @@ class TestRabbitMqConfigurerRabbitMqHardcodedInnerBuses:
         spy_store_consumer = SpyMessages()
         spy_derived_bus_handler = SpyMessages()
 
-        class MainEvent(DomainEvent):
-            ...
+        class MainEvent(DomainEvent): ...
 
-        class DerivedEvent(DomainEvent):
-            ...
+        class DerivedEvent(DomainEvent): ...
 
         main_event = MainEvent()
         derived_event = DerivedEvent()

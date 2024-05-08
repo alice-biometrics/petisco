@@ -21,18 +21,12 @@ class RabbitMqMessageStoreConfigurer:
     ) -> None:
         self._connector = connector
         self._exchange_name = f"{organization}.{service}"
-        self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(
-            self._exchange_name
-        )
-        self._dead_letter_exchange_name = RabbitMqExchangeNameFormatter.dead_letter(
-            self._exchange_name
-        )
+        self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(self._exchange_name)
+        self._dead_letter_exchange_name = RabbitMqExchangeNameFormatter.dead_letter(self._exchange_name)
         self._common_retry_exchange_name = f"retry.{organization}.store"
         self._common_dead_letter_exchange_name = f"dead_letter.{organization}.store"
 
-        self.rabbitmq = RabbitMqDeclarer(
-            connector=self._connector, channel_name=self._exchange_name
-        )
+        self.rabbitmq = RabbitMqDeclarer(connector=self._connector, channel_name=self._exchange_name)
         self.queue_config = queue_config
 
     def execute(self) -> None:
@@ -103,12 +97,8 @@ class RabbitMqMessageStoreConfigurer:
                 routing_key=f"dead_letter.{routing_key_any_message}",
             )
 
-        self.rabbitmq.bind_queue(
-            exchange_name=exchange_name, queue_name="store", routing_key="retry.store"
-        )
-        self.rabbitmq.bind_queue(
-            exchange_name=exchange_name, queue_name="store", routing_key="store"
-        )
+        self.rabbitmq.bind_queue(exchange_name=exchange_name, queue_name="store", routing_key="retry.store")
+        self.rabbitmq.bind_queue(exchange_name=exchange_name, queue_name="store", routing_key="store")
 
         self.rabbitmq.bind_queue(
             exchange_name=self._common_retry_exchange_name,

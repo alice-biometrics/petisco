@@ -9,9 +9,7 @@ class Executable:
 
 
 class PoolExecutor:
-    def __init__(
-        self, executables: List[Executable], use_multi_threading: bool = True
-    ) -> None:
+    def __init__(self, executables: List[Executable], use_multi_threading: bool = True) -> None:
         self.executables = executables
         self.use_multi_threading = use_multi_threading
 

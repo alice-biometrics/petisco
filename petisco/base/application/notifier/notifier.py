@@ -13,7 +13,5 @@ class Notifier(Interface):
         raise NotImplementedError
 
     @abstractmethod
-    def publish_exception(
-        self, notifier_exception_message: NotifierExceptionMessage
-    ) -> None:
+    def publish_exception(self, notifier_exception_message: NotifierExceptionMessage) -> None:
         raise NotImplementedError

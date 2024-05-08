@@ -31,9 +31,7 @@ class LoggingBasedLogger(Logger):
         config: Callable = None,
     ):
         self.logging_level = os.environ.get("PETISCO_LOGGING_LEVEL", "INFO").upper()
-        logging_level_value = CORRESPONDENCES_LOGGING_LEVEL.get(
-            self.logging_level, logging.INFO
-        )
+        logging_level_value = CORRESPONDENCES_LOGGING_LEVEL.get(self.logging_level, logging.INFO)
         logging.basicConfig(format=format, level=logging_level_value)
         if config:
             config()

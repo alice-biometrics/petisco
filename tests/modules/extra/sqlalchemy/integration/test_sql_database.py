@@ -31,9 +31,7 @@ class TestSqlDatabase:
     database: SqlDatabase
 
     def setup_method(self):
-        self.connection = SqliteConnection.create(
-            server_name="sqlite", database_name="petisco.db"
-        )
+        self.connection = SqliteConnection.create(server_name="sqlite", database_name="petisco.db")
         self.database: SqlDatabase = SqlDatabase(connection=self.connection)
         self.database.delete()
 
@@ -110,12 +108,8 @@ class TestSqlDatabase:
             )
             database.initialize()
 
-    @pytest.mark.parametrize(
-        "exception", [OperationalError(None, None, None), Exception()]
-    )
-    def should_log_rollback_and_raise_when_exceptions_are_raised(
-        self, exception, caplog: LogCaptureFixture
-    ):
+    @pytest.mark.parametrize("exception", [OperationalError(None, None, None), Exception()])
+    def should_log_rollback_and_raise_when_exceptions_are_raised(self, exception, caplog: LogCaptureFixture):
         database = SqlDatabase(
             connection=self.connection,
             initial_statements_filename=f"{ROOT_PATH}/initial_statements.sql",
@@ -123,19 +117,13 @@ class TestSqlDatabase:
         database.initialize()
         session_scope = database.get_session_scope()
 
-        with pytest.raises(type(exception)):
-            with session_scope() as session:  # noqa
-                raise exception
+        with pytest.raises(type(exception)), session_scope() as session:  # noqa
+            raise exception
 
-        assert (
-            "petisco.extra.sqlalchemy.sql.sql_session_scope_provider"
-            == caplog.record_tuples[0][0]
-        )
-        assert ERROR == caplog.record_tuples[0][1]
+        assert caplog.record_tuples[0][0] == "petisco.extra.sqlalchemy.sql.sql_session_scope_provider"
+        assert caplog.record_tuples[0][1] == ERROR
 
-    def should_rollback_and_raise_when_meiga_exception_is_raised(
-        self, caplog: LogCaptureFixture
-    ):
+    def should_rollback_and_raise_when_meiga_exception_is_raised(self, caplog: LogCaptureFixture):
         database = SqlDatabase(
             connection=self.connection,
             initial_statements_filename=f"{ROOT_PATH}/initial_statements.sql",
@@ -143,9 +131,8 @@ class TestSqlDatabase:
         database.initialize()
         session_scope = database.get_session_scope()
 
-        with pytest.raises(WaitingForEarlyReturn):
-            with session_scope() as session:  # noqa
-                raise WaitingForEarlyReturn(None)
+        with pytest.raises(WaitingForEarlyReturn), session_scope() as session:  # noqa
+            raise WaitingForEarlyReturn(None)
 
         assert len(caplog.record_tuples) == 0
 
@@ -164,9 +151,7 @@ class TestSqlDatabase:
             user_models = inner_function(session).unwrap_or_return()
             assert len(user_models) == 2
 
-    def should_session_deal_with_failure_unwrap_or_return_style(
-        self, caplog: LogCaptureFixture
-    ):
+    def should_session_deal_with_failure_unwrap_or_return_style(self, caplog: LogCaptureFixture):
         database = SqlDatabase(
             connection=self.connection,
             initial_statements_filename=f"{ROOT_PATH}/initial_statements.sql",

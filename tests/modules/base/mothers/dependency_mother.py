@@ -39,9 +39,7 @@ class DependencyMother:
 
     @staticmethod
     def domain_event_bus() -> Dependency:
-        return Dependency(
-            DomainEventBus, builders={"default": Builder(NotImplementedDomainEventBus)}
-        )
+        return Dependency(DomainEventBus, builders={"default": Builder(NotImplementedDomainEventBus)})
 
     @staticmethod
     def create(name: str, builder: Any) -> Dependency:

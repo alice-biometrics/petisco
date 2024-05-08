@@ -60,9 +60,7 @@ class Uuid(str):
                     from_uuid_schema,
                 ]
             ),
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                lambda instance: instance.value
-            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(lambda instance: instance.value),
         )
 
     @classmethod

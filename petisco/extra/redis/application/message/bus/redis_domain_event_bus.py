@@ -14,9 +14,7 @@ class RedisDomainEventBus(RedisMessageBus):
     An implementation of DomainEventBus using Redis infrastructure.
     """
 
-    def __init__(
-        self, organization: str, service: str, redis_database: Redis | RedisCluster
-    ):
+    def __init__(self, organization: str, service: str, redis_database: Redis | RedisCluster):
         super().__init__(organization, service, redis_database, "events")
 
     def publish(self, domain_event: DomainEvent | list[DomainEvent]) -> None:

@@ -25,13 +25,10 @@ class TestRedisDomainEventBus:
     def teardown_method(self):
         self.redis_database.flushall()
 
-    def _assert_domain_event_is_saved_in_bus(
-        self, bus: RedisCommandBus, domain_event: DomainEvent
-    ):
+    def _assert_domain_event_is_saved_in_bus(self, bus: RedisCommandBus, domain_event: DomainEvent):
         data = self.redis_database.lrange(bus.database_name, 0, -1)
         domain_events = [
-            DomainEvent.from_format(json.loads(command_data).get("message"))
-            for command_data in data
+            DomainEvent.from_format(json.loads(command_data).get("message")) for command_data in data
         ]
         assert domain_events[0] == domain_event
 

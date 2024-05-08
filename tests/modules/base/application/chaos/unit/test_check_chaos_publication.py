@@ -15,6 +15,7 @@ class TestCheckChaosPublication:
         check_chaos_publication()
 
     def should_check_chaos_publication_raising_error(self):  # noqa
-        with patch.object(chaos_config, "percentage_invalid_message_publication", 1.0):
-            with pytest.raises(ChaosInvalidMessagePublication):
-                check_chaos_publication()
+        with patch.object(chaos_config, "percentage_invalid_message_publication", 1.0), pytest.raises(
+            ChaosInvalidMessagePublication
+        ):
+            check_chaos_publication()

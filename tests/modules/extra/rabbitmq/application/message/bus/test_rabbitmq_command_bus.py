@@ -73,9 +73,7 @@ class TestRabbitMqCommandBus:
             MessageSubscriberMother.command_subscriber(
                 command_type=type(self.command), handler=assert_consumer_default_queue
             ),
-            MessageSubscriberMother.all_messages_subscriber(
-                handler=assert_consumer_store
-            ),
+            MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_store),
         ]
 
         configurer = RabbitMqMessageConfigurerMother.default()
@@ -94,9 +92,7 @@ class TestRabbitMqCommandBus:
         consumer.stop()
         configurer.clear()
 
-        spy_consumer_default_queue.assert_count_by_message_id(
-            self.command.get_message_id(), 1
-        )
+        spy_consumer_default_queue.assert_count_by_message_id(self.command.get_message_id(), 1)
         spy_consumer_store.assert_count_by_message_id(self.command.get_message_id(), 1)
 
     @testing_with_rabbitmq
@@ -104,9 +100,7 @@ class TestRabbitMqCommandBus:
         mock_fallback_command_bus = Mock(CommandBus)
         bus = RabbitMqCommandBusMother.default(fallback=mock_fallback_command_bus)
 
-        with patch.object(
-            BlockingChannel, "basic_publish", side_effect=Exception()
-        ) as mock_channel:
+        with patch.object(BlockingChannel, "basic_publish", side_effect=Exception()) as mock_channel:
             bus.dispatch(self.command)
 
             mock_fallback_command_bus.dispatch.assert_called_once()
@@ -136,9 +130,7 @@ class TestRabbitMqCommandBus:
     def should_raise_an_unexpected_exception_when_not_given_fallback(self):
         bus = RabbitMqCommandBusMother.default()
 
-        with patch.object(
-            BlockingChannel, "basic_publish", side_effect=Exception()
-        ) as mock_channel:
+        with patch.object(BlockingChannel, "basic_publish", side_effect=Exception()) as mock_channel:
             with pytest.raises(Exception):
                 bus.dispatch(self.command)
 

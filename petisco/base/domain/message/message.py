@@ -39,9 +39,7 @@ class Message(BaseModel, extra="allow"):
 
         if not hasattr(self, "_message_name"):
             self._message_name = (  # noqa
-                re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__)
-                .lower()
-                .replace("_", ".")
+                re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__).lower().replace("_", ".")
             )
         if hasattr(self, "Config"):
             self._message_version = get_version(self.Config)
@@ -101,9 +99,7 @@ class Message(BaseModel, extra="allow"):
         if not isinstance(formatted_message, dict):
             formatted_message = json.loads(formatted_message)
         data = cast(Dict[str, Any], formatted_message.get("data"))
-        attributes = (
-            data.get("attributes") if data.get("attributes") is not None else dict()
-        )
+        attributes = data.get("attributes") if data.get("attributes") is not None else {}
         target_type = target_type if target_type else cls
         message = target_type(**attributes)
         message._message_formatted_message = data
@@ -127,22 +123,18 @@ class Message(BaseModel, extra="allow"):
         self._message_name = str(kwargs.get("type"))
         self._message_version = int(kwargs.get("version", 1))
         self._message_occurred_on = (
-            datetime.strptime(str(kwargs.get("occurred_on")), TIME_FORMAT).replace(
-                tzinfo=timezone.utc
-            )
+            datetime.strptime(str(kwargs.get("occurred_on")), TIME_FORMAT).replace(tzinfo=timezone.utc)
             if kwargs.get("occurred_on")
             else datetime.now(timezone.utc)
         )
 
-        attributes = (
-            kwargs.get("attributes") if kwargs.get("attributes") is not None else dict()
-        )
+        attributes = kwargs.get("attributes") if kwargs.get("attributes") is not None else {}
         self._message_attributes = cast(Dict[str, Any], attributes)
         if self._message_attributes:
             for key, value in self._message_attributes.items():
                 setattr(self, key, value)
 
-        self._message_meta = cast(Dict[str, Any], kwargs.get("meta", dict()))
+        self._message_meta = cast(Dict[str, Any], kwargs.get("meta", {}))
         self._message_type = str(kwargs.get("type_message", self._message_type))
 
     def __hash__(self) -> int:

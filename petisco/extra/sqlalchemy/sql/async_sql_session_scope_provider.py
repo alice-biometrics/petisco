@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 def async_sql_session_scope_provider(
-    async_session_factory: Callable[[], AsyncSession]
+    async_session_factory: Callable[[], AsyncSession],
 ) -> Callable[..., AsyncContextManager[AsyncSession]]:
     @asynccontextmanager
     async def session_scope() -> AsyncContextManager[AsyncSession]:

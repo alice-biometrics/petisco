@@ -29,15 +29,11 @@ class MetaMessageSubscriber(type, Interface):
     middlewares: list[Middleware] = []
     use_global_middlewares: bool = True
 
-    def __new__(
-        mcs, name: str, bases: tuple[Any, ...], namespace: dict[str, Any]
-    ) -> MetaMessageSubscriber:
+    def __new__(mcs, name: str, bases: tuple[Any, ...], namespace: dict[str, Any]) -> MetaMessageSubscriber:
         config = namespace.get("Config")
 
         if "handle" not in namespace:
-            raise NotImplementedError(
-                "Petisco MessageSubscriber must implement an handle method"
-            )
+            raise NotImplementedError("Petisco MessageSubscriber must implement an handle method")
 
         mapper = ResultMapper()
 

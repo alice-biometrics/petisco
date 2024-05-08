@@ -34,9 +34,7 @@ class DomainError(Error):
             self.additional_info = info
 
     @classmethod
-    @deprecated(
-        "get_specify_detail is deprecated. Use the `get_specific_detail` instead."
-    )
+    @deprecated("get_specify_detail is deprecated. Use the `get_specific_detail` instead.")
     def get_specify_detail(cls) -> str:
         return cls.get_specific_detail()
 

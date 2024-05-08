@@ -13,9 +13,7 @@ from petisco.extra.sqlalchemy.sql.mysql_is_running_locally import (
 
 
 def testing_with_rabbitmq(func):
-    @pytest.mark.skipif(
-        not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
-    )
+    @pytest.mark.skipif(not rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally")
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any):
         return func(*args, **kwargs)
@@ -24,9 +22,7 @@ def testing_with_rabbitmq(func):
 
 
 def testing_without_rabbitmq(func):
-    @pytest.mark.skipif(
-        rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally"
-    )
+    @pytest.mark.skipif(rabbitmq_is_running_locally(), reason="RabbitMQ is not running locally")
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any):
         return func(*args, **kwargs)
@@ -35,9 +31,7 @@ def testing_without_rabbitmq(func):
 
 
 def testing_with_mysql(func):
-    @pytest.mark.skipif(
-        not mysql_is_running_locally(), reason="MySQL is not running locally"
-    )
+    @pytest.mark.skipif(not mysql_is_running_locally(), reason="MySQL is not running locally")
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any):
         return func(*args, **kwargs)
@@ -46,9 +40,7 @@ def testing_with_mysql(func):
 
 
 def testing_with_elastic(func):
-    @pytest.mark.skipif(
-        not elastic_is_running_locally(), reason="Elastic is not running locally"
-    )
+    @pytest.mark.skipif(not elastic_is_running_locally(), reason="Elastic is not running locally")
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any):
         return func(*args, **kwargs)

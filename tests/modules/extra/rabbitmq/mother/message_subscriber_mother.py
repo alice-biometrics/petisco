@@ -13,9 +13,7 @@ from petisco import (
 
 class MessageSubscriberMother:
     @staticmethod
-    def domain_event_subscriber(
-        domain_event_type: Type[DomainEvent], handler: Callable
-    ):
+    def domain_event_subscriber(domain_event_type: Type[DomainEvent], handler: Callable):
         class MyDomainEventSubscriber(DomainEventSubscriber):
             def subscribed_to(self) -> List[Type[DomainEvent]]:
                 return [domain_event_type]
@@ -39,9 +37,7 @@ class MessageSubscriberMother:
         return MyDomainEventSubscriber
 
     @staticmethod
-    def other_domain_event_subscriber(
-        domain_event_type: Type[DomainEvent], handler: Callable
-    ):
+    def other_domain_event_subscriber(domain_event_type: Type[DomainEvent], handler: Callable):
         class MyOtherDomainEventSubscriber(DomainEventSubscriber):
             def subscribed_to(self) -> List[Type[DomainEvent]]:
                 return [domain_event_type]

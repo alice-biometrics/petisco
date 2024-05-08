@@ -8,18 +8,14 @@ class RabbitMqDeclarer:
         self._connector = connector
         self._channel_name = channel_name
 
-    def declare_exchange(
-        self, exchange_name: str, exchange_type: str = "topic"
-    ) -> None:
+    def declare_exchange(self, exchange_name: str, exchange_type: str = "topic") -> None:
         channel = self._connector.get_channel(self._channel_name)
         try:
-            channel.exchange_declare(
-                exchange=exchange_name, exchange_type=exchange_type, durable=True
-            )
+            channel.exchange_declare(exchange=exchange_name, exchange_type=exchange_type, durable=True)
         except Exception as error:
             raise TypeError(
                 f"RabbitMQEventPublisher: Cannot create the exchange ({exchange_name})\n{error}"
-            )
+            ) from error
         channel.close()
 
     def delete_exchange(self, exchange_name: str) -> None:
@@ -46,9 +42,7 @@ class RabbitMqDeclarer:
         if message_ttl:
             queue_arguments["x-message-ttl"] = message_ttl
 
-        result = channel.queue_declare(
-            queue=queue_name, arguments=queue_arguments, durable=True
-        )
+        result = channel.queue_declare(queue=queue_name, arguments=queue_arguments, durable=True)
         channel.close()
 
         queue_name: str = result.method.queue
@@ -58,9 +52,7 @@ class RabbitMqDeclarer:
     def bind_queue(self, exchange_name: str, queue_name: str, routing_key: str) -> None:
         channel = self._connector.get_channel(self._channel_name)
 
-        channel.queue_bind(
-            exchange=exchange_name, queue=queue_name, routing_key=routing_key
-        )
+        channel.queue_bind(exchange=exchange_name, queue=queue_name, routing_key=routing_key)
         channel.close()
 
     def delete_queue(self, queue_name: str) -> None:

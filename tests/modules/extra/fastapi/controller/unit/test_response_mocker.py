@@ -31,9 +31,7 @@ class TestResponseMocker:
     @pytest.mark.parametrize("status_code", [300, 400, 500])
     def should_raise_http_exception_when_mocked_value_is_an_error(self, status_code):
         request = Mock(Request)
-        request.headers = Headers(
-            headers={"X-Status-Code-Mock-Response": str(status_code)}
-        )
+        request.headers = Headers(headers={"X-Status-Code-Mock-Response": str(status_code)})
         dependency = ResponseMocker()
 
         with pytest.raises(HTTPException) as exc_info:

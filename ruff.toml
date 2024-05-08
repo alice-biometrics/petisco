@@ -1,0 +1,91 @@
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    "docs",
+    "tests/conftest.py",
+    "__pycache__",
+]
+
+line-length = 110
+indent-width = 4
+
+target-version = "py37"
+
+[lint]
+ignore = [
+    "B008", # TODO: Review Do not perform function call `X` in argument defaults
+    "E501" # TODO: Line too long
+]
+select = ["B", "C", "E", "F", "I", "UP", "SIM", "W"]
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[lint.per-file-ignores]
+"__init__.py" = [
+    "F401",
+    "E402",
+    "F403",
+    "F405",
+] # Imports not on top, from * imports
+"interface.py" = [
+    "B024", # `Interface` is an abstract base class, but it has no abstract methods,
+]
+"petisco/base/misc/result_mapper.py" = [
+    "B024", # `ResultMapper` is an abstract base class, but it has no abstract methods,
+]
+"petisco/base/domain/message/message.py" = [
+    "C901",
+] #`model_post_init` is too complex (12 > 10)
+"petisco/base/misc/async_wrapper.py" = [
+    "C901",
+] #`async_wrapper` is too complex (13 > 10)
+"petisco/base/misc/wrapper.py" = ["C901"] #`wrapper` is too complex (14 > 10)
+"petisco/cli/petisco_dev.py" = ["F823"] # ruff error
+"test_rabbitmq_command_bus.py" = [
+    "B017",
+] # TODO: Review `pytest.raises(Exception)` should be considered evil
+"test_rabbitmq_domain_event_bus.py" = [
+    "B017",
+] # TODO: Review `pytest.raises(Exception)` should be considered evil
+
+[format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[lint.isort]
+known-third-party = ["alembic"]

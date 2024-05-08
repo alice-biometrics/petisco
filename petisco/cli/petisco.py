@@ -20,7 +20,7 @@ def rename_template(original_name: str, replacement: str) -> None:
             os.rename(dname, dname.replace(original_name, replacement))
 
     blacklist = [".git/", ".idea"]
-    for dname, dirs, files in os.walk("."):
+    for dname, _dirs, files in os.walk("."):
         for fname in files:
             fpath = os.path.join(dname, fname)
             rewrite = True
@@ -45,13 +45,9 @@ def main() -> None:
         description="petisco is a framework for helping Python developers to build clean Applications",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument(
-        "-v", "--version", action="store_true", help="show petisco version number."
-    )
+    parser.add_argument("-v", "--version", action="store_true", help="show petisco version number.")
     parser.add_argument("-uuid", "--uuid", action="store_true", help="show an UUID v4.")
-    parser.add_argument(
-        "-utcnow", "--utcnow", action="store_true", help="show a utc now datetime"
-    )
+    parser.add_argument("-utcnow", "--utcnow", action="store_true", help="show a utc now datetime")
     parser.add_argument(
         "-rt",
         "--rename-template",
@@ -90,7 +86,5 @@ def main() -> None:
             print(
                 f"petisco 🍪 => Changing {args.original_template_name} for {args.rename_template_replacement}..."
             )
-            rename_template(
-                args.original_template_name, args.rename_template_replacement
-            )
+            rename_template(args.original_template_name, args.rename_template_replacement)
             return
