@@ -1,6 +1,14 @@
 # petisco 🍪  
 
-[![version](https://img.shields.io/github/release/alice-biometrics/petisco/all.svg)](https://github.com/alice-biometrics/petisco/releases) 
+
+
+<div align="center">
+    <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/petisco.png?raw=true" style="width: 60%">
+
+
+ [Alice] | [Getting Started] | [Documentation] | [Source Code] | [Examples]
+
+ [![version](https://img.shields.io/github/release/alice-biometrics/petisco/all.svg)](https://github.com/alice-biometrics/petisco/releases) 
 [![ci](https://github.com/alice-biometrics/petisco/workflows/ci/badge.svg)](https://github.com/alice-biometrics/petisco/actions) 
 [![pypi](https://img.shields.io/pypi/dm/petisco)](https://pypi.org/project/petisco/) 
 [![codecov](https://codecov.io/gh/alice-biometrics/petisco/branch/main/graph/badge.svg?token=YHXAYKX0VO)](https://codecov.io/gh/alice-biometrics/petisco)
@@ -9,12 +17,6 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Pydantic v2](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/pydantic/pydantic/main/docs/badge/v2.json)](https://docs.pydantic.dev/latest/contributing/#badges)
 
-
-<div align="center">
-    <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/petisco.png?raw=true" style="width: 60%">
-
-
- [Alice] | [Getting Started] | [Documentation] | [Source Code] | [Examples]
 </div>
 
 [Alice]: https://alicebiometrics.com/
