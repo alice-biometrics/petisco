@@ -11,7 +11,8 @@
 
 
 <div align="center">
-    <img src="https://github.com/alice-biometrics/custom-emojis/blob/main/images/petisco.png?raw=true" style="width: 60%">
+    <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/petisco.png?raw=true" style="width: 60%">
+
 
  [Alice] | [Getting Started] | [Documentation] | [Source Code] | [Examples]
 </div>
