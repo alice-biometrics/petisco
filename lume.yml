@@ -26,6 +26,7 @@ steps:
     run:
       - ruff check --fix $PACKAGE_NAME tests
       - ruff format $PACKAGE_NAME tests
+      - pyupgrade --py38-plus `find $PACKAGE_NAME tests -name "*.py" -type f`
   check-requirements:
     run: pip-audit -v -r requirements/requirements.txt
   static-analysis:
