@@ -29,25 +29,19 @@ def fastapi_failure_handler(result: AnyResult, error_map: ErrorMap) -> NoReturn:
     if isinstance(result.value, UnknownError):
         internal_error_message = str(result.value.__dict__)
     elif error_type not in error_map:
-        internal_error_message = (
-            f"Error '{result.value.__class__.__name__}' is not mapped in controller"
-        )
+        internal_error_message = f"Error '{result.value.__class__.__name__}' is not mapped in controller"
 
     if internal_error_message is not None:
         logger.error(internal_error_message)
         if is_elastic_apm_available():
             import elasticapm  # noqa
 
-            elasticapm.set_custom_context(
-                {"internal_error_message": internal_error_message}
-            )
+            elasticapm.set_custom_context({"internal_error_message": internal_error_message})
 
     detail = http_error.detail
     if isinstance(domain_error, DomainError):
         detail = (
-            http_error.detail
-            if http_error.detail != DEFAULT_HTTP_ERROR_DETAIL
-            else domain_error.detail()
+            http_error.detail if http_error.detail != DEFAULT_HTTP_ERROR_DETAIL else domain_error.detail()
         )
     else:
         logger.warning(
@@ -60,10 +54,7 @@ def fastapi_failure_handler(result: AnyResult, error_map: ErrorMap) -> NoReturn:
         status_code=http_error.status_code, detail=detail, headers=http_error.headers
     )
 
-    if (
-        isinstance(domain_error, DomainError)
-        and type(domain_error) not in DEFAULT_HTTP_ERROR_MAP.keys()
-    ):
+    if isinstance(domain_error, DomainError) and type(domain_error) not in DEFAULT_HTTP_ERROR_MAP:
         logger.error(f"DomainError:  {domain_error.__repr__()}")
         logger.error(f"HTTPException: {http_exception.__repr__()}")
 

@@ -10,9 +10,7 @@ from petisco.base.misc.interface import Interface
 
 class SlackNotifierMessageConverter(Interface):
     @abstractmethod
-    def convert(
-        self, notifier_message: Union[NotifierMessage, NotifierExceptionMessage]
-    ) -> List[Dict]:
+    def convert(self, notifier_message: Union[NotifierMessage, NotifierExceptionMessage]) -> List[Dict]:
         """
         Should return a list of blocks. See: https://api.slack.com/reference/block-kit/blocks
         """

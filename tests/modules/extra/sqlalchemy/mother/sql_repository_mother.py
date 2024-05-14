@@ -38,9 +38,7 @@ class User:
         }
 
     def __eq__(self, other):
-        if issubclass(other.__class__, self.__class__) or issubclass(
-            self.__class__, other.__class__
-        ):
+        if issubclass(other.__class__, self.__class__) or issubclass(self.__class__, other.__class__):
             return self.to_dict() == other.to_dict()
         else:
             return False
@@ -67,9 +65,7 @@ class Client:
         return {"client_id": self.client_id.value, "name": self.name}
 
     def __eq__(self, other):
-        if issubclass(other.__class__, self.__class__) or issubclass(
-            self.__class__, other.__class__
-        ):
+        if issubclass(other.__class__, self.__class__) or issubclass(self.__class__, other.__class__):
             return self.to_dict() == other.to_dict()
         else:
             return False
@@ -84,13 +80,9 @@ class MyUserSqlRepository(SqlRepository):
     def save(self, user: User) -> BoolResult:
         with self.session_scope() as session:
             client_model = (
-                session.query(ClientModel)
-                .filter(ClientModel.client_id == user.client_id.value)
-                .first()
+                session.query(ClientModel).filter(ClientModel.client_id == user.client_id.value).first()
             )
-            self.fail_if_aggregate_not_found(
-                client_model, user.client_id
-            ).unwrap_or_return()
+            self.fail_if_aggregate_not_found(client_model, user.client_id).unwrap_or_return()
 
             user_model = (
                 session.query(UserModel)
@@ -98,9 +90,7 @@ class MyUserSqlRepository(SqlRepository):
                 .filter(UserModel.client_id == client_model.client_id)
                 .first()
             )
-            self.fail_if_aggregate_already_exist(
-                user_model, user.user_id
-            ).unwrap_or_return()
+            self.fail_if_aggregate_already_exist(user_model, user.user_id).unwrap_or_return()
             user_model = UserModel(**user.to_dict())
             session.add(user_model)
         return isSuccess
@@ -108,11 +98,7 @@ class MyUserSqlRepository(SqlRepository):
     @meiga
     def retrieve(self, user_id: UserId) -> Result[User, Error]:
         with self.session_scope() as session:
-            user_model = (
-                session.query(UserModel)
-                .filter(UserModel.user_id == user_id.value)
-                .first()
-            )
+            user_model = session.query(UserModel).filter(UserModel.user_id == user_id.value).first()
             self.fail_if_aggregate_not_found(user_model, user_id).unwrap_or_return()
             user = User.from_dict(user_model.__dict__)
             return Success(user)
@@ -120,18 +106,10 @@ class MyUserSqlRepository(SqlRepository):
     @meiga
     def retrieve_all(self, client_id: ClientId) -> Result[List[User], Error]:
         with self.session_scope() as session:
-            client_model = (
-                session.query(ClientModel)
-                .filter(ClientModel.client_id == client_id.value)
-                .first()
-            )
+            client_model = session.query(ClientModel).filter(ClientModel.client_id == client_id.value).first()
             self.fail_if_aggregate_not_found(client_model, client_id).unwrap_or_return()
 
-            user_models = (
-                session.query(UserModel)
-                .filter(UserModel.client_id == client_model.id)
-                .all()
-            )
+            user_models = session.query(UserModel).filter(UserModel.client_id == client_model.id).all()
             self.fail_if_aggregates_not_found(user_models).unwrap_or_return()
             users = [User.from_dict(user_model.__dict__) for user_model in user_models]
             return Success(users)
@@ -142,13 +120,9 @@ class MyClientSqlRepository(SqlRepository):
     def save(self, client: Client) -> BoolResult:
         with self.session_scope() as session:
             client_model = (
-                session.query(ClientModel)
-                .filter(ClientModel.client_id == client.client_id.value)
-                .first()
+                session.query(ClientModel).filter(ClientModel.client_id == client.client_id.value).first()
             )
-            self.fail_if_aggregate_already_exist(
-                client_model, client.client_id
-            ).unwrap_or_return()
+            self.fail_if_aggregate_already_exist(client_model, client.client_id).unwrap_or_return()
             client_model = ClientModel(**client.to_dict())
             session.add(client_model)
         return isSuccess
@@ -156,11 +130,7 @@ class MyClientSqlRepository(SqlRepository):
     @meiga
     def retrieve(self, client_id: ClientId) -> Result[Client, Error]:
         with self.session_scope() as session:
-            client_model = (
-                session.query(ClientModel)
-                .filter(ClientModel.client_id == client_id.value)
-                .first()
-            )
+            client_model = session.query(ClientModel).filter(ClientModel.client_id == client_id.value).first()
             self.fail_if_aggregate_not_found(client_model, client_id).unwrap_or_return()
             client = Client.from_dict(client_model.__dict__)
             return Success(client)

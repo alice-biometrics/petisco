@@ -10,7 +10,7 @@ T = TypeVar("T")
 
 
 def get_key(base_type: type[T], alias: str | None = None) -> str:
-    return base_type.__name__ if not alias else alias
+    return alias if alias else base_type.__name__
 
 
 @dataclass
@@ -30,9 +30,7 @@ class _Databases:
     def get_database_names(self) -> list[str]:
         return list(self._databases.keys())
 
-    def add(
-        self, database: Database | list[Database], skip_if_exist: bool = False
-    ) -> None:
+    def add(self, database: Database | list[Database], skip_if_exist: bool = False) -> None:
         if isinstance(database, list):
             for database_ in database:
                 self.add(database_, skip_if_exist)
@@ -72,17 +70,11 @@ class _Databases:
             if skip_if_not_exist is False:
                 raise IndexError(f"Database cannot be removed. {key} does not exists")
 
-    def initialize(
-        self, initialization_arguments: dict[str, dict[str, Any]] | None = None
-    ) -> None:
+    def initialize(self, initialization_arguments: dict[str, dict[str, Any]] | None = None) -> None:
         for database in self._databases.values():
             if isinstance(database, AsyncDatabase):
                 continue
-            arguments = (
-                initialization_arguments.get(database.alias)
-                if initialization_arguments
-                else None
-            )
+            arguments = initialization_arguments.get(database.alias) if initialization_arguments else None
             if arguments:
                 database.initialize(**arguments)
             else:
@@ -93,11 +85,7 @@ class _Databases:
     ) -> None:
         for database in self._databases.values():
             if isinstance(database, AsyncDatabase):
-                arguments = (
-                    initialization_arguments.get(database.alias)
-                    if initialization_arguments
-                    else None
-                )
+                arguments = initialization_arguments.get(database.alias) if initialization_arguments else None
                 if arguments:
                     await database.initialize(**arguments)
                 else:
@@ -110,9 +98,8 @@ class _Databases:
     def clear_database(self, base_type: type[T], *, alias: str | None = None) -> None:
         key = get_key(base_type, alias)
         databases_ = self._databases
-        if key is not None:
-            if key not in self._databases:
-                raise IndexError(f"Database cannot clear the data. {key} not exists")
+        if key is not None and key not in self._databases:
+            raise IndexError(f"Database cannot clear the data. {key} not exists")
         for database in databases_.values():
             database.clear_data()
 

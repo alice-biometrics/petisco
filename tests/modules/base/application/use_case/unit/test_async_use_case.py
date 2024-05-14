@@ -98,10 +98,7 @@ class TestAsyncUseCase:
             class MyUseCase(AsyncUseCase):
                 pass
 
-            assert (
-                excinfo.value.message
-                == "Petisco AsyncUseCase must implement an execute method"
-            )
+            assert excinfo.value.message == "Petisco AsyncUseCase must implement an execute method"
 
     async def should_success_when_using_collaborators(self):
         class MyAppService(AsyncAppService):
@@ -109,9 +106,7 @@ class TestAsyncUseCase:
                 return isSuccess
 
         class MyUseCase(AsyncUseCase):
-            def __init__(
-                self, app_service_1: MyAppService, app_service_2: MyAppService
-            ):
+            def __init__(self, app_service_1: MyAppService, app_service_2: MyAppService):
                 self.app_service_1 = app_service_1
                 self.app_service_2 = app_service_2
 
@@ -120,8 +115,6 @@ class TestAsyncUseCase:
                 (await self.app_service_2.execute()).unwrap_or_return()
                 return isSuccess
 
-        result = await MyUseCase(
-            app_service_1=MyAppService(), app_service_2=MyAppService()
-        ).execute()
+        result = await MyUseCase(app_service_1=MyAppService(), app_service_2=MyAppService()).execute()
 
         result.assert_success()

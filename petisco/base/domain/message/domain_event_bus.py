@@ -18,13 +18,9 @@ class DomainEventBus(MessageBus[DomainEvent]):
         """
         raise NotImplementedError
 
-    def _check_is_domain_event(
-        self, domain_event: DomainEvent | list[DomainEvent]
-    ) -> None:
+    def _check_is_domain_event(self, domain_event: DomainEvent | list[DomainEvent]) -> None:
         if not domain_event or not issubclass(domain_event.__class__, DomainEvent):
-            raise TypeError(
-                f"{self.__class__.__name__} only publishes DomainEvent objects"
-            )
+            raise TypeError(f"{self.__class__.__name__} only publishes DomainEvent objects")
 
     @abstractmethod
     def close(self) -> None:

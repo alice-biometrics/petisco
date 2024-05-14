@@ -11,15 +11,11 @@ from tests.modules.extra.rabbitmq.mother.defaults import (
 class RedisDomainEventBusMother:
     @staticmethod
     def default(redis_database: Redis):
-        return RedisDomainEventBus(
-            DEFAULT_ORGANIZATION, DEFAULT_SERVICE, redis_database=redis_database
-        )
+        return RedisDomainEventBus(DEFAULT_ORGANIZATION, DEFAULT_SERVICE, redis_database=redis_database)
 
     @staticmethod
     def with_service(service: str, redis_database: Redis):
-        return RedisDomainEventBus(
-            DEFAULT_ORGANIZATION, service, redis_database=redis_database
-        )
+        return RedisDomainEventBus(DEFAULT_ORGANIZATION, service, redis_database=redis_database)
 
     @staticmethod
     def with_info_id(redis_database: Redis):

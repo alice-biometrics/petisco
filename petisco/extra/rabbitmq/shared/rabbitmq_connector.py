@@ -21,14 +21,10 @@ class RabbitMqConnector(metaclass=Singleton):
         self.password = os.environ.get("RABBITMQ_PASSWORD", "guest")
         self.host = os.environ.get("RABBITMQ_HOST", "localhost")
         self.port = os.environ.get("RABBITMQ_PORT", "5672")
-        self.num_max_retries_connection = int(
-            os.environ.get("RABBITMQ_CONNECTION_NUM_MAX_RETRIES", 15)
-        )
-        self.wait_seconds_retry = float(
-            os.environ.get("RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY", 1)
-        )
+        self.num_max_retries_connection = int(os.environ.get("RABBITMQ_CONNECTION_NUM_MAX_RETRIES", 15))
+        self.wait_seconds_retry = float(os.environ.get("RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY", 1))
         self.prefetch_count = int(os.environ.get("RABBITMQ_PREFETCH_COUNT", 1))
-        self.open_connections: Dict[str, BlockingConnection] = dict()
+        self.open_connections: Dict[str, BlockingConnection] = {}
 
     @staticmethod
     def ping() -> None:
@@ -85,9 +81,7 @@ class RabbitMqConnector(metaclass=Singleton):
         self._wait_for_open_connection(connection, key_connection)
 
         if not connection.is_open:
-            time_elapsed = round(
-                (self.wait_seconds_retry * self.num_max_retries_connection), 2
-            )
+            time_elapsed = round((self.wait_seconds_retry * self.num_max_retries_connection), 2)
             raise ConnectionError(
                 f"RabbitMQConnector: Impossible to obtain a open connection with host {self.host}. "
                 f"Retried {self.num_max_retries_connection} in ~{time_elapsed} seconds"
@@ -102,23 +96,20 @@ class RabbitMqConnector(metaclass=Singleton):
                     heartbeat=self.heartbeat,
                     host=self.host,
                     port=int(self.port),
-                    credentials=PlainCredentials(
-                        username=self.user, password=self.password
-                    ),
+                    credentials=PlainCredentials(username=self.user, password=self.password),
                     client_properties={"connection_name": connection_name},
                 )
             )
-        except:  # noqa E722
+        except Exception as exc:
             raise ConnectionError(
                 f"RabbitMQConnector: Impossible to connect to host {self.host}. "
-                f"Review the following envars: [RABBITMQ_USER, RABBITMQ_PASSWORD, RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_CONNECTION_NUM_MAX_RETRIES, RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY]"
-            )
+                "Review the following envars: [RABBITMQ_USER, RABBITMQ_PASSWORD, RABBITMQ_HOST, "
+                "RABBITMQ_PORT, RABBITMQ_CONNECTION_NUM_MAX_RETRIES, RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY]"
+            ) from exc
         return connection
 
-    def _wait_for_open_connection(
-        self, connection: BlockingConnection, key_connection: str
-    ) -> None:
-        for i in range(self.num_max_retries_connection):
+    def _wait_for_open_connection(self, connection: BlockingConnection, key_connection: str) -> None:
+        for _i in range(self.num_max_retries_connection):
             if connection.is_open:
                 self.open_connections[key_connection] = connection
                 break

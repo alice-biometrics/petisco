@@ -27,9 +27,7 @@ class RabbitMqCommandBus(CommandBus):
         self,
         organization: str,
         service: str,
-        connector: Union[
-            RabbitMqConnector, RabbitMqConsumerConnector
-        ] = RabbitMqConnector(),
+        connector: Union[RabbitMqConnector, RabbitMqConsumerConnector] = RabbitMqConnector(),
         fallback: Union[CommandBus, None] = None,
     ):
         self.connector = connector
@@ -58,23 +56,17 @@ class RabbitMqCommandBus(CommandBus):
                 self._check_is_command(command)
                 command = command.update_meta(meta)
                 self.publisher.execute(channel, command)
-                if channel.is_open and not isinstance(
-                    self.connector, RabbitMqConsumerConnector
-                ):
+                if channel.is_open and not isinstance(self.connector, RabbitMqConsumerConnector):
                     channel.close()
                 dispatched_commands.append(command)
         except ChannelClosedByBroker:
-            unpublished_commands = [
-                command for command in commands if command not in dispatched_commands
-            ]
+            unpublished_commands = [command for command in commands if command not in dispatched_commands]
             self._retry(unpublished_commands)
         except Exception as exc:  # noqa
             if not self.fallback:
                 raise exc
 
-            unpublished_commands = [
-                command for command in commands if command not in dispatched_commands
-            ]
+            unpublished_commands = [command for command in commands if command not in dispatched_commands]
             self.fallback.dispatch(unpublished_commands)
 
     def _retry(self, command: Union[Command, List[Command]]) -> None:

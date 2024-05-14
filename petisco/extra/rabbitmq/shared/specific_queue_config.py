@@ -8,7 +8,7 @@ class SpecificQueueConfig:
         kdict: Dict[str, Any], default_retry_ttl: int, default_main_ttl: int
     ) -> "SpecificQueueConfig":
         return SpecificQueueConfig(
-            wildcard=kdict.get("when_queue_contains", None),
+            wildcard=kdict.get("when_queue_contains"),
             specific_retry_ttl=kdict.get("use", {}).get("retry_ttl", default_retry_ttl),
             specific_main_ttl=kdict.get("use", {}).get("main_ttl", default_main_ttl),
         )

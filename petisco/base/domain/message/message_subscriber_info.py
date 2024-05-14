@@ -17,9 +17,7 @@ class MessageSubscriberInfo(BaseModel):
     @staticmethod
     def from_class_type(class_type: type[Message]) -> MessageSubscriberInfo:
         message_name = (  # noqa
-            re.sub(r"(?<!^)(?=[A-Z])", "_", class_type.__name__)
-            .lower()
-            .replace("_", ".")
+            re.sub(r"(?<!^)(?=[A-Z])", "_", class_type.__name__).lower().replace("_", ".")
         )
 
         message_version = 1

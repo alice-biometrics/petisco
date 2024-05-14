@@ -23,7 +23,7 @@ def get_application(module_path: str):
 
     try:
         module_name = importlib.import_module(module_path)
-        application = getattr(module_name, "application")
+        application = module_name.application
         return application
     except Exception as exc:  # noqa
         print(
@@ -119,9 +119,7 @@ def show_dependencies(application) -> None:
                 implementations += f"{key}: {builder.klass.__name__}\n"
             implementations = implementations[:-1]
 
-            table.add_row(
-                type, default_implementation, implementations, dependency.envar_modifier
-            )
+            table.add_row(type, default_implementation, implementations, dependency.envar_modifier)
 
         console.print(table)
 
@@ -132,9 +130,7 @@ def show_configurers(application) -> None:
     if is_rich_available() is False:
         print("Configurers:")
         for configurer in configurers:
-            print(
-                f"{configurer.__class__.__name__} -> {configurer.execute_after_dependencies=}"
-            )
+            print(f"{configurer.__class__.__name__} -> {configurer.execute_after_dependencies=}")
         encourage_rich_installation()
     else:
         from rich.console import Console
@@ -290,9 +286,7 @@ def main() -> None:
         description="petisco dev tools to inspect your application",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument(
-        "-i", "--info", action="store_true", help="show petisco app info."
-    )
+    parser.add_argument("-i", "--info", action="store_true", help="show petisco app info.")
     parser.add_argument(
         "-deps",
         "--dependencies",

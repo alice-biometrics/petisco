@@ -46,13 +46,8 @@ class MessageBus(ABC, Generic[TypeMessage]):
         """
         raise NotImplementedError
 
-    def _check_input(
-        self, message: TypeMessage | list[TypeMessage]
-    ) -> list[TypeMessage]:  # noqa
-        if isinstance(message, list):
-            messages = message
-        else:
-            messages = [message]
+    def _check_input(self, message: TypeMessage | list[TypeMessage]) -> list[TypeMessage]:  # noqa
+        messages = message if isinstance(message, list) else [message]
         return messages
 
     @abstractmethod

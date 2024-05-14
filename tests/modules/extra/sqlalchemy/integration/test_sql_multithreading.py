@@ -16,9 +16,7 @@ from tests.modules.extra.decorators import testing_with_mysql
 @pytest.mark.integration
 class TestSqlMulithreading:
     def should_sql_executor_with_sqlite(self):
-        connection = SqliteConnection.create(
-            server_name="sqlite", database_name="petisco.db"
-        )
+        connection = SqliteConnection.create(server_name="sqlite", database_name="petisco.db")
         database = SqlDatabase(connection=connection)
         database.initialize()
 
@@ -40,9 +38,7 @@ class TestSqlMulithreading:
 
         number_of_threads = 20
 
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=number_of_threads
-        ) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=number_of_threads) as executor:
             for num_thread in range(number_of_threads):
                 executor.submit(execute_sql_statement, num_thread)
 
@@ -70,9 +66,7 @@ class TestSqlMulithreading:
                 )
                 sql_executor.execute_statement("SELECT * FROM Client")
                 sleep(1.0)
-                sql_executor.execute_statement(
-                    f'DELETE FROM Client WHERE client_id="{uuid}";'
-                )
+                sql_executor.execute_statement(f'DELETE FROM Client WHERE client_id="{uuid}";')
                 return True
             except Exception as exp:
                 print(exp)

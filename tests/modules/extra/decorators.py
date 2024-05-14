@@ -20,9 +20,7 @@ from petisco.extra.sqlalchemy.sql.mysql_is_running_locally import (
 
 
 def testing_with_mysql(func):
-    @pytest.mark.skipif(
-        not mysql_is_running_locally(), reason="MySQL is not running locally"
-    )
+    @pytest.mark.skipif(not mysql_is_running_locally(), reason="MySQL is not running locally")
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any):
         return func(*args, **kwargs)
@@ -31,9 +29,7 @@ def testing_with_mysql(func):
 
 
 def testing_with_elastic(func):
-    @pytest.mark.skipif(
-        not elastic_is_running_locally(), reason="Elastic is not running locally"
-    )
+    @pytest.mark.skipif(not elastic_is_running_locally(), reason="Elastic is not running locally")
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any):
         return func(*args, **kwargs)

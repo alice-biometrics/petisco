@@ -44,9 +44,7 @@ class TestRabbitMqConfigurerInnerBuses:
             organization=self.inner_organization,
             service=self.inner_service,
         )
-        Container.set_dependencies(
-            store_dependencies + main_dependencies + inner_dependencies
-        )
+        Container.set_dependencies(store_dependencies + main_dependencies + inner_dependencies)
 
     def teardown_method(self):
         Container.clear()
@@ -56,11 +54,9 @@ class TestRabbitMqConfigurerInnerBuses:
         spy_store_consumer = SpyMessages()
         spy_derived_bus_handler = SpyMessages()
 
-        class MainEvent(DomainEvent):
-            ...
+        class MainEvent(DomainEvent): ...
 
-        class DerivedEvent(DomainEvent):
-            ...
+        class DerivedEvent(DomainEvent): ...
 
         main_event = MainEvent()
         derived_event = DerivedEvent()

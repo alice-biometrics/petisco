@@ -53,18 +53,11 @@ class TestFastApiController:
             as_fastapi(result)
 
         apm_set_custom_context_mock.assert_called()
-        apm_internal_error_message = apm_set_custom_context_mock.call_args[0][0][
-            "internal_error_message"
-        ]
+        apm_internal_error_message = apm_set_custom_context_mock.call_args[0][0]["internal_error_message"]
         logger_error_mock.assert_called()
         logger_error_message = logger_error_mock.call_args[0][0]
-        assert (
-            "test_error" in logger_error_message
-            and "test_error" in apm_internal_error_message
-        )
-        assert (
-            __name__ in logger_error_message and __name__ in apm_internal_error_message
-        )
+        assert "test_error" in logger_error_message and "test_error" in apm_internal_error_message
+        assert __name__ in logger_error_message and __name__ in apm_internal_error_message
 
     def should_return_tranformed_result_when_success_handler(self):
         expected_result = {"message": "ok"}
@@ -162,13 +155,11 @@ class TestFastApiController:
 
         with patch.object(
             PrintMiddleware, "before", return_value=isSuccess
-        ) as mock_middleware_before:
-            with patch.object(
-                PrintMiddleware, "after", return_value=isSuccess
-            ) as mock_middleware_after:
-                with pytest.raises(HTTPException):
-                    result = MyController().execute()
-                    as_fastapi(result)
+        ) as mock_middleware_before, patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after, pytest.raises(HTTPException):
+            result = MyController().execute()
+            as_fastapi(result)
 
         mock_middleware_before.assert_called()
         mock_middleware_after.assert_called()
@@ -178,9 +169,7 @@ class TestFastApiController:
             class Config:
                 middlewares = [PrintMiddleware]
                 success_handler = lambda result: FASTAPI_DEFAULT_RESPONSE  # noqa E731
-                error_map = {
-                    NotFound: HttpError(status_code=404, detail="Task not Found")
-                }
+                error_map = {NotFound: HttpError(status_code=404, detail="Task not Found")}
 
             def execute(self) -> BoolResult:
                 return isSuccess
@@ -195,12 +184,8 @@ class TestFastApiController:
             (Failure(NotFound()), HTTPException(404, detail="Task not Found")),
             (Failure(AlreadyExists()), HTTPException(409, detail="AlreadyExists")),
             (
-                Failure(
-                    AlreadyExists(uuid_value="76f5994d-b16f-45b0-b3e4-e531f784f801")
-                ),
-                HTTPException(
-                    409, detail="AlreadyExists (76f5994d-b16f-45b0-b3e4-e531f784f801)"
-                ),
+                Failure(AlreadyExists(uuid_value="76f5994d-b16f-45b0-b3e4-e531f784f801")),
+                HTTPException(409, detail="AlreadyExists (76f5994d-b16f-45b0-b3e4-e531f784f801)"),
             ),
             (
                 Failure(
@@ -218,11 +203,7 @@ class TestFastApiController:
                 ),
             ),
             (
-                Failure(
-                    AlreadyExists(
-                        additional_info={"patterns": "Products", "table": "UserProduct"}
-                    )
-                ),
+                Failure(AlreadyExists(additional_info={"patterns": "Products", "table": "UserProduct"})),
                 HTTPException(
                     409,
                     detail="AlreadyExists [{'patterns': 'Products', 'table': 'UserProduct'}]",
@@ -237,9 +218,7 @@ class TestFastApiController:
             class Config:
                 middlewares = [PrintMiddleware]
                 success_handler = lambda result: FASTAPI_DEFAULT_RESPONSE  # noqa E731
-                error_map = {
-                    NotFound: HttpError(status_code=404, detail="Task not Found")
-                }
+                error_map = {NotFound: HttpError(status_code=404, detail="Task not Found")}
 
             def execute(self) -> BoolResult:
                 return result
@@ -285,9 +264,7 @@ class TestFastApiController:
             class Config:
                 success_handler = lambda result: FASTAPI_DEFAULT_RESPONSE  # noqa E731
                 failure_handler = lambda result: FASTAPI_DEFAULT_RESPONSE  # noqa E731
-                error_map = {
-                    NotFound: HttpError(status_code=404, detail="Task not Found")
-                }
+                error_map = {NotFound: HttpError(status_code=404, detail="Task not Found")}
 
             def execute(self) -> BoolResult:
                 return result
@@ -308,12 +285,8 @@ class TestFastApiController:
         class MyController(FastAPIController):
             class Config:
                 success_handler = lambda result: FASTAPI_DEFAULT_RESPONSE  # noqa E731
-                failure_handler = (
-                    lambda result, error_map: FASTAPI_DEFAULT_RESPONSE
-                )  # noqa E731
-                error_map = {
-                    NotFound: HttpError(status_code=404, detail="Task not Found")
-                }
+                failure_handler = lambda result, error_map: FASTAPI_DEFAULT_RESPONSE  # noqa E731
+                error_map = {NotFound: HttpError(status_code=404, detail="Task not Found")}
 
             def execute(self) -> BoolResult:
                 return result
@@ -343,9 +316,7 @@ class TestFastApiController:
     def should_return_responses_when_error_map_is_defined(self):
         class MyController(FastAPIController):
             class Config:
-                error_map = {
-                    NotFound: HttpError(status_code=404, detail="Task not Found")
-                }
+                error_map = {NotFound: HttpError(status_code=404, detail="Task not Found")}
 
             def execute(self) -> BoolResult:
                 return isSuccess

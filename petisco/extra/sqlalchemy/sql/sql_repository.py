@@ -36,11 +36,9 @@ class SqlRepository(Repository):
     ) -> BoolResult:
         if model:
             error = (
-                AggregateAlreadyExistError(
-                    aggregate_id, cls.__name__, model.__tablename__
-                )
-                if not result_error
-                else result_error
+                result_error
+                if result_error
+                else AggregateAlreadyExistError(aggregate_id, cls.__name__, model.__tablename__)
             )
             return Failure(error)
         return isSuccess
@@ -50,23 +48,13 @@ class SqlRepository(Repository):
         cls, model: Any, aggregate_id: Uuid, result_error: Error | None = None
     ) -> BoolResult:
         if not model:
-            error = (
-                AggregateNotFoundError(aggregate_id, cls.__name__)
-                if not result_error
-                else result_error
-            )
+            error = result_error if result_error else AggregateNotFoundError(aggregate_id, cls.__name__)
             return Failure(error)
         return isSuccess
 
     @classmethod
-    def fail_if_aggregates_not_found(
-        cls, model: Any, result_error: Error | None = None
-    ) -> BoolResult:
+    def fail_if_aggregates_not_found(cls, model: Any, result_error: Error | None = None) -> BoolResult:
         if not model:
-            error = (
-                AggregatesNotFoundError(cls.__name__)
-                if not result_error
-                else result_error
-            )
+            error = result_error if result_error else AggregatesNotFoundError(cls.__name__)
             return Failure(error)
         return isSuccess

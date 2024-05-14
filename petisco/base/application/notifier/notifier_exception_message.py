@@ -37,9 +37,7 @@ class NotifierExceptionMessage:
         self.meta = {**self.meta, **meta}  # type: ignore
 
     @staticmethod
-    def from_unknown_error(
-        unknown_error: UnknownError, title: str
-    ) -> "NotifierExceptionMessage":
+    def from_unknown_error(unknown_error: UnknownError, title: str) -> "NotifierExceptionMessage":
         return NotifierExceptionMessage(
             title=title,
             executor=unknown_error.executor,

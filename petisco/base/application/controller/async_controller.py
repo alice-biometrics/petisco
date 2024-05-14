@@ -13,8 +13,8 @@ from petisco.base.misc.result_mapper import ResultMapper, default_failure_handle
 class AsyncController(metaclass=MetaController):
     """
     A base class for creating async controllers.
-    Inherit from this class to convert to domain the request values, configure middlewares and instantiate and execute
-     a UseCase.
+    Inherit from this class to convert to domain the request values,
+    configure middlewares and instantiate and execute a UseCase.
     """
 
     @staticmethod
@@ -30,7 +30,5 @@ class AsyncController(metaclass=MetaController):
         )
 
     @abstractmethod
-    async def execute(
-        self, *args: tuple[str, ...], **kwargs: dict[str, Any]
-    ) -> AnyResult:
+    async def execute(self, *args: tuple[str, ...], **kwargs: dict[str, Any]) -> AnyResult:
         return NotImplementedMethodError

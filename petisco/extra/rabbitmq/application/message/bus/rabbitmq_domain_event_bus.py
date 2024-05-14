@@ -28,9 +28,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
         self,
         organization: str,
         service: str,
-        connector: Union[
-            RabbitMqConnector, RabbitMqConsumerConnector
-        ] = RabbitMqConnector(),
+        connector: Union[RabbitMqConnector, RabbitMqConsumerConnector] = RabbitMqConnector(),
         fallback: Union[DomainEventBus, None] = None,
     ):
         self.connector = connector
@@ -58,9 +56,7 @@ class RabbitMqDomainEventBus(DomainEventBus):
                 domain_event = domain_event.update_meta(meta)
                 self.publisher.execute(channel, domain_event)
                 published_domain_event.append(domain_event)
-            if channel.is_open and not isinstance(
-                self.connector, RabbitMqConsumerConnector
-            ):
+            if channel.is_open and not isinstance(self.connector, RabbitMqConsumerConnector):
                 channel.close()
         except ChannelClosedByBroker:
             unpublished_domain_events = [

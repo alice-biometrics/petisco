@@ -23,9 +23,7 @@ class QueueConfig:
         )
 
     @staticmethod
-    def default(
-        default_retry_ttl: int = 5000, default_main_ttl: int = 5000
-    ) -> "QueueConfig":
+    def default(default_retry_ttl: int = 5000, default_main_ttl: int = 5000) -> "QueueConfig":
         return QueueConfig(
             default_retry_ttl=default_retry_ttl,
             default_main_ttl=default_main_ttl,
@@ -43,10 +41,7 @@ class QueueConfig:
         self.specific_queue_configs = specific_queue_configs
 
     def info(self) -> Dict[str, Any]:
-        return {
-            name: specific_config.info()
-            for name, specific_config in self.specific_queue_configs.items()
-        }
+        return {name: specific_config.info() for name, specific_config in self.specific_queue_configs.items()}
 
     def get_retry_ttl(self, queue_name: str) -> Union[int, None]:
         for queue_config in self.specific_queue_configs.values():

@@ -8,7 +8,7 @@ from tests.modules.extra.rabbitmq.mother.defaults import (
 class RabbitMqDeclarerMother:
     @staticmethod
     def default(connector: RabbitMqConnector = None):
-        connector = RabbitMqConnector() if not connector else connector
+        connector = connector if connector else RabbitMqConnector()
         return RabbitMqDeclarer(
             connector=connector,
             channel_name=f"{DEFAULT_ORGANIZATION}.{DEFAULT_SERVICE}",

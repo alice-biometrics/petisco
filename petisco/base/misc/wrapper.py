@@ -34,7 +34,7 @@ def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:
             except TypeError as exc:
                 raise TypeError(
                     f"Middlewares cannot have configurable constructor, please review your petisco extension.\n{str(exc)}"
-                )
+                ) from exc
         else:
             middlewares_instances.append(middlewares_config)
 
@@ -43,7 +43,7 @@ def get_middleware_instances(config: Dict[str, Any]) -> List[Middleware]:
 
 def update_middlewares(config: Dict[str, Any], middlewares: List[Middleware]) -> None:
     if config is not None and hasattr(config, "middlewares"):
-        setattr(config, "middlewares", middlewares)
+        config.middlewares = middlewares
 
 
 def get_global_middlewares() -> List[Middleware]:
@@ -66,15 +66,11 @@ def get_middlewares_configuration_from_environment() -> List[Middleware]:
             )
         return my_type
 
-    default_middlewares_names: Union[str, None] = os.getenv(
-        "PETISCO_DEFAULT_MIDDLEWARES"
-    )
+    default_middlewares_names: Union[str, None] = os.getenv("PETISCO_DEFAULT_MIDDLEWARES")
     if not default_middlewares_names:
         return []
     default_middlewares_names_list = default_middlewares_names.split(",")
-    return [
-        gettype(middleware_name) for middleware_name in default_middlewares_names_list
-    ]
+    return [gettype(middleware_name) for middleware_name in default_middlewares_names_list]
 
 
 def wrapper(
@@ -132,8 +128,7 @@ def wrapper(
 
         if isinstance(result.value, CriticalError) and len(arguments) > 0:
             formatted_args = {
-                k: str(v) if type(v) is not bytes else "bytes"
-                for k, v in arguments.items()
+                k: str(v) if not isinstance(v, bytes) else "bytes" for k, v in arguments.items()
             }
             result.value.set_additional_info(formatted_args)
 
@@ -154,9 +149,7 @@ def wrapper(
                 try:
                     middleware.after(result)
                 except Exception as exception:
-                    logger.error(
-                        f"Error in the {wrapped_class_name} middlewares (after)."
-                    )
+                    logger.error(f"Error in the {wrapped_class_name} middlewares (after).")
                     logger.exception(exception)
 
         update_middlewares(config, middlewares)

@@ -34,11 +34,7 @@ class TestRabbitMqMessageConsumerStartAndStop:
             return isSuccess
 
         bus = RabbitMqDomainEventBusMother.default()
-        subscribers = [
-            MessageSubscriberMother.all_messages_subscriber(
-                handler=assert_consumer_event_store
-            )
-        ]
+        subscribers = [MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_event_store)]
 
         configurer = RabbitMqMessageConfigurerMother.default()
         configurer.configure_subscribers(subscribers)
@@ -82,11 +78,7 @@ class TestRabbitMqMessageConsumerStartAndStop:
 
         bus = RabbitMqDomainEventBusMother.default()
 
-        subscribers = [
-            MessageSubscriberMother.all_messages_subscriber(
-                handler=assert_consumer_event_store
-            )
-        ]
+        subscribers = [MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_event_store)]
 
         configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
         configurer.configure_subscribers(subscribers)
@@ -111,7 +103,7 @@ class TestRabbitMqMessageConsumerStartAndStop:
         consumer.unsubscribe_subscriber_on_queue("store")
 
         # Send 5 Domain Events (Expected to go to dead_letter.store Queue)
-        for i in range(5):
+        for _i in range(5):
             bus.publish(DomainEventUserCreatedMother.random())
         sleep(5.0)
 
@@ -144,11 +136,7 @@ class TestRabbitMqMessageConsumerStartAndStop:
 
         bus = RabbitMqDomainEventBusMother.default()
 
-        subscribers = [
-            MessageSubscriberMother.all_messages_subscriber(
-                handler=assert_consumer_event_store
-            )
-        ]
+        subscribers = [MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_event_store)]
 
         configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
         configurer.configure_subscribers(subscribers)
@@ -164,19 +152,19 @@ class TestRabbitMqMessageConsumerStartAndStop:
         )
         consumer.start()
 
-        for i in range(5):
+        for _i in range(5):
             bus.publish(DomainEventUserCreatedMother.random())
         sleep(5.0)
 
         consumer.unsubscribe_subscriber_on_queue("dead_letter.store")
 
-        for i in range(5):
+        for _i in range(5):
             bus.publish(DomainEventUserCreatedMother.random())
         sleep(5.0)
 
         consumer.resume_subscriber_on_queue("dead_letter.store")
 
-        for i in range(5):
+        for _i in range(5):
             bus.publish(DomainEventUserCreatedMother.random())
         sleep(5.0)
 
@@ -190,11 +178,7 @@ class TestRabbitMqMessageConsumerStartAndStop:
         def assert_consumer_event_store(domain_event: DomainEvent) -> BoolResult:
             return isSuccess
 
-        subscribers = [
-            MessageSubscriberMother.all_messages_subscriber(
-                handler=assert_consumer_event_store
-            )
-        ]
+        subscribers = [MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_event_store)]
 
         configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
         configurer.configure_subscribers(subscribers)
@@ -219,11 +203,7 @@ class TestRabbitMqMessageConsumerStartAndStop:
         def assert_consumer_event_store(domain_event: DomainEvent) -> BoolResult:
             return isSuccess
 
-        subscribers = [
-            MessageSubscriberMother.all_messages_subscriber(
-                handler=assert_consumer_event_store
-            )
-        ]
+        subscribers = [MessageSubscriberMother.all_messages_subscriber(handler=assert_consumer_event_store)]
 
         configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
         configurer.configure_subscribers(subscribers)

@@ -15,13 +15,11 @@ class RabbitMqMessageConsumerLogger:
         self.logger = logger
 
     def _get_base_message(self, handler: Callable[..., Any]) -> LogMessage:
-        return LogMessage(
-            layer="rabbitmq_message_consumer", operation=f"{handler.__name__}"
-        )
+        return LogMessage(layer="rabbitmq_message_consumer", operation=f"{handler.__name__}")
 
     def _get_event_handler_name(self, handler: Callable[..., Any]) -> str:
         handler_name = getattr(handler, "__name__", repr(handler))
-        handler_module = getattr(handler, "__module__") + "."
+        handler_module = handler.__module__ + "."
         return f"{handler_module}{handler_name}"
 
     def log_nack_simulation(

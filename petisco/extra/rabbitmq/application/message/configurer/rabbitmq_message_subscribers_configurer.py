@@ -25,15 +25,9 @@ class RabbitMqMessageSubcribersConfigurer:
     ) -> None:
         self._connector = connector
         self._exchange_name = f"{organization}.{service}"
-        self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(
-            self._exchange_name
-        )
-        self._dead_letter_exchange_name = RabbitMqExchangeNameFormatter.dead_letter(
-            self._exchange_name
-        )
-        self.rabbitmq = RabbitMqDeclarer(
-            connector=self._connector, channel_name=self._exchange_name
-        )
+        self._retry_exchange_name = RabbitMqExchangeNameFormatter.retry(self._exchange_name)
+        self._dead_letter_exchange_name = RabbitMqExchangeNameFormatter.dead_letter(self._exchange_name)
+        self.rabbitmq = RabbitMqDeclarer(connector=self._connector, channel_name=self._exchange_name)
         self._configured_subscribers: List[Any] = []
         self.queue_config = queue_config
 
@@ -76,15 +70,11 @@ class RabbitMqMessageSubcribersConfigurer:
                 queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format(
                     subscriber_info, exchange_name=self._exchange_name
                 )
-                retry_queue_name = (
-                    RabbitMqMessageSubscriberQueueNameFormatter.format_retry(
-                        subscriber_info, exchange_name=self._exchange_name
-                    )
+                retry_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_retry(
+                    subscriber_info, exchange_name=self._exchange_name
                 )
-                dead_letter_queue_name = (
-                    RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
-                        subscriber_info, exchange_name=self._exchange_name
-                    )
+                dead_letter_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
+                    subscriber_info, exchange_name=self._exchange_name
                 )
 
                 suffix = subscriber.get_subscriber_name()
@@ -112,15 +102,11 @@ class RabbitMqMessageSubcribersConfigurer:
                 base_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format(
                     subscriber_info, exchange_name=exchange_name
                 )
-                base_retry_queue_name = (
-                    RabbitMqMessageSubscriberQueueNameFormatter.format_retry(
-                        subscriber_info, exchange_name=exchange_name
-                    )
+                base_retry_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_retry(
+                    subscriber_info, exchange_name=exchange_name
                 )
-                base_dead_letter_queue_name = (
-                    RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
-                        subscriber_info, exchange_name=exchange_name
-                    )
+                base_dead_letter_queue_name = RabbitMqMessageSubscriberQueueNameFormatter.format_dead_letter(
+                    subscriber_info, exchange_name=exchange_name
                 )
                 routing_key = base_queue_name
                 suffix = subscriber.get_subscriber_name()

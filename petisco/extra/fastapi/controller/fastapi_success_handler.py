@@ -9,11 +9,7 @@ from petisco.extra.fastapi.controller.fastapi_default_response import (
 
 def fastapi_success_handler(result: AnyResult) -> Dict[str, Any]:
     try:
-        response = (
-            FASTAPI_DEFAULT_RESPONSE
-            if result.value is True
-            else {"result": result.value}
-        )
+        response = FASTAPI_DEFAULT_RESPONSE if result.value is True else {"result": result.value}
     except Exception:  # noqa
         response = FASTAPI_DEFAULT_RESPONSE
 

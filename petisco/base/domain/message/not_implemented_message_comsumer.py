@@ -13,9 +13,7 @@ class NotImplementedMessageConsumer(MessageConsumer[Any]):
     def add_subscribers(self, subscribers: list[MessageSubscriber]) -> None:
         pass
 
-    def add_subscriber_on_dead_letter(
-        self, subscriber: type[MessageSubscriber]
-    ) -> None:
+    def add_subscriber_on_dead_letter(self, subscriber: type[MessageSubscriber]) -> None:
         pass
 
     def add_subscriber_on_queue(

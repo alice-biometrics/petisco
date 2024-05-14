@@ -24,9 +24,7 @@ DOMAIN_EVENTS = [
 @pytest.mark.unit
 class TestDomainEvent:
     @pytest.mark.parametrize("domain_event", DOMAIN_EVENTS)
-    def should_create_domain_event_input_and_output(
-        self, domain_event: DomainEvent
-    ):  # noqa
+    def should_create_domain_event_input_and_output(self, domain_event: DomainEvent):  # noqa
         domain_event_json = domain_event.format_json()
         retrieved_domain_event = DomainEvent.from_format(domain_event_json)
         assert domain_event == retrieved_domain_event
@@ -39,28 +37,22 @@ class TestDomainEvent:
 
         domain_event_json = domain_event.format_json()
 
-        retrieved_domain_event = MyDomainEvent.from_format(
-            domain_event_json, target_type=MyDomainEvent
-        )
+        retrieved_domain_event = MyDomainEvent.from_format(domain_event_json, target_type=MyDomainEvent)
 
         assert type(domain_event) is type(domain_event)
         assert domain_event == retrieved_domain_event
         assert id(domain_event) != id(retrieved_domain_event)
-        assert (
-            domain_event.my_specific_value == retrieved_domain_event.my_specific_value
-        )
+        assert domain_event.my_specific_value == retrieved_domain_event.my_specific_value
 
     def should_create_domain_event_with_required_values(self):  # noqa
         domain_event = MyDomainEvent(my_specific_value="whatever")
 
         assert hasattr(domain_event, "my_specific_value")
         assert hasattr(domain_event, "_message_attributes")
-        assert getattr(domain_event, "_message_attributes") == {
-            "my_specific_value": "whatever"
-        }
+        assert domain_event._message_attributes == {"my_specific_value": "whatever"}
         assert hasattr(domain_event, "_message_id")
         assert hasattr(domain_event, "_message_type")
-        assert getattr(domain_event, "_message_type") == "domain_event"
+        assert domain_event._message_type == "domain_event"
         assert hasattr(domain_event, "_message_version")
         assert hasattr(domain_event, "_message_occurred_on")
         assert hasattr(domain_event, "_message_name")
@@ -152,8 +144,7 @@ class TestDomainEvent:
     def should_create_domain_event_with_correct_name_defined_inside_a_function(  # noqa
         self,
     ):
-        class MyInnerDomainEvent(DomainEvent):
-            ...
+        class MyInnerDomainEvent(DomainEvent): ...
 
         domain_event = MyInnerDomainEvent()
         assert domain_event.get_message_name() == "my.inner.domain.event"

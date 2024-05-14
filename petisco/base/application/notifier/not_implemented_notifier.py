@@ -9,7 +9,5 @@ class NotImplementedNotifier(Notifier):
     def publish(self, message: NotifierMessage) -> None:
         pass
 
-    def publish_exception(
-        self, notifier_exception_message: NotifierExceptionMessage
-    ) -> None:
+    def publish_exception(self, notifier_exception_message: NotifierExceptionMessage) -> None:
         pass

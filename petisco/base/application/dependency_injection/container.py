@@ -12,8 +12,8 @@ T = TypeVar("T", bound=ABC)
 
 class Container(metaclass=Singleton):
     """
-    Singleton which contains set dependencies (List[Dependency)) prepared to be instantiated in order to be injected
-     in the UseCases of our application
+    Singleton which contains set dependencies (List[Dependency)) prepared to
+    be instantiated in order to be injected in the UseCases of our application
     """
 
     def __init__(self) -> None:
@@ -27,11 +27,7 @@ class Container(metaclass=Singleton):
 
         container = Container()
 
-        key = (
-            base_type.__name__
-            if not alias
-            else f'{base_type.__name__} (alias="{alias}")'
-        )
+        key = base_type.__name__ if not alias else f'{base_type.__name__} (alias="{alias}")'
         dependency = container.dependencies.get(key)
         if dependency is None:
             raise IndexError(
@@ -41,9 +37,7 @@ class Container(metaclass=Singleton):
         return instance
 
     @staticmethod
-    def set_dependencies(
-        dependencies: list[Dependency[Any]] | None = None, overwrite: bool = False
-    ) -> None:
+    def set_dependencies(dependencies: list[Dependency[Any]] | None = None, overwrite: bool = False) -> None:
         """
         Set dependencies from a list of them.
         """
@@ -59,9 +53,7 @@ class Container(metaclass=Singleton):
         keys = list(Container().dependencies.keys())
         return keys
 
-    def _set_dependencies(
-        self, input_dependencies: list[Dependency[Any]], overwrite: bool = False
-    ) -> None:
+    def _set_dependencies(self, input_dependencies: list[Dependency[Any]], overwrite: bool = False) -> None:
         for dependency in input_dependencies:
             key = dependency.get_key()
 

@@ -7,9 +7,7 @@ from petisco.base.domain.errors.defaults.invalid_value_object import InvalidValu
 TypeValueObject = TypeVar("TypeValueObject", bound="ValueObject")
 
 
-ValueObjectSerializer = PlainSerializer(
-    lambda value_object: value_object.value if value_object else None
-)
+ValueObjectSerializer = PlainSerializer(lambda value_object: value_object.value if value_object else None)
 
 
 class ValueObject(BaseModel):

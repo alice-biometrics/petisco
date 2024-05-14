@@ -27,8 +27,8 @@ class Application(BaseSettings):
     environment: str = Field(default="local", validation_alias="ENVIRONMENT")
     dependencies_provider: Callable[..., List[Dependency]] = lambda: []
     configurers: List[ApplicationConfigurer] = []
-    shared_error_map: Union[ErrorMap, None] = Field(default=dict())
-    shared_middlewares: Union[List[Type[Middleware]], None] = Field(default=list())
+    shared_error_map: Union[ErrorMap, None] = Field(default={})
+    shared_middlewares: Union[List[Type[Middleware]], None] = Field(default=[])
 
     def __init__(self, **data: Any) -> None:
         info = ApplicationInfo(
@@ -37,8 +37,8 @@ class Application(BaseSettings):
             version=data["version"],
             deployed_at=data.get("deployed_at"),
             force_recreation=True,
-            shared_error_map=data.get("shared_error_map", dict()),
-            shared_middlewares=data.get("shared_middlewares", list()),
+            shared_error_map=data.get("shared_error_map", {}),
+            shared_middlewares=data.get("shared_middlewares", []),
         )
         deployed_at = info.deployed_at.strftime("%m/%d/%Y, %H:%M:%S")
         logger.info(
@@ -46,21 +46,12 @@ class Application(BaseSettings):
         )
         super().__init__(**data)
 
-    def configure(
-        self, testing: bool = False, overwrite_dependencies: bool = False
-    ) -> None:
+    def configure(self, testing: bool = False, overwrite_dependencies: bool = False) -> None:
         before_dependencies_configurers = [
-            configurer
-            for configurer in self.configurers
-            if configurer.execute_after_dependencies is False
+            configurer for configurer in self.configurers if configurer.execute_after_dependencies is False
         ]
-        name_configurers = [
-            configurer.__class__.__name__
-            for configurer in before_dependencies_configurers
-        ]
-        logger.info(
-            f"Application: running configurators before setting dependencies {name_configurers}..."
-        )
+        name_configurers = [configurer.__class__.__name__ for configurer in before_dependencies_configurers]
+        logger.info(f"Application: running configurators before setting dependencies {name_configurers}...")
         for configurer in before_dependencies_configurers:
             configurer.execute(testing)
 
@@ -68,18 +59,11 @@ class Application(BaseSettings):
         Container.set_dependencies(self.get_dependencies(), overwrite_dependencies)
 
         after_dependencies_configurers = [
-            configurer
-            for configurer in self.configurers
-            if configurer.execute_after_dependencies is True
+            configurer for configurer in self.configurers if configurer.execute_after_dependencies is True
         ]
 
-        name_configurers = [
-            configurer.__class__.__name__
-            for configurer in after_dependencies_configurers
-        ]
-        logger.info(
-            f"Application: running configurators after setting dependencies {name_configurers}..."
-        )
+        name_configurers = [configurer.__class__.__name__ for configurer in after_dependencies_configurers]
+        logger.info(f"Application: running configurators after setting dependencies {name_configurers}...")
         for configurer in after_dependencies_configurers:
             configurer.execute(testing)
 
@@ -88,17 +72,14 @@ class Application(BaseSettings):
     def get_dependencies(self) -> List[Dependency]:
         # TODO: review default dependencies in v2
 
-        default_dependencies = (
-            get_default_message_dependencies() + get_default_notifier_dependencies()
-        )
-        default_dependencies_dict = {
-            dependency.get_key(): dependency for dependency in default_dependencies
-        }
+        default_dependencies = get_default_message_dependencies() + get_default_notifier_dependencies()
+        default_dependencies_dict = {dependency.get_key(): dependency for dependency in default_dependencies}
         provided_dependencies = self.dependencies_provider()
         provided_dependencies_dict = {
             dependency.get_key(): dependency for dependency in provided_dependencies
         }
-        # This merged_dependencies will give preference to provided_dependencies_dict over default_dependencies_dict
+        # This merged_dependencies will give preference to provided_dependencies_dict
+        # over default_dependencies_dict
         merged_dependencies = {
             **default_dependencies_dict,
             **provided_dependencies_dict,
@@ -122,9 +103,7 @@ class Application(BaseSettings):
         return info
 
     def was_deploy_few_minutes_ago(self, minutes: int = 25) -> bool:
-        return datetime.now(timezone.utc) < self.deployed_at + timedelta(
-            minutes=minutes
-        )
+        return datetime.now(timezone.utc) < self.deployed_at + timedelta(minutes=minutes)
 
     def publish_domain_event(self, domain_event: DomainEvent) -> None:
         try:
@@ -132,14 +111,16 @@ class Application(BaseSettings):
             domain_event_bus.publish(domain_event)
         except Exception as exc:  # noqa
             raise TypeError(
-                f"To publish an event to the domain event bus, please add a dependency with type `DomainEventBus` on Application dependencies. {str(exc)}"
-            )
+                "To publish an event to the domain event bus, please add a dependency"
+                f" with type `DomainEventBus` on Application dependencies. {str(exc)}"
+            ) from exc
 
     def notify(self, message: NotifierMessage) -> None:
         try:
             notifier = Container.get(Notifier)
             notifier.publish(message)
-        except:  # noqa
+        except Exception as exc:  # noqa
             raise TypeError(
-                'To notify the deploy, please add a dependency with name "notifier" on Application dependencies'
-            )
+                "To notify the deploy, please add a dependency "
+                'with name "notifier" on Application dependencies'
+            ) from exc

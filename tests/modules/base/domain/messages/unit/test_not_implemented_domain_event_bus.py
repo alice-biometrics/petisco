@@ -11,9 +11,7 @@ from tests.modules.extra.rabbitmq.mother.domain_event_user_created_mother import
 @pytest.mark.unit
 class TestNotImplementedDomainEventBus:
     @pytest.mark.parametrize("domain_event", [DomainEventUserCreatedMother.random()])
-    def should_success_on_publish_a_domain_event(
-        self, domain_event: DomainEvent | list[DomainEvent]
-    ):
+    def should_success_on_publish_a_domain_event(self, domain_event: DomainEvent | list[DomainEvent]):
         bus = NotImplementedDomainEventBus()
         bus.publish(domain_event)
 

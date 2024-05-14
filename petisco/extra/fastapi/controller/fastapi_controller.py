@@ -28,7 +28,7 @@ class FastAPIController(Controller):
         if not hasattr(controller, "Config"):
             return None
 
-        config = getattr(controller, "Config")
+        config = controller.Config
         if not hasattr(config, "error_map"):
             return None
 

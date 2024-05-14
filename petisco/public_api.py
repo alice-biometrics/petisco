@@ -1,4 +1,5 @@
 """Public API of Alice Petisco Framework"""
+
 from petisco.base.application.application import Application
 from petisco.base.application.application_configurer import ApplicationConfigurer
 from petisco.base.application.controller.async_controller import AsyncController

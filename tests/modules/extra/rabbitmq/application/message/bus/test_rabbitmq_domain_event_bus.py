@@ -51,17 +51,13 @@ class TestRabbitMqDomainEventBus:
     @testing_with_rabbitmq
     def should_publish_a_list_of_domain_events(self):
         events_number = 5
-        domain_event_list = [
-            DomainEventUserCreatedMother.random() for _ in range(events_number)
-        ]
+        domain_event_list = [DomainEventUserCreatedMother.random() for _ in range(events_number)]
 
         configurer = RabbitMqMessageConfigurerMother.default()
         configurer.configure()
 
         bus = RabbitMqDomainEventBusMother.with_info_id()
-        with mock.patch.object(
-            BlockingChannel, "basic_publish"
-        ) as mock_channel_publish:
+        with mock.patch.object(BlockingChannel, "basic_publish") as mock_channel_publish:
             bus.publish(domain_event_list)
 
         assert mock_channel_publish.call_count == events_number
@@ -71,13 +67,9 @@ class TestRabbitMqDomainEventBus:
     @testing_with_rabbitmq
     def should_publish_via_fallback_when_unexpected_exception(self):
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
-        bus = RabbitMqDomainEventBusMother.default(
-            fallback=mock_fallback_domain_event_bus
-        )
+        bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
 
-        with patch.object(
-            BlockingChannel, "basic_publish", side_effect=Exception()
-        ) as mock_channel:
+        with patch.object(BlockingChannel, "basic_publish", side_effect=Exception()) as mock_channel:
             bus.publish(self.domain_event)
 
             mock_fallback_domain_event_bus.publish.assert_called_once()
@@ -88,9 +80,7 @@ class TestRabbitMqDomainEventBus:
     @testing_with_rabbitmq
     def should_publish_retry_and_publish_via_fallback_when_unexpected_exception(self):
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
-        bus = RabbitMqDomainEventBusMother.default(
-            fallback=mock_fallback_domain_event_bus
-        )
+        bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
 
         with patch.object(
             BlockingChannel,
@@ -108,13 +98,9 @@ class TestRabbitMqDomainEventBus:
     @testing_with_rabbitmq
     def should_publish_list_via_fallback_when_unexpected_exception(self):
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
-        bus = RabbitMqDomainEventBusMother.default(
-            fallback=mock_fallback_domain_event_bus
-        )
+        bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
 
-        with patch.object(
-            BlockingChannel, "basic_publish", side_effect=Exception()
-        ) as mock_channel:
+        with patch.object(BlockingChannel, "basic_publish", side_effect=Exception()) as mock_channel:
             bus.publish([self.domain_event])
 
             mock_fallback_domain_event_bus.publish.assert_called_once()
@@ -127,9 +113,7 @@ class TestRabbitMqDomainEventBus:
         self,
     ):
         mock_fallback_domain_event_bus = Mock(DomainEventBus)
-        bus = RabbitMqDomainEventBusMother.default(
-            fallback=mock_fallback_domain_event_bus
-        )
+        bus = RabbitMqDomainEventBusMother.default(fallback=mock_fallback_domain_event_bus)
 
         with patch.object(
             BlockingChannel,
@@ -148,9 +132,7 @@ class TestRabbitMqDomainEventBus:
     def should_raise_an_unexpected_exception_when_not_given_fallback_when_publish(self):
         bus = RabbitMqDomainEventBusMother.default()
 
-        with patch.object(
-            BlockingChannel, "basic_publish", side_effect=Exception()
-        ) as mock_channel:
+        with patch.object(BlockingChannel, "basic_publish", side_effect=Exception()) as mock_channel:
             with pytest.raises(Exception):
                 bus.publish(self.domain_event)
 
@@ -164,9 +146,7 @@ class TestRabbitMqDomainEventBus:
     ):
         bus = RabbitMqDomainEventBusMother.default()
 
-        with patch.object(
-            BlockingChannel, "basic_publish", side_effect=Exception()
-        ) as mock_channel:
+        with patch.object(BlockingChannel, "basic_publish", side_effect=Exception()) as mock_channel:
             with pytest.raises(Exception):
                 bus.publish([self.domain_event])
 

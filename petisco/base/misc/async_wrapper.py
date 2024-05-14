@@ -62,11 +62,11 @@ def async_wrapper(
             capture_exception()
         try:
             result.set_transformer(mapper.map)
-        except AttributeError:  # noqa
+        except AttributeError as err:  # noqa
             raise TypeError(
                 f"Controller Error: Return value `{result}` ({type(result)}) must be a `meiga.Result` to "
                 f"transform values to success and failure handlers."
-            )
+            ) from err
 
         for middleware in middlewares:
             if (
@@ -84,9 +84,7 @@ def async_wrapper(
                 try:
                     middleware.after(result)
                 except Exception as exception:
-                    logger.error(
-                        f"Error in the {wrapped_class_name} middlewares (after)."
-                    )
+                    logger.error(f"Error in the {wrapped_class_name} middlewares (after).")
                     logger.exception(exception)
 
         update_middlewares(config, middlewares)

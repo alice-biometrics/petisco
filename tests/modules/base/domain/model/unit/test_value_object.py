@@ -9,17 +9,13 @@ from petisco import InvalidValueObject, ValueObject, ValueObjectSerializer
 
 @pytest.mark.unit
 class TestValueObject:
-    @pytest.mark.parametrize(
-        "expected_value", ["any", 1, 0.3, ["1", ["2"]], {"any": 1}]
-    )
+    @pytest.mark.parametrize("expected_value", ["any", 1, 0.3, ["1", ["2"]], {"any": 1}])
     def should_construct_and_serialize_with_inner_value(self, expected_value):  # noqa
         value_object = ValueObject(value=expected_value)
         assert value_object.value == expected_value
         assert value_object.model_dump() == expected_value
 
-    @pytest.mark.parametrize(
-        "expected_value", ["any", 1, 0.3, ["1", ["2"]], {"any": 1}]
-    )
+    @pytest.mark.parametrize("expected_value", ["any", 1, 0.3, ["1", ["2"]], {"any": 1}])
     def should_fail_when_try_to_change_a_parameter(self, expected_value):  # noqa
         value_object = ValueObject(value=expected_value)
 
@@ -28,9 +24,7 @@ class TestValueObject:
 
         assert "ValueObject objects are immutable" in str(excinfo.value)
 
-    @pytest.mark.parametrize(
-        "expected_value", ["any", 1, 0.3, ["1", ["2"]], {"any": 1}]
-    )
+    @pytest.mark.parametrize("expected_value", ["any", 1, 0.3, ["1", ["2"]], {"any": 1}])
     def should_equal_when_values_are_equals(self, expected_value):  # noqa
         value_object = ValueObject(value=expected_value)
         other = ValueObject(value=expected_value)
@@ -63,8 +57,7 @@ class TestValueObject:
     def should_check_value_object_serializer(self):  # noqa
         expected_value = "my_expected_value"
 
-        class MyValueObject(ValueObject):
-            ...
+        class MyValueObject(ValueObject): ...
 
         class MyModel(BaseModel):
             my_value_object: MyValueObject
@@ -75,16 +68,13 @@ class TestValueObject:
 
         assert my_model.model_dump() == {"my_value_object": expected_value}
 
-    @pytest.mark.skipif(
-        sys.version_info < (3, 9), reason="Requires Python 3.9 or higher"
-    )
+    @pytest.mark.skipif(sys.version_info < (3, 9), reason="Requires Python 3.9 or higher")
     def should_check_value_object_annotated_serializer(self):  # noqa
         from typing import Annotated  # noqa (available in Python 3.9)
 
         expected_value = "my_expected_value"
 
-        class MyValueObject(ValueObject):
-            ...
+        class MyValueObject(ValueObject): ...
 
         class MyModel(BaseModel):
             my_value_object: Annotated[MyValueObject, ValueObjectSerializer]

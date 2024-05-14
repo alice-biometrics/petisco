@@ -38,8 +38,7 @@ def get_logger() -> Logger:
     return logger
 
 
-class MyDomainEvent(DomainEvent):
-    ...
+class MyDomainEvent(DomainEvent): ...
 
 
 class UnackMessage(MessageSubscriber):
@@ -177,9 +176,7 @@ def main() -> None:
 
                 message = cast(DomainEvent, message)
 
-                self.domain_event_bus.retry_publish(
-                    message, args.retry_routing_key, args.retry_exchange_name
-                )
+                self.domain_event_bus.retry_publish(message, args.retry_routing_key, args.retry_exchange_name)
 
                 return isSuccess
 

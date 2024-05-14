@@ -46,12 +46,10 @@ class TestCommand:
 
         assert hasattr(command, "my_specific_value")
         assert hasattr(command, "_message_attributes")
-        assert getattr(command, "_message_attributes") == {
-            "my_specific_value": "whatever"
-        }
+        assert command._message_attributes == {"my_specific_value": "whatever"}
         assert hasattr(command, "_message_id")
         assert hasattr(command, "_message_type")
-        assert getattr(command, "_message_type") == "command"
+        assert command._message_type == "command"
         assert hasattr(command, "_message_version")
         assert hasattr(command, "_message_occurred_on")
         assert hasattr(command, "_message_name")
@@ -106,8 +104,7 @@ class TestCommand:
     def should_create_command_with_correct_name_defined_inside_a_function(  # noqa
         self,
     ):
-        class MyInnerCommand(Command):
-            ...
+        class MyInnerCommand(Command): ...
 
         command = MyInnerCommand()
         assert command.get_message_name() == "my.inner.command"

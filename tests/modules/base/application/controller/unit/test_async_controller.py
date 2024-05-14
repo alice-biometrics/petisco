@@ -108,11 +108,10 @@ class TestAsyncController:
 
         with patch.object(
             PrintMiddleware, "before", return_value=isSuccess
-        ) as mock_middleware_before:
-            with patch.object(
-                PrintMiddleware, "after", return_value=isSuccess
-            ) as mock_middleware_after:
-                result = await MyAsyncController().execute()
+        ) as mock_middleware_before, patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            result = await MyAsyncController().execute()
 
         assert result == controller_result
         mock_middleware_before.assert_called()
@@ -130,11 +129,10 @@ class TestAsyncController:
 
         with patch.object(
             PrintMiddleware, "before", return_value=isSuccess
-        ) as mock_middleware_before:
-            with patch.object(
-                PrintMiddleware, "after", return_value=isSuccess
-            ) as mock_middleware_after:
-                result = await MyAsyncController().execute()
+        ) as mock_middleware_before, patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            result = await MyAsyncController().execute()
 
         result.assert_failure()
         mock_middleware_before.assert_called()
@@ -163,9 +161,7 @@ class TestAsyncController:
         with pytest.raises(TypeError) as excinfo:
             await MyAsyncController().execute()
 
-        assert " in PETISCO_DEFAULT_MIDDLEWARES is not valid. Please, use" in str(
-            excinfo.value
-        )
+        assert " in PETISCO_DEFAULT_MIDDLEWARES is not valid. Please, use" in str(excinfo.value)
 
         monkeypatch.undo()
 
@@ -178,11 +174,10 @@ class TestAsyncController:
 
         with patch.object(
             PrintMiddleware, "before", return_value=isSuccess
-        ) as mock_middleware_before:
-            with patch.object(
-                PrintMiddleware, "after", return_value=isSuccess
-            ) as mock_middleware_after:
-                result = await MyAsyncController().execute()
+        ) as mock_middleware_before, patch.object(
+            PrintMiddleware, "after", return_value=isSuccess
+        ) as mock_middleware_after:
+            result = await MyAsyncController().execute()
 
         result.assert_success()
         mock_middleware_before.assert_called()
@@ -194,9 +189,7 @@ class TestAsyncController:
         "simulate_result, expected_result",
         [(isSuccess, {"message": "ok"}), (Failure(MyError()), {"message": "not ok"})],
     )
-    async def should_works_with_all_configurations(
-        self, simulate_result, expected_result
-    ):
+    async def should_works_with_all_configurations(self, simulate_result, expected_result):
         class MyAsyncController(AsyncController):
             class Config:
                 middlewares = [PrintMiddleware]
@@ -217,10 +210,7 @@ class TestAsyncController:
             class MyAsyncController(AsyncController):
                 pass
 
-            assert (
-                excinfo.value.message
-                == "Petisco Controller must implement an execute method"
-            )
+            assert excinfo.value.message == "Petisco Controller must implement an execute method"
 
     async def should_return_unknown_error(self):  # noqa
         class MyAsyncController(AsyncController):

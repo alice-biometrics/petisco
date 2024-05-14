@@ -19,9 +19,7 @@ class ElasticApmMonitoringAppService(AppService):
     def _set_transaction(self, transaction: Transaction) -> None:
         self.transaction = transaction
 
-    def with_transaction(
-        self, transaction: Transaction
-    ) -> "ElasticApmMonitoringAppService":
+    def with_transaction(self, transaction: Transaction) -> "ElasticApmMonitoringAppService":
         service = copy.copy(self)
         service._set_transaction(transaction)
         return service

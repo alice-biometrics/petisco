@@ -56,9 +56,7 @@ class TestRabbitMqConnector:
         original_host = connector.host
         connector.host = "invalid"
 
-        with pytest.raises(
-            ConnectionError, match="RabbitMQConnector: Impossible to connect to host*"
-        ):
+        with pytest.raises(ConnectionError, match="RabbitMQConnector: Impossible to connect to host*"):
             connector.get_connection("test")
 
         connector.host = original_host
@@ -74,9 +72,7 @@ class TestRabbitMqConnector:
         connection = connector.get_connection("test")
         connection.close()
 
-        with mock.patch.object(
-            BlockingConnection, "is_open", new_callable=PropertyMock
-        ) as mocker_is_open:
+        with mock.patch.object(BlockingConnection, "is_open", new_callable=PropertyMock) as mocker_is_open:
             mocker_is_open.return_value = False
             with pytest.raises(
                 ConnectionError,
@@ -149,4 +145,4 @@ class TestRabbitMqConnector:
 
         connector.close_all()
 
-        assert connector.open_connections == dict()
+        assert connector.open_connections == {}

@@ -4,16 +4,13 @@ from petisco.base.domain.errors.domain_error import DomainError
 from petisco.base.domain.model.uuid import Uuid
 
 
-class NotFound(DomainError):
-    ...
+class NotFound(DomainError): ...
 
 
-class ClientNotFound(DomainError):
-    ...
+class ClientNotFound(DomainError): ...
 
 
-class UserNotFound(DomainError):
-    ...
+class UserNotFound(DomainError): ...
 
 
 class AggregateNotFoundError(DomainError):

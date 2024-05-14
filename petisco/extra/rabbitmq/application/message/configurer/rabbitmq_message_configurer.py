@@ -25,9 +25,7 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         self,
         organization: str,
         service: str,
-        connector: Union[
-            RabbitMqConnector, RabbitMqConsumerConnector
-        ] = RabbitMqConnector(),
+        connector: Union[RabbitMqConnector, RabbitMqConsumerConnector] = RabbitMqConnector(),
         queue_config: QueueConfig = QueueConfig.default(),
         use_store_queues: bool = True,
     ) -> None:
@@ -35,9 +33,7 @@ class RabbitMqMessageConfigurer(MessageConfigurer):
         self.subscribers_configurer = RabbitMqMessageSubcribersConfigurer(
             organization, service, connector, queue_config
         )
-        self.store_configurer = RabbitMqMessageStoreConfigurer(
-            organization, service, connector, queue_config
-        )
+        self.store_configurer = RabbitMqMessageStoreConfigurer(organization, service, connector, queue_config)
 
     def configure(self) -> None:
         """

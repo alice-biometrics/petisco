@@ -13,9 +13,7 @@ def test_rabbitmq_message_chaos_should_configure_with_envvars(monkeypatch):
     monkeypatch.setenv("MESSAGE_CHAOS_PERCENTAGE_SIMULATE_NACK", "1.0")
     monkeypatch.setenv("MESSAGE_CHAOS_DELAY_BEFORE_EVENT_HANDLER_SECONDS", "1.0")
     monkeypatch.setenv("MESSAGE_CHAOS_PERCENTAGE_SIMULATE_FAILURES", "1.0")
-    monkeypatch.setenv(
-        "MESSAGE_CHAOS_PROTECTED_ROUTING_KEYS", "dead_letter.store,dl-legacy"
-    )
+    monkeypatch.setenv("MESSAGE_CHAOS_PROTECTED_ROUTING_KEYS", "dead_letter.store,dl-legacy")
 
     chaos = RabbitMqMessageChaos()
 
@@ -87,9 +85,7 @@ def test_rabbitmq_message_should_create_rabbitmq_event_chaos_with_percentage_sim
 
 @pytest.mark.integration
 def test_rabbitmq_message_create_rabbitmq_event_chaos_with_percentage_simulate_nack_but_with_protected_routing_key():
-    chaos = RabbitMqMessageChaos(
-        percentage_simulate_nack=1.0, protected_routing_keys=["routing_key"]
-    )
+    chaos = RabbitMqMessageChaos(percentage_simulate_nack=1.0, protected_routing_keys=["routing_key"])
 
     mock_channel = Mock(BlockingChannel)
     mock_method = Mock(Basic.Deliver)
@@ -103,9 +99,7 @@ def test_rabbitmq_message_create_rabbitmq_event_chaos_with_percentage_simulate_n
 
 @pytest.mark.integration
 def test_rabbitmq_message_should_create_rabbitmq_event_chaos_with_percentage_simulate_failure_but_with_protected_routing_key():
-    chaos = RabbitMqMessageChaos(
-        percentage_simulate_failures=1.0, protected_routing_keys=["routing_key"]
-    )
+    chaos = RabbitMqMessageChaos(percentage_simulate_failures=1.0, protected_routing_keys=["routing_key"])
 
     mock_channel = Mock(BlockingChannel)
     mock_method = Mock(Basic.Deliver)

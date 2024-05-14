@@ -19,15 +19,11 @@ class TestNotifierMiddleware:
     notifier_middleware: NotifierMiddleware
 
     def setup_method(self):
-        notifier_dependency = Dependency(
-            Notifier, builders={"default": Builder(NotImplementedNotifier)}
-        )
+        notifier_dependency = Dependency(Notifier, builders={"default": Builder(NotImplementedNotifier)})
         Container.set_dependencies([notifier_dependency], overwrite=True)
 
         self.notifier_middleware = NotifierMiddleware()
-        self.notifier_middleware.set_data(
-            wrapped_class_name="class_name", wrapped_class_input_arguments=()
-        )
+        self.notifier_middleware.set_data(wrapped_class_name="class_name", wrapped_class_input_arguments=())
 
     def teardown_method(self):
         Container.clear()
@@ -45,19 +41,13 @@ class TestNotifierMiddleware:
 
     @patch.object(NotImplementedNotifier, "publish_exception")
     def should_notify_unknown_error_failure_results(self, mock_notifier):
-        self.notifier_middleware.after(
-            result=Failure(UnknownError(exception=TypeError()))
-        )
+        self.notifier_middleware.after(result=Failure(UnknownError(exception=TypeError())))
         mock_notifier.assert_called()
 
     @patch.object(NotImplementedNotifier, "publish_exception")
-    def should_notify_unknown_error_failure_results_with_meta_information(
-        self, mock_notifier
-    ):
+    def should_notify_unknown_error_failure_results_with_meta_information(self, mock_notifier):
         ApplicationInfo(name="app_name", version="app_version")
-        self.notifier_middleware.after(
-            result=Failure(UnknownError(exception=TypeError()))
-        )
+        self.notifier_middleware.after(result=Failure(UnknownError(exception=TypeError())))
 
         mock_notifier.assert_called()
         exception_message = mock_notifier.call_args[0][0]
@@ -65,9 +55,7 @@ class TestNotifierMiddleware:
         assert exception_message.meta["application_version"] == "app_version"
 
     @patch.object(NotImplementedNotifier, "publish")
-    def should_notify_critical_error_failure_results_with_meta_information(
-        self, mock_notifier
-    ):
+    def should_notify_critical_error_failure_results_with_meta_information(self, mock_notifier):
         ApplicationInfo(name="app_name", version="app_version")
         self.notifier_middleware.after(result=Failure(CriticalError()))
 

@@ -14,9 +14,7 @@ class TestDatabases:
         databases.clear()
 
     @pytest.mark.parametrize("database", [FakeDatabase(), AsyncFakeDatabase()])
-    def should_execute_lifecycle_of_persistence_with_fake_database(
-        self, database: Database
-    ):
+    def should_execute_lifecycle_of_persistence_with_fake_database(self, database: Database):
         classname = database.__class__.__name__
         assert [] == databases.get_database_names()
 

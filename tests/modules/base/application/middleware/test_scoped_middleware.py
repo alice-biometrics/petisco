@@ -37,12 +37,8 @@ class OnlySubscriberMiddleware(MockMiddleware):
 
 @pytest.mark.unit
 class TestScopeMiddleware:
-    @pytest.mark.parametrize(
-        "middleware", [AllScopeMiddleware, OnlySubscriberMiddleware]
-    )
-    def should_execute_middleware_when_is_subscriber_when_subscribed_is_in_scope(
-        self, middleware
-    ) -> None:
+    @pytest.mark.parametrize("middleware", [AllScopeMiddleware, OnlySubscriberMiddleware])
+    def should_execute_middleware_when_is_subscriber_when_subscribed_is_in_scope(self, middleware) -> None:
         class MySubscriber(MessageSubscriber):
             class Config:
                 middlewares = [middleware]
@@ -60,12 +56,8 @@ class TestScopeMiddleware:
         assert subscriber.Config.middlewares[0].before_is_executed is True
         assert subscriber.Config.middlewares[0].after_is_executed is True
 
-    @pytest.mark.parametrize(
-        "middleware", [AllScopeMiddleware, OnlyControllerMiddleware]
-    )
-    def should_execute_middleware_when_is_controller_when_subscribed_is_in_scope(
-        self, middleware
-    ) -> None:
+    @pytest.mark.parametrize("middleware", [AllScopeMiddleware, OnlyControllerMiddleware])
+    def should_execute_middleware_when_is_controller_when_subscribed_is_in_scope(self, middleware) -> None:
         class MyController(Controller):
             class Config:
                 middlewares = [middleware]
@@ -117,9 +109,7 @@ class TestScopeMiddleware:
         assert controller.Config.middlewares[0].before_is_executed is False
         assert controller.Config.middlewares[0].after_is_executed is False
 
-    @pytest.mark.parametrize(
-        "middleware", [AllScopeMiddleware, OnlyControllerMiddleware]
-    )
+    @pytest.mark.parametrize("middleware", [AllScopeMiddleware, OnlyControllerMiddleware])
     async def should_execute_middleware_when_is_async_controller_when_subscribed_is_in_scope(
         self, middleware
     ) -> None:

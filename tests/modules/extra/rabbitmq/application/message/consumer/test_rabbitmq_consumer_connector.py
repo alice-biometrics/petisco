@@ -23,9 +23,7 @@ class TestRabbitMqConsumerConnector:
 
         with pytest.raises(RuntimeError) as excinfo:
             _ = connector.get_connection("test")
-        assert "RabbitMqConsumerConnector works only with given channel." in str(
-            excinfo.value
-        )
+        assert "RabbitMqConsumerConnector works only with given channel." in str(excinfo.value)
 
     @testing_with_rabbitmq
     def should_get_channel(self):

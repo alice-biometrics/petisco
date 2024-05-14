@@ -50,9 +50,7 @@ class TestRabbitMqConfigurer:
         [(True, True), (True, False), (False, True), (False, False)],
     )
     def should_execute(self, start_consuming, testing):
-        configurer = RabbitMqConfigurer(
-            subscribers=self.subscribers, start_consuming=start_consuming
-        )
+        configurer = RabbitMqConfigurer(subscribers=self.subscribers, start_consuming=start_consuming)
         configurer.execute(testing=testing)
 
     @pytest.mark.parametrize(
@@ -110,10 +108,9 @@ class TestRabbitMqConfigurer:
             NotImplementedMessageConfigurer,
             "configure_subscribers",
             side_effect=ConnectionError(),
-        ) as mock_message_configurer:
-            with patch.object(
-                NotImplementedNotifier, "publish_exception"
-            ) as notifier_mock:
-                configurer.execute()
+        ) as mock_message_configurer, patch.object(
+            NotImplementedNotifier, "publish_exception"
+        ) as notifier_mock:
+            configurer.execute()
         mock_message_configurer.assert_called_once()
         notifier_mock.assert_called_once()

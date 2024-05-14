@@ -10,9 +10,7 @@ def unwrap_result_handler(result: AnyResult) -> Any:
     return result.unwrap()
 
 
-def custom_message_handler(
-    message: dict[str, Any]
-) -> Callable[[AnyResult], dict[str, Any]]:
+def custom_message_handler(message: dict[str, Any]) -> Callable[[AnyResult], dict[str, Any]]:
     def _result_handler(_: AnyResult) -> dict[str, Any]:
         return message
 

@@ -44,16 +44,12 @@ class ElasticDatabase(Database):
 
     def __init__(self, alias: str, connection: ElasticConnection) -> None:
         if not connection or not isinstance(connection, ElasticConnection):
-            raise ConnectionError(
-                "ElasticDatabase needs a valid ElasticConnection connection"
-            )
+            raise ConnectionError("ElasticDatabase needs a valid ElasticConnection connection")
         self.connection = connection
         super().__init__(alias)
 
     def initialize(self) -> None:
-        self.session = Elasticsearch(
-            self.connection.to_elastic_format(), http_auth=self.connection.http_auth
-        )
+        self.session = Elasticsearch(self.connection.to_elastic_format(), http_auth=self.connection.http_auth)
 
     def delete(self) -> None:
         pass

@@ -54,9 +54,7 @@ def test_message_consumer_should_consumer_react_to_default_no_chaos():
 
     max_retries_allowed = 5
     chaos = RabbitMqMessageChaos()
-    consumer = RabbitMqMessageConsumerMother.with_chaos(
-        chaos, max_retries_allowed, logger
-    )
+    consumer = RabbitMqMessageConsumerMother.with_chaos(chaos, max_retries_allowed, logger)
     consumer.add_subscribers(subscribers)
     consumer.start()
 
@@ -104,12 +102,8 @@ def test_message_consumer_should_works_as_expected_with_chaos_with_zero_probabil
     bus.publish(domain_event)
 
     max_retries_allowed = 5
-    chaos = RabbitMqMessageChaos(
-        percentage_simulate_nack=0.0, percentage_simulate_failures=0.0
-    )
-    consumer = RabbitMqMessageConsumerMother.with_chaos(
-        chaos, max_retries_allowed, logger
-    )
+    chaos = RabbitMqMessageChaos(percentage_simulate_nack=0.0, percentage_simulate_failures=0.0)
+    consumer = RabbitMqMessageConsumerMother.with_chaos(chaos, max_retries_allowed, logger)
     consumer.add_subscribers(subscribers)
     consumer.start()
 
@@ -173,9 +167,7 @@ def test_message_consumer_should_works_when_configure_several_chaos_inputs(
 
     consumer.stop()
     configurer.clear()
-    spy.assert_count_by_message_id(
-        domain_event.get_message_id(), expected_number_event_consumed
-    )
+    spy.assert_count_by_message_id(domain_event.get_message_id(), expected_number_event_consumed)
 
 
 @pytest.mark.integration
@@ -203,9 +195,7 @@ def test_message_consumer_should_works_when_chaos_is_configurer_with_nck_simulat
 
     max_retries_allowed = 5
     chaos = RabbitMqMessageChaos(percentage_simulate_nack=1.0)
-    consumer = RabbitMqMessageConsumerMother.with_chaos(
-        chaos, max_retries_allowed, logger
-    )
+    consumer = RabbitMqMessageConsumerMother.with_chaos(chaos, max_retries_allowed, logger)
     consumer.add_subscribers(subscribers)
     consumer.start()
 
@@ -222,9 +212,7 @@ def test_message_consumer_should_works_when_chaos_is_configurer_with_nck_simulat
         "layer": "rabbitmq_message_consumer",
         "operation": "handle",
     }
-    assert (
-        first_logging_message[1]["data"]["message"]["chaos_action"] == "nack simulated"
-    )
+    assert first_logging_message[1]["data"]["message"]["chaos_action"] == "nack simulated"
 
 
 @pytest.mark.integration
@@ -255,17 +243,11 @@ def test_message_consumer_should_works_when_chaos_is_configure_with_failure_simu
     chaos = RabbitMqMessageChaos(
         percentage_simulate_failures=1.0, protected_routing_keys=["dead_letter.store"]
     )
-    consumer = RabbitMqMessageConsumerMother.with_chaos(
-        chaos, max_retries_allowed, logger
-    )
-    consumer.add_subscribers(
-        [MessageSubscriberMother.all_messages_subscriber(handler=assert_store_consumer)]
-    )
+    consumer = RabbitMqMessageConsumerMother.with_chaos(chaos, max_retries_allowed, logger)
+    consumer.add_subscribers([MessageSubscriberMother.all_messages_subscriber(handler=assert_store_consumer)])
     consumer.add_subscriber_on_queue(
         "dead_letter.store",
-        MessageSubscriberMother.all_messages_subscriber(
-            handler=assert_dead_letter_store_consumer
-        ),
+        MessageSubscriberMother.all_messages_subscriber(handler=assert_dead_letter_store_consumer),
     )
     consumer.start()
 
@@ -310,13 +292,9 @@ def test_message_consumer_should_works_when_chaos_is_configured_with_failure_sim
     max_retries_allowed = 5
     chaos = RabbitMqMessageChaos(
         percentage_simulate_failures=1.0,
-        protected_routing_keys=[
-            "dead_letter.alice.petisco.1.event.user_created.my_domain_event_subscriber"
-        ],
+        protected_routing_keys=["dead_letter.alice.petisco.1.event.user_created.my_domain_event_subscriber"],
     )
-    consumer = RabbitMqMessageConsumerMother.with_chaos(
-        chaos, max_retries_allowed, logger
-    )
+    consumer = RabbitMqMessageConsumerMother.with_chaos(chaos, max_retries_allowed, logger)
     consumer.add_subscribers(subscribers)
     consumer.add_subscriber_on_queue(
         queue_name="dead_letter.alice.petisco.1.event.user_created.my_domain_event_subscriber",
@@ -386,9 +364,7 @@ def test_message_consumer_should_consumer_react_to_chaos_with_failure_simulation
             "dead_letter.store",
         ],
     )
-    consumer = RabbitMqMessageConsumerMother.with_chaos(
-        chaos, max_retries_allowed, logger
-    )
+    consumer = RabbitMqMessageConsumerMother.with_chaos(chaos, max_retries_allowed, logger)
     consumer.add_subscribers(subscribers)
     consumer.add_subscriber_on_queue(
         queue_name="dead_letter.alice.petisco.1.event.user_created.my_domain_event_subscriber",
@@ -414,9 +390,7 @@ def test_message_consumer_should_consumer_react_to_chaos_with_failure_simulation
     spy_subscriber.assert_count_by_message_id(domain_event.get_message_id(), 0)
     spy_store.assert_count_by_message_id(domain_event.get_message_id(), 0)
 
-    spy_dead_letter_subscriber.assert_count_by_message_id(
-        domain_event.get_message_id(), 1
-    )
+    spy_dead_letter_subscriber.assert_count_by_message_id(domain_event.get_message_id(), 1)
     spy_dead_letter_store.assert_count_by_message_id(domain_event.get_message_id(), 1)
 
 
@@ -469,9 +443,7 @@ def test_message_consumer_should_consumer_react_to_chaos_with_failure_simulation
             "store",
         ],
     )
-    consumer = RabbitMqMessageConsumerMother.with_chaos(
-        chaos, max_retries_allowed, logger
-    )
+    consumer = RabbitMqMessageConsumerMother.with_chaos(chaos, max_retries_allowed, logger)
     consumer.add_subscribers(subscribers)
     consumer.add_subscriber_on_queue(
         queue_name="dead_letter.alice.petisco.1.event.user_created.my_domain_event_subscriber",
@@ -496,7 +468,5 @@ def test_message_consumer_should_consumer_react_to_chaos_with_failure_simulation
 
     spy_subscriber.assert_count_by_message_id(domain_event.get_message_id(), 0)
     spy_store.assert_count_by_message_id(domain_event.get_message_id(), 1)
-    spy_dead_letter_subscriber.assert_count_by_message_id(
-        domain_event.get_message_id(), 1
-    )
+    spy_dead_letter_subscriber.assert_count_by_message_id(domain_event.get_message_id(), 1)
     spy_dead_letter_store.assert_count_by_message_id(domain_event.get_message_id(), 0)

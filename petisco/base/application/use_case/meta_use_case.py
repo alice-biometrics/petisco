@@ -13,9 +13,7 @@ from petisco.extra.elastic_apm.capture_exception import capture_exception
 from petisco.extra.meiga import WaitingForEarlyReturn
 
 
-def use_case_wrapper(
-    method: Callable[..., AnyResult], wrapped_class_name: str
-) -> Callable[..., AnyResult]:
+def use_case_wrapper(method: Callable[..., AnyResult], wrapped_class_name: str) -> Callable[..., AnyResult]:
     @wraps(method)
     def wrapped(*args: Any, **kwargs: Any) -> AnyResult:
         try:
@@ -61,14 +59,10 @@ def async_use_case_wrapper(
 
 
 class MetaUseCase(type, ABC):
-    def __new__(
-        mcs, name: str, bases: Tuple[Any], namespace: Dict[str, Any]
-    ) -> "MetaUseCase":
+    def __new__(mcs, name: str, bases: Tuple[Any], namespace: Dict[str, Any]) -> "MetaUseCase":
         new_class_dict = {}
         if "execute" not in namespace:
-            raise NotImplementedError(
-                "Petisco UseCase or AsyncUseCase must implement an execute method"
-            )
+            raise NotImplementedError("Petisco UseCase or AsyncUseCase must implement an execute method")
 
         for attributeName, attribute in namespace.items():
             if isinstance(attribute, FunctionType) and attribute.__name__ == "execute":
