@@ -1,0 +1,2089 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="🍪 petisco is a framework for helping Python developers to build clean Applications in Python.">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/alice-biometrics/petisco/application/">
+      
+      
+        <link rel="prev" href="../getting_started/">
+      
+      
+        <link rel="next" href="../domain/">
+      
+      
+      <link rel="icon" href="../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.22">
+    
+    
+      
+        <title>Application - petisco</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.732c4fb1.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../css/terminal.css">
+    
+      <link rel="stylesheet" href="../css/termynal.css">
+    
+      <link rel="stylesheet" href="../css/tweaks.css">
+    
+      <link rel="stylesheet" href="../css/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dependency-injection-container" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="petisco" class="md-header__button md-logo" aria-label="petisco" data-md-component="logo">
+      
+  <img src="../logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            petisco
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Application
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/alice-biometrics/petisco" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alice-biometrics/petisco
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="petisco" class="md-nav__button md-logo" aria-label="petisco" data-md-component="logo">
+      
+  <img src="../logo-white.png" alt="logo">
+
+    </a>
+    petisco
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/alice-biometrics/petisco" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alice-biometrics/petisco
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Application
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Application
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dependency-injection-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dependency Injection Container
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-case" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use Case
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controller
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Controller">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      FastAPI ⚡️
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#subscriber" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subscriber
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cqrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      CQRS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CQRS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fastapi_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      FastAPI ⚡️
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../domain/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Domain
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../databases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Extras
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Extras
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/fastapi/fastapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/rabbitmq/rabbitmq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RabbitMQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/redis/redis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Redis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/elastic/elastic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Elastic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/sqlalchemy/sqlalchemy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SQLAlchemy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/slack/slack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Slack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asyncio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Asyncio
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Migrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrations/from_v1_to_v2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From v1 to v2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing to petisco
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acknowledgements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Acknowledgements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dependency-injection-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dependency Injection Container
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-case" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use Case
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controller
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Controller">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      FastAPI ⚡️
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#subscriber" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subscriber
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cqrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      CQRS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CQRS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fastapi_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      FastAPI ⚡️
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+  
+  
+<!--    <div id="bsa-cpc"></div>-->
+  
+  
+                  
+
+  
+  
+
+
+  <h1>Application</h1>
+
+<p>Let's go deeper into the application layer.</p>
+<pre class="mermaid"><code>flowchart LR
+
+        subgraph I/O
+            cli([CLI])
+            webapp([Web App])
+            message([Message Broker])
+        end
+
+        subgraph Application
+            dic([Container])        
+            dic-- Dependency Injection --&gt;usecase
+            controller([Controller])
+            usecase([UseCase])
+            subscriber([Subscriber])
+            controller --&gt; usecase
+            subscriber --&gt; usecase
+        end
+
+        webapp --&gt; controller
+        cli --&gt; controller
+        message --&gt; subscriber
+
+        subgraph Domain
+        petisco(((petisco)))
+        end
+
+        usecase --&gt; petisco
+
+        subgraph Infrastructure
+            Persistence[(Persistence)]
+            petisco --&gt; Persistence
+            petisco --&gt; Buses
+            petisco --&gt; Monitoring
+            petisco --&gt; Others
+        end
+
+        style Application fill:#D6EAF8</code></pre>
+<h2 id="dependency-injection-container">Dependency Injection Container<a class="headerlink" href="#dependency-injection-container" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p>The framework provides a Dependency Injection Container to manage instantiation and configuration of dependencies.</p>
+</div>
+<pre class="mermaid"><code>flowchart LR
+
+        subgraph I/O
+            cli([CLI])
+            webapp([Web App])
+            message([Message Broker])
+        end
+
+
+
+        subgraph Application
+            dic([Container])        
+            dic-- Dependency Injection --&gt;usecase
+            controller([Controller])
+            usecase([UseCase])
+            subscriber([Subscriber])
+            controller --&gt; usecase
+            subscriber --&gt; usecase
+        end
+
+        webapp --&gt; controller
+        cli --&gt; controller
+        message --&gt; subscriber
+
+        subgraph Domain
+        petisco(((petisco)))
+        end
+
+        usecase --&gt; petisco
+
+        subgraph Infrastructure
+            Persistence[(Persistence)]
+            petisco --&gt; Persistence
+            petisco --&gt; Buses
+            petisco --&gt; Monitoring
+            petisco --&gt; Others
+        end
+
+        style dic fill:#F0B27A
+        style Application fill:#D6EAF8</code></pre>
+<p>As we presented in the <a href="../getting_started/">Getting Started</a> section. The dependencies will be configured in the 
+<code>Container</code> when <code>Aplication</code> is configured.
+Once they are configured, we can instantiate defined implementations using the static method <code>get</code> from <code>Container</code> 
+object. <code>Controllers</code> and <code>Subscribers</code> (described below), instantiate collaborators of <code>UseCase</code>s using the <code>Container</code>
+object.</p>
+<details class="example" open="open">
+<summary>Usage</summary>
+<p>Accessing the container to instantiate its dependencies is as easy as following:
+To configure dependencies manually, use <code>set_dependencies</code>:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Defining Dependencies</label><label for="__tabbed_1_2">Instantiation of set Dependencies</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Dependency</span><span class="p">,</span> <span class="n">Container</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">Dependency</span><span class="p">(</span><span class="n">MyBase</span><span class="p">,</span> <span class="n">builders</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">MyImplementation</span><span class="p">)})</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">]</span>    
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">Container</span><span class="o">.</span><span class="n">set_dependencies</span><span class="p">(</span><span class="n">dependencies</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Container</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">my_instance</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MyBase</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># You can check available dependencies</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">available_dependencies</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">get_available_dependencies</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>When defining dependencies, you can add different implementation on the builders as in the following code:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">Dependency</span><span class="p">(</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        <span class="n">MyBase</span><span class="p">,</span> 
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>        <span class="n">builders</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">MyImplementation</span><span class="p">),</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="hll">            <span class="s2">&quot;fake&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">MyFakeImplementation</span><span class="p">),</span>
+</span><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="hll">            <span class="s2">&quot;inmemory&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">MyInmemoryImplementation</span><span class="p">),</span>
+</span><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="p">}</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="p">)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">]</span>    
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>"default" implementation is mandatory on <code>Dependency</code> definition, if it is not defined  it will raise an error in Runtime.</p>
+</div>
+<p><strong>Environment Modifiers:</strong> </p>
+<p>When you get the instance with <code>Container.get(MyBase)</code>, by default you will get an instance of default implementation
+defined in <code>builders</code>. </p>
+<p>If you want to modify this, you an do it with an environment variable (<code>&lt;NAME_OF_THE_BASE_TYPE&gt;</code> + <code>_TYPE</code>).
+For example, in the above class if we set the envar <code>MY_BASE_TYPE</code> to <code>fake</code> the <code>Container.get(MyBase)</code> will return
+<code>fake</code> implementation.</p>
+<p><strong>Alias:</strong></p>
+<p>Imagine you want to have available two different dependencies from the same base type. You can use the alias to tell
+apart between them in instatiation time.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">Dependency</span><span class="p">(</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        <span class="n">MyBase</span><span class="p">,</span> 
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="hll">        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;implementation_1&quot;</span><span class="p">,</span>
+</span><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>        <span class="n">builders</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">MyImplementation_1</span><span class="p">),</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="p">}</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="p">),</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">Dependency</span><span class="p">(</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        <span class="n">MyBase</span><span class="p">,</span> 
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="hll">        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;implementation_2&quot;</span><span class="p">,</span>
+</span><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>        <span class="n">builders</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">MyImplementation_2</span><span class="p">),</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>        <span class="p">}</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="p">)</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="p">]</span>    
+</code></pre></div>
+<p>Then, to instatiate them, you can use alias parameter in Container:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">instance_1</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MyBase</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;implementation_1&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">instance_2</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MyBase</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;implementation_2&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Validation:</strong></p>
+<p>Petisco will vailidate all dependencies to check if given implementations are subclasses of base class. <code>MyBase</code> 
+in the following example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a> <span class="n">Dependency</span><span class="p">(</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="hll">        <span class="n">MyBase</span><span class="p">,</span> 
+</span><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>        <span class="n">builders</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="hll">            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">MyImplementation</span><span class="p">),</span> <span class="c1"># (1)</span>
+</span><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>        <span class="p">}</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="p">)</span>
+</code></pre></div>
+<ol>
+<li>If the implementation is not a subclass of MyBase, petisco will raise a TypeError exception</li>
+</ol>
+<details class="info" open="open">
+<summary>strict=False</summary>
+<p>If you want to be more permissive with this strict mode of validation you can specify it in your Dependency 
+definition.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">class</span> <span class="nc">MyImplementationFactory</span><span class="p">:</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="k">def</span> <span class="nf">build</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">MyImplementation</span><span class="p">:</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>        <span class="c1"># do your stuff</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>        <span class="k">return</span> <span class="n">MyImplementation</span><span class="p">()</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">Dependency</span><span class="p">(</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">MyBase</span><span class="p">,</span> 
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">builders</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>        <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">MyImplementationFactory</span><span class="p">,</span> <span class="n">is_builder</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> 
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="p">},</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="hll">    <span class="n">strict</span><span class="o">=</span><span class="kc">False</span>
+</span><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="p">)</span>
+</code></pre></div>
+</details>
+<details class="help" open="open">
+<summary>Example with Controller</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">BoolResult</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Container</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="kn">from</span> <span class="nn">petisco.extra.fastapi</span> <span class="kn">import</span> <span class="n">FastAPIController</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="kn">from</span> <span class="nn">app.src.task.create.application.task_creator</span> <span class="kn">import</span> <span class="n">TaskCreator</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="kn">from</span> <span class="nn">app.src.task.shared.domain.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="k">class</span> <span class="nc">CreateTaskController</span><span class="p">(</span><span class="n">FastAPIController</span><span class="p">):</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>        <span class="n">task_creator</span> <span class="o">=</span> <span class="n">TaskCreator</span><span class="p">(</span> <span class="c1"># (1)</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="hll">            <span class="n">labeler</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskLabeler</span><span class="p">),</span>
+</span><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="hll">            <span class="n">repository</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskRepository</span><span class="p">),</span>
+</span><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="hll">            <span class="n">domain_event_bus</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DomainEventBus</span><span class="p">),</span>
+</span><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>        <span class="p">)</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>        <span class="k">return</span> <span class="n">task_creator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span> <span class="c1"># (2)</span>
+</code></pre></div>
+<ol>
+<li>Instantiate an <code>UseCase</code> using dependencies from container (using its base type).</li>
+<li>Execute the <code>UseCase</code> passing external output.</li>
+</ol>
+</details>
+</details>
+<h2 id="use-case">Use Case<a class="headerlink" href="#use-case" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p>The use case is a class that solves a part of your business logic. </p>
+</div>
+<pre class="mermaid"><code>flowchart LR
+
+        subgraph I/O
+            cli([CLI])
+            webapp([Web App])
+            message([Message Broker])
+        end
+
+        subgraph Application
+            dic([Container])        
+            dic-- Dependency Injection --&gt;usecase
+            controller([Controller])
+            usecase([UseCase])
+            subscriber([Subscriber])
+            controller --&gt; usecase
+            subscriber --&gt; usecase
+        end
+
+        webapp --&gt; controller
+        cli --&gt; controller
+        message --&gt; subscriber
+
+        subgraph Domain
+        petisco(((petisco)))
+        end
+
+        usecase --&gt; petisco
+
+        subgraph Infrastructure
+            Persistence[(Persistence)]
+            petisco --&gt; Persistence
+            petisco --&gt; Buses
+            petisco --&gt; Monitoring
+            petisco --&gt; Others
+        end
+
+        style usecase fill:#F0B27A
+        style Application fill:#D6EAF8</code></pre>
+<p>As shown above, a <code>UseCase</code> will be instantiated by a <code>Controller</code> or  a <code>Subscriber</code>. 
+Both will use the <code>Container</code>, to inject the dependencies.</p>
+<details class="example" open="open">
+<summary>Example of TaskCreator (instantiated in the Controller Example)</summary>
+<p>Following the Task Manager application example, there is a <code>TaskCreator</code> that labels the task using an application 
+service, saves the task through a repository and publishes a domain event using an event bus. The code could be as 
+follow:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">BoolResult</span><span class="p">,</span> <span class="n">isSuccess</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">CrudRepository</span><span class="p">,</span> <span class="n">DomainEventBus</span><span class="p">,</span> <span class="n">UseCase</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="kn">from</span> <span class="nn">my_app</span> <span class="kn">import</span> <span class="n">Task</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="k">class</span> <span class="nc">TaskCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="k">class</span> <span class="nc">TaskCreator</span><span class="p">(</span><span class="n">UseCase</span><span class="p">):</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>        <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>        <span class="n">labeler</span><span class="p">:</span> <span class="n">TaskLabeler</span><span class="p">,</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        <span class="n">repository</span><span class="p">:</span> <span class="n">CrudRepository</span><span class="p">,</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>        <span class="n">domain_event_bus</span><span class="p">:</span> <span class="n">DomainEventBus</span><span class="p">,</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>    <span class="p">):</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">labeler</span> <span class="o">=</span> <span class="n">labeler</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">repository</span> <span class="o">=</span> <span class="n">repository</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">domain_event_bus</span> <span class="o">=</span> <span class="n">domain_event_bus</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>        <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>        <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>        <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labeler</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="p">)</span><span class="o">.</span><span class="n">unwrap_or_return</span><span class="p">()</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">task</span><span class="p">)</span><span class="o">.</span><span class="n">unwrap_or_return</span><span class="p">()</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">domain_event_bus</span><span class="o">.</span><span class="n">publish_list</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">pull_domain_events</span><span class="p">())</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>        <span class="k">return</span> <span class="n">isSuccess</span>
+</code></pre></div>
+</details>
+<h2 id="controller">Controller<a class="headerlink" href="#controller" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p>A controller is class which receive inputs from the infrastructure layer (web framework, cli, etc...) and orchestrate 
+the application use cases given a result.
+Use <code>Controller</code> class to define and configure inputs and outputs or your entry point. </p>
+</div>
+<pre class="mermaid"><code>flowchart LR
+
+        subgraph I/O
+            cli([CLI])
+            webapp([Web App])
+            message([Message Broker])
+        end
+
+
+
+        subgraph Application
+            dic([Container])        
+            dic-- Dependency Injection --&gt;usecase
+            controller([Controller])
+            usecase([UseCase])
+            subscriber([Subscriber])
+            controller --&gt; usecase
+            subscriber --&gt; usecase
+        end
+
+        webapp --&gt; controller
+        cli --&gt; controller
+        message --&gt; subscriber
+
+        subgraph Domain
+        petisco(((petisco)))
+        end
+
+        usecase --&gt; petisco
+
+        subgraph Infrastructure
+            Persistence[(Persistence)]
+            petisco --&gt; Persistence
+            petisco --&gt; Buses
+            petisco --&gt; Monitoring
+            petisco --&gt; Others
+        end
+
+        style controller fill:#F0B27A
+        style Application fill:#D6EAF8</code></pre>
+<p>You can use a simpler and default configuration:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Controller</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">Error</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="kn">import</span> <span class="nn">random</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="hll"><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span> <span class="c1"># (1)</span>
+</span><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]))</span>
+</code></pre></div>
+<ol>
+<li>Inherit from petisco Controller class</li>
+</ol>
+<h4 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h4>
+<p>You can configure some behaviours with the inner class <code>Config</code>. 
+Configure controller <code>middlewares</code>, <code>success_handler</code> and <code>failure_handler</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainError</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PrintMiddleware</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">Error</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="kn">import</span> <span class="nn">random</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="k">class</span> <span class="nc">MyError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="hll">    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span> <span class="c1"># (1)</span>
+</span><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="hll">        <span class="n">success_handler</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">result</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">}</span>
+</span><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="hll">        <span class="n">error_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">NotFound</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Task not Found&quot;</span><span class="p">)}</span>
+</span><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="hll">        <span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">PrintMiddleware</span><span class="p">]</span>
+</span><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]))</span>
+</code></pre></div>
+<ol>
+<li>By default, the failure handler uses the <code>error_map</code> to map error. But you can also config <code>failure_handler</code> as we do with <code>success_handler</code> callable. <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainError</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PrintMiddleware</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">Error</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="kn">import</span> <span class="nn">random</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="k">class</span> <span class="nc">MyError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>        <span class="n">success_handler</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">result</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">}</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="hll">        <span class="n">failure_handler</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">result</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;not ok&quot;</span><span class="p">}</span> 
+</span><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]))</span>
+</code></pre></div>
+</li>
+</ol>
+<p>Let's go into more detail in the following points.</p>
+<ul>
+<li>
+<p><strong>Middlewares</strong>: are a layer of actions/callables that are wrapped around a piece of core logic in an application (in this case, the <code>Controller</code>)
+  <code>petisco</code> provides some examples of Middlewares:</p>
+<table>
+<thead>
+<tr>
+<th>Middleware</th>
+<th style="text-align: left;">Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PrintMiddleware</code></td>
+<td style="text-align: left;">Print something before and after the controller</td>
+</tr>
+<tr>
+<td><code>NotifierMiddleware</code></td>
+<td style="text-align: left;">Notify a message if the result of a controller is a failure</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Define your middleware</p>
+<p>To create your own Middleware is necessary to extend from <code>Middleware</code> as following code:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Middleware</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="k">class</span> <span class="nc">MyFirstMiddleware</span><span class="p">(</span><span class="n">Middleware</span><span class="p">):</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="k">def</span> <span class="nf">before</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>        <span class="nb">print</span><span class="p">(</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped_class_name</span><span class="si">}</span><span class="s2"> -&gt; Start | Params </span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped_class_input_arguments</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>        <span class="p">)</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="k">def</span> <span class="nf">after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Result</span><span class="p">):</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped_class_name</span><span class="si">}</span><span class="s2"> -&gt; End | </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Then, you can add it to your controller with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span> 
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="hll">    <span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">PrintMiddleware</span><span class="p">]</span>
+</span><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]))</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Define the middleware scope (is it going to be used on Controller or/and Subscribers?)</p>
+<p>Example of Middleware to be used only in Controllers (<code>scope = MiddlewareScope.CONTROLLER</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">MiddlewareScope</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="k">class</span> <span class="nc">MyScopedControllerMiddleware</span><span class="p">(</span><span class="n">Middleware</span><span class="p">):</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="hll">  <span class="n">scope</span> <span class="o">=</span> <span class="n">MiddlewareScope</span><span class="o">.</span><span class="n">CONTROLLER</span>
+</span><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>  <span class="k">def</span> <span class="nf">before</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>      <span class="k">pass</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>  <span class="k">def</span> <span class="nf">after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">AnyResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>      <span class="k">pass</span>
+</code></pre></div>
+<p>Example of Middleware to be used only in Subscribers (<code>scope = MiddlewareScope.SUBSCRIBER</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">MiddlewareScope</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="k">class</span> <span class="nc">MyScopedSubscriberMiddleware</span><span class="p">(</span><span class="n">Middleware</span><span class="p">):</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="hll">  <span class="n">scope</span> <span class="o">=</span> <span class="n">MiddlewareScope</span><span class="o">.</span><span class="n">SUBSCRIBER</span>
+</span><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>  <span class="k">def</span> <span class="nf">before</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>      <span class="k">pass</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>  <span class="k">def</span> <span class="nf">after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">AnyResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>      <span class="k">pass</span>
+</code></pre></div>
+<p>If you want to use your middleware in Subscribers and Controllers you don't need to specify anything.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">MiddlewareScope</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="k">class</span> <span class="nc">MyGeneralMiddleware</span><span class="p">(</span><span class="n">Middleware</span><span class="p">):</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>  <span class="k">def</span> <span class="nf">before</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>      <span class="k">pass</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>  <span class="k">def</span> <span class="nf">after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">AnyResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>      <span class="k">pass</span>
+</code></pre></div>
+</div>
+<details class="warning">
+<summary>Do not use parametrized constructors on your Middlewares implementations</summary>
+<p>The following implementation is not valid:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">MiddlewareScope</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="k">class</span> <span class="nc">InvalidMiddleware</span><span class="p">(</span><span class="n">Middleware</span><span class="p">):</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="hll">  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">my_fancy_parameter</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="hll">      <span class="bp">self</span><span class="o">.</span><span class="n">my_fancy_parameter</span> <span class="o">=</span> <span class="n">my_fancy_parameter</span>
+</span><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>  <span class="k">def</span> <span class="nf">before</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>      <span class="k">pass</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>  <span class="k">def</span> <span class="nf">after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">AnyResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>      <span class="k">pass</span>
+</code></pre></div>
+</details>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Configure <code>shared_middlewares</code> for all Controllers and Subscribers</p>
+<p>If you want to set a default middleware for every Controller and Subscriber, you can do it when defining your <code>Application</code> with the input <code>shared_middlewares</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>  <span class="kn">from</span> <span class="nn">petisco.extra.fastapi</span> <span class="kn">import</span> <span class="n">FastApiApplication</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="hll">  <span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="p">(</span>
+</span><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>      <span class="n">APPLICATION_LATEST_DEPLOY</span><span class="p">,</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>      <span class="n">APPLICATION_NAME</span><span class="p">,</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>      <span class="n">APPLICATION_VERSION</span><span class="p">,</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>      <span class="n">ORGANIZATION</span><span class="p">,</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>  <span class="p">)</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>  <span class="kn">from</span> <span class="nn">app.fastapi</span> <span class="kn">import</span> <span class="n">fastapi_configurer</span>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>  <span class="kn">from</span> <span class="nn">app.petisco.dependencies.dependencies</span> <span class="kn">import</span> <span class="n">dependencies_provider</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>  <span class="n">application</span> <span class="o">=</span> <span class="n">FastApiApplication</span><span class="p">(</span>
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>      <span class="n">name</span><span class="o">=</span><span class="n">APPLICATION_NAME</span><span class="p">,</span>
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>      <span class="n">version</span><span class="o">=</span><span class="n">APPLICATION_VERSION</span><span class="p">,</span>
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>      <span class="n">organization</span><span class="o">=</span><span class="n">ORGANIZATION</span><span class="p">,</span>
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>      <span class="n">deployed_at</span><span class="o">=</span><span class="n">APPLICATION_LATEST_DEPLOY</span><span class="p">,</span>
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>      <span class="n">dependencies_provider</span><span class="o">=</span><span class="n">dependencies_provider</span><span class="p">,</span>
+<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>      <span class="n">fastapi_configurer</span><span class="o">=</span><span class="n">fastapi_configurer</span><span class="p">,</span>
+<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a>      <span class="n">shared_middlewares</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a>          <span class="n">NotifierMiddleware</span><span class="p">,</span>
+<a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a>          <span class="n">PrintMiddleware</span>
+<a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a>      <span class="p">]</span>
+<a id="__codelineno-18-23" name="__codelineno-18-23" href="#__codelineno-18-23"></a>  <span class="p">)</span>
+</code></pre></div>
+<details class="warning">
+<summary>Deprecated way for configuring middelwares with envar</summary>
+<p>There is also a deprecated way of configure shared middlewares using the envvar <code>PETISCO_DEFAULT_MIDDLEWARES</code>:</p>
+<p>* <code>PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware</code>: to configure PrintMiddleware</p>
+<p>* <code>PETISCO_DEFAULT_MIDDLEWARES=NotifierMiddleware</code>: to configure NotifierMiddleware</p>
+<p>* <code>PETISCO_DEFAULT_MIDDLEWARES=PrintMiddleware,NotifierMiddleware</code>: to configure several middlewares (using comma to separate)</p>
+</details>
+</div>
+</li>
+</ul>
+<ul>
+<li>
+<p><strong>use_shared_middlewares</strong>: When you have middlewares configured through <code>shared_middlewares</code>, but you have some Controller/Subscriber that you don't want to be affected by they, you can use the field <strong>use_shared_middlewares</strong> and set it to <code>False</code> (default is <code>True</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>  <span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">FastAPIController</span><span class="p">):</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>      <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="hll">          <span class="n">use_shared_middlewares</span> <span class="o">=</span> <span class="kc">False</span>
+</span><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>      <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>          <span class="o">...</span>
+</code></pre></div>
+<p>In that way the Controller/Subscriber only will be affected by the Middlewares defined in the Config (<code>MyNewMiddleware</code> in the below example).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">FastAPIController</span><span class="p">):</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="hll">        <span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyNewMiddleware</span><span class="p">]</span>
+</span><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>        <span class="n">use_shared_middlewares</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>        <span class="o">...</span>
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li><strong>success_handler</strong>: you can modify the result of a controller when the result is a success with the <code>success_handler</code> Config argument.<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainError</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PrintMiddleware</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">Error</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="kn">import</span> <span class="nn">random</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="k">class</span> <span class="nc">MyError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="hll">        <span class="n">success_handler</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">result</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;MyController set </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="s2">&quot;whatever&quot;</span><span class="p">}</span> 
+</span><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a>
+<a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]))</span>
+</code></pre></div>
+<p>If your want just to unwrap the success value of a Result (example above <code>Success(random.choice([True, False]))</code>) 
+  just use the <code>unwrap_result_handler</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">unwrap_result_handler</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">Error</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="kn">import</span> <span class="nn">random</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="hll">        <span class="n">success_handler</span> <span class="o">=</span> <span class="n">unwrap_result_handler</span>
+</span><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]))</span>
+</code></pre></div>
+<p>Additionally, if you don't care about original result, for instance a <code>BoolResult</code>, you can define a custom message 
+  with <code>custom_message_handler</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">custom_message_handler</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">Error</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="kn">import</span> <span class="nn">random</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="hll">        <span class="n">success_handler</span> <span class="o">=</span> <span class="n">custom_message_handler</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;my-custom-message}&quot;</span><span class="p">)</span>
+</span><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]))</span>
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li><strong>failure_handler</strong>: you can modify the result of the controller when failure. <div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainError</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PrintMiddleware</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">Failure</span><span class="p">,</span> <span class="n">Error</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="kn">import</span> <span class="nn">random</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="k">class</span> <span class="nc">MyError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a><span class="hll">        <span class="n">failure_handler</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">result</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;MyController error </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="s2">&quot;random error&quot;</span><span class="p">}</span> 
+</span><a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a>
+<a id="__codelineno-24-11" name="__codelineno-24-11" href="#__codelineno-24-11"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-24-12" name="__codelineno-24-12" href="#__codelineno-24-12"></a>        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+<a id="__codelineno-24-13" name="__codelineno-24-13" href="#__codelineno-24-13"></a>            <span class="k">return</span> <span class="n">Failure</span><span class="p">(</span><span class="n">MyError</span><span class="p">())</span>
+<a id="__codelineno-24-14" name="__codelineno-24-14" href="#__codelineno-24-14"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>
+<p><strong>error_map</strong>: you can define a mapping between <code>DomainError</code>s and HttpError using the <code>error_map</code> dictionary.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainError</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">HttpError</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">Failure</span><span class="p">,</span> <span class="n">Error</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="kn">import</span> <span class="nn">random</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="k">class</span> <span class="nc">MyError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="hll">        <span class="n">error_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">MyError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Random error&quot;</span><span class="p">)}</span>
+</span><a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a>
+<a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a>        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+<a id="__codelineno-25-13" name="__codelineno-25-13" href="#__codelineno-25-13"></a>            <span class="k">return</span> <span class="n">Failure</span><span class="p">(</span><span class="n">MyError</span><span class="p">())</span>
+<a id="__codelineno-25-14" name="__codelineno-25-14" href="#__codelineno-25-14"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Define shared error_map</p>
+<p>You can define a global shared error map to reuse in every controller of the application with:</p>
+<p>You can enhance your application's controllers by implementing a globally shared error map that can be utilized 
+across all controllers. This approach offers several benefits, such as improved code reusability and easier 
+management of error handling throughout the application. To implement this solution, consider the following steps:</p>
+<ul>
+<li>Create a shared error map: Define a dict with DomainErrors in keys and HttpErrors in values:</li>
+<li>Define the error map globally: Use the Application construction to define the shared error map.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Application</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="hll"><span class="n">SHARED_ERROR_MAP</span><span class="p">:</span> <span class="n">ErrorMap</span> <span class="o">=</span> <span class="p">{</span>
+</span><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="hll">  <span class="n">MySharedNotFoundError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+</span><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="hll">  <span class="n">MySharedConflictError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">)</span>
+</span><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="hll"><span class="p">}</span>
+</span><a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>
+<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a><span class="n">application</span> <span class="o">=</span> <span class="n">Application</span><span class="p">(</span>
+<a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-app&quot;</span><span class="p">,</span>
+<a id="__codelineno-26-11" name="__codelineno-26-11" href="#__codelineno-26-11"></a>    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-26-12" name="__codelineno-26-12" href="#__codelineno-26-12"></a>    <span class="n">organization</span><span class="o">=</span><span class="s2">&quot;acme&quot;</span><span class="p">,</span>
+<a id="__codelineno-26-13" name="__codelineno-26-13" href="#__codelineno-26-13"></a>    <span class="n">deployed_at</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()),</span>
+<a id="__codelineno-26-14" name="__codelineno-26-14" href="#__codelineno-26-14"></a><span class="hll">    <span class="n">shared_error_map</span><span class="o">=</span><span class="n">SHARED_ERROR_MAP</span><span class="p">,</span>
+</span><a id="__codelineno-26-15" name="__codelineno-26-15" href="#__codelineno-26-15"></a><span class="p">)</span>
+<a id="__codelineno-26-16" name="__codelineno-26-16" href="#__codelineno-26-16"></a><span class="n">application</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
+</code></pre></div>
+<p>By implementing a global shared error map, you can streamline error management and foster efficient code reuse 
+among your application's controllers. This approach significantly improves maintainability and enables seamless future enhancements or modifications to error handling logic.</p>
+<p>Furthermore, even if you choose not to explicitly select an <code>error_map</code> in your controllers or application, there 
+are already default mappings available for you to leverage. For instance, you can make use of
+<code>petisco.DEFAULT_HTTP_ERROR_MAP</code>, which provides a set of predefined mappings for common HTTP errors.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">DEFAULT_HTTP_ERROR_MAP</span><span class="p">:</span> <span class="n">ErrorMap</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>  <span class="n">DomainError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>  <span class="n">NotFound</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>  <span class="n">AlreadyExists</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">),</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>  <span class="n">AggregateNotFoundError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>  <span class="n">AggregatesNotFoundError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>  <span class="n">AggregateAlreadyExistError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">),</span>
+<a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a>  <span class="n">ClientNotFound</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+<a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a>  <span class="n">ClientAlreadyExists</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">),</span>
+<a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a>  <span class="n">UserNotFound</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+<a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a>  <span class="n">UserAlreadyExists</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">),</span>
+<a id="__codelineno-27-12" name="__codelineno-27-12" href="#__codelineno-27-12"></a>  <span class="n">InvalidUuid</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">422</span><span class="p">),</span>
+<a id="__codelineno-27-13" name="__codelineno-27-13" href="#__codelineno-27-13"></a>  <span class="n">InvalidValueObject</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>
+<a id="__codelineno-27-14" name="__codelineno-27-14" href="#__codelineno-27-14"></a><span class="p">}</span>
+</code></pre></div>
+These default mappings serve as a solid foundation and can be customized as needed. If any specific error codes or
+messages need to be overridden or added, you can extend or modify the shared error map accordingly. This 
+flexibility allows you to tailor error handling to your application's unique requirements while still benefiting 
+from the convenience and consistency offered by the shared error map approach.</p>
+<p><strong>Important ⚠️</strong>:
+When using petisco, it's essential to note that all defined error_maps, including the shared, default, and 
+controller ones, are internally merged. This merging process follows a specific priority order: controller 
+mappings take precedence over shared mappings, which in turn take precedence over default mappings.
+In practical terms, this means that if you define a key in the controller that is already defined in the shared 
+or default error_map, petisco will prioritize the value from the controller definition. This behavior ensures that
+you have full control over the error mappings within your specific controller, allowing you to override or 
+customize any predefined mappings as needed.</p>
+<p>By adhering to this merging priority, you can confidently manage and tailor error handling within your controllers 
+while leveraging the shared and default error maps for consistency and convenience. It empowers you to fine-tune 
+error mappings according to your application's requirements without sacrificing the benefits provided by petisco's 
+predefined error mappings.</p>
+</div>
+</li>
+</ul>
+<h4 id="fastapi">FastAPI ⚡️<a class="headerlink" href="#fastapi" title="Permanent link">&para;</a></h4>
+<p>To use it in combination with FastAPI is as easy as inherit from  <code>FastAPIController</code> instead of using <code>Controller</code> (as shown above).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">BoolResult</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">DomainEventBus</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="kn">from</span> <span class="nn">petisco.extra.fastapi</span> <span class="kn">import</span> <span class="n">FastAPIController</span>
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>
+<a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="kn">from</span> <span class="nn">app.src.task.create.application.task_creator</span> <span class="kn">import</span> <span class="n">TaskCreator</span>
+<a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a><span class="kn">from</span> <span class="nn">app.src.task.shared.domain.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>
+<a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>
+<a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a><span class="hll"><span class="k">class</span> <span class="nc">CreateTaskController</span><span class="p">(</span><span class="n">FastAPIController</span><span class="p">):</span>
+</span><a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a><span class="hll">    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+</span><a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a><span class="hll">        <span class="n">task_creator</span> <span class="o">=</span> <span class="n">TaskCreator</span><span class="p">(</span> <span class="c1"># (1)</span>
+</span><a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a><span class="hll">            <span class="n">labeler</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskLabeler</span><span class="p">),</span>
+</span><a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a><span class="hll">            <span class="n">repository</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskRepository</span><span class="p">),</span>
+</span><a id="__codelineno-28-14" name="__codelineno-28-14" href="#__codelineno-28-14"></a><span class="hll">            <span class="n">domain_event_bus</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DomainEventBus</span><span class="p">),</span>
+</span><a id="__codelineno-28-15" name="__codelineno-28-15" href="#__codelineno-28-15"></a><span class="hll">        <span class="p">)</span>
+</span><a id="__codelineno-28-16" name="__codelineno-28-16" href="#__codelineno-28-16"></a><span class="hll">        <span class="k">return</span> <span class="n">task_creator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span> <span class="c1"># (2)</span>
+</span></code></pre></div>
+<ol>
+<li>Defines and instantiate the use case.</li>
+<li>Executes the use case.</li>
+</ol>
+<p>Then, we have to instantiate and execute the controller object in the FastAPI routers.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">APIRouter</span>
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="kn">from</span> <span class="nn">petisco.extra.fastapi</span> <span class="kn">import</span> <span class="n">as_fastapi</span>
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Uuid</span>
+<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>
+<a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>
+<a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="kn">from</span> <span class="nn">app.api.models</span> <span class="kn">import</span> <span class="n">TaskIn</span><span class="p">,</span> <span class="n">TaskOut</span>
+<a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a><span class="kn">from</span> <span class="nn">app.src.task.create.application.create_task_controller</span> <span class="kn">import</span> <span class="n">CreateTaskController</span>
+<a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>
+<a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Tasks&quot;</span><span class="p">])</span>
+<a id="__codelineno-29-12" name="__codelineno-29-12" href="#__codelineno-29-12"></a>
+<a id="__codelineno-29-13" name="__codelineno-29-13" href="#__codelineno-29-13"></a><span class="hll"><span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/task&quot;</span><span class="p">)</span>
+</span><a id="__codelineno-29-14" name="__codelineno-29-14" href="#__codelineno-29-14"></a><span class="hll"><span class="k">async</span> <span class="k">def</span> <span class="nf">create_task</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="n">TaskIn</span><span class="p">):</span>
+</span><a id="__codelineno-29-15" name="__codelineno-29-15" href="#__codelineno-29-15"></a><span class="hll">    <span class="n">result</span> <span class="o">=</span> <span class="n">CreateTaskController</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">to_task</span><span class="p">())</span> <span class="c1"># (1) </span>
+</span><a id="__codelineno-29-16" name="__codelineno-29-16" href="#__codelineno-29-16"></a><span class="hll">    <span class="k">return</span> <span class="n">as_fastapi</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1"># (2) </span>
+</span></code></pre></div>
+<ol>
+<li>Executes the Controller</li>
+<li>Transforms Result to FastAPI expected message or <code>HttpException</code>s.</li>
+</ol>
+<h2 id="subscriber">Subscriber<a class="headerlink" href="#subscriber" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p>A <code>Subscriber</code> is similar to <code>Controller</code>, use it to define and configure inputs and outputs or your entry point.
+The difference is that the <code>Subscriber</code> is executed reactively to messages (Domain Events, Commands, etc..).</p>
+</div>
+<pre class="mermaid"><code>flowchart LR
+
+        subgraph I/O
+            cli([CLI])
+            webapp([Web App])
+            message([Message Broker])
+        end
+
+        subgraph Application
+            dic([Container])        
+            dic-- Dependency Injection --&gt;usecase
+            controller([Controller])
+            usecase([UseCase])
+            subscriber([Subscriber])
+            controller --&gt; usecase
+            subscriber --&gt; usecase
+        end
+
+        webapp --&gt; controller
+        cli --&gt; controller
+        message --&gt; subscriber
+
+        subgraph Domain
+        petisco(((petisco)))
+        end
+
+        usecase --&gt; petisco
+
+        subgraph Infrastructure
+            Persistence[(Persistence)]
+            petisco --&gt; Persistence
+            petisco --&gt; Buses
+            petisco --&gt; Monitoring
+            petisco --&gt; Others
+        end
+
+        style subscriber fill:#F0B27A
+        style Application fill:#D6EAF8</code></pre>
+<p><code>Subscribers</code> (or handlers) are very useful on Event Streaming Architectures, where use cases publish domain events and
+subscribers handle them.</p>
+<ul>
+<li><strong>Subscribe to all messages:</strong> If you want to create a subscriber to handle all the message, you have to extend from 
+<code>AllMessageSubscriber</code>.<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">AllMessageSubscriber</span><span class="p">,</span> <span class="n">Message</span><span class="p">,</span> <span class="n">Container</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">BoolResult</span>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="kn">from</span> <span class="nn">my_app</span> <span class="kn">import</span> <span class="n">MessageSaver</span>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="k">class</span> <span class="nc">StoreMessage</span><span class="p">(</span><span class="n">AllMessageSubscriber</span><span class="p">):</span>
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">Message</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a>        <span class="n">saver</span> <span class="o">=</span> <span class="n">MessageSaver</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MessageRepository</span><span class="p">))</span>
+<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>        <span class="k">return</span> <span class="n">saver</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div>
+<p>In this example, the subscriber will handle all the messages and store them into a configured repository.</p>
+</li>
+</ul>
+<ul>
+<li><strong>Subscribe to a DomainEvent:</strong> You can subscribe to domain events (check <a href="../domain/">Domain</a> to learn how to create a 
+domain event).<pre class="mermaid"><code>flowchart LR
+
+        subgraph Use Case TaskCreator
+        eventbus([Event Bus])
+        end
+
+        message_broker([Message Broker])
+        eventbus -- Domain Event --&gt; message_broker
+        message_broker --  Domain Event --&gt; Subscriber
+
+        subgraph Use Case Send Notification 
+        action([Action])
+        end
+
+        Subscriber --&gt; action
+
+        style Subscriber fill:#D6EAF8
+
+        style message_broker fill:#F0B27A,stroke:#333,stroke-width:2px</code></pre>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example subscribing to 1 Domain Event</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEventSubscriber</span><span class="p">,</span> <span class="n">DomainEvent</span><span class="p">,</span> <span class="n">Container</span>
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="kn">from</span> <span class="nn">my_app</span> <span class="kn">import</span> <span class="n">TaskCreated</span><span class="p">,</span> <span class="n">Notification</span><span class="p">,</span> <span class="n">Notificator</span>
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="k">class</span> <span class="nc">SendNotificationOnTaskCreated</span><span class="p">(</span><span class="n">DomainEventSubscriber</span><span class="p">):</span>
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="hll">    <span class="k">def</span> <span class="nf">subscribed_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">DomainEvent</span><span class="p">]]:</span> 
+</span><a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a><span class="hll">        <span class="k">return</span> <span class="p">[</span><span class="n">TaskCreated</span><span class="p">]</span> <span class="c1"># (1)</span>
+</span><a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a>
+<a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_event</span><span class="p">:</span> <span class="n">DomainEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a>        <span class="n">notification</span> <span class="o">=</span> <span class="n">Notification</span><span class="o">.</span><span class="n">from_domain_event</span><span class="p">(</span><span class="n">domain_event</span><span class="p">)</span>
+<a id="__codelineno-31-11" name="__codelineno-31-11" href="#__codelineno-31-11"></a>        <span class="n">notificator</span> <span class="o">=</span> <span class="n">Notificator</span><span class="p">(</span><span class="n">app_service</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MyAppService</span><span class="p">))</span>
+<a id="__codelineno-31-12" name="__codelineno-31-12" href="#__codelineno-31-12"></a>        <span class="k">return</span> <span class="n">notificator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">notification</span><span class="p">)</span>
+</code></pre></div>
+<ol>
+<li>Defines which <code>DomainEvent</code> this subscriber will execute (In this case <code>TaskCreated</code>).</li>
+</ol>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example subscribing to several Domain Events</p>
+<pre class="mermaid"><code>flowchart LR
+
+        subgraph Use Case TaskCreator
+        eventbus1([Event Bus])
+        end
+
+        subgraph Use Case TaskUpdater
+        eventbus2([Event Bus])
+        end
+
+        subgraph Use Case TaskRemover
+        eventbus3([Event Bus])
+        end
+
+        message_broker([Message Broker])
+        eventbus1 -- TaskCreated --&gt; message_broker
+        eventbus2 -- TaskUpdated --&gt; message_broker
+        eventbus3 -- TaskRemoved --&gt; message_broker
+
+        message_broker --  TaskCreated --&gt; Subscriber
+        message_broker --  TaskUpdated --&gt; Subscriber
+        message_broker --  TaskRemoved --&gt; Subscriber 
+
+        subgraph Use Case Send Notification 
+        action([Action])
+        end
+
+        Subscriber --&gt; action
+
+        style Subscriber fill:#D6EAF8
+
+        style message_broker fill:#F0B27A,stroke:#333,stroke-width:2px</code></pre>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEventSubscriber</span><span class="p">,</span> <span class="n">DomainEvent</span><span class="p">,</span> <span class="n">Container</span>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="kn">from</span> <span class="nn">my_app</span> <span class="kn">import</span> <span class="n">TaskCreated</span><span class="p">,</span> <span class="n">TaskUpdated</span><span class="p">,</span> <span class="n">TaskRemoved</span><span class="p">,</span> <span class="n">Notification</span><span class="p">,</span> <span class="n">Notificator</span>
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>
+<a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a><span class="k">class</span> <span class="nc">SendNotificationOnTaskModifications</span><span class="p">(</span><span class="n">DomainEventSubscriber</span><span class="p">):</span>
+<a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a>
+<a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a><span class="hll">    <span class="k">def</span> <span class="nf">subscribed_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">DomainEvent</span><span class="p">]]:</span>
+</span><a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a><span class="hll">        <span class="k">return</span> <span class="p">[</span><span class="n">TaskCreated</span><span class="p">,</span> <span class="n">TaskUpdated</span><span class="p">,</span> <span class="n">TaskRemoved</span><span class="p">]</span> <span class="c1"># (1)</span>
+</span><a id="__codelineno-32-9" name="__codelineno-32-9" href="#__codelineno-32-9"></a>
+<a id="__codelineno-32-10" name="__codelineno-32-10" href="#__codelineno-32-10"></a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_event</span><span class="p">:</span> <span class="n">DomainEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-32-11" name="__codelineno-32-11" href="#__codelineno-32-11"></a>        <span class="n">notification</span> <span class="o">=</span> <span class="n">Notification</span><span class="o">.</span><span class="n">from_domain_event</span><span class="p">(</span><span class="n">domain_event</span><span class="p">)</span>
+<a id="__codelineno-32-12" name="__codelineno-32-12" href="#__codelineno-32-12"></a>        <span class="n">notificator</span> <span class="o">=</span> <span class="n">Notificator</span><span class="p">(</span><span class="n">app_service</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MyAppService</span><span class="p">))</span>
+<a id="__codelineno-32-13" name="__codelineno-32-13" href="#__codelineno-32-13"></a>        <span class="k">return</span> <span class="n">notificator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">notification</span><span class="p">)</span>
+</code></pre></div>
+<ol>
+<li>Defines which <code>DomainEvent</code> this subscriber will execute (In this case <code>TaskCreated</code>, <code>TaskUpdated</code>, <code>TaskRemoved</code>).</li>
+</ol>
+</div>
+<ul>
+<li><strong>Subscribe to a Command:</strong> You can subscribe to a command that is published by your domain.</li>
+</ul>
+<details class="example" open="open">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">CommandSubscriber</span><span class="p">,</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Container</span>
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="kn">from</span> <span class="nn">my_app</span> <span class="kn">import</span> <span class="n">CreateTask</span><span class="p">,</span> <span class="n">TaskCreator</span>
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>
+<a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="k">class</span> <span class="nc">CreateTaskOnCreateTaskCommand</span><span class="p">(</span><span class="n">CommandSubscriber</span><span class="p">):</span>
+<a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>
+<a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a><span class="hll">    <span class="k">def</span> <span class="nf">subscribed_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Command</span><span class="p">]:</span>
+</span><a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a><span class="hll">        <span class="k">return</span> <span class="p">[</span><span class="n">CreateTask</span><span class="p">]</span> <span class="c1"># (1)</span>
+</span><a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a>
+<a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="n">Command</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-33-11" name="__codelineno-33-11" href="#__codelineno-33-11"></a>        <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">from_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+<a id="__codelineno-33-12" name="__codelineno-33-12" href="#__codelineno-33-12"></a>         <span class="n">task_creator</span> <span class="o">=</span> <span class="n">TaskCreator</span><span class="p">(</span>
+<a id="__codelineno-33-13" name="__codelineno-33-13" href="#__codelineno-33-13"></a>            <span class="n">repository</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskRepository</span><span class="p">),</span>
+<a id="__codelineno-33-14" name="__codelineno-33-14" href="#__codelineno-33-14"></a>            <span class="n">domain_event_bus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">domain_event_bus</span><span class="p">,</span> <span class="c1"># (2) </span>
+<a id="__codelineno-33-15" name="__codelineno-33-15" href="#__codelineno-33-15"></a>        <span class="p">)</span>
+<a id="__codelineno-33-16" name="__codelineno-33-16" href="#__codelineno-33-16"></a>        <span class="k">return</span> <span class="n">task_creator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>  
+</code></pre></div>
+<ol>
+<li>Defines which <code>Command</code> this subscriber will execute (In this case <code>CreateTask</code>).</li>
+<li>Use available <code>domain_event_bus</code> in <code>CommandSubscriber</code> instead of <code>Container.get(DomainEventBus)</code></li>
+</ol>
+</details>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>For more info, take a look at <a href="extra/rabbitmq">Infrastructure/RabbitMQ</a> and see how it works with a real implementation.</p>
+</div>
+<h2 id="cqrs">CQRS<a class="headerlink" href="#cqrs" title="Permanent link">&para;</a></h2>
+<p>CQRS (Command Query Responsibility Segregation) is incipient in petisco, but the framework already allows to play with 
+this architecture. 
+The following example presents the cases we have reviewed in the previous sections. 
+We will use a <code>Controller</code> to send a command over the command bus, so that a subscriber will receive this message and 
+instantiates the use case in order to complete the action.</p>
+<pre class="mermaid"><code>flowchart LR
+
+        subgraph I/O
+        webapp([Web App])
+        end
+
+        subgraph Controller
+        command_bus([Command Bus])
+        end
+
+        subgraph Subscriber
+        subscriber_usecase([UseCase])
+        end
+
+        webapp -- Task --&gt; Controller
+        message_broker([Message Broker])
+        command_bus -- Command --&gt; message_broker
+        message_broker --  Command --&gt; Subscriber
+
+        style Controller fill:#D6EAF8
+        style Subscriber fill:#D6EAF8
+
+        style message_broker fill:#F0B27A,stroke:#333,stroke-width:2px
+</code></pre>
+<h4 id="fastapi_1">FastAPI ⚡️<a class="headerlink" href="#fastapi_1" title="Permanent link">&para;</a></h4>
+<p>The following code is an example of how to use CQRS with petisco and FastAPI.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>
+<a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a><span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span>
+<a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">BoolResult</span><span class="p">,</span> <span class="n">isSuccess</span>
+<a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a><span class="kn">from</span> <span class="nn">petisco.extra.fastapi</span> <span class="kn">import</span> <span class="n">FastAPIController</span><span class="p">,</span> <span class="n">as_fastapi</span>
+<a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a><span class="kn">from</span> <span class="nn">pydantic.types</span> <span class="kn">import</span> <span class="n">constr</span>
+<a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">CommandSubscriber</span><span class="p">,</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Container</span><span class="p">,</span> <span class="n">CommandBus</span>
+<a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a><span class="kn">from</span> <span class="nn">my_app</span> <span class="kn">import</span> <span class="n">CreateTask</span><span class="p">,</span> <span class="n">TaskCreator</span>
+<a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a>
+<a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+<a id="__codelineno-34-12" name="__codelineno-34-12" href="#__codelineno-34-12"></a>
+<a id="__codelineno-34-13" name="__codelineno-34-13" href="#__codelineno-34-13"></a>
+<a id="__codelineno-34-14" name="__codelineno-34-14" href="#__codelineno-34-14"></a><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-34-15" name="__codelineno-34-15" href="#__codelineno-34-15"></a>    <span class="n">name</span><span class="p">:</span> <span class="n">constr</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<a id="__codelineno-34-16" name="__codelineno-34-16" href="#__codelineno-34-16"></a>    <span class="n">description</span><span class="p">:</span> <span class="n">constr</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<a id="__codelineno-34-17" name="__codelineno-34-17" href="#__codelineno-34-17"></a>
+<a id="__codelineno-34-18" name="__codelineno-34-18" href="#__codelineno-34-18"></a>
+<a id="__codelineno-34-19" name="__codelineno-34-19" href="#__codelineno-34-19"></a><span class="c1"># Controller</span>
+<a id="__codelineno-34-20" name="__codelineno-34-20" href="#__codelineno-34-20"></a><span class="k">class</span> <span class="nc">CreateTaskController</span><span class="p">(</span><span class="n">FastAPIController</span><span class="p">):</span>
+<a id="__codelineno-34-21" name="__codelineno-34-21" href="#__codelineno-34-21"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-34-22" name="__codelineno-34-22" href="#__codelineno-34-22"></a>        <span class="n">command_bus</span><span class="p">:</span> <span class="n">CommandBus</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CommandBus</span><span class="p">)</span>
+<a id="__codelineno-34-23" name="__codelineno-34-23" href="#__codelineno-34-23"></a>        <span class="n">create_task</span> <span class="o">=</span> <span class="n">CreateTask</span><span class="o">.</span><span class="n">from_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+<a id="__codelineno-34-24" name="__codelineno-34-24" href="#__codelineno-34-24"></a>        <span class="n">command_bus</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">create_task</span><span class="p">)</span>
+<a id="__codelineno-34-25" name="__codelineno-34-25" href="#__codelineno-34-25"></a>        <span class="k">return</span> <span class="n">isSuccess</span>
+<a id="__codelineno-34-26" name="__codelineno-34-26" href="#__codelineno-34-26"></a>
+<a id="__codelineno-34-27" name="__codelineno-34-27" href="#__codelineno-34-27"></a>
+<a id="__codelineno-34-28" name="__codelineno-34-28" href="#__codelineno-34-28"></a><span class="c1"># Subscriber</span>
+<a id="__codelineno-34-29" name="__codelineno-34-29" href="#__codelineno-34-29"></a><span class="k">class</span> <span class="nc">CreateTaskOnCreateTaskCommandSubscriber</span><span class="p">(</span><span class="n">CommandSubscriber</span><span class="p">):</span>
+<a id="__codelineno-34-30" name="__codelineno-34-30" href="#__codelineno-34-30"></a>
+<a id="__codelineno-34-31" name="__codelineno-34-31" href="#__codelineno-34-31"></a>    <span class="k">def</span> <span class="nf">subscribed_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Command</span><span class="p">]:</span>
+<a id="__codelineno-34-32" name="__codelineno-34-32" href="#__codelineno-34-32"></a>        <span class="k">return</span> <span class="n">CreateTask</span>
+<a id="__codelineno-34-33" name="__codelineno-34-33" href="#__codelineno-34-33"></a>
+<a id="__codelineno-34-34" name="__codelineno-34-34" href="#__codelineno-34-34"></a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="n">Command</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-34-35" name="__codelineno-34-35" href="#__codelineno-34-35"></a>        <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">from_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+<a id="__codelineno-34-36" name="__codelineno-34-36" href="#__codelineno-34-36"></a>        <span class="n">task_creator</span> <span class="o">=</span> <span class="n">TaskCreator</span><span class="p">(</span>
+<a id="__codelineno-34-37" name="__codelineno-34-37" href="#__codelineno-34-37"></a>            <span class="n">repository</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskRepository</span><span class="p">),</span>
+<a id="__codelineno-34-38" name="__codelineno-34-38" href="#__codelineno-34-38"></a>            <span class="n">domain_event_bus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">domain_event_bus</span><span class="p">,</span> <span class="c1"># (1)</span>
+<a id="__codelineno-34-39" name="__codelineno-34-39" href="#__codelineno-34-39"></a>        <span class="p">)</span>
+<a id="__codelineno-34-40" name="__codelineno-34-40" href="#__codelineno-34-40"></a>        <span class="k">return</span> <span class="n">task_creator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
+<a id="__codelineno-34-41" name="__codelineno-34-41" href="#__codelineno-34-41"></a>
+<a id="__codelineno-34-42" name="__codelineno-34-42" href="#__codelineno-34-42"></a><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/task&quot;</span><span class="p">)</span>
+<a id="__codelineno-34-43" name="__codelineno-34-43" href="#__codelineno-34-43"></a><span class="k">def</span> <span class="nf">create_task</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<a id="__codelineno-34-44" name="__codelineno-34-44" href="#__codelineno-34-44"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">CreateTaskController</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+<a id="__codelineno-34-45" name="__codelineno-34-45" href="#__codelineno-34-45"></a>    <span class="k">return</span> <span class="n">as_fastapi</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+<ol>
+<li>Use available <code>domain_event_bus</code> in <code>CommandSubscriber</code> instead of <code>Container.get(DomainEventBus")</code></li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/alice-biometrics/petisco" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/alicebiometrics" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/company/alicebiometrics" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.tabs.link", "content.code.annotate", "content.code.copy"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.5cfa9459.min.js"></script>
+      
+        <script src="../js/redirects.js"></script>
+      
+        <script src="../js/termynal.js"></script>
+      
+        <script src="../js/ad.js"></script>
+      
+        <script src="../js/custom.js"></script>
+      
+    
+  </body>
+</html>

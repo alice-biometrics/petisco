@@ -1,0 +1,1534 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="🍪 petisco is a framework for helping Python developers to build clean Applications in Python.">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/alice-biometrics/petisco/migrations/from_v1_to_v2/">
+      
+      
+        <link rel="prev" href="../../asyncio/">
+      
+      
+        <link rel="next" href="../../contributing/">
+      
+      
+      <link rel="icon" href="../../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.22">
+    
+    
+      
+        <title>From v1 to v2 - petisco</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.732c4fb1.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../css/terminal.css">
+    
+      <link rel="stylesheet" href="../../css/termynal.css">
+    
+      <link rel="stylesheet" href="../../css/tweaks.css">
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#breaking-changes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="petisco" class="md-header__button md-logo" aria-label="petisco" data-md-component="logo">
+      
+  <img src="../../logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            petisco
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              From v1 to v2
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/alice-biometrics/petisco" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alice-biometrics/petisco
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="petisco" class="md-nav__button md-logo" aria-label="petisco" data-md-component="logo">
+      
+  <img src="../../logo-white.png" alt="logo">
+
+    </a>
+    petisco
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/alice-biometrics/petisco" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alice-biometrics/petisco
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../application/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../domain/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Domain
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../databases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Extras
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Extras
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extra/fastapi/fastapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extra/rabbitmq/rabbitmq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RabbitMQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extra/redis/redis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Redis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extra/elastic/elastic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Elastic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extra/sqlalchemy/sqlalchemy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SQLAlchemy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extra/slack/slack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Slack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../asyncio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Asyncio
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Migrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    From v1 to v2
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    From v1 to v2
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#breaking-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Breaking Changes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Changes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dependencies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controller-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controller Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#messagebuses" class="md-nav__link">
+    <span class="md-ellipsis">
+      MessageBuses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-private-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message Private Properties
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-from-metaclass-to-pydantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message (From metaclass to Pydantic)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-experience-improvements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dev Experience Improvements
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dev Experience Improvements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retrieved-message-are-better-typed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retrieved Message are better typed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-implementations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async Implementations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-shared_error_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use shared_error_map
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing to petisco
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acknowledgements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Acknowledgements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#breaking-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Breaking Changes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Changes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dependencies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controller-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controller Result
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#messagebuses" class="md-nav__link">
+    <span class="md-ellipsis">
+      MessageBuses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-private-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message Private Properties
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-from-metaclass-to-pydantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message (From metaclass to Pydantic)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-experience-improvements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dev Experience Improvements
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dev Experience Improvements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retrieved-message-are-better-typed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retrieved Message are better typed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-implementations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async Implementations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-shared_error_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use shared_error_map
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+  
+  
+<!--    <div id="bsa-cpc"></div>-->
+  
+  
+                  
+
+  
+  
+
+
+  <h1>From v1 to v2</h1>
+
+<p>Here, you will find comprehensive information and guidelines on migrating to a new version (v2) of petisco framework. 
+Upgrading to the latest version can bring numerous benefits, including enhanced features, improved performance, and 
+increased security. However, we understand that the migration process can be complex and challenging, which is why we 
+have compiled this documentation to assist you every step of the way.</p>
+<h2 id="breaking-changes">Breaking Changes<a class="headerlink" href="#breaking-changes" title="Permanent link">&para;</a></h2>
+<p>Following changes may require modifications to your existing code. While we apologize for any inconvenience, we believe 
+these updates will enhance functionality and improve user experience. Please review the accompanying documentation for 
+specific modifications and reach out to our support team for assistance. We value your feedback and appreciate your 
+understanding during this transition. Thank you for your continued support as we strive to provide you with an improved 
+library experience.</p>
+<h3 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>On dependency definition, <code>name</code> and <code>default_builder</code> are no longer available. </p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Petisco v1 👴</label><label for="__tabbed_1_2">Petisco v2 👶</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Dependency</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="hll">    <span class="n">Dependency</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-base&quot;</span><span class="p">,</span> <span class="n">default_builder</span><span class="o">=</span><span class="n">Builder</span><span class="p">(</span><span class="n">MyImplementation</span><span class="p">))</span>
+</span><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">]</span>    
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">Container</span><span class="o">.</span><span class="n">set_dependencies</span><span class="p">(</span><span class="n">dependencies</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="hll"><span class="n">instance</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my-base&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Dependency</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="hll">    <span class="n">Dependency</span><span class="p">(</span><span class="n">MyBase</span><span class="p">,</span> <span class="n">builders</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">MyImplementation</span><span class="p">)})</span>
+</span><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">]</span>    
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">Container</span><span class="o">.</span><span class="n">set_dependencies</span><span class="p">(</span><span class="n">dependencies</span><span class="p">)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="hll"><span class="n">instance</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MyBase</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p>For more info about new way of defining dependencies, you can check the <a href="../../application/#dependency-injection-container">Dependency Injection Container section</a>.</p>
+<h3 id="controller-result">Controller Result<a class="headerlink" href="#controller-result" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>After some attempts to remove the forbidden petisco magic behind the controller returning type while keeping the useful
+mapping of the result (e.g. mapping Result values to outputs or Http errors in FastAPI) like in the <a href="https://github.com/alice-biometrics/petisco/issues/333">Issue 333</a>
+, a new proposal have been validated.</p>
+<p>The main idea is simplify controller result to avoid the following question: <strong>Is petisco controller going to return 
+me a <code>meiga.Result</code> or instead is going to directly map the Result using the Controller Config parameters (See <a href="../../application/#configuration">Doc</a>).?</strong></p>
+<p>Now, the <code>Controller</code> implementation of petisco v2 version always returns a <code>meiga.Result</code> type. And this Result 
+type will have set a tranformed function to map domain result to the framework expected result (e.g. agging mapping 
+Result values to outputs or Http errors in FastAPI).</p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Petisco v1 👴</label><label for="__tabbed_2_2">Petisco v2 👶</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainError</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PrintMiddleware</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">Error</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">import</span> <span class="nn">random</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">class</span> <span class="nc">MyError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>  
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        <span class="n">success_handler</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">result</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">}</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="n">error_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">NotFound</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Task not Found&quot;</span><span class="p">)}</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        <span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">PrintMiddleware</span><span class="p">]</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]))</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="hll"><span class="n">result</span> <span class="o">=</span> <span class="n">MyController</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainError</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PrintMiddleware</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">Error</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">import</span> <span class="nn">random</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">class</span> <span class="nc">MyError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span> <span class="c1"># </span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        <span class="n">success_handler</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">result</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">}</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        <span class="n">error_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">NotFound</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Task not Found&quot;</span><span class="p">)}</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>        <span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">PrintMiddleware</span><span class="p">]</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]))</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="hll"><span class="n">result</span> <span class="o">=</span> <span class="n">MyController</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</span><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="hll">
+</span><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="hll"><span class="c1"># If you want to transform you can do it with result.transform() o with a better semantic funciton `as_fastapi`</span>
+</span><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="hll"><span class="kn">from</span> <span class="nn">petisco.extras.fastapi</span> <span class="kn">import</span> <span class="n">as_fastapi</span>
+</span><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="hll"><span class="n">mapped_result</span> <span class="o">=</span> <span class="n">as_fastapi</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p>To use this in a FastAPI router, is quite easy:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Petisco v1 👴</label><label for="__tabbed_3_2">Petisco v2 👶</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">APIRouter</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my/path&quot;</span><span class="p">):</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">def</span> <span class="nf">my_router</span><span class="p">():</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">MyController</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span> <span class="c1"># real result don&#39;t match with typehint as it is mapped</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">APIRouter</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="hll"><span class="kn">from</span> <span class="nn">petisco.extra.fastapi</span> <span class="kn">import</span> <span class="n">as_fastapi</span>
+</span><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my/path&quot;</span><span class="p">):</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="k">def</span> <span class="nf">my_router</span><span class="p">():</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">MyController</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="hll">    <span class="k">return</span> <span class="n">as_fastapi</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="messagebuses">MessageBuses<a class="headerlink" href="#messagebuses" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code>DomainEventBus</code> and <code>CommandBus</code> do not implement <code>publish_list</code> anymore. Now is necessary to rename it to <code>publish</code>.
+The new <code>publish</code> implementation available in petisco v2 allows to pass individual and list of messages.</p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Petisco v1 👴</label><label for="__tabbed_4_2">Petisco v2 👶</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Dependency</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">domain_events</span> <span class="o">=</span> <span class="p">[</span><span class="n">UserCreated</span><span class="p">(),</span> <span class="n">UserCompleted</span><span class="p">()]</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">domain_event_bus</span><span class="p">:</span> <span class="n">DomainEventBus</span> <span class="o">=</span> <span class="n">MyDomainEventBus</span><span class="p">()</span>  
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="hll"><span class="n">domain_event_bus</span><span class="o">.</span><span class="n">publish_list</span><span class="p">(</span><span class="n">domain_events</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Dependency</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">domain_events</span> <span class="o">=</span> <span class="p">[</span><span class="n">UserCreated</span><span class="p">(),</span> <span class="n">UserCompleted</span><span class="p">()]</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">domain_event_bus</span><span class="p">:</span> <span class="n">DomainEventBus</span> <span class="o">=</span> <span class="n">MyDomainEventBus</span><span class="p">()</span>  
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="hll"><span class="n">domain_event_bus</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">domain_events</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="message-private-properties">Message Private Properties<a class="headerlink" href="#message-private-properties" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Petisco Message classes (<code>DomainEvent</code> and <code>Commnad</code>) had some limitations on version 1. Some <code>protected</code> class 
+attribute names cannot be chosen as were used to store meta information of the message.</p>
+<p>For example, you cannot use <code>name</code> attribute in your definition, or <code>version</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">Petisco v1 👴</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block"></div>
+</div>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEvent</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">class</span> <span class="nc">UserCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="hll">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> 
+</span><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="hll">    <span class="n">version</span><span class="p">:</span> <span class="nb">int</span>
+</span></code></pre></div>
+<p>Version 2 resolves this issues but needs to break compatibility.</p>
+</div>
+<p>Now, the access to private attributes must be performed using a sort of getters.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:2"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Petisco v1 👴</label><label for="__tabbed_6_2">Petisco v2 👶</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEvent</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">class</span> <span class="nc">UserCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="hll">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> 
+</span><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="hll">    <span class="n">version</span><span class="p">:</span> <span class="nb">int</span>
+</span><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">user_created</span> <span class="o">=</span> <span class="n">UserCreated</span><span class="p">(</span><span class="n">name</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="hll"><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="c1"># the given name conflicts with private name attribute</span>
+</span><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="hll"><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">version</span><span class="p">)</span> <span class="c1"># the given version conflicts with private version attribute</span>
+</span><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span> 
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">message_id</span><span class="p">)</span> 
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">ocurred_on</span><span class="p">)</span> 
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span> 
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEvent</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="k">class</span> <span class="nc">UserCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> 
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">int</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="n">user_created</span> <span class="o">=</span> <span class="n">UserCreated</span><span class="p">(</span><span class="n">name</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">get_message_name</span><span class="p">())</span> 
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">get_message_version</span><span class="p">())</span> 
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">get_message_attributes</span><span class="p">())</span> 
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">get_message_id</span><span class="p">())</span> 
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">get_message_ocurred_on</span><span class="p">())</span> 
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="nb">print</span><span class="p">(</span><span class="n">user_created</span><span class="o">.</span><span class="n">get_message_meta</span><span class="p">())</span> 
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="message-from-metaclass-to-pydantic">Message (From metaclass to Pydantic)<a class="headerlink" href="#message-from-metaclass-to-pydantic" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Petisco <code>Message</code> base class is now a <code>pydantic.BaseModel</code>. This will help on dev experience improvement of 
+<code>DomainEvent</code> and <code>Command</code> and also validation. <a href="https://github.com/alice-biometrics/petisco/issues/360">https://github.com/alice-biometrics/petisco/issues/360</a></p>
+</div>
+<p>To ilustrate main changes we will use the following <code>DomainEvent</code> definition:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEvent</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">class</span> <span class="nc">UserCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>    <span class="n">age</span><span class="p">:</span> <span class="nb">int</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">user_created</span> <span class="o">=</span> <span class="n">UserCreated</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;acme&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</code></pre></div>
+<p>Main changes:</p>
+<ul>
+<li>Serialization<ul>
+<li>Use <code>.format()</code> instead of <code>.dict()</code> to convert your Message to specific message format.
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;01d34093-7b7f-43b0-8cdf-557bb377c331&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;user.created&#39;</span><span class="p">,</span> <span class="s1">&#39;type_message&#39;</span><span class="p">:</span> <span class="s1">&#39;domain_event&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;occurred_on&#39;</span><span class="p">:</span> <span class="s1">&#39;2023-07-17 15:35:03.518701&#39;</span><span class="p">,</span> <span class="s1">&#39;attributes&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;acme&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">},</span> <span class="s1">&#39;meta&#39;</span><span class="p">:</span> <span class="p">{}}}</span>
+</code></pre></div></li>
+<li>Use <code>.format_json()</code> instead of <code>.json()</code> to convert your Message to specific message format and convert to str.
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="s2">&quot;{&#39;data&#39;: {&#39;id&#39;: &#39;01d34093-7b7f-43b0-8cdf-557bb377c331&#39;, &#39;type&#39;: &#39;user.created&#39;, &#39;type_message&#39;: &#39;domain_event&#39;, &#39;version&#39;: 1, &#39;occurred_on&#39;: &#39;2023-07-17 15:35:03.518701&#39;, &#39;attributes&#39;: {&#39;name&#39;: &#39;acme&#39;, &#39;age&#39;: 50}, &#39;meta&#39;: </span><span class="si">{}</span><span class="s2">}}&quot;</span>
+</code></pre></div></li>
+<li>Use <code>.model_dump()</code> (old pydantic <code>.dict()</code>) to get model attributes dictionary:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;acme&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">}</span>
+</code></pre></div></li>
+<li>Use <code>.model_dump_json()</code> (old pydantic <code>.json()</code>) to get model attributes dictionary:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="s2">&quot;{&#39;name&#39;: &#39;acme&#39;, &#39;age&#39;: 50}&quot;</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>Deserialization<ul>
+<li>Use <code>.from_format(formatted_message: dict | str | bytes)</code> to convert from specific message format (<code>.format()</code> and <code>.format_json()</code> output). Don't use legacy <code>.from_dict()</code>.</li>
+</ul>
+</li>
+<li>
+<p>envar_modifier with alias</p>
+<p>The below dependency will automatically creates a <code>envar_modifier</code> with value <code>USER_REPOSITORY_TYPE</code>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">Dependency</span><span class="p">(</span><span class="n">UserRepository</span><span class="p">,</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>          <span class="n">builders</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>              <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">SqlUserRepository</span><span class="p">),</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>              <span class="s2">&quot;fake&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">FakeUserRepository</span><span class="p">),</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>          <span class="p">},</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>      <span class="p">),</span>
+</code></pre></div></p>
+<p>Now, if you uses an alias, envar_modifier will be different as well (in the following case <code>USER_REPOSITORY_ALIAS_DASHBOARD_TYPE</code>)</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">Dependency</span><span class="p">(</span><span class="n">UserRepository</span><span class="p">,</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="hll">          <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;dashboard&quot;</span><span class="p">,</span>
+</span><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>          <span class="n">builders</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>              <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">SqlUserRepository</span><span class="p">),</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>              <span class="s2">&quot;fake&quot;</span><span class="p">:</span> <span class="n">Builder</span><span class="p">(</span><span class="n">FakeUserRepository</span><span class="p">),</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>          <span class="p">},</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>      <span class="p">),</span>
+</code></pre></div>
+<p>This allows us to have different configuration for different implementation (different alias)</p>
+<p>⚠️Check your configurations (maybe you have to add <code>_ALIAS_{YOUR_ALIAS}</code> to some env vars)!</p>
+</li>
+</ul>
+<ul>
+<li>New features thanks to pydantic<ul>
+<li>Attribute auto-completion</li>
+<li>Attribute and model validation as we are extending from <code>pydantic.BaseModel</code></li>
+<li>Automatic serialization </li>
+</ul>
+</li>
+</ul>
+<h2 id="dev-experience-improvements">Dev Experience Improvements<a class="headerlink" href="#dev-experience-improvements" title="Permanent link">&para;</a></h2>
+<h3 id="retrieved-message-are-better-typed">Retrieved Message are better typed<a class="headerlink" href="#retrieved-message-are-better-typed" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>In the <a href="https://github.com/alice-biometrics/petisco/issues/340">Issue 340</a> is implemented an improvement to access 
+attributes of retrieved Messages (DomainEvent and Commands).</p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">Petisco v1 👴</label><label for="__tabbed_7_2">Petisco v2 👶</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">isSuccess</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEventSubscriber</span><span class="p">,</span> <span class="n">DomainEvent</span><span class="p">,</span> <span class="n">Container</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="k">class</span> <span class="nc">TaskCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="k">class</span> <span class="nc">SendNotificationOnTaskModifications</span><span class="p">(</span><span class="n">DomainEventSubscriber</span><span class="p">):</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>    <span class="k">def</span> <span class="nf">subscribed_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">DomainEvent</span><span class="p">]]:</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">TaskCreated</span><span class="p">]</span> 
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_event</span><span class="p">:</span> <span class="n">DomainEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="hll">        <span class="n">task_name</span> <span class="o">=</span> <span class="n">domain_event</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+</span><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>        <span class="c1"># Do your stuff here</span>
+<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>
+<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a>        <span class="k">return</span> <span class="n">isSuccess</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">isSuccess</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEventSubscriber</span><span class="p">,</span> <span class="n">DomainEvent</span><span class="p">,</span> <span class="n">Container</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="k">class</span> <span class="nc">TaskCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="k">class</span> <span class="nc">SendNotificationOnTaskModifications</span><span class="p">(</span><span class="n">DomainEventSubscriber</span><span class="p">):</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>    <span class="k">def</span> <span class="nf">subscribed_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">DomainEvent</span><span class="p">]]:</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">TaskCreated</span><span class="p">]</span> 
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_event</span><span class="p">:</span> <span class="n">TaskCreated</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>
+<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a><span class="hll">        <span class="n">task_name</span> <span class="o">=</span> <span class="n">domain_event</span><span class="o">.</span><span class="n">name</span> <span class="c1"># With typehint and autocompletion.</span>
+</span><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>
+<a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>        <span class="c1"># Do your stuff here</span>
+<a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>
+<a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>        <span class="k">return</span> <span class="n">isSuccess</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="async-implementations">Async Implementations<a class="headerlink" href="#async-implementations" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Petisco v2 provides async implementation for every base elements. This allows petisco users to migrate step their 
+use cases, controllers and app services keeping back compatibility with current sync implementations.</p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:3"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><input id="__tabbed_8_3" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">Petisco v1 👴 (sync)</label><label for="__tabbed_8_2">Petisco v2 👶 (sync -&gt; no changes)</label><label for="__tabbed_8_3">Petisco v2 👶 (async ⚡)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">BoolResult</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">DomainEventBus</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="kn">from</span> <span class="nn">petisco.extra.fastapi</span> <span class="kn">import</span> <span class="n">FastAPIController</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="kn">from</span> <span class="nn">app.src.task.create.application.task_creator</span> <span class="kn">import</span> <span class="n">TaskCreator</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="kn">from</span> <span class="nn">app.src.task.shared.domain.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="k">class</span> <span class="nc">CreateTaskController</span><span class="p">(</span><span class="n">FastAPIController</span><span class="p">):</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="hll">    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+</span><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>        <span class="n">task_creator</span> <span class="o">=</span> <span class="n">TaskCreator</span><span class="p">(</span>
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>            <span class="n">labeler</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskLabeler</span><span class="p">),</span>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>            <span class="n">repository</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskRepository</span><span class="p">),</span>
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>            <span class="n">domain_event_bus</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DomainEventBus</span><span class="p">),</span>
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>        <span class="p">)</span>
+<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="hll">        <span class="k">return</span> <span class="n">task_creator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">BoolResult</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">DomainEventBus</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="kn">from</span> <span class="nn">petisco.extra.fastapi</span> <span class="kn">import</span> <span class="n">FastAPIController</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="kn">from</span> <span class="nn">app.src.task.create.application.task_creator</span> <span class="kn">import</span> <span class="n">TaskCreator</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="kn">from</span> <span class="nn">app.src.task.shared.domain.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="k">class</span> <span class="nc">CreateTaskController</span><span class="p">(</span><span class="n">FastAPIController</span><span class="p">):</span>
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="hll">    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+</span><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>        <span class="n">task_creator</span> <span class="o">=</span> <span class="n">TaskCreator</span><span class="p">(</span>
+<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a>            <span class="n">labeler</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskLabeler</span><span class="p">),</span>
+<a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a>            <span class="n">repository</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskRepository</span><span class="p">),</span>
+<a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>            <span class="n">domain_event_bus</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DomainEventBus</span><span class="p">),</span>
+<a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a>        <span class="p">)</span>
+<a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="hll">        <span class="k">return</span> <span class="n">task_creator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">BoolResult</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">DomainEventBus</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="kn">from</span> <span class="nn">petisco.extra.fastapi</span> <span class="kn">import</span> <span class="n">AsyncFastAPIController</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="kn">from</span> <span class="nn">app.src.task.create.application.task_creator</span> <span class="kn">import</span> <span class="n">AsyncTaskCreator</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="kn">from</span> <span class="nn">app.src.task.shared.domain.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="hll"><span class="k">class</span> <span class="nc">CreateTaskController</span><span class="p">(</span><span class="n">AsyncFastAPIController</span><span class="p">):</span>
+</span><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="hll">    <span class="k">async</span> <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+</span><a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>        <span class="n">task_creator</span> <span class="o">=</span> <span class="n">AsyncTaskCreator</span><span class="p">(</span>
+<a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>            <span class="n">labeler</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskLabeler</span><span class="p">),</span>
+<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a>            <span class="n">repository</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TaskRepository</span><span class="p">),</span>
+<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a>            <span class="n">domain_event_bus</span><span class="o">=</span><span class="n">Container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DomainEventBus</span><span class="p">),</span>
+<a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a>        <span class="p">)</span>
+<a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a><span class="hll">        <span class="k">return</span> <span class="k">await</span> <span class="n">task_creator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="use-shared_error_map">Use <code>shared_error_map</code><a class="headerlink" href="#use-shared_error_map" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Petisco v2 provides an implementation for configure shared error maps</p>
+</div>
+<p>Check <code>error_map</code> documentation in <a href="../../application/#configuration">Application/Configuration</a> to know hot to ease 
+your error handling.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/alice-biometrics/petisco" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/alicebiometrics" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/company/alicebiometrics" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.tabs.link", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.5cfa9459.min.js"></script>
+      
+        <script src="../../js/redirects.js"></script>
+      
+        <script src="../../js/termynal.js"></script>
+      
+        <script src="../../js/ad.js"></script>
+      
+        <script src="../../js/custom.js"></script>
+      
+    
+  </body>
+</html>

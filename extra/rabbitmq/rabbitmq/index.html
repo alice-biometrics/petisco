@@ -1,0 +1,1920 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="🍪 petisco is a framework for helping Python developers to build clean Applications in Python.">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/alice-biometrics/petisco/extra/rabbitmq/rabbitmq/">
+      
+      
+        <link rel="prev" href="../../fastapi/fastapi/">
+      
+      
+        <link rel="next" href="../../redis/redis/">
+      
+      
+      <link rel="icon" href="../../../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.22">
+    
+    
+      
+        <title>RabbitMQ - petisco</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.732c4fb1.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../css/terminal.css">
+    
+      <link rel="stylesheet" href="../../../css/termynal.css">
+    
+      <link rel="stylesheet" href="../../../css/tweaks.css">
+    
+      <link rel="stylesheet" href="../../../css/custom.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-terminology" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="petisco" class="md-header__button md-logo" aria-label="petisco" data-md-component="logo">
+      
+  <img src="../../../logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            petisco
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              RabbitMQ
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/alice-biometrics/petisco" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alice-biometrics/petisco
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="petisco" class="md-nav__button md-logo" aria-label="petisco" data-md-component="logo">
+      
+  <img src="../../../logo-white.png" alt="logo">
+
+    </a>
+    petisco
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/alice-biometrics/petisco" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alice-biometrics/petisco
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../application/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../domain/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Domain
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../databases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Extras
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Extras
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../fastapi/fastapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    RabbitMQ
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    RabbitMQ
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Terminology
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Configurations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cli-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. CLI Tools
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Code
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rabbitmq-in-your-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      RabbitMQ in your Application
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#code-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code explained
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Advanced
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Advanced">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#queue-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      Queue Naming
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-petisco-takes-advantage-of-rabbitmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      How petisco takes advantage of RabbitMQ
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-chaos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message Chaos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Message Chaos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#message-bus" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message Bus
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message Consumer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../redis/redis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Redis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../elastic/elastic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Elastic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sqlalchemy/sqlalchemy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SQLAlchemy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../slack/slack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Slack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../asyncio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Asyncio
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Migrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../migrations/from_v1_to_v2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From v1 to v2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing to petisco
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../acknowledgements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Acknowledgements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Terminology
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Configurations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cli-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. CLI Tools
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Code
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rabbitmq-in-your-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      RabbitMQ in your Application
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#code-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code explained
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Advanced
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Advanced">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#queue-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      Queue Naming
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-petisco-takes-advantage-of-rabbitmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      How petisco takes advantage of RabbitMQ
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-chaos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message Chaos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Message Chaos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#message-bus" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message Bus
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message Consumer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+  
+  
+<!--    <div id="bsa-cpc"></div>-->
+  
+  
+                  
+
+  
+  
+
+
+  <h1>RabbitMQ</h1>
+
+<div class="termy">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>petisco<span class="o">[</span>rabbitmq<span class="o">]</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="go">---&gt; 100%</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="go">Successfully installed petisco</span>
+</code></pre></div>
+</div>
+
+<p>This page is an overview of how petisco helps us on Message Broker development using RabbitMQ as message broker.
+Currently, petisco provides a RabbitMQ implementation on top of <a href="https://github.com/pika/pika">pika</a> framework.</p>
+<h2 id="1-terminology">1. Terminology<a class="headerlink" href="#1-terminology" title="Permanent link">&para;</a></h2>
+<p>This glossary joins domain ubiquitous language with the specific implementation using RabbitMQ.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>More Info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Publisher</code></td>
+<td>Application (or application instance) that publishes messages (e.g domain events and commands). Also called producer.</td>
+<td><a href="https://www.rabbitmq.com/publishers.html">https://www.rabbitmq.com/publishers.html</a></td>
+</tr>
+<tr>
+<td><code>Message Broker</code></td>
+<td>Intermediary application that translates a message from the formal messaging protocol of the sender (publisher/producer) to the formal messaging protocol of the receiver (subscriber/consumer).</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>Exchange</code></td>
+<td>"Messages are not published directly to a queue. Instead, the producer sends messages to an exchange. Exchanges are message routing agents, defined by the virtual host within RabbitMQ. An exchange is responsible for routing the messages to different queues with the help of header attributes, bindings, and routing keys."</td>
+<td><a href="https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html">https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html</a></td>
+</tr>
+<tr>
+<td><code>Queue</code></td>
+<td>"A queue is a sequential data structure with two primary operations: an item can be enqueued (added) at the tail and dequeued (consumed) from the head. Queues play a prominent role in the messaging technology space: many messaging protocols and tools assume that publishers and consumers communicate using a queue-like storage mechanism."</td>
+<td><a href="https://www.rabbitmq.com/queues.html">https://www.rabbitmq.com/queues.html</a></td>
+</tr>
+<tr>
+<td><code>Subscriber</code></td>
+<td>Application (or application instance) that consumes messages (e.g domain events and commands) from a queue and handles a derived action. Also called consumer or handler.</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p>Find several RabbitMQ tutorials in <a href="https://www.rabbitmq.com/getstarted.html">https://www.rabbitmq.com/getstarted.html</a>.</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Publisher
+    participant Exchange
+    participant Queue
+    participant Subscriber
+
+        autonumber
+
+    Publisher-&gt;&gt;Exchange: Message
+    Exchange-&gt;&gt;Queue: Message
+        Note over Exchange,Queue: Based on exchange rules (bindings)
+    Subscriber-&gt;&gt;Queue: Read Message
+    Subscriber--&gt;&gt;Queue: ack
+    Note over Queue: Remove message</code></pre>
+<h2 id="2-example">2. Example<a class="headerlink" href="#2-example" title="Permanent link">&para;</a></h2>
+<p>In <a href="https://github.com/alice-biometrics/petisco/tree/main/examples/rabbitmq">examples/rabbitmq</a> you can find several scripts to interact with RabbitMQ.
+To test how petisco can help you on message management you need to run locally a RabbitMQ application. </p>
+<ol>
+<li><strong>Run RabbitMQ with docker</strong>.
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">docker run -d --rm --name petisco-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management</span>
+</code></pre></div>
+    You can check the RabbitMQ status on <a href="http://localhost:15672/#/">http://localhost:15672/#/</a> (guest:guest). Please, 
+    check the official doc <a href="https://www.rabbitmq.com/download.html">here</a>.</li>
+<li>Clone the project
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">git clone git@github.com:alice-biometrics/petisco.git &amp;&amp; cd petisco</span>
+</code></pre></div></li>
+<li>Create a python environment and install petisco
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">&gt; python3 -m venv venv</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="go">&gt; source venv/bin/activate</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="gp gp-VirtualEnv">(venv)</span> <span class="go">&gt; pip install lume</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="gp gp-VirtualEnv">(venv)</span> <span class="go">&gt; lume -install</span>
+</code></pre></div></li>
+<li><strong>Configure the exchanges and queues</strong>. This script will configure common queues and specific queues to support subscriptions (domain event and command consumers/handlers).
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="go">python3 examples/rabbitmq/configure.py</span>
+</code></pre></div></li>
+<li><strong>Start consuming messages from Queues</strong>. This script will execute a continuous process to consume every message on subscribed queues. 
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">python3 examples/rabbitmq/consume.py</span>
+</code></pre></div></li>
+<li><strong>Publish domain events</strong>.
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="go">python3 examples/rabbitmq/publish_domain_events.py</span>
+</code></pre></div></li>
+<li><strong>Dispatch commands</strong>.
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="go">python3 examples/rabbitmq/dispatch_commands.py</span>
+</code></pre></div></li>
+</ol>
+<p>These examples can help you to start playing with rabbitmq and to understand how it works in petisco. It is strongly 
+recommended to check local rabbitmq at <a href="http://localhost:15672/#/">http://localhost:15672/#/</a> (as mentioned above) to
+review the activity of queues and exchanges.</p>
+<p><img alt="RabbitMQ Queue Overview" src="../rabbitmq_queue_overview.jpeg" /></p>
+<p>In addition, there are three useful scripts (<code>clear.py</code>, <code>clear_subscribers.py</code>, <code>configure_with_clear_before.py</code>) for 
+play with queue management and some administration tools for removing or renewing exchanges and queue configurations.</p>
+<p>If you want to go deeper into how messages are queued in rabbitmq, you can review the concepts of <code>bindings</code>, <code>routing_keys</code> and <code>dead_letters</code>.</p>
+<p><img alt="RabbitMQ Bindings Overview" src="../rabbitmq_bindings_overview.jpeg" /></p>
+<h2 id="3-configurations">3. Configurations<a class="headerlink" href="#3-configurations" title="Permanent link">&para;</a></h2>
+<p>Some configurations are managed by the classes and examples seen above, others can be configured with the following 
+environment variables.</p>
+<ul>
+<li><code>RABBITMQ_HEARTBEAT</code>: (default: 60 s)</li>
+<li><code>RABBITMQ_USER</code>: (default: guest)</li>
+<li><code>RABBITMQ_PASSWORD</code>: (default: guest)</li>
+<li><code>RABBITMQ_HOST</code>: (default: localhost)</li>
+<li><code>RABBITMQ_HOST</code>: (default: 5672)</li>
+<li><code>RABBITMQ_CONNECTION_NUM_MAX_RETRIES</code>: (default: 15)</li>
+<li><code>RABBITMQ_CONNECTION_WAIT_SECONDS_RETRY</code>: (default: 1)</li>
+<li><code>RABBITMQ_MESSAGE_TTL</code>: (default 1000 ms) If a queue is already created it will generate a precodition failure.</li>
+</ul>
+<h2 id="4-cli-tools">4. CLI Tools<a class="headerlink" href="#4-cli-tools" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since version <code>v1.7.0</code>, petisco have available the cli command <code>petisco-rabbitmq</code> to consume domain events and requeue them.</p>
+</div>
+<p>Imagine you have some events in a dead letter queue. To reproduce, you can configure your rabbitmq and publish some 
+events without launching a consumer. </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="go">python3 examples/rabbitmq/configure.py</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="go">python3 examples/rabbitmq/publish_domain_events.py</span>
+</code></pre></div>
+<p>To requeue event from queues, just use the <code>petisco-rabbitmq</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="go">&gt;&gt; petisco-rabbitmq --help                                                                                                                                </span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="go">usage: petisco-rabbitmq 🍪 [-h] [-rq] [-cq CONSUMING_QUEUES] [-o ORGANIZATION] [-s SERVICE] [-mr MAX_RETRIES] [-rttl RETRY_TTL] [-wtr WAIT_TO_REQUEUE]</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="go">petisco-rabbitmq helps us on rabbitmq iteration</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="go">optional arguments:</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="go">  -h, --help            show this help message and exit</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="go">  -rq, --requeue        requeue</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="go">  -o ORGANIZATION, --organization ORGANIZATION</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="go">                        Name of the organization</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="go">  -s SERVICE, --service SERVICE</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="go">                        Name of the service</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="go">  -cq CONSUMING_QUEUE, --consuming-queue CONSUMING_QUEUE</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="go">                        Queue to consume</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="go">  -rrk RETRY_ROUTING_KEY, --retry-routing-key RETRY_ROUTING_KEY</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="go">                        Routing key to republish the message to specific retry queue</span>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="go">  -ren RETRY_EXCHANGE_NAME, --retry-exchange-name RETRY_EXCHANGE_NAME</span>
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="go">                        Exchange name to republish the message to specific exchange</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="go">  -mr MAX_RETRIES, --max-retries MAX_RETRIES</span>
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="go">                        Max Retries</span>
+<a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="go">  -rttl RETRY_TTL, --retry-ttl RETRY_TTL</span>
+<a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="go">                        Retry TTL</span>
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a><span class="go">  -wtr WAIT_TO_REQUEUE, --wait-to-requeue WAIT_TO_REQUEUE</span>
+<a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a><span class="go">                        Wait to Requeue (seconds)</span>
+</code></pre></div>
+<p>Examples:</p>
+<ul>
+<li>Example 1 (requeue events from <code>dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed</code>):
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="go">petisco-rabbitmq --requeue \</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="go">    --organization acme \</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="go">    --service registration \</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="go">    --consuming-queue dead_letter.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed \</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="go">    --retry-routing-key retry.acme.registration.1.event.user_confirmed.send_sms_on_user_confirmed</span>
+</code></pre></div></li>
+<li>Example 2 (requeue events from <code>dead_letter.acme.registration.1.event.user_created.send_mail_on_user_created</code>):
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="go">petisco-rabbitmq --requeue \</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="go">    --organization acme \</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="go">    --service registration \</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="go">    --consuming-queue dead_letter.acme.registration.1.event.user_created.send_mail_on_user_created \</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="go">    --retry-routing-key retry.acme.registration.1.event.user_created.send_mail_on_user_created</span>
+</code></pre></div></li>
+</ul>
+<ul>
+<li>Example 3 (requeue events from <code>dead_letter.store</code>):
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="go">petisco-rabbitmq --requeue \</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="go">    --organization acme \</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="go">    --service registration \</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="go">    --consuming-queue dead_letter.store \</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="go">    --retry-routing-key retry.store \</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="go">    --retry-exchange-name retry.acme.store</span>
+</code></pre></div></li>
+</ul>
+<h2 id="5-code">5. Code<a class="headerlink" href="#5-code" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Base code is available in <a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message">petisco/domain/message</a> 
+and specific implementation in <a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq">petisco/extra/rabbitmq</a>.</p>
+</div>
+<p>Some definition of <a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message">domain base classes</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/message.py">Message</a></td>
+<td>Define a basic Message using a base metaclass (<code>MetaMessage</code>)</td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/domain_event.py">DomainEvent</a></td>
+<td>Defines a Domain Event inheriting from <code>Message</code>. You can define new attributes to add to the resultant encoded message.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/command.py">Command</a></td>
+<td>Defines a Command inheriting from <code>Message</code>. You can define new attributes to add to the resultant encoded message.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/message_bus.py">MessageBus</a></td>
+<td>Interface which defines the contract of a message bus to publish messages</td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/domain_event_bus.py">DomainEventBus</a></td>
+<td>Interface which defines the contract of domain event bus to publish <code>DomainEvent</code>. It inherits from <code>MessageBus</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/command_bus.py">CommandBus</a></td>
+<td>Interface which defines the contract of command bus to dispatch <code>Command</code>. It inherits from <code>MessageBus</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/message_subscriber.py">MessageSubscriber</a></td>
+<td>Interface which defines the contract of a subscriber using a base metaclass (<code>MetaMessageSubscriber</code>)</td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/domain_event_subscriber.py">DomainEventSubscriber</a></td>
+<td>Interface which defines the contract of <code>DomainEvent</code> hanlders. It inherits from <code>MessageSubscriber</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/command_subscriber.py">CommandSubscriber</a></td>
+<td>Interface which defines the contract of <code>Command</code> hanlders. It inherits from <code>MessageSubscriber</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/all_message_subscriber.py">AllMessageSubscriber</a></td>
+<td>Interface which defines the contract of every message (e.g <code>DomainEvent</code> and <code>Command</code>) hanlders. It inherits from <code>MessageSubscriber</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/message_configurer.py">MessageConfigurer</a></td>
+<td>Interface which defines the contract of message configurer</td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/base/domain/message/message_consumer.py">MessageConsumer</a></td>
+<td>Interface which defines the contract of message consumers</td>
+</tr>
+</tbody>
+</table>
+<p>Some <a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq">RabbitMQ implementations</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq/shared/rabbitmq_connector.py">RabbitMqConnector</a></td>
+<td>Singleton class to define RabbitMQ connector and set its configurations.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq/application/message/bus/rabbitmq_domain_event_bus.py">RabbitMqDomainEventBus</a></td>
+<td>RabbitMQ implementation of <code>DomainEventBus</code> to publish <code>DomainEvents</code>.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq/application/message/bus/rabbitmq_command_bus.py/">RabbitMqCommandBus</a></td>
+<td>RabbitMQ implementation of <code>CommandBus</code> to dispatch <code>Commands</code>.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq/application/message/configurer/rabbitmq_message_configurer.py">RabbitMqMessageConfigurer</a></td>
+<td>RabbitMQ implementation of <code>MessageConfigurer</code>, which configures exchanges, queue bindings and routing keys from defined <code>MessageSubscribers</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/alice-biometrics/petisco/tree/main/petisco/extra/rabbitmq/application/message/configurer/rabbitmq_message_consumer.py">RabbitMqMessageConsumer</a></td>
+<td>RabbitMQ implementation of <code>MessageConsumer</code> to add subscribers, and start a thread to consume message from defined subscribers</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>classDiagram
+        class RabbitMqConnector
+        RabbitMqConnector: +close()
+        RabbitMqConnector: +get_connection()
+        RabbitMqConnector: +get_channel()
+
+        class MessageConfigurer
+        MessageConfigurer: +configure_subscribers()
+        MessageConfigurer: +clear()
+
+        class MessageConsumer
+        MessageConsumer: +add_subscribers()
+        MessageConsumer: +add_subscriber_on_dead_letter()
+        MessageConsumer: +add_subscriber_on_queue()
+        MessageConsumer: +unsubscribe_subscriber_on_queue()
+        MessageConsumer: +resume_subscriber_on_queue()
+        MessageConsumer: +start()
+        MessageConsumer: +stop()
+
+        class MessageSubscriber
+        MessageSubscriber: +subscribed_to()
+        MessageSubscriber: +handle()
+        MessageSubscriber: +set_domain_event_bus()
+        MessageSubscriber: +set_command_bus()
+        MessageSubscriber: -get_subscriber_name()
+        MessageSubscriber: -get_message_subscribers_info()
+
+    class Message
+    Message : +Uuid message_id
+    Message : +str name
+    Message : +int version
+    Message : +datatime oscurred_on
+    Message : +dict attributes (ready to compose) 
+    Message : +dict meta (ready to add info id, e.g correlation_id, client_id)
+    Message: +str type
+
+    class MessageBus
+    MessageBus : +publish()
+
+        class DomainEventBus
+    DomainEventBus : +publish()
+
+        class CommandBus
+    CommandBus : +dispatch()
+
+    DomainEvent --|&gt; Message 
+    Command --|&gt; Message 
+
+    DomainEventBus --|&gt; MessageBus 
+    CommandBus --|&gt; MessageBus 
+
+    DomainEventBus --* DomainEvent 
+    CommandBus --* Command 
+    MessageConsumer --* MessageSubscriber 
+
+    RabbitMqMessageConfigurer --|&gt; MessageConfigurer
+    RabbitMqMessageConsumer --|&gt; MessageConsumer
+    RabbitMqDomainEventBus --|&gt; DomainEventBus 
+    RabbitMqCommandBus --|&gt; CommandBus
+
+    RabbitMqMessageConfigurer --* RabbitMqConnector 
+    RabbitMqMessageConsumer --* RabbitMqConnector 
+    RabbitMqDomainEventBus --* RabbitMqConnector 
+    RabbitMqCommandBus --* RabbitMqConnector </code></pre>
+<h3 id="rabbitmq-in-your-application">RabbitMQ in your Application<a class="headerlink" href="#rabbitmq-in-your-application" title="Permanent link">&para;</a></h3>
+<p>To add RabbitMQ to your application, you need to define your message dependencies and configure them to start consuming 
+messages:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span> <span class="nn">petisco.extra.rabbitmq</span> <span class="kn">import</span> <span class="n">get_rabbitmq_message_dependencies</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">ORGANIZATION</span> <span class="o">=</span> <span class="s2">&quot;acme&quot;</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">SERVICE</span> <span class="o">=</span> <span class="s2">&quot;my-app&quot;</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="c1"># Define RabbitMQ dependencies </span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="k">def</span> <span class="nf">dependencies_provider</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Dependency</span><span class="p">]:</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="o">...</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="hll">    <span class="n">message_dependencies</span> <span class="o">=</span> <span class="n">get_rabbitmq_message_dependencies</span><span class="p">(</span><span class="n">ORGANIZATION</span><span class="p">,</span> <span class="n">SERVICE</span><span class="p">)</span>
+</span><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="hll">    <span class="n">dependencies</span> <span class="o">+=</span> <span class="n">message_dependencies</span>
+</span><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    <span class="o">---</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="k">return</span> <span class="n">dependencies</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="kn">from</span> <span class="nn">petisco.extra.rabbitmq</span> <span class="kn">import</span> <span class="n">RabbitMqConfigurer</span><span class="p">,</span> <span class="n">DomainEventSubscriber</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="c1"># Define RabbitMQ configurers  </span>
+<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="k">class</span> <span class="nc">SendSmsOnUserCreated</span><span class="p">(</span><span class="n">DomainEventSubscriber</span><span class="p">):</span>
+<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a>    <span class="k">def</span> <span class="nf">subscribed_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">DomainEvent</span><span class="p">]]:</span>
+<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">UserCreated</span><span class="p">]</span>
+<a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a>
+<a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_event</span><span class="p">:</span> <span class="n">UserCreated</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a>       <span class="c1">## do your stuff</span>
+<a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a>       <span class="k">return</span> <span class="n">isSuccess</span>
+<a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a>
+<a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a><span class="hll"><span class="n">configurers</span> <span class="o">=</span> <span class="p">[</span>
+</span><a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a><span class="hll">    <span class="n">RabbitMqConfigurer</span><span class="p">(</span>
+</span><a id="__codelineno-13-28" name="__codelineno-13-28" href="#__codelineno-13-28"></a><span class="hll">        <span class="n">subscribers</span><span class="o">=</span><span class="p">[</span><span class="n">SendSmsOnUserCreated</span><span class="p">]</span>
+</span><a id="__codelineno-13-29" name="__codelineno-13-29" href="#__codelineno-13-29"></a><span class="hll">    <span class="p">)</span>
+</span><a id="__codelineno-13-30" name="__codelineno-13-30" href="#__codelineno-13-30"></a><span class="hll"><span class="p">]</span>
+</span><a id="__codelineno-13-31" name="__codelineno-13-31" href="#__codelineno-13-31"></a>
+<a id="__codelineno-13-32" name="__codelineno-13-32" href="#__codelineno-13-32"></a><span class="n">application</span> <span class="o">=</span> <span class="n">Application</span><span class="p">(</span>
+<a id="__codelineno-13-33" name="__codelineno-13-33" href="#__codelineno-13-33"></a>    <span class="n">name</span><span class="o">=</span><span class="n">SERVICE</span><span class="p">,</span>
+<a id="__codelineno-13-34" name="__codelineno-13-34" href="#__codelineno-13-34"></a>    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-35" name="__codelineno-13-35" href="#__codelineno-13-35"></a>    <span class="n">organization</span><span class="o">=</span><span class="n">ORGANIZATION</span><span class="p">,</span>
+<a id="__codelineno-13-36" name="__codelineno-13-36" href="#__codelineno-13-36"></a>    <span class="n">deployed_at</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()),</span>
+<a id="__codelineno-13-37" name="__codelineno-13-37" href="#__codelineno-13-37"></a>    <span class="n">environment</span><span class="o">=</span><span class="s2">&quot;staging&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-38" name="__codelineno-13-38" href="#__codelineno-13-38"></a><span class="hll">    <span class="n">dependencies_provider</span><span class="o">=</span><span class="n">dependencies_provider</span><span class="p">,</span>  <span class="c1"># &lt;==== Adding dependencies ➕</span>
+</span><a id="__codelineno-13-39" name="__codelineno-13-39" href="#__codelineno-13-39"></a><span class="hll">    <span class="n">configurers</span><span class="o">=</span><span class="n">configurers</span> <span class="c1"># &lt;==== Adding configurers ➕</span>
+</span><a id="__codelineno-13-40" name="__codelineno-13-40" href="#__codelineno-13-40"></a><span class="p">)</span>
+<a id="__codelineno-13-41" name="__codelineno-13-41" href="#__codelineno-13-41"></a><span class="n">application</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
+</code></pre></div>
+<p>This code will start consuming message and calling your defined subscribers for your defined <code>SERVICE</code> (name of your 
+application). If you want to subscribe to messages from, for example, other service you can do it quite similar using 
+alias:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span> <span class="nn">petisco.extra.rabbitmq</span> <span class="kn">import</span> <span class="n">get_rabbitmq_message_dependencies</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">ORGANIZATION</span> <span class="o">=</span> <span class="s2">&quot;acme&quot;</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="n">SERVICE</span> <span class="o">=</span> <span class="s2">&quot;my-app&quot;</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="hll"><span class="n">OTHER_SERVICE</span> <span class="o">=</span> <span class="s2">&quot;my-other-app&quot;</span>
+</span><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="c1"># Define RabbitMQ dependencies </span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="k">def</span> <span class="nf">dependencies_provider</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Dependency</span><span class="p">]:</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>    <span class="o">...</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>    <span class="n">message_dependencies</span> <span class="o">=</span> <span class="n">get_rabbitmq_message_dependencies</span><span class="p">(</span><span class="n">ORGANIZATION</span><span class="p">,</span> <span class="n">SERVICE</span><span class="p">)</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>    <span class="n">dependencies</span> <span class="o">+=</span> <span class="n">message_dependencies</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>    <span class="o">---</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="hll">    <span class="n">other_message_dependencies</span> <span class="o">=</span> <span class="n">get_rabbitmq_message_dependencies</span><span class="p">(</span>
+</span><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="hll">        <span class="n">ORGANIZATION</span><span class="p">,</span> 
+</span><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="hll">        <span class="n">OTHER_SERVICE</span><span class="p">,</span> 
+</span><a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="hll">        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;other&quot;</span>
+</span><a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a><span class="hll">    <span class="p">)</span>
+</span><a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>    <span class="n">dependencies</span> <span class="o">+=</span> <span class="n">other_message_dependencies</span>
+<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a>    <span class="k">return</span> <span class="n">dependencies</span>
+<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a>
+<a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a>
+<a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a><span class="kn">from</span> <span class="nn">petisco.extra.rabbitmq</span> <span class="kn">import</span> <span class="n">RabbitMqConfigurer</span><span class="p">,</span> <span class="n">DomainEventSubscriber</span>
+<a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a>
+<a id="__codelineno-14-25" name="__codelineno-14-25" href="#__codelineno-14-25"></a><span class="c1"># Define RabbitMQ configurers  </span>
+<a id="__codelineno-14-26" name="__codelineno-14-26" href="#__codelineno-14-26"></a><span class="k">class</span> <span class="nc">SendSmsOnUserCreated</span><span class="p">(</span><span class="n">DomainEventSubscriber</span><span class="p">):</span>
+<a id="__codelineno-14-27" name="__codelineno-14-27" href="#__codelineno-14-27"></a>    <span class="k">def</span> <span class="nf">subscribed_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">DomainEvent</span><span class="p">]]:</span>
+<a id="__codelineno-14-28" name="__codelineno-14-28" href="#__codelineno-14-28"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">UserCreated</span><span class="p">]</span>
+<a id="__codelineno-14-29" name="__codelineno-14-29" href="#__codelineno-14-29"></a>
+<a id="__codelineno-14-30" name="__codelineno-14-30" href="#__codelineno-14-30"></a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_event</span><span class="p">:</span> <span class="n">UserCreated</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-14-31" name="__codelineno-14-31" href="#__codelineno-14-31"></a>       <span class="c1">## do your stuff</span>
+<a id="__codelineno-14-32" name="__codelineno-14-32" href="#__codelineno-14-32"></a>       <span class="k">return</span> <span class="n">isSuccess</span>
+<a id="__codelineno-14-33" name="__codelineno-14-33" href="#__codelineno-14-33"></a>
+<a id="__codelineno-14-34" name="__codelineno-14-34" href="#__codelineno-14-34"></a><span class="n">configurers</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-14-35" name="__codelineno-14-35" href="#__codelineno-14-35"></a>    <span class="n">RabbitMqConfigurer</span><span class="p">(</span>
+<a id="__codelineno-14-36" name="__codelineno-14-36" href="#__codelineno-14-36"></a>        <span class="n">subscribers</span><span class="o">=</span><span class="p">[</span><span class="n">SendSmsOnUserCreated</span><span class="p">]</span>
+<a id="__codelineno-14-37" name="__codelineno-14-37" href="#__codelineno-14-37"></a>    <span class="p">)</span>
+<a id="__codelineno-14-38" name="__codelineno-14-38" href="#__codelineno-14-38"></a><span class="hll">    <span class="n">RabbitMqConfigurer</span><span class="p">(</span>
+</span><a id="__codelineno-14-39" name="__codelineno-14-39" href="#__codelineno-14-39"></a><span class="hll">        <span class="n">subscribers</span><span class="o">=</span><span class="p">[</span><span class="n">SendSmsOnUserCreated</span><span class="p">]</span>
+</span><a id="__codelineno-14-40" name="__codelineno-14-40" href="#__codelineno-14-40"></a><span class="hll">        <span class="n">configurer_alias</span><span class="o">=</span><span class="s2">&quot;other&quot;</span><span class="p">,</span>
+</span><a id="__codelineno-14-41" name="__codelineno-14-41" href="#__codelineno-14-41"></a><span class="hll">        <span class="n">consumer_alias</span><span class="o">=</span><span class="s2">&quot;other&quot;</span><span class="p">,</span>
+</span><a id="__codelineno-14-42" name="__codelineno-14-42" href="#__codelineno-14-42"></a><span class="hll">    <span class="p">)</span>
+</span><a id="__codelineno-14-43" name="__codelineno-14-43" href="#__codelineno-14-43"></a><span class="p">]</span>
+<a id="__codelineno-14-44" name="__codelineno-14-44" href="#__codelineno-14-44"></a>
+<a id="__codelineno-14-45" name="__codelineno-14-45" href="#__codelineno-14-45"></a><span class="n">application</span> <span class="o">=</span> <span class="n">Application</span><span class="p">(</span>
+<a id="__codelineno-14-46" name="__codelineno-14-46" href="#__codelineno-14-46"></a>    <span class="n">name</span><span class="o">=</span><span class="n">SERVICE</span><span class="p">,</span>
+<a id="__codelineno-14-47" name="__codelineno-14-47" href="#__codelineno-14-47"></a>    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-48" name="__codelineno-14-48" href="#__codelineno-14-48"></a>    <span class="n">organization</span><span class="o">=</span><span class="n">ORGANIZATION</span><span class="p">,</span>
+<a id="__codelineno-14-49" name="__codelineno-14-49" href="#__codelineno-14-49"></a>    <span class="n">deployed_at</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()),</span>
+<a id="__codelineno-14-50" name="__codelineno-14-50" href="#__codelineno-14-50"></a>    <span class="n">environment</span><span class="o">=</span><span class="s2">&quot;staging&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-51" name="__codelineno-14-51" href="#__codelineno-14-51"></a>    <span class="n">dependencies_provider</span><span class="o">=</span><span class="n">dependencies_provider</span><span class="p">,</span>  <span class="c1"># &lt;==== Adding dependencies ➕</span>
+<a id="__codelineno-14-52" name="__codelineno-14-52" href="#__codelineno-14-52"></a>    <span class="n">configurers</span><span class="o">=</span><span class="n">configurers</span> <span class="c1"># &lt;==== Adding configurers ➕</span>
+<a id="__codelineno-14-53" name="__codelineno-14-53" href="#__codelineno-14-53"></a><span class="p">)</span>
+<a id="__codelineno-14-54" name="__codelineno-14-54" href="#__codelineno-14-54"></a><span class="n">application</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
+</code></pre></div>
+<p>With this configuration the application will handle <code>UserCreated</code> message from the main service (<code>SERVICE=my-app</code>) and
+also from the other service (<code>SERVICE=my-other-app</code>) using the following configurer queues:</p>
+<ul>
+<li><code>alice.my_app.1.user_created.send_sms_on_user_created</code>: SendSmsOnUserCreated will handle domain event published by the <code>my_app</code> service.</li>
+<li><code>alice.my_other_app.1.user_created.send_sms_on_user_created</code>: SendSmsOnUserCreated will handle domain event published by the <code>my_other_ºrrapp</code> service.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Imagine your are consuming from a <code>ORGANIZATION="acme"</code> and <code>SERVICE="my-app</code> and you want to publish a derived domain
+event in your subscriber. You can do it with the inner domain_event_bus (this pre-loaded domain event bus is already
+configured and shares connection to avoid thread errors)</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">class</span> <span class="nc">UserSmailed</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="k">class</span> <span class="nc">SendSmsOnUserCreated</span><span class="p">(</span><span class="n">DomainEventSubscriber</span><span class="p">):</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="k">def</span> <span class="nf">subscribed_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">DomainEvent</span><span class="p">]]:</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">UserCreated</span><span class="p">]</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_event</span><span class="p">:</span> <span class="n">UserCreated</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="hll">       <span class="bp">self</span><span class="o">.</span><span class="n">domain_event_bus</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">UserSmiled</span><span class="p">())</span>
+</span><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>       <span class="k">return</span> <span class="n">isSuccess</span>
+</code></pre></div>
+<p>And maybe you don't want to publish to the same exchange <code>acme.my-app</code> (from <code>{ORGANIZATION}.{SERVICE}</code>) and you want to
+publish to <code>petisco.my-other-service</code>. So you can configure this inner bus using RabbitMqConfigurer parameters:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">INNER_BUS_ORGANIZATION</span> <span class="o">=</span> <span class="s2">&quot;petisco&quot;</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">INNER_BUS_SERVICE</span> <span class="o">=</span> <span class="s2">&quot;my-other-service&quot;</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="n">configurers</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="n">RabbitMqConfigurer</span><span class="p">(</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>        <span class="n">subscribers</span><span class="o">=</span><span class="p">[</span><span class="n">SendSmsOnUserCreated</span><span class="p">]</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="hll">        <span class="n">inner_bus_organization</span><span class="o">=</span><span class="n">INNER_BUS_ORGANIZATION</span><span class="p">,</span>
+</span><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="hll">        <span class="n">inner_bus_service</span><span class="o">=</span><span class="n">INNER_BUS_SERVICE</span>
+</span><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>    <span class="p">)</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="p">]</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="n">application</span> <span class="o">=</span> <span class="n">Application</span><span class="p">(</span>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>    <span class="n">name</span><span class="o">=</span><span class="n">SERVICE</span><span class="p">,</span>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>    <span class="n">organization</span><span class="o">=</span><span class="n">ORGANIZATION</span><span class="p">,</span>
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>    <span class="n">deployed_at</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()),</span>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>    <span class="n">environment</span><span class="o">=</span><span class="s2">&quot;staging&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>    <span class="n">dependencies_provider</span><span class="o">=</span><span class="n">dependencies_provider</span><span class="p">,</span>  <span class="c1"># &lt;==== Adding dependencies ➕</span>
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>    <span class="n">configurers</span><span class="o">=</span><span class="n">configurers</span> <span class="c1"># &lt;==== Adding configurers ➕</span>
+<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="p">)</span>
+<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a><span class="n">application</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
+</code></pre></div>
+</div>
+<h3 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h3>
+<p>Best way to learn how to use petisco to manage messages is with the <a href="../../examples/rabbitmq">examples</a> defined above 
+and reviewing the petisco test suite (check these folders: <a href="../../tests/modules/base/domain/messages">messages</a> and +
+<a href="../../tests/modules/extra/rabbitmq">rabbitmq</a>) </p>
+<p>You can run this tests using:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="go">lume -test-with-rabbitmq-mysql-and-elastic</span>
+</code></pre></div></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Tests checks rabbitmq availability. If a local rabbitmq is not available, some tests will be skipped.  </p>
+</div>
+<h3 id="code-explained">Code explained<a class="headerlink" href="#code-explained" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Create a domain event.
+  Define a <code>DomainEvent</code> in petisco is as easy as:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEvent</span><span class="p">,</span> <span class="n">Uuid</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="k">class</span> <span class="nc">UserCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>    <span class="n">user_id</span><span class="p">:</span> <span class="n">Uuid</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="n">domain_event</span> <span class="o">=</span> <span class="n">UserCreated</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">Uuid</span><span class="o">.</span><span class="n">v4</span><span class="p">())</span>
+</code></pre></div></li>
+<li>
+<p>Configure RabbitMQ. 
+  Now, you can configure a subscriber, for example, we can use the <code>send_mail_handler</code> subscriber from the example below.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>  <span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEvent</span><span class="p">,</span> <span class="n">MessageSubscriber</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>  <span class="kn">from</span> <span class="nn">petisco.extra.rabbitmq</span> <span class="kn">import</span> <span class="n">RabbitMqConnector</span><span class="p">,</span> <span class="n">RabbitMqMessageConfigurer</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>  <span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Error</span><span class="p">,</span> <span class="n">isSuccess</span><span class="p">,</span> <span class="n">isFailure</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>  <span class="k">def</span> <span class="nf">send_mail_handler</span><span class="p">(</span><span class="n">domain_event</span><span class="p">:</span> <span class="n">DomainEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>    <span class="c1"># Do your stuff here</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>    <span class="k">return</span> <span class="n">isSuccess</span> <span class="c1"># if fails, returns isFailure</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>  <span class="c1"># Define Subscribers</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>  <span class="n">domain_event</span> <span class="o">=</span> <span class="n">UserCreated</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">Uuid</span><span class="o">.</span><span class="n">v4</span><span class="p">())</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>  <span class="n">subscribers</span> <span class="o">=</span> <span class="p">[</span><span class="n">MessageSubscriber</span><span class="o">.</span><span class="n">from_message</span><span class="p">(</span><span class="n">domain_event</span><span class="p">,</span> <span class="p">[</span><span class="n">send_mail_handler</span><span class="p">])]</span>  
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>  <span class="c1"># Configure RabbitMQ Infrastructure with defined subscribers</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>  <span class="n">connector</span> <span class="o">=</span> <span class="n">RabbitMqConnector</span><span class="p">()</span>
+<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>  <span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;acme&quot;</span>
+<a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>  <span class="n">service</span> <span class="o">=</span> <span class="s2">&quot;registration&quot;</span>
+<a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>  <span class="n">configurer</span> <span class="o">=</span> <span class="n">RabbitMqMessageConfigurer</span><span class="p">(</span><span class="n">connector</span><span class="p">,</span> <span class="n">organization</span><span class="p">,</span> <span class="n">service</span><span class="p">)</span>
+<a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>  <span class="n">configurer</span><span class="o">.</span><span class="n">configure_subscribers</span><span class="p">(</span><span class="n">subscribers</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>Start Consuming DomainEvents from RabbitMQ.
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">MessageSubscriber</span><span class="p">,</span> <span class="n">DomainEvent</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="kn">from</span> <span class="nn">petisco.extra.rabbitmq</span> <span class="kn">import</span> <span class="n">RabbitMqConnector</span><span class="p">,</span> <span class="n">RabbitMqMessageConsumer</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Error</span><span class="p">,</span> <span class="n">isSuccess</span><span class="p">,</span> <span class="n">isFailure</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="k">def</span> <span class="nf">send_mail_handler</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">DomainEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>  <span class="c1"># Do your stuff here</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>  <span class="k">return</span> <span class="n">isSuccess</span> <span class="c1"># if fails, returns isFailure</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="c1"># Define Subscribers</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="n">domain_event</span> <span class="o">=</span> <span class="n">UserCreated</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">Uuid</span><span class="o">.</span><span class="n">v4</span><span class="p">())</span>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="n">subscribers</span> <span class="o">=</span> <span class="p">[</span><span class="n">MessageSubscriber</span><span class="o">.</span><span class="n">from_message</span><span class="p">(</span><span class="n">domain_event</span><span class="p">,</span> <span class="p">[</span><span class="n">send_mail_handler</span><span class="p">])]</span>  
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="c1"># Define RabbitMQ Consumer and start</span>
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;alice&quot;</span>
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="n">service</span> <span class="o">=</span> <span class="s2">&quot;petisco&quot;</span>
+<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="n">max_retries</span> <span class="o">=</span> <span class="mi">5</span>
+<a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a><span class="n">connector</span> <span class="o">=</span> <span class="n">RabbitMqConnector</span><span class="p">()</span>
+<a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a><span class="n">consumer</span> <span class="o">=</span> <span class="n">RabbitMqMessageConsumer</span><span class="p">(</span><span class="n">connector</span><span class="p">,</span> <span class="n">organization</span><span class="p">,</span> <span class="n">service</span><span class="p">,</span> <span class="n">max_retries</span><span class="p">)</span>
+<a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a><span class="n">consumer</span><span class="o">.</span><span class="n">add_subscribers</span><span class="p">(</span><span class="n">subscribers</span><span class="p">)</span>
+<a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a><span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</code></pre></div></li>
+<li>Publish DomainEvents with the DomainEventBus
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kn">from</span> <span class="nn">petisco.extra.rabbitmq</span> <span class="kn">import</span> <span class="n">RabbitMqConnector</span><span class="p">,</span> <span class="n">RabbitMqDomainEventBus</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="n">connector</span> <span class="o">=</span> <span class="n">RabbitMqConnector</span><span class="p">()</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;alice&quot;</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="n">service</span> <span class="o">=</span> <span class="s2">&quot;petisco&quot;</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="n">bus</span> <span class="o">=</span> <span class="n">RabbitMqDomainEventBus</span><span class="p">(</span><span class="n">connector</span><span class="p">,</span> <span class="n">organization</span><span class="p">,</span> <span class="n">service</span><span class="p">)</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="n">domain_event</span> <span class="o">=</span> <span class="n">UserCreated</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">Uuid</span><span class="o">.</span><span class="n">v4</span><span class="p">())</span>
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="n">bus</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">domain_event</span><span class="p">)</span>
+</code></pre></div></li>
+</ul>
+<h2 id="6-advanced">6. Advanced<a class="headerlink" href="#6-advanced" title="Permanent link">&para;</a></h2>
+<p>Happy path of a message broker is shown in the following diagram. 
+Let's imagine a new service (<code>registration</code>) which produces domain events and some actions are derived from them 
+(managed by subscribers).</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Publisher
+    participant Exchange
+    participant Queue
+    participant Subscriber
+    Note over Publisher, Subscriber: Registration Example
+
+    autonumber
+
+  Publisher-&gt;&gt;Exchange: UserCreated
+  Exchange-&gt;&gt;Queue: UserCreated
+    Subscriber-&gt;&gt;Queue: Read Message
+    Subscriber-&gt;&gt;Subscriber: Send SMS to user
+  Subscriber--&gt;&gt;Queue: ack
+    Note over Queue: Remove message</code></pre>
+<p>However, when something is not correct on the subscriber, petisco/rabbitmq infrastructure performs some actions to 
+retry the execution. This will be the steps:
+1. Subscriber read the message from queue (e.g. UserCreated)
+2. Subscriber perform derived fails (e.g. send sms message when user is created)
+3. As this derived action fails, subscriber returns a <code>nack</code> to the queue.
+4. Now, the message is requeued to the <code>retry</code> queue.
+   * This waits a specific time (ttl) and message will be requeued n times (also configurable).
+5. If derived action is not a success, message will be requeue to a <code>dead letter</code> queue.</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Publisher
+    participant Exchange
+    participant Queue
+    participant Subscriber
+
+    autonumber
+
+    Publisher-&gt;&gt;Exchange: Message
+    Exchange-&gt;&gt;Queue: Message
+        Note over Exchange,Queue: Based on exchange rules (bindings)
+    Subscriber-&gt;&gt;Queue: Read Message
+
+        loop N TIMES
+                Subscriber-&gt;&gt;Subscriber: Performs derived action
+        Subscriber--&gt;&gt;Retry Queue: nack
+                Note over Retry Queue: Message move to retry queue
+        Retry Queue--&gt;&gt;Retry Queue: Message
+                Note over Retry Queue: Wait Retry TTL
+        Retry Queue--&gt;&gt;Queue: Message
+                Note over Queue: Try again
+    end
+
+        Subscriber--&gt;&gt;Dead Letter Queue: Message
+        Note over Dead Letter Queue: Message move to dead letter queue</code></pre>
+<h3 id="queue-naming">Queue Naming<a class="headerlink" href="#queue-naming" title="Permanent link">&para;</a></h3>
+<p>The queues naming uses the following convention:</p>
+<p><code>&lt;organization&gt;.&lt;service&gt;.&lt;version&gt;.&lt;type&gt;.&lt;event_name&gt;.&lt;action_handler&gt;</code></p>
+<p>where:</p>
+<ul>
+<li><strong>organization</strong> is used for represent your company/team/project</li>
+<li><strong>service</strong> is used for represent your service/application</li>
+<li><strong>version</strong> is used for represent the version of the source event/command</li>
+<li><strong>type</strong> is used for represent the type of source that triggers the process (event|command)</li>
+<li><strong>event_name</strong> is used to represent the name of the event in snake case (<code>UserCreate</code> -&gt; <code>user.created</code>) </li>
+<li><strong>action_handler</strong> is used to represent the name of the callback which will trigger the event (e.g <code>send_mail_handler</code>) </li>
+</ul>
+<h3 id="how-petisco-takes-advantage-of-rabbitmq">How petisco takes advantage of RabbitMQ<a class="headerlink" href="#how-petisco-takes-advantage-of-rabbitmq" title="Permanent link">&para;</a></h3>
+<p>Continuing with the <code>registration</code> example: imagine we are developing this system for an organization called <code>acme</code>).</p>
+<p>We want to publish a domain event when the user create an account (<code>UserCreated</code>). 
+The <code>registration</code> service will react to this event storing the date (metrics are important) and performing some 
+derived action (e.g <code>send_mail_handler</code>). This event will be consumed by subscribers (derived actions that are executed 
+from associated events).</p>
+<p>In our example, we are going to use two subscribers:</p>
+<ul>
+<li><code>event_store</code>: general subscriber. It can be useful for saving all domain events.</li>
+<li><code>send_mail_handler</code>: It will send a mail on <code>UserCreated</code> event.</li>
+</ul>
+<p>The following figure represents this use case:</p>
+<p><img alt="Event Bus Example" src="../event-bus-example.jpeg" /></p>
+<p>What is happening here?</p>
+<ol>
+<li>The <code>DomainEventBus</code> publishes the <code>UserCreated</code> domain event. <ul>
+<li>The routing key of this event is <code>acme.registration.1.event.user.created</code> </li>
+</ul>
+</li>
+<li>The exchange <code>acme.registration</code> (<em><organization>.<service></em>) redirect the message using the binding keys (<em>green</em>)</li>
+<li>The <code>store</code> queue receives the event perfectly :metal:</li>
+<li>The <code>acme.registration.1.event.user.created.send_mail_handler</code> queue gets the <code>UserCreated</code> event.</li>
+<li>The <code>send_mail_handler</code> consumer obtains the event perform the action:<ul>
+<li>If it is success: perfect, everything works nice and the queue will get an <code>ack</code> :thumbsup:</li>
+<li>Otherwise, if it is a failure: something is not working as expected or maybe we are suffering from overload. :fire:
+    * We need to recover from error, let's <code>ack</code> to <code>acme.registration.1.event.user.created.send_mail_handler</code> and requeue the info to the retry exchange (<code>retry.acme.registration</code>).
+    * We select a number of maximun retries, as well as the time between retries (<code>x-message-ttl</code> on <code>retry.acme.registration.1.event.user.created.send_mail_handler</code>queue)</li>
+</ul>
+</li>
+<li>When the <em>TTL</em> expires on the retry queue, the message will be requeues automatically with the following parameters:<ul>
+<li>x-dead-letter-exchange: <code>acme.registration</code></li>
+<li>x-dead-letter-routing-key: <code>acme.registration.1.event.user.created.send_mail_handler</code></li>
+</ul>
+</li>
+<li>Then, the process will return to 2, however in this case, only will be requed to <code>acme.registration.1.event.user.created.send_mail_handler</code> thanks to the additional binding key <code>retry.acme.registration.1.event.user.created.send_mail_handler</code>.</li>
+</ol>
+<h3 id="message-chaos">Message Chaos<a class="headerlink" href="#message-chaos" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Chaos engineering is the discipline of experimenting on a system in order to build confidence in the system's capability to withstand turbulent conditions in production. <strong>Wikipedia</strong></p>
+</div>
+<p>Petisco allows you to force errors from the configuration of certain parameters by setting environment variables.</p>
+<h4 id="message-bus">Message Bus<a class="headerlink" href="#message-bus" title="Permanent link">&para;</a></h4>
+<p>You can force fails in message publication in (for example in <code>RabbitMqDomainEventBus</code> and <code>RabbitMqCommandBus</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Environment Variable</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PETISCO_CHAOS_PERCENTAGE_INVALID_MESSAGE_PUBLICATION</td>
+<td>Percentage of invalid message publication. Where 1.0 means rejecting all the publishing messages.</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition helps">
+<p class="admonition-title">Helps</p>
+<p>You can configure PETISCO_CHAOS_PERCENTAGE_INVALID_MESSAGE_PUBLICATION=0.1 to force failures in the 10% of the message
+publication. This is a convinient way of testing if fallback strategy works as expected.</p>
+</div>
+<h4 id="message-consumer">Message Consumer<a class="headerlink" href="#message-consumer" title="Permanent link">&para;</a></h4>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>To be deprecated to use better naming in 2.0.0. Migration work has already stated with <code>ChaosConfig</code> class implementation.</p>
+</div>
+<p>You can add a <code>MessageChaos</code> object as collaborator on a <code>RabbitMqConsumer</code>.
+As example, petisco provides the <code>RabbitMqEventChaos</code> implementation, where configurable parameters are the following:</p>
+<ul>
+<li>percentage_simulate_nack: Percentage of simulate nack [0.0 -&gt; 1.0]. Where 1.0 rejects all the event.
+    - Configurable with <code>EVENT_CHAOS_PERCENTAGE_SIMULATE_NACK</code> envvar.</li>
+<li>delay_before_even_handler_second: Delay event handler execution for a given number of seconds.
+    - Configurable with <code>EVENT_CHAOS_DELAY_BEFORE_EVENT_HANDLER_SECONDS</code> envvar.</li>
+<li>percentage_simulate_failures: Percentage of simulate failures [0.0 -&gt; 1.0]. Where 1.0 simulate always a failure on handlers.
+    - Configurable with <code>EVENT_CHAOS_PERCENTAGE_SIMULATE_FAILURES</code> envvar.    </li>
+<li>protected_routing_keys: Routing keys where chaos will not be applied<br />
+    - Configurable with <code>EVENT_CHAOS_PROTECTED_ROUTING_KEYS</code> envvar (e.g <code>"dead_letter.store,dl-legacy"</code>).  </li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/alice-biometrics/petisco" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/alicebiometrics" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/company/alicebiometrics" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.tabs.link", "content.code.annotate", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.5cfa9459.min.js"></script>
+      
+        <script src="../../../js/redirects.js"></script>
+      
+        <script src="../../../js/termynal.js"></script>
+      
+        <script src="../../../js/ad.js"></script>
+      
+        <script src="../../../js/custom.js"></script>
+      
+    
+  </body>
+</html>

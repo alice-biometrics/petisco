@@ -1,0 +1,1638 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="🍪 petisco is a framework for helping Python developers to build clean Applications in Python.">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/alice-biometrics/petisco/domain/">
+      
+      
+        <link rel="prev" href="../application/">
+      
+      
+        <link rel="next" href="../databases/">
+      
+      
+      <link rel="icon" href="../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.22">
+    
+    
+      
+        <title>Domain - petisco</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.732c4fb1.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../css/terminal.css">
+    
+      <link rel="stylesheet" href="../css/termynal.css">
+    
+      <link rel="stylesheet" href="../css/tweaks.css">
+    
+      <link rel="stylesheet" href="../css/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#entities" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="petisco" class="md-header__button md-logo" aria-label="petisco" data-md-component="logo">
+      
+  <img src="../logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            petisco
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Domain
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/alice-biometrics/petisco" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alice-biometrics/petisco
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="petisco" class="md-nav__button md-logo" aria-label="petisco" data-md-component="logo">
+      
+  <img src="../logo-white.png" alt="logo">
+
+    </a>
+    petisco
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/alice-biometrics/petisco" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alice-biometrics/petisco
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../application/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Domain
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Domain
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#entities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Entities
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uuid" class="md-nav__link">
+    <span class="md-ellipsis">
+      UUID
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#value-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Value Objects
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aggregate-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      Aggregate Root
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#messaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Messaging
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Messaging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#domain-event" class="md-nav__link">
+    <span class="md-ellipsis">
+      Domain Event
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#domaineventbus" class="md-nav__link">
+    <span class="md-ellipsis">
+      DomainEventBus
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commandbus" class="md-nav__link">
+    <span class="md-ellipsis">
+      CommandBus
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-domain-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other Domain Elements
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Other Domain Elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#domain-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      Domain Error
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notifier" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notifier
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appservices" class="md-nav__link">
+    <span class="md-ellipsis">
+      AppServices
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repositories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Repositories
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../databases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Extras
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Extras
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/fastapi/fastapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/rabbitmq/rabbitmq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RabbitMQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/redis/redis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Redis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/elastic/elastic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Elastic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/sqlalchemy/sqlalchemy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SQLAlchemy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extra/slack/slack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Slack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asyncio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Asyncio
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Migrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrations/from_v1_to_v2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From v1 to v2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing to petisco
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acknowledgements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Acknowledgements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#entities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Entities
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uuid" class="md-nav__link">
+    <span class="md-ellipsis">
+      UUID
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#value-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Value Objects
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aggregate-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      Aggregate Root
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#messaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Messaging
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Messaging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#domain-event" class="md-nav__link">
+    <span class="md-ellipsis">
+      Domain Event
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#domaineventbus" class="md-nav__link">
+    <span class="md-ellipsis">
+      DomainEventBus
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commandbus" class="md-nav__link">
+    <span class="md-ellipsis">
+      CommandBus
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-domain-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other Domain Elements
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Other Domain Elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#domain-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      Domain Error
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notifier" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notifier
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appservices" class="md-nav__link">
+    <span class="md-ellipsis">
+      AppServices
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repositories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Repositories
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+  
+  
+<!--    <div id="bsa-cpc"></div>-->
+  
+  
+                  
+
+  
+  
+
+
+  <h1>Domain</h1>
+
+<p><code>petisco 🍪</code> is a framework which helps you to model you domain. </p>
+<pre class="mermaid"><code>flowchart TD
+
+        subgraph Domain
+
+        subgraph Entities
+        aggregateroot([Aggregate Root])
+        uuid((Uuid))
+        valueobject([Value Object])
+        aggregateroot -.-&gt; valueobject
+        uuid --&gt; valueobject
+        end
+
+        notifier([Notifier])
+        appservice([AppService])
+        repository([Repository])
+        domainerror([Domain Error])   
+
+        subgraph Message
+        domainevent([Domain Event])
+        command([Command])
+        basemessage([Message])
+        domainevent --&gt; basemessage
+        command --&gt; basemessage
+        end
+
+
+
+
+        end
+
+        style Domain fill:#D6EAF8</code></pre>
+<p>Continuing with the Task Manager example (see <a href="../getting_started/">Getting Started</a>), let's see some examples of domain entities and models that can help you.</p>
+<h2 id="entities">Entities<a class="headerlink" href="#entities" title="Permanent link">&para;</a></h2>
+<h3 id="uuid">UUID<a class="headerlink" href="#uuid" title="Permanent link">&para;</a></h3>
+<p>Use <code>Uuid</code> to generate new identifiers.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Uuid</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">uuid</span> <span class="o">=</span> <span class="n">Uuid</span><span class="o">.</span><span class="n">v4</span><span class="p">()</span>
+</code></pre></div>
+<p>Additionally, you can extend it:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Uuid</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">class</span> <span class="nc">TaskId</span><span class="p">(</span><span class="n">Uuid</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">task_id</span> <span class="o">=</span> <span class="n">TaskId</span><span class="o">.</span><span class="n">v4</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition help">
+<p class="admonition-title">Help</p>
+<p>Use this class to interoperate with <code>uuid.UUID</code> and <code>pydantid.UUID4</code>. Those are very useful to document OpenAPI
+documentation.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">UUID4</span><span class="p">,</span> <span class="n">Field</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">AggregateRoot</span><span class="p">,</span> <span class="n">Uuid</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="k">class</span> <span class="nc">TaskIn</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">UUID4</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">uuid4</span><span class="p">)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="n">AggregateRoot</span><span class="p">):</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="k">def</span> <span class="nf">from_task_in</span><span class="p">(</span><span class="n">task_in</span><span class="p">:</span> <span class="n">TaskIn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Task&quot;</span><span class="p">:</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>        <span class="k">return</span> <span class="n">Task</span><span class="p">(</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="hll">            <span class="n">aggregate_id</span><span class="o">=</span><span class="n">Uuid</span><span class="o">.</span><span class="n">from_uuid</span><span class="p">(</span><span class="n">task_in</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>            <span class="n">name</span><span class="o">=</span><span class="n">task_in</span><span class="o">.</span><span class="n">name</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="p">)</span>
+</code></pre></div>
+</div>
+<h3 id="value-objects">Value Objects<a class="headerlink" href="#value-objects" title="Permanent link">&para;</a></h3>
+<p>Create your Value Objects extending from <code>ValueObject</code> base class.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">field_validator</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">Failure</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">ValueObject</span><span class="p">,</span> <span class="n">DomainError</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">class</span> <span class="nc">EmptyValueObjectError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">class</span> <span class="nc">ExceedLengthLimitValueObjectError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="k">def</span> <span class="nf">ensure_not_empty_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">classname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        <span class="k">raise</span> <span class="n">Failure</span><span class="p">(</span><span class="n">EmptyValueObjectError</span><span class="p">(</span><span class="n">classname</span><span class="p">))</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="k">def</span> <span class="nf">ensure_value_is_less_than_200_char</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>        <span class="k">raise</span> <span class="n">ExceedLengthLimitValueObjectError</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="k">class</span> <span class="nc">Description</span><span class="p">(</span><span class="n">ValueObject</span><span class="p">):</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>    <span class="k">def</span> <span class="nf">validate_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>        <span class="n">ensure_not_empty_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>        <span class="n">ensure_value_is_less_than_200_char</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a>        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Sometimes we want to keep only the wrapped value when serializing. In other words, we don't want to keep <code>{"value": 
+"my-value"}</code>. To do this, you can use Annotated write with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">ValueObjectSerializer</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  <span class="n">model_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Uuid</span><span class="p">,</span> <span class="n">ValueObjectSerializer</span><span class="p">]</span> <span class="c1"># (1)</span>
+</code></pre></div>
+<ol>
+<li><code>ValueObjectSerializer</code> is equivalent to <code>PlainSerializer(lambda value_object: value_object.value if value_object else None)</code></li>
+</ol>
+<p>Otherwise, you can also use <code>field_serializer</code> to solve this with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Uuid</span><span class="p">,</span> <span class="n">ValueObject</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  <span class="n">model_id</span><span class="p">:</span> <span class="n">Uuid</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>  <span class="n">_model_id</span> <span class="o">=</span> <span class="n">ValueObject</span><span class="o">.</span><span class="n">serializer</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">)</span>  <span class="c1"># (1)</span>
+</code></pre></div>
+<ol>
+<li>This is equivalent to <code>_model_id = field_serializer("model_id")(lamdba value_object: value_object.value)</code></li>
+</ol>
+</div>
+<h3 id="aggregate-root">Aggregate Root<a class="headerlink" href="#aggregate-root" title="Permanent link">&para;</a></h3>
+<div class="admonition quote">
+<p class="admonition-title">Quote</p>
+<p>As Evans define:</p>
+<p>"An AGGREGATE is a cluster of associated objects that we treat as a unit for the purpose of data changes. 
+Each AGGREGATE has a root and a boundary. The boundary defines what is inside the AGGREGATE. 
+The root is a single, specific ENTITY contained in the AGGREGATE."</p>
+<p>...</p>
+<p>"The root is the only member of the AGGREGATE that outside objects are allowed to hold references to[.]"</p>
+</div>
+<p>To define your data model, just extend from <code>AggregateRoot</code> to obtain useful features.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">AggregateRoot</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="kn">from</span> <span class="nn">my_app</span> <span class="kn">import</span> <span class="n">Description</span><span class="p">,</span> <span class="n">TaskCreated</span><span class="p">,</span> <span class="n">TaskId</span><span class="p">,</span> <span class="n">Title</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="n">AggregateRoot</span><span class="p">):</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">title</span><span class="p">:</span> <span class="n">Title</span>  <span class="c1"># &lt;== ValueObject</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">description</span><span class="p">:</span> <span class="n">Description</span> <span class="c1"># &lt;== ValueObject</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">task_id</span><span class="p">:</span> <span class="n">TaskId</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="n">Title</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="n">Description</span><span class="p">):</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>        <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="p">(</span><span class="n">aggregate_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">())</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>        <span class="n">task</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">TaskCreated</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">))</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>        <span class="k">return</span> <span class="n">task</span>
+</code></pre></div>
+<p>Define a name constructor as the static method <code>create</code> to simplify the construction and the record of the domain events
+related with the Task <code>AggregateRoot</code>.</p>
+<p>Then, you can get all the event with <code>pull_domain_events</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">task_id</span><span class="o">=</span><span class="n">TaskId</span><span class="o">.</span><span class="n">v4</span><span class="p">(),</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;petisco&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Learning petisco is nice!&quot;</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">)</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">domain_events</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">pull_domain_events</span><span class="p">()</span> <span class="c1"># This will return a list of DomainEvents ([TaskCreated(task_id=task_id)])</span>
+</code></pre></div>
+<h2 id="messaging">Messaging<a class="headerlink" href="#messaging" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+        domainevent([Domain Event])
+        command([Command])
+        basemessage([Message])
+        domainevent --&gt; basemessage
+        command --&gt; basemessage</code></pre>
+<h3 id="domain-event">Domain Event<a class="headerlink" href="#domain-event" title="Permanent link">&para;</a></h3>
+<p>Use <code>DomainEvent</code> to model the actions of our domain that are of interest to our business logic.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainEvent</span><span class="p">,</span> <span class="n">Uuid</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">class</span> <span class="nc">TaskId</span><span class="p">(</span><span class="n">Uuid</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="k">class</span> <span class="nc">TaskCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskId</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="k">class</span> <span class="nc">TaskRemoved</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskId</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="k">class</span> <span class="nc">TaskRetrieved</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskId</span>
+</code></pre></div>
+<p><code>DomainEvent</code> inherits from <code>Message</code> that have available <code>dict</code> and <code>json</code> method to encode the info.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">my_domain_event</span> <span class="o">=</span> <span class="n">TaskCreated</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="n">TaskId</span><span class="o">.</span><span class="n">v4</span><span class="p">())</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">my_domain_event</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div>
+<p>The result should be something like the following:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3a4d78aa-6870-41cb-aa14-964831511d86&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;task.created&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">        </span><span class="nt">&quot;type_message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;domain_event&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">        </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">        </span><span class="nt">&quot;occurred_on&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-12-28 14:11:47.845618&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">        </span><span class="nt">&quot;attributes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;task_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a7f8b62a-c9e5-4f3c-a451-47cd1965958f&quot;</span><span class="p">},</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">        </span><span class="nt">&quot;meta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="p">}</span>
+</code></pre></div></p>
+<p><code>attributes</code> is a representation of the class:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">class</span> <span class="nc">TaskCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskId</span>
+</code></pre></div>
+<p>You can also add metadata to your domain event payload</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">domain_event</span> <span class="o">=</span>  <span class="n">TaskCreated</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="n">TaskId</span><span class="o">.</span><span class="n">v4</span><span class="p">())</span><span class="o">.</span><span class="n">add_meta</span><span class="p">({</span><span class="s2">&quot;correlation_id&quot;</span><span class="p">:</span> <span class="s2">&quot;d8ed76aa-2fce-48f2-9470-ec5048783fe1&quot;</span><span class="p">})</span>
+</code></pre></div>
+<p>The result is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3a4d78aa-6870-41cb-aa14-964831511d86&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;task.created&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">        </span><span class="nt">&quot;type_message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;domain_event&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">        </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">        </span><span class="nt">&quot;occurred_on&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-12-28 14:11:47.845618&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">        </span><span class="nt">&quot;attributes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;task_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a7f8b62a-c9e5-4f3c-a451-47cd1965958f&quot;</span><span class="p">},</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">        </span><span class="nt">&quot;meta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;correlation_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;d8ed76aa-2fce-48f2-9470-ec5048783fe1&quot;</span><span class="p">}</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="err">&lt;==</span><span class="w"> </span><span class="err">Added</span><span class="w"> </span><span class="err">me</span><span class="kc">ta</span><span class="w"> </span><span class="err">i</span><span class="kc">nf</span><span class="err">o</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="p">}</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you want to modify the version of the Message, use the inner class <code>Config</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">class</span> <span class="nc">TaskCreated</span><span class="p">(</span><span class="n">DomainEvent</span><span class="p">):</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskId</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>        <span class="n">version</span> <span class="o">=</span> <span class="mi">2</span>
+</code></pre></div>
+<p>Default value of message version is 1.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>🚫DO NOT overwrite the constructor of the Message 🚫. This could cause errors on the serialization of the message.
+If you want to do an acction before the construction, use a named constructor as follows:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>class TaskCreated(DomainEvent):
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    complete_name: str
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    first_name: str | None = None
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    @staticmethod
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    def create(complete_name: str) -&gt; &quot;TaskCreated&quot;:
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>        return TaskCreated(
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>            complete_name=complete_name,
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>            first_name=complete_name.split(&quot; &quot;)[0]
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>        )
+</code></pre></div>
+</div>
+<h3 id="command">Command<a class="headerlink" href="#command" title="Permanent link">&para;</a></h3>
+<p>If you use CQRS you can use also the <code>Command</code> class. Extend from it when you want to model an imperative action to be done.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Uuid</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="k">class</span> <span class="nc">TaskId</span><span class="p">(</span><span class="n">Uuid</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="k">class</span> <span class="nc">UpdateTask</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskId</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="n">my_command</span> <span class="o">=</span> <span class="n">UpdateTask</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="n">TaskId</span><span class="o">.</span><span class="n">v4</span><span class="p">())</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="nb">print</span><span class="p">(</span><span class="n">my_command</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div>
+<p>The result:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="p">{</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">    </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1f35e414-0636-4983-987e-13d522749709&quot;</span><span class="p">,</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update.task&quot;</span><span class="p">,</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">        </span><span class="nt">&quot;type_message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;command&quot;</span><span class="p">,</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="w">        </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="w">        </span><span class="nt">&quot;occurred_on&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-12-28 14:19:09.149651&quot;</span><span class="p">,</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">        </span><span class="nt">&quot;attributes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;task_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;db0970be-f6b6-478b-976a-f83e85112b90&quot;</span><span class="p">},</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">        </span><span class="nt">&quot;meta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="domaineventbus">DomainEventBus<a class="headerlink" href="#domaineventbus" title="Permanent link">&para;</a></h3>
+<p>Use <code>DomainEventBus</code> to publish <code>DomainEvent</code>s in your Use Cases. </p>
+<details class="example" open="open">
+<summary>Example of usage into a <code>UseCase</code></summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">BoolResult</span><span class="p">,</span> <span class="n">isSuccess</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">CrudRepository</span><span class="p">,</span> <span class="n">DomainEventBus</span><span class="p">,</span> <span class="n">UseCase</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="kn">from</span> <span class="nn">app.src.task.label.domain.task_labeler</span> <span class="kn">import</span> <span class="n">TaskLabeler</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="kn">from</span> <span class="nn">app.src.task.shared.domain.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="k">class</span> <span class="nc">TaskCreator</span><span class="p">(</span><span class="n">UseCase</span><span class="p">):</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>        <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>        <span class="n">labeler</span><span class="p">:</span> <span class="n">TaskLabeler</span><span class="p">,</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>        <span class="n">repository</span><span class="p">:</span> <span class="n">CrudRepository</span><span class="p">,</span>
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>        <span class="n">domain_event_bus</span><span class="p">:</span> <span class="n">DomainEventBus</span><span class="p">,</span>
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>    <span class="p">):</span>
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">labeler</span> <span class="o">=</span> <span class="n">labeler</span>
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">repository</span> <span class="o">=</span> <span class="n">repository</span>
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">domain_event_bus</span> <span class="o">=</span> <span class="n">domain_event_bus</span>
+<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>
+<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a>        <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labeler</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">task</span><span class="p">)</span><span class="o">.</span><span class="n">unwrap_or_return</span><span class="p">()</span>
+<a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">task</span><span class="p">)</span><span class="o">.</span><span class="n">unwrap_or_return</span><span class="p">()</span>
+<a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a><span class="hll">        <span class="n">domain_events</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">pull_domain_events</span><span class="p">()</span> <span class="c1"># (1)</span>
+</span><a id="__codelineno-18-23" name="__codelineno-18-23" href="#__codelineno-18-23"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">domain_event_bus</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">domain_events</span><span class="p">)</span> <span class="c1"># (2)</span>
+</span><a id="__codelineno-18-24" name="__codelineno-18-24" href="#__codelineno-18-24"></a>        <span class="k">return</span> <span class="n">isSuccess</span>
+</code></pre></div>
+<ol>
+<li>Pull <code>DomainEvent</code>s from the <code>Task</code> Aggregate.</li>
+<li>Publish retrieved <code>DomainEvent</code>s. </li>
+</ol>
+</details>
+<h3 id="commandbus">CommandBus<a class="headerlink" href="#commandbus" title="Permanent link">&para;</a></h3>
+<p>Use <code>CommandBus</code> to dispatch <code>Command</code>s in your Use Cases or Controllers.</p>
+<h2 id="other-domain-elements">Other Domain Elements<a class="headerlink" href="#other-domain-elements" title="Permanent link">&para;</a></h2>
+<h3 id="domain-error">Domain Error<a class="headerlink" href="#domain-error" title="Permanent link">&para;</a></h3>
+<p>Model your domain errors extending from <code>DomainError</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">DomainError</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="k">class</span> <span class="nc">TaskAlreadyExistError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="k">class</span> <span class="nc">TaskNotFoundError</span><span class="p">(</span><span class="n">DomainError</span><span class="p">):</span> <span class="o">...</span>
+</code></pre></div>
+<p>You can add additional information to <code>DomainError</code> objects using <code>additional_info</code> argument:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">domain_error</span> <span class="o">=</span> <span class="n">TaskNotFoundError</span><span class="p">(</span><span class="n">additional_info</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;detail&quot;</span><span class="p">})</span>
+</code></pre></div>
+<p>or also you can add related uuid with </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">domain_error</span> <span class="o">=</span> <span class="n">TaskNotFoundError</span><span class="p">(</span><span class="n">uuid_value</span><span class="o">=</span><span class="n">task_id</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">additional_info</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;detail&quot;</span><span class="p">})</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>petisco</code> provides some default errors such as <code>UnknownError</code> and <code>CriticalError</code>.</p>
+<p>Additionally, the framework defines <code>DEFAULT_HTTP_ERROR_MAP</code> with some default errors and its correspondences with
+<code>HttpErrors</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">DEFAULT_HTTP_ERROR_MAP</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>    <span class="n">DomainError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>    <span class="n">NotFound</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>    <span class="n">AlreadyExists</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">),</span>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>    <span class="n">AggregateNotFoundError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>    <span class="n">AggregatesNotFoundError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>    <span class="n">AggregateAlreadyExistError</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">),</span>
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>    <span class="n">ClientNotFound</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>    <span class="n">ClientAlreadyExists</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">),</span>
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>    <span class="n">UserNotFound</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">),</span>
+<a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>    <span class="n">UserAlreadyExists</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">),</span>
+<a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>    <span class="n">InvalidUuid</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">422</span><span class="p">),</span>
+<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a>    <span class="n">InvalidValueObject</span><span class="p">:</span> <span class="n">HttpError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>
+<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<h3 id="notifier">Notifier<a class="headerlink" href="#notifier" title="Permanent link">&para;</a></h3>
+<p>Implement your notifier inheriting from <code>Notifier</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Notifier</span><span class="p">,</span> <span class="n">NotifierMessage</span><span class="p">,</span> <span class="n">NotifierExceptionMessage</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="k">class</span> <span class="nc">MyDummyNotifier</span><span class="p">(</span><span class="n">Notifier</span><span class="p">):</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>    <span class="k">def</span> <span class="nf">publish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notifier_message</span><span class="p">:</span> <span class="n">NotifierMessage</span><span class="p">):</span>
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Publishing </span><span class="si">{</span><span class="n">notifier_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>      <span class="k">def</span> <span class="nf">publish_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notifier_exception_message</span><span class="p">:</span> <span class="n">NotifierExceptionMessage</span><span class="p">):</span>
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Publishing exeception </span><span class="si">{</span><span class="n">notifier_exception_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="appservices">AppServices<a class="headerlink" href="#appservices" title="Permanent link">&para;</a></h3>
+<p>Implement your app services inheriting from <code>AppService</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">AppService</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="k">class</span> <span class="nc">MyDummyAppService</span><span class="p">(</span><span class="n">AppService</span><span class="p">):</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>        <span class="c1"># Add your code here</span>
+</code></pre></div>
+<h3 id="repositories">Repositories<a class="headerlink" href="#repositories" title="Permanent link">&para;</a></h3>
+<p>Implement your repositories inheriting from <code>Repository</code>. This interface do not expose any abstract method, so you can 
+extend it as you want.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">Repository</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="kn">from</span> <span class="nn">my_app</span> <span class="kn">import</span> <span class="n">TaskId</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="k">class</span> <span class="nc">MyDummyRepository</span><span class="p">(</span><span class="n">Repository</span><span class="p">):</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskId</span><span class="p">):</span>
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a>        <span class="n">task</span> <span class="o">=</span> <span class="n">task_from_task_id</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+<a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a>        <span class="k">return</span> <span class="n">task</span>
+</code></pre></div>
+<details class="example">
+<summary>Example with CRUD Repository</summary>
+<p>Otherwise, if you want to model a repository for a CRUD application, you can inherit from <code>CrudRepository</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="kn">from</span> <span class="nn">meiga</span> <span class="kn">import</span> <span class="n">BoolResult</span><span class="p">,</span> <span class="n">Error</span><span class="p">,</span> <span class="n">Failure</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Success</span><span class="p">,</span> <span class="n">isSuccess</span><span class="p">,</span> <span class="n">early_return</span>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="kn">from</span> <span class="nn">petisco.base.application.patterns.crud_repository</span> <span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>    <span class="n">AggregateRootType</span><span class="p">,</span>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>    <span class="n">CrudRepository</span><span class="p">,</span>
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a><span class="p">)</span>
+<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a><span class="kn">from</span> <span class="nn">petisco.base.domain.errors.defaults.already_exists</span> <span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a>    <span class="n">AggregateAlreadyExistError</span><span class="p">,</span>
+<a id="__codelineno-26-11" name="__codelineno-26-11" href="#__codelineno-26-11"></a><span class="p">)</span>
+<a id="__codelineno-26-12" name="__codelineno-26-12" href="#__codelineno-26-12"></a><span class="kn">from</span> <span class="nn">petisco.base.domain.errors.defaults.not_found</span> <span class="kn">import</span> <span class="n">AggregateNotFoundError</span>
+<a id="__codelineno-26-13" name="__codelineno-26-13" href="#__codelineno-26-13"></a><span class="kn">from</span> <span class="nn">petisco.base.domain.model.uuid</span> <span class="kn">import</span> <span class="n">Uuid</span>
+<a id="__codelineno-26-14" name="__codelineno-26-14" href="#__codelineno-26-14"></a>
+<a id="__codelineno-26-15" name="__codelineno-26-15" href="#__codelineno-26-15"></a>
+<a id="__codelineno-26-16" name="__codelineno-26-16" href="#__codelineno-26-16"></a><span class="k">class</span> <span class="nc">InmemoryCrudRepository</span><span class="p">(</span><span class="n">CrudRepository</span><span class="p">[</span><span class="n">AggregateRootType</span><span class="p">]):</span>
+<a id="__codelineno-26-17" name="__codelineno-26-17" href="#__codelineno-26-17"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-26-18" name="__codelineno-26-18" href="#__codelineno-26-18"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Uuid</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<a id="__codelineno-26-19" name="__codelineno-26-19" href="#__codelineno-26-19"></a>
+<a id="__codelineno-26-20" name="__codelineno-26-20" href="#__codelineno-26-20"></a>    <span class="nd">@early_return</span>
+<a id="__codelineno-26-21" name="__codelineno-26-21" href="#__codelineno-26-21"></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregate_root</span><span class="p">:</span> <span class="n">AggregateRootType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-26-22" name="__codelineno-26-22" href="#__codelineno-26-22"></a>        <span class="k">if</span> <span class="n">aggregate_root</span><span class="o">.</span><span class="n">aggregate_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+<a id="__codelineno-26-23" name="__codelineno-26-23" href="#__codelineno-26-23"></a>            <span class="k">return</span> <span class="n">Failure</span><span class="p">(</span><span class="n">AggregateAlreadyExistError</span><span class="p">(</span><span class="n">aggregate_root</span><span class="o">.</span><span class="n">aggregate_id</span><span class="p">))</span>
+<a id="__codelineno-26-24" name="__codelineno-26-24" href="#__codelineno-26-24"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">aggregate_root</span><span class="o">.</span><span class="n">aggregate_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">aggregate_root</span>
+<a id="__codelineno-26-25" name="__codelineno-26-25" href="#__codelineno-26-25"></a>        <span class="k">return</span> <span class="n">isSuccess</span>
+<a id="__codelineno-26-26" name="__codelineno-26-26" href="#__codelineno-26-26"></a>
+<a id="__codelineno-26-27" name="__codelineno-26-27" href="#__codelineno-26-27"></a>    <span class="nd">@early_return</span>
+<a id="__codelineno-26-28" name="__codelineno-26-28" href="#__codelineno-26-28"></a>    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregate_id</span><span class="p">:</span> <span class="n">Uuid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="n">AggregateRootType</span><span class="p">,</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-26-29" name="__codelineno-26-29" href="#__codelineno-26-29"></a>        <span class="n">aggregate_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">aggregate_id</span><span class="p">)</span>
+<a id="__codelineno-26-30" name="__codelineno-26-30" href="#__codelineno-26-30"></a>        <span class="k">if</span> <span class="n">aggregate_root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-26-31" name="__codelineno-26-31" href="#__codelineno-26-31"></a>            <span class="k">return</span> <span class="n">Failure</span><span class="p">(</span><span class="n">AggregateNotFoundError</span><span class="p">(</span><span class="n">aggregate_id</span><span class="p">))</span>
+<a id="__codelineno-26-32" name="__codelineno-26-32" href="#__codelineno-26-32"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="n">aggregate_root</span><span class="p">)</span>
+<a id="__codelineno-26-33" name="__codelineno-26-33" href="#__codelineno-26-33"></a>
+<a id="__codelineno-26-34" name="__codelineno-26-34" href="#__codelineno-26-34"></a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregate_root</span><span class="p">:</span> <span class="n">AggregateRootType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-26-35" name="__codelineno-26-35" href="#__codelineno-26-35"></a>        <span class="k">if</span> <span class="n">aggregate_root</span><span class="o">.</span><span class="n">aggregate_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+<a id="__codelineno-26-36" name="__codelineno-26-36" href="#__codelineno-26-36"></a>            <span class="k">return</span> <span class="n">Failure</span><span class="p">(</span><span class="n">AggregateNotFoundError</span><span class="p">(</span><span class="n">aggregate_root</span><span class="o">.</span><span class="n">aggregate_id</span><span class="p">))</span>
+<a id="__codelineno-26-37" name="__codelineno-26-37" href="#__codelineno-26-37"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">aggregate_root</span><span class="o">.</span><span class="n">aggregate_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">aggregate_root</span>
+<a id="__codelineno-26-38" name="__codelineno-26-38" href="#__codelineno-26-38"></a>        <span class="k">return</span> <span class="n">isSuccess</span>
+<a id="__codelineno-26-39" name="__codelineno-26-39" href="#__codelineno-26-39"></a>
+<a id="__codelineno-26-40" name="__codelineno-26-40" href="#__codelineno-26-40"></a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregate_id</span><span class="p">:</span> <span class="n">Uuid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolResult</span><span class="p">:</span>
+<a id="__codelineno-26-41" name="__codelineno-26-41" href="#__codelineno-26-41"></a>        <span class="k">if</span> <span class="n">aggregate_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+<a id="__codelineno-26-42" name="__codelineno-26-42" href="#__codelineno-26-42"></a>            <span class="k">return</span> <span class="n">Failure</span><span class="p">(</span><span class="n">AggregateNotFoundError</span><span class="p">(</span><span class="n">aggregate_id</span><span class="p">))</span>
+<a id="__codelineno-26-43" name="__codelineno-26-43" href="#__codelineno-26-43"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">aggregate_id</span><span class="p">)</span>
+<a id="__codelineno-26-44" name="__codelineno-26-44" href="#__codelineno-26-44"></a>        <span class="k">return</span> <span class="n">isSuccess</span>
+<a id="__codelineno-26-45" name="__codelineno-26-45" href="#__codelineno-26-45"></a>
+<a id="__codelineno-26-46" name="__codelineno-26-46" href="#__codelineno-26-46"></a>    <span class="k">def</span> <span class="nf">retrieve_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">AggregateRootType</span><span class="p">],</span> <span class="n">Error</span><span class="p">]:</span>
+<a id="__codelineno-26-47" name="__codelineno-26-47" href="#__codelineno-26-47"></a>        <span class="k">return</span> <span class="n">Success</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+</code></pre></div>
+</details>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/alice-biometrics/petisco" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/alicebiometrics" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/company/alicebiometrics" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.tabs.link", "content.code.annotate", "content.code.copy"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.5cfa9459.min.js"></script>
+      
+        <script src="../js/redirects.js"></script>
+      
+        <script src="../js/termynal.js"></script>
+      
+        <script src="../js/ad.js"></script>
+      
+        <script src="../js/custom.js"></script>
+      
+    
+  </body>
+</html>

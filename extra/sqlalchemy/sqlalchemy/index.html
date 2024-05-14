@@ -1,0 +1,1559 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="🍪 petisco is a framework for helping Python developers to build clean Applications in Python.">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/alice-biometrics/petisco/extra/sqlalchemy/sqlalchemy/">
+      
+      
+        <link rel="prev" href="../../elastic/elastic/">
+      
+      
+        <link rel="next" href="../../slack/slack/">
+      
+      
+      <link rel="icon" href="../../../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.22">
+    
+    
+      
+        <title>SQLAlchemy - petisco</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.732c4fb1.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../css/terminal.css">
+    
+      <link rel="stylesheet" href="../../../css/termynal.css">
+    
+      <link rel="stylesheet" href="../../../css/tweaks.css">
+    
+      <link rel="stylesheet" href="../../../css/custom.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#connections" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="petisco" class="md-header__button md-logo" aria-label="petisco" data-md-component="logo">
+      
+  <img src="../../../logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            petisco
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              SQLAlchemy
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/alice-biometrics/petisco" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alice-biometrics/petisco
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="petisco" class="md-nav__button md-logo" aria-label="petisco" data-md-component="logo">
+      
+  <img src="../../../logo-white.png" alt="logo">
+
+    </a>
+    petisco
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/alice-biometrics/petisco" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alice-biometrics/petisco
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../application/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../domain/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Domain
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../databases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Extras
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Extras
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../fastapi/fastapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rabbitmq/rabbitmq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RabbitMQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../redis/redis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Redis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../elastic/elastic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Elastic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    SQLAlchemy
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    SQLAlchemy
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connections
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Models
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session" class="md-nav__link">
+    <span class="md-ellipsis">
+      Session
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sqlexecutor" class="md-nav__link">
+    <span class="md-ellipsis">
+      SqlExecutor
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sync
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../slack/slack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Slack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../asyncio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Asyncio
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Migrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../migrations/from_v1_to_v2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From v1 to v2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing to petisco
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../acknowledgements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Acknowledgements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connections
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Models
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session" class="md-nav__link">
+    <span class="md-ellipsis">
+      Session
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sqlexecutor" class="md-nav__link">
+    <span class="md-ellipsis">
+      SqlExecutor
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sync
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+  
+  
+<!--    <div id="bsa-cpc"></div>-->
+  
+  
+                  
+
+  
+  
+
+
+  <h1>SQLAlchemy</h1>
+
+<div class="admonition note">
+<p>The <code>SqlDatabase</code> is an specific implementation of a <code>Database</code> using a modern version of the SQLAlchemy ORM (version 2).
+This object encapsulates some specific SQLAlchemy stuff (e.g engine) and provides it as a scoped session to work with
+the defined models</p>
+</div>
+<h2 id="connections">Connections<a class="headerlink" href="#connections" title="Permanent link">&para;</a></h2>
+<p>When you define a <code>SqlDatabase</code> you have to specify the connection. Petisco already provides connections to <code>MySQL</code> and
+<code>SQLite</code>, but you can extend it with your requirements.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">petisco.extra.sqlalchemy</span> <span class="kn">import</span> <span class="n">MySqlConnection</span><span class="p">,</span> <span class="n">SqlDatabase</span><span class="p">,</span> <span class="n">SqliteConnection</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="o">...</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">if</span> <span class="n">SQL_SERVER</span> <span class="o">==</span> <span class="s2">&quot;SQLite&quot;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  <span class="n">connection</span> <span class="o">=</span> <span class="n">SqliteConnection</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;sqlite&quot;</span><span class="p">,</span> <span class="s2">&quot;database.db&quot;</span><span class="p">)</span> 
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  <span class="n">connection</span> <span class="o">=</span> <span class="n">MySqlConnection</span><span class="o">.</span><span class="n">from_environ</span><span class="p">()</span> 
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">sql_database</span> <span class="o">=</span> <span class="n">SqlDatabase</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;petisco&quot;</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">)</span> 
+</code></pre></div>
+<h2 id="models">Models<a class="headerlink" href="#models" title="Permanent link">&para;</a></h2>
+<p>To define your models, you have to inherit from <code>SqlBase</code> abstract object. Check the following example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">petisco.extra.sqlalchemy</span> <span class="kn">import</span> <span class="n">SqlBase</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">Mapped</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="hll"><span class="k">class</span> <span class="nc">SqlUser</span><span class="p">(</span><span class="n">SqlBase</span><span class="p">):</span>
+</span><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;User&quot;</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">age</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">)</span>
+</code></pre></div>
+<p>Thanks to inheriting from <code>SqlBase</code> with have available abstract methods ready to be implemented to convert <code>SQL</code> models
+to domain model and vice versa.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">petisco.extra.sqlalchemy</span> <span class="kn">import</span> <span class="n">SqlBase</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">Mapped</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># Domain Model (pydantic)</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="hll"><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="hll">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="hll">    <span class="n">age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+</span><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c1"># SQL Model (petisco)</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="hll"><span class="k">class</span> <span class="nc">SqlUser</span><span class="p">(</span><span class="n">SqlBase</span><span class="p">):</span>
+</span><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;users&quot;</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">age</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">)</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="hll">    <span class="k">def</span> <span class="nf">to_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+</span><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="hll">        <span class="k">return</span> <span class="n">User</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="p">)</span>
+</span><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="hll">
+</span><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="hll">    <span class="nd">@staticmethod</span>
+</span><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="hll">    <span class="k">def</span> <span class="nf">from_domain</span><span class="p">(</span><span class="n">domain_entity</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SQLUser&quot;</span><span class="p">:</span>
+</span><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="hll">        <span class="k">return</span> <span class="n">SQLUser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">domain_entity</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="n">domain_entity</span><span class="o">.</span><span class="n">age</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="admonition help">
+<p class="admonition-title">Help</p>
+<p>You can check the <a href="../../../cli/#show-sql-models"><code>petisco-dev --sql-models</code></a> cli tool to check which SQL models
+(inheriting from <code>SQLBase</code>) are available.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Consider that your defined models have to inherit from <code>SqlBase</code>. This <code>sqlalchemy.orm.DeclarativeBase</code> will be used
+to gather all the models and create them in case of the database is empty.</p>
+<p>When you initialize the <code>SqlDatabase</code> object, a default parameter is given (<code>SqlBase</code>). This given base will be used
+to create all tables if required.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="hll"><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">DeclarativeBase</span> <span class="o">=</span> <span class="n">SqlBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>        <span class="n">json_serializer</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>        <span class="n">json_deserializer</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="n">echo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">print_sql_statements</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="p">)</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">database_exists</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">url</span><span class="p">):</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        <span class="n">create_database</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="hll">        <span class="n">base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+</span><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_run_initial_statements</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">session_factory</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Advaced Usage:</strong> </p>
+<p>If you don't want to inherit from <code>SqlBase</code> and want to extend declarative, you can do it creating your base inheriting
+from <code>DeclarativeBase</code> and passing this to the <code>initialize</code> method.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">DeclarativeBase</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="hll"><span class="k">class</span> <span class="nc">YourBaseExtension</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+</span><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="hll">  <span class="c1"># your extension code</span>
+</span><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="hll"><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">YourBaseExtension</span><span class="p">):</span>
+</span><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;users&quot;</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="n">age</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">)</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="n">connection</span> <span class="o">=</span> <span class="n">SqliteConnection</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;sqlite&quot;</span><span class="p">,</span> <span class="s2">&quot;database.db&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="n">sql_database</span> <span class="o">=</span> <span class="n">SqlDatabase</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;petisco&quot;</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">)</span> 
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="hll"><span class="n">sql_database</span><span class="o">.</span><span class="n">initializes</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">YourBaseExtension</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<h2 id="session">Session<a class="headerlink" href="#session" title="Permanent link">&para;</a></h2>
+<p>The <code>SQLDatabase</code> implements the <code>get_session_scope</code> method to get a context manager with a pre-configured 
+<code>sqlalchemy.orm.Session</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">session_scope</span> <span class="o">=</span> <span class="n">sql_database</span><span class="o">.</span><span class="n">get_session_scope</span><span class="p">()</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">with</span> <span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">sql_user</span> <span class="o">=</span> <span class="n">SQLUser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sql_user</span><span class="p">)</span>
+</code></pre></div>
+<p>To illustrate what is done in this context manager, you can check the session scope provider:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span> <span class="nf">sql_session_scope_provider</span><span class="p">(</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">session_factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Session</span><span class="p">]</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">ContextManager</span><span class="p">[</span><span class="n">Session</span><span class="p">]]:</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="nd">@contextmanager</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="k">def</span> <span class="nf">session_scope</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ContextManager</span><span class="p">[</span><span class="n">Session</span><span class="p">]:</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        <span class="n">session</span> <span class="o">=</span> <span class="n">session_factory</span><span class="p">()</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>        <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>            <span class="k">yield</span> <span class="n">session</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>            <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>        <span class="k">except</span> <span class="n">OperationalError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>            <span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>            <span class="k">raise</span> <span class="n">e</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>            <span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>            <span class="k">raise</span> <span class="n">e</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>        <span class="k">finally</span><span class="p">:</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>            <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>    <span class="k">return</span> <span class="n">session_scope</span>
+</code></pre></div>
+<p>Note that in this scope, session <code>commit</code> and <code>rollback</code> are taken into account to ease the way we develop, keeping the
+security aspect.</p>
+<h2 id="sqlexecutor">SqlExecutor<a class="headerlink" href="#sqlexecutor" title="Permanent link">&para;</a></h2>
+<p>The <code>SqlExecutor</code> provides us a way to quickly execute SQL statements.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span> <span class="nn">petisco.extra.sqlalchemy</span> <span class="kn">import</span> <span class="n">SqlExecutor</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">session_scope</span> <span class="o">=</span> <span class="n">sql_database</span><span class="o">.</span><span class="n">get_session_scope</span><span class="p">()</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">sql_executor</span> <span class="o">=</span> <span class="n">SqlExecutor</span><span class="p">(</span><span class="n">session_scope</span><span class="p">)</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1"># 1 SQL statmenet</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">sql_executor</span><span class="o">.</span><span class="n">execute_statement</span><span class="p">(</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="s1">&#39;INSERT INTO User (name,age) VALUES (&quot;Alice&quot;,3)&#39;</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="p">)</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="c1"># 2 SQL several statmenets</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="n">sql_executor</span><span class="o">.</span><span class="n">execute_statements</span><span class="p">(</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>    <span class="p">[</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>    <span class="s1">&#39;INSERT INTO User (name,age) VALUES (&quot;Alice&quot;,3)&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>    <span class="s1">&#39;INSERT INTO User (name,age) VALUES (&quot;Bob&quot;,10)&#39;</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>    <span class="p">]</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="p">)</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="c1"># 3 SQL statmenets from filename</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="n">sql_executor</span><span class="o">.</span><span class="n">execute_from_filename</span><span class="p">(</span><span class="s2">&quot;insert_users.sql&quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When declare a <code>SqlDatabase</code> you can define a <code>initial_statements_filename</code> to run some SQL statements right after
+initialization.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">sql_database</span> <span class="o">=</span> <span class="n">SqlDatabase</span><span class="p">(</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;petisco&quot;</span><span class="p">,</span> 
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">,</span> 
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="hll">    <span class="n">initial_statements_filename</span><span class="o">=</span><span class="s2">&quot;sql_statements.sql&quot;</span>
+</span><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="p">)</span> 
+</code></pre></div>
+<p>You can also define some callables before and after the initial statemenents execution with 
+<code>before_initial_statements</code> and <code>after_initial_statements</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span> <span class="nf">run_alembic</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="c1"># add your alembic script</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">def</span> <span class="nf">do_whatever_after_sql_initial_stements</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>   <span class="c1"># add your stuff</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">sql_database</span> <span class="o">=</span> <span class="n">SqlDatabase</span><span class="p">(</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;petisco&quot;</span><span class="p">,</span> 
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>    <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">,</span> 
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="hll">    <span class="n">before_initial_statements</span><span class="o">=</span><span class="n">run_alembic</span><span class="p">,</span>
+</span><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="n">initial_statements_filename</span><span class="o">=</span><span class="s2">&quot;sql_statements.sql&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="hll">    <span class="n">after_initial_statements</span><span class="o">=</span><span class="n">do_whatever_after_sql_initial_stements</span><span class="p">,</span>
+</span><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="p">)</span> 
+</code></pre></div>
+</div>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<h3 id="sync">Sync<a class="headerlink" href="#sync" title="Permanent link">&para;</a></h3>
+<p>You can check the following example, and execute it with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">cd</span><span class="w"> </span>examples/persistence
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>python<span class="w"> </span>run_sql_database.py
+</code></pre></div>
+<div class="highlight"><span class="filename">examples/persistence/run_sql_database.py</span><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="kn">import</span> <span class="nn">os</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">select</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="kn">from</span> <span class="nn">examples.persistence.models.sql_user</span> <span class="kn">import</span> <span class="n">SqlUser</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">databases</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="kn">from</span> <span class="nn">petisco.extra.sqlalchemy</span> <span class="kn">import</span> <span class="n">SqlDatabase</span><span class="p">,</span> <span class="n">SqliteConnection</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="c1"># Initialization</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="n">ROOT_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="n">DATABASE_NAME</span> <span class="o">=</span> <span class="s2">&quot;my-database&quot;</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="n">DATABASE_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;sqlite.db&quot;</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="s2">&quot;sqlite&quot;</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="k">def</span> <span class="nf">database_configurer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>    <span class="n">sql_database</span> <span class="o">=</span> <span class="n">SqlDatabase</span><span class="p">(</span>
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>        <span class="n">alias</span><span class="o">=</span><span class="n">DATABASE_NAME</span><span class="p">,</span>
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>        <span class="n">connection</span><span class="o">=</span><span class="n">SqliteConnection</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">SERVER_NAME</span><span class="p">,</span> <span class="n">DATABASE_FILENAME</span><span class="p">),</span>
+<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a>    <span class="p">)</span>
+<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a>    <span class="n">databases</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sql_database</span><span class="p">)</span>
+<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a>    <span class="n">databases</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a>
+<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a>
+<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a><span class="k">def</span> <span class="nf">execution</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a>    <span class="n">session_scope</span> <span class="o">=</span> <span class="n">databases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">SqlDatabase</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">DATABASE_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">get_session_scope</span><span class="p">()</span>
+<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a>
+<a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a>    <span class="k">with</span> <span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<a id="__codelineno-11-31" name="__codelineno-11-31" href="#__codelineno-11-31"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">)</span>
+<a id="__codelineno-11-32" name="__codelineno-11-32" href="#__codelineno-11-32"></a>        <span class="n">users</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<a id="__codelineno-11-33" name="__codelineno-11-33" href="#__codelineno-11-33"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">users</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-34" name="__codelineno-11-34" href="#__codelineno-11-34"></a>
+<a id="__codelineno-11-35" name="__codelineno-11-35" href="#__codelineno-11-35"></a>        <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">))</span>
+<a id="__codelineno-11-36" name="__codelineno-11-36" href="#__codelineno-11-36"></a>        <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="s2">&quot;10&quot;</span><span class="p">))</span>
+<a id="__codelineno-11-37" name="__codelineno-11-37" href="#__codelineno-11-37"></a>        <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<a id="__codelineno-11-38" name="__codelineno-11-38" href="#__codelineno-11-38"></a>
+<a id="__codelineno-11-39" name="__codelineno-11-39" href="#__codelineno-11-39"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">SqlUser</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Alice&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-40" name="__codelineno-11-40" href="#__codelineno-11-40"></a>        <span class="n">user</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+<a id="__codelineno-11-41" name="__codelineno-11-41" href="#__codelineno-11-41"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">user</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-42" name="__codelineno-11-42" href="#__codelineno-11-42"></a>
+<a id="__codelineno-11-43" name="__codelineno-11-43" href="#__codelineno-11-43"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">)</span>
+<a id="__codelineno-11-44" name="__codelineno-11-44" href="#__codelineno-11-44"></a>        <span class="n">users</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<a id="__codelineno-11-45" name="__codelineno-11-45" href="#__codelineno-11-45"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">users</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-46" name="__codelineno-11-46" href="#__codelineno-11-46"></a>
+<a id="__codelineno-11-47" name="__codelineno-11-47" href="#__codelineno-11-47"></a>
+<a id="__codelineno-11-48" name="__codelineno-11-48" href="#__codelineno-11-48"></a><span class="n">database_configurer</span><span class="p">()</span>
+<a id="__codelineno-11-49" name="__codelineno-11-49" href="#__codelineno-11-49"></a><span class="n">execution</span><span class="p">()</span>
+</code></pre></div>
+<p>Where <code>examples/persistence/models/sql_user.py</code> is:</p>
+<div class="highlight"><span class="filename">examples/persistence/models/sql_user.py</span><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">Mapped</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="kn">from</span> <span class="nn">petisco.extra.sqlalchemy</span> <span class="kn">import</span> <span class="n">SqlBase</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="n">age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="k">class</span> <span class="nc">SqlUser</span><span class="p">(</span><span class="n">SqlBase</span><span class="p">[</span><span class="n">User</span><span class="p">]):</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;users&quot;</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>    <span class="n">age</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">)</span>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>    <span class="k">def</span> <span class="nf">to_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>        <span class="k">return</span> <span class="n">User</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="p">)</span>
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a>
+<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a>    <span class="k">def</span> <span class="nf">from_domain</span><span class="p">(</span><span class="n">domain_entity</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SqlUser&quot;</span><span class="p">:</span>
+<a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a>        <span class="k">return</span> <span class="n">SqlUser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">domain_entity</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="n">domain_entity</span><span class="o">.</span><span class="n">age</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="async">Async<a class="headerlink" href="#async" title="Permanent link">&para;</a></h3>
+<p>Petisco also provides an async implementation, the <code>AsyncSqlDatabase</code>. To run it with async/await pattern, you could run
+the following commands</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">cd</span><span class="w"> </span>examples/persistence
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>python<span class="w"> </span>run_async_sql_database.py
+</code></pre></div>
+<p>Where <code>examples/persistence/run_async_sql_database.py</code> is:</p>
+<div class="highlight"><span class="filename">examples/persistence/run_async_sql_database.py</span><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">import</span> <span class="nn">asyncio</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kn">import</span> <span class="nn">os</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">select</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="kn">from</span> <span class="nn">examples.persistence.models</span> <span class="kn">import</span> <span class="n">SqlUser</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">databases</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="kn">from</span> <span class="nn">petisco.extra.sqlalchemy</span> <span class="kn">import</span> <span class="n">AsyncSqlDatabase</span><span class="p">,</span> <span class="n">SqliteConnection</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="n">ROOT_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="n">DATABASE_NAME</span> <span class="o">=</span> <span class="s2">&quot;my-database&quot;</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="n">DATABASE_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;sqlite.db&quot;</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="s2">&quot;sqlite+aiosqlite&quot;</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">database_configurer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>    <span class="n">sql_database</span> <span class="o">=</span> <span class="n">AsyncSqlDatabase</span><span class="p">(</span>
+<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>        <span class="n">alias</span><span class="o">=</span><span class="n">DATABASE_NAME</span><span class="p">,</span>
+<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>        <span class="n">connection</span><span class="o">=</span><span class="n">SqliteConnection</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">SERVER_NAME</span><span class="p">,</span> <span class="n">DATABASE_FILENAME</span><span class="p">),</span>
+<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a>    <span class="p">)</span>
+<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a>    <span class="n">databases</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sql_database</span><span class="p">)</span>
+<a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a>    <span class="k">await</span> <span class="n">databases</span><span class="o">.</span><span class="n">async_initialize</span><span class="p">()</span>
+<a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a>
+<a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a>
+<a id="__codelineno-14-25" name="__codelineno-14-25" href="#__codelineno-14-25"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">execution</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-14-26" name="__codelineno-14-26" href="#__codelineno-14-26"></a>    <span class="n">session_scope</span> <span class="o">=</span> <span class="n">databases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+<a id="__codelineno-14-27" name="__codelineno-14-27" href="#__codelineno-14-27"></a>        <span class="n">AsyncSqlDatabase</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">DATABASE_NAME</span>
+<a id="__codelineno-14-28" name="__codelineno-14-28" href="#__codelineno-14-28"></a>    <span class="p">)</span><span class="o">.</span><span class="n">get_session_scope</span><span class="p">()</span>
+<a id="__codelineno-14-29" name="__codelineno-14-29" href="#__codelineno-14-29"></a>
+<a id="__codelineno-14-30" name="__codelineno-14-30" href="#__codelineno-14-30"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<a id="__codelineno-14-31" name="__codelineno-14-31" href="#__codelineno-14-31"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">)</span>
+<a id="__codelineno-14-32" name="__codelineno-14-32" href="#__codelineno-14-32"></a>        <span class="n">users</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<a id="__codelineno-14-33" name="__codelineno-14-33" href="#__codelineno-14-33"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">users</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-14-34" name="__codelineno-14-34" href="#__codelineno-14-34"></a>
+<a id="__codelineno-14-35" name="__codelineno-14-35" href="#__codelineno-14-35"></a>        <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">))</span>
+<a id="__codelineno-14-36" name="__codelineno-14-36" href="#__codelineno-14-36"></a>        <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="s2">&quot;10&quot;</span><span class="p">))</span>
+<a id="__codelineno-14-37" name="__codelineno-14-37" href="#__codelineno-14-37"></a>        <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<a id="__codelineno-14-38" name="__codelineno-14-38" href="#__codelineno-14-38"></a>
+<a id="__codelineno-14-39" name="__codelineno-14-39" href="#__codelineno-14-39"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">SqlUser</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Alice&quot;</span><span class="p">)</span>
+<a id="__codelineno-14-40" name="__codelineno-14-40" href="#__codelineno-14-40"></a>        <span class="n">user</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+<a id="__codelineno-14-41" name="__codelineno-14-41" href="#__codelineno-14-41"></a>        <span class="nb">print</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+<a id="__codelineno-14-42" name="__codelineno-14-42" href="#__codelineno-14-42"></a>
+<a id="__codelineno-14-43" name="__codelineno-14-43" href="#__codelineno-14-43"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">)</span>
+<a id="__codelineno-14-44" name="__codelineno-14-44" href="#__codelineno-14-44"></a>        <span class="n">users</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<a id="__codelineno-14-45" name="__codelineno-14-45" href="#__codelineno-14-45"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">users</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-14-46" name="__codelineno-14-46" href="#__codelineno-14-46"></a>
+<a id="__codelineno-14-47" name="__codelineno-14-47" href="#__codelineno-14-47"></a>
+<a id="__codelineno-14-48" name="__codelineno-14-48" href="#__codelineno-14-48"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-14-49" name="__codelineno-14-49" href="#__codelineno-14-49"></a>    <span class="k">await</span> <span class="n">database_configurer</span><span class="p">()</span>
+<a id="__codelineno-14-50" name="__codelineno-14-50" href="#__codelineno-14-50"></a>    <span class="k">await</span> <span class="n">execution</span><span class="p">()</span>
+<a id="__codelineno-14-51" name="__codelineno-14-51" href="#__codelineno-14-51"></a>
+<a id="__codelineno-14-52" name="__codelineno-14-52" href="#__codelineno-14-52"></a>
+<a id="__codelineno-14-53" name="__codelineno-14-53" href="#__codelineno-14-53"></a><span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<a id="__codelineno-14-54" name="__codelineno-14-54" href="#__codelineno-14-54"></a><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<h3 id="async_1">Async<a class="headerlink" href="#async_1" title="Permanent link">&para;</a></h3>
+<p>Create two databases modifying using two <code>DeclarativeBase</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nb">cd</span><span class="w"> </span>examples/persistence
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>python<span class="w"> </span>run_two_sql_databases.py
+</code></pre></div>
+<div class="highlight"><span class="filename">examples/persistence/run_two_sql_databases.py</span><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="kn">import</span> <span class="nn">os</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">select</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="kn">from</span> <span class="nn">examples.persistence.models.sql_profession</span> <span class="kn">import</span> <span class="n">SqlProfession</span><span class="p">,</span> <span class="n">AlternativeSqlBase</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="kn">from</span> <span class="nn">examples.persistence.models.sql_user</span> <span class="kn">import</span> <span class="n">SqlUser</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="kn">from</span> <span class="nn">petisco</span> <span class="kn">import</span> <span class="n">databases</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="kn">from</span> <span class="nn">petisco.extra.sqlalchemy</span> <span class="kn">import</span> <span class="n">SqlDatabase</span><span class="p">,</span> <span class="n">SqliteConnection</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="c1"># Initialization</span>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="n">ROOT_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="n">DATABASE_NAME_1</span> <span class="o">=</span> <span class="s2">&quot;my-database-1&quot;</span>
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="n">DATABASE_FILENAME_1</span> <span class="o">=</span> <span class="s2">&quot;sqlite_1.db&quot;</span>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="n">DATABASE_NAME_2</span> <span class="o">=</span> <span class="s2">&quot;my-database-2&quot;</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="n">DATABASE_FILENAME_2</span> <span class="o">=</span> <span class="s2">&quot;sqlite_2.db&quot;</span>
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>
+<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="s2">&quot;sqlite&quot;</span>
+<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>
+<a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>
+<a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a><span class="k">def</span> <span class="nf">databases_configurer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a>    <span class="n">sql_database_1</span> <span class="o">=</span> <span class="n">SqlDatabase</span><span class="p">(</span>
+<a id="__codelineno-16-25" name="__codelineno-16-25" href="#__codelineno-16-25"></a>        <span class="n">alias</span><span class="o">=</span><span class="n">DATABASE_NAME_1</span><span class="p">,</span>
+<a id="__codelineno-16-26" name="__codelineno-16-26" href="#__codelineno-16-26"></a>        <span class="n">connection</span><span class="o">=</span><span class="n">SqliteConnection</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">SERVER_NAME</span><span class="p">,</span> <span class="n">DATABASE_FILENAME_1</span><span class="p">),</span>
+<a id="__codelineno-16-27" name="__codelineno-16-27" href="#__codelineno-16-27"></a>    <span class="p">)</span>
+<a id="__codelineno-16-28" name="__codelineno-16-28" href="#__codelineno-16-28"></a>    <span class="n">sql_database_2</span> <span class="o">=</span> <span class="n">SqlDatabase</span><span class="p">(</span>
+<a id="__codelineno-16-29" name="__codelineno-16-29" href="#__codelineno-16-29"></a>        <span class="n">alias</span><span class="o">=</span><span class="n">DATABASE_NAME_2</span><span class="p">,</span>
+<a id="__codelineno-16-30" name="__codelineno-16-30" href="#__codelineno-16-30"></a>        <span class="n">connection</span><span class="o">=</span><span class="n">SqliteConnection</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">SERVER_NAME</span><span class="p">,</span> <span class="n">DATABASE_FILENAME_2</span><span class="p">),</span>
+<a id="__codelineno-16-31" name="__codelineno-16-31" href="#__codelineno-16-31"></a>    <span class="p">)</span>
+<a id="__codelineno-16-32" name="__codelineno-16-32" href="#__codelineno-16-32"></a>    <span class="n">databases</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sql_database_1</span><span class="p">)</span>
+<a id="__codelineno-16-33" name="__codelineno-16-33" href="#__codelineno-16-33"></a>    <span class="n">databases</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sql_database_2</span><span class="p">)</span>
+<a id="__codelineno-16-34" name="__codelineno-16-34" href="#__codelineno-16-34"></a>
+<a id="__codelineno-16-35" name="__codelineno-16-35" href="#__codelineno-16-35"></a>    <span class="n">databases</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">initialization_arguments</span><span class="o">=</span><span class="p">{</span><span class="n">DATABASE_NAME_2</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;base&quot;</span><span class="p">:</span> <span class="n">AlternativeSqlBase</span><span class="p">}})</span>
+<a id="__codelineno-16-36" name="__codelineno-16-36" href="#__codelineno-16-36"></a>
+<a id="__codelineno-16-37" name="__codelineno-16-37" href="#__codelineno-16-37"></a>
+<a id="__codelineno-16-38" name="__codelineno-16-38" href="#__codelineno-16-38"></a><span class="k">def</span> <span class="nf">execution</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-16-39" name="__codelineno-16-39" href="#__codelineno-16-39"></a>    <span class="n">session_scope_1</span> <span class="o">=</span> <span class="n">databases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">SqlDatabase</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">DATABASE_NAME_1</span><span class="p">)</span><span class="o">.</span><span class="n">get_session_scope</span><span class="p">()</span>
+<a id="__codelineno-16-40" name="__codelineno-16-40" href="#__codelineno-16-40"></a>
+<a id="__codelineno-16-41" name="__codelineno-16-41" href="#__codelineno-16-41"></a>    <span class="k">with</span> <span class="n">session_scope_1</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<a id="__codelineno-16-42" name="__codelineno-16-42" href="#__codelineno-16-42"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">)</span>
+<a id="__codelineno-16-43" name="__codelineno-16-43" href="#__codelineno-16-43"></a>        <span class="n">users</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<a id="__codelineno-16-44" name="__codelineno-16-44" href="#__codelineno-16-44"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">users</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-45" name="__codelineno-16-45" href="#__codelineno-16-45"></a>
+<a id="__codelineno-16-46" name="__codelineno-16-46" href="#__codelineno-16-46"></a>        <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">))</span>
+<a id="__codelineno-16-47" name="__codelineno-16-47" href="#__codelineno-16-47"></a>        <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="s2">&quot;10&quot;</span><span class="p">))</span>
+<a id="__codelineno-16-48" name="__codelineno-16-48" href="#__codelineno-16-48"></a>        <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<a id="__codelineno-16-49" name="__codelineno-16-49" href="#__codelineno-16-49"></a>
+<a id="__codelineno-16-50" name="__codelineno-16-50" href="#__codelineno-16-50"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">SqlUser</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Alice&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-51" name="__codelineno-16-51" href="#__codelineno-16-51"></a>        <span class="n">user</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+<a id="__codelineno-16-52" name="__codelineno-16-52" href="#__codelineno-16-52"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">user</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-53" name="__codelineno-16-53" href="#__codelineno-16-53"></a>
+<a id="__codelineno-16-54" name="__codelineno-16-54" href="#__codelineno-16-54"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlUser</span><span class="p">)</span>
+<a id="__codelineno-16-55" name="__codelineno-16-55" href="#__codelineno-16-55"></a>        <span class="n">users</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<a id="__codelineno-16-56" name="__codelineno-16-56" href="#__codelineno-16-56"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">users</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-57" name="__codelineno-16-57" href="#__codelineno-16-57"></a>
+<a id="__codelineno-16-58" name="__codelineno-16-58" href="#__codelineno-16-58"></a>    <span class="n">session_scope_2</span> <span class="o">=</span> <span class="n">databases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">SqlDatabase</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">DATABASE_NAME_2</span><span class="p">)</span><span class="o">.</span><span class="n">get_session_scope</span><span class="p">()</span>
+<a id="__codelineno-16-59" name="__codelineno-16-59" href="#__codelineno-16-59"></a>
+<a id="__codelineno-16-60" name="__codelineno-16-60" href="#__codelineno-16-60"></a>    <span class="k">with</span> <span class="n">session_scope_2</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<a id="__codelineno-16-61" name="__codelineno-16-61" href="#__codelineno-16-61"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlProfession</span><span class="p">)</span>
+<a id="__codelineno-16-62" name="__codelineno-16-62" href="#__codelineno-16-62"></a>        <span class="n">professions</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<a id="__codelineno-16-63" name="__codelineno-16-63" href="#__codelineno-16-63"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">professions</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-64" name="__codelineno-16-64" href="#__codelineno-16-64"></a>
+<a id="__codelineno-16-65" name="__codelineno-16-65" href="#__codelineno-16-65"></a>        <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SqlProfession</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="n">salary</span><span class="o">=</span><span class="s2">&quot;1000&quot;</span><span class="p">))</span>
+<a id="__codelineno-16-66" name="__codelineno-16-66" href="#__codelineno-16-66"></a>        <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SqlProfession</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="n">salary</span><span class="o">=</span><span class="s2">&quot;2000&quot;</span><span class="p">))</span>
+<a id="__codelineno-16-67" name="__codelineno-16-67" href="#__codelineno-16-67"></a>        <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<a id="__codelineno-16-68" name="__codelineno-16-68" href="#__codelineno-16-68"></a>
+<a id="__codelineno-16-69" name="__codelineno-16-69" href="#__codelineno-16-69"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlProfession</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">SqlProfession</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Alice&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-70" name="__codelineno-16-70" href="#__codelineno-16-70"></a>        <span class="n">profession</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+<a id="__codelineno-16-71" name="__codelineno-16-71" href="#__codelineno-16-71"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">profession</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-72" name="__codelineno-16-72" href="#__codelineno-16-72"></a>
+<a id="__codelineno-16-73" name="__codelineno-16-73" href="#__codelineno-16-73"></a>        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">SqlProfession</span><span class="p">)</span>
+<a id="__codelineno-16-74" name="__codelineno-16-74" href="#__codelineno-16-74"></a>        <span class="n">professions</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<a id="__codelineno-16-75" name="__codelineno-16-75" href="#__codelineno-16-75"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">professions</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-76" name="__codelineno-16-76" href="#__codelineno-16-76"></a>
+<a id="__codelineno-16-77" name="__codelineno-16-77" href="#__codelineno-16-77"></a>
+<a id="__codelineno-16-78" name="__codelineno-16-78" href="#__codelineno-16-78"></a><span class="n">databases_configurer</span><span class="p">()</span>
+<a id="__codelineno-16-79" name="__codelineno-16-79" href="#__codelineno-16-79"></a><span class="n">execution</span><span class="p">()</span>
+</code></pre></div>
+<p>Where <code>AlternativeSqlBase</code> is defined in <code>examples/persistence/models/sql_profession.py</code> in order to gather other 
+SQLAlchemy models.</p>
+<div class="highlight"><span class="filename">examples/persistence/models/sql_profession.py</span><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">import</span> <span class="nn">inspect</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">DeclarativeBase</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>    <span class="n">age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>
+<a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>
+<a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a><span class="k">class</span> <span class="nc">AlternativeSqlBase</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>        <span class="n">attributes</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+<a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+<a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+<a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>        <span class="p">)</span>
+<a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">attributes</span><span class="si">}</span><span class="s2">)&quot;</span>
+<a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>
+<a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>        <span class="k">return</span> <span class="p">{</span>
+<a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+<a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>            <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+<a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a>            <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsourcefile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">),</span>
+<a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>        <span class="p">}</span>
+<a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a>
+<a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>    <span class="nd">@abstractmethod</span>
+<a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a>    <span class="k">def</span> <span class="nf">to_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a>        <span class="k">pass</span>
+<a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a>
+<a id="__codelineno-17-38" name="__codelineno-17-38" href="#__codelineno-17-38"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-17-39" name="__codelineno-17-39" href="#__codelineno-17-39"></a>    <span class="nd">@abstractmethod</span>
+<a id="__codelineno-17-40" name="__codelineno-17-40" href="#__codelineno-17-40"></a>    <span class="k">def</span> <span class="nf">from_domain</span><span class="p">(</span><span class="n">domain_entity</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AlternativeSqlBase&quot;</span><span class="p">:</span>
+<a id="__codelineno-17-41" name="__codelineno-17-41" href="#__codelineno-17-41"></a>        <span class="k">pass</span>
+<a id="__codelineno-17-42" name="__codelineno-17-42" href="#__codelineno-17-42"></a>
+<a id="__codelineno-17-43" name="__codelineno-17-43" href="#__codelineno-17-43"></a>
+<a id="__codelineno-17-44" name="__codelineno-17-44" href="#__codelineno-17-44"></a><span class="k">class</span> <span class="nc">Profession</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-17-45" name="__codelineno-17-45" href="#__codelineno-17-45"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-17-46" name="__codelineno-17-46" href="#__codelineno-17-46"></a>    <span class="n">salary</span><span class="p">:</span> <span class="nb">int</span>
+<a id="__codelineno-17-47" name="__codelineno-17-47" href="#__codelineno-17-47"></a>
+<a id="__codelineno-17-48" name="__codelineno-17-48" href="#__codelineno-17-48"></a>
+<a id="__codelineno-17-49" name="__codelineno-17-49" href="#__codelineno-17-49"></a><span class="k">class</span> <span class="nc">SqlProfession</span><span class="p">(</span><span class="n">AlternativeSqlBase</span><span class="p">[</span><span class="n">Profession</span><span class="p">]):</span>
+<a id="__codelineno-17-50" name="__codelineno-17-50" href="#__codelineno-17-50"></a>    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;professions&quot;</span>
+<a id="__codelineno-17-51" name="__codelineno-17-51" href="#__codelineno-17-51"></a>
+<a id="__codelineno-17-52" name="__codelineno-17-52" href="#__codelineno-17-52"></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-17-53" name="__codelineno-17-53" href="#__codelineno-17-53"></a>
+<a id="__codelineno-17-54" name="__codelineno-17-54" href="#__codelineno-17-54"></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+<a id="__codelineno-17-55" name="__codelineno-17-55" href="#__codelineno-17-55"></a>    <span class="n">salary</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">)</span>
+<a id="__codelineno-17-56" name="__codelineno-17-56" href="#__codelineno-17-56"></a>
+<a id="__codelineno-17-57" name="__codelineno-17-57" href="#__codelineno-17-57"></a>    <span class="k">def</span> <span class="nf">to_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profession</span><span class="p">:</span>
+<a id="__codelineno-17-58" name="__codelineno-17-58" href="#__codelineno-17-58"></a>        <span class="k">return</span> <span class="n">Profession</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">salary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">salary</span><span class="p">)</span>
+<a id="__codelineno-17-59" name="__codelineno-17-59" href="#__codelineno-17-59"></a>
+<a id="__codelineno-17-60" name="__codelineno-17-60" href="#__codelineno-17-60"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-17-61" name="__codelineno-17-61" href="#__codelineno-17-61"></a>    <span class="k">def</span> <span class="nf">from_domain</span><span class="p">(</span><span class="n">domain_entity</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SqlProfession&quot;</span><span class="p">:</span>
+<a id="__codelineno-17-62" name="__codelineno-17-62" href="#__codelineno-17-62"></a>        <span class="k">return</span> <span class="n">SqlProfession</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">domain_entity</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">salary</span><span class="o">=</span><span class="n">domain_entity</span><span class="o">.</span><span class="n">salary</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/alice-biometrics/petisco" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/alicebiometrics" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/company/alicebiometrics" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.tabs.link", "content.code.annotate", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.5cfa9459.min.js"></script>
+      
+        <script src="../../../js/redirects.js"></script>
+      
+        <script src="../../../js/termynal.js"></script>
+      
+        <script src="../../../js/ad.js"></script>
+      
+        <script src="../../../js/custom.js"></script>
+      
+    
+  </body>
+</html>
