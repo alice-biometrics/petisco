@@ -58,11 +58,11 @@ class TestRabbitMqDomainEventBus:
 
         bus = RabbitMqDomainEventBusMother.with_info_id()
         with mock.patch.object(BlockingChannel, "basic_publish") as mock_channel_publish, mock.patch.object(
-            bus, "execute", wraps=bus.execute
-        ) as wrapped_bus:
+            bus.publisher, "execute", wraps=bus.publisher.execute
+        ) as mock_publisher:
             bus.publish(domain_event_list)
-            wrapped_bus.assert_any_call(ANY, domain_event_list[0], True)
-            wrapped_bus.assert_any_call(ANY, domain_event_list[1], False)
+            mock_publisher.assert_any_call(ANY, domain_event_list[0], first_time=True)
+            mock_publisher.assert_any_call(ANY, domain_event_list[1], first_time=False)
 
         assert mock_channel_publish.call_count == events_number
 
