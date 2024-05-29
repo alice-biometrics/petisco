@@ -52,10 +52,10 @@ class RabbitMqCommandBus(CommandBus):
         try:
             check_chaos_publication()
             channel = self.connector.get_channel(self.rabbitmq_key)
-            for command in commands:
+            for i, command in enumerate(commands):
                 self._check_is_command(command)
                 command = command.update_meta(meta)
-                self.publisher.execute(channel, command)
+                self.publisher.execute(channel, command, first_time=i == 0)
                 if channel.is_open and not isinstance(self.connector, RabbitMqConsumerConnector):
                     channel.close()
                 dispatched_commands.append(command)
