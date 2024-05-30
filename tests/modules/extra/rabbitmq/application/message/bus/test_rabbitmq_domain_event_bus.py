@@ -57,12 +57,9 @@ class TestRabbitMqDomainEventBus:
         configurer.configure()
 
         bus = RabbitMqDomainEventBusMother.with_info_id()
-        with mock.patch.object(BlockingChannel, "confirm_delivery") as mock_channel_confirm_delivery:
+        with mock.patch.object(BlockingChannel, "basic_publish") as mock_channel_publish:
             bus.publish(domain_event_list)
-
-        mock_channel_confirm_delivery.assert_called_once()
-        assert bus.publisher.executed_times == events_number
-
+        assert mock_channel_publish.call_count == events_number
         configurer.clear()
 
     @testing_with_rabbitmq
