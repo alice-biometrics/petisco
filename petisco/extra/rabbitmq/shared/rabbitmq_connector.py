@@ -66,6 +66,7 @@ class RabbitMqConnector(metaclass=Singleton):
         try:
             channel = connection.channel()
             channel.basic_qos(prefetch_count=self.prefetch_count, global_qos=True)
+            channel.confirm_delivery()
         except StreamLostError:
             connection = self.get_connection(key_connection)
             channel = connection.channel()
