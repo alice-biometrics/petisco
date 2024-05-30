@@ -1,5 +1,5 @@
 from unittest import mock
-from unittest.mock import ANY, Mock, patch
+from unittest.mock import Mock, patch
 
 import pytest
 from pika.adapters.blocking_connection import BlockingChannel
@@ -57,14 +57,11 @@ class TestRabbitMqDomainEventBus:
         configurer.configure()
 
         bus = RabbitMqDomainEventBusMother.with_info_id()
-        with mock.patch.object(BlockingChannel, "basic_publish") as mock_channel_publish, mock.patch.object(
-            bus.publisher, "execute", wraps=bus.publisher.execute
-        ) as mock_publisher:
+        with mock.patch.object(BlockingChannel, "confirm_delivery") as mock_channel_confirm_delivery:
             bus.publish(domain_event_list)
-            mock_publisher.assert_any_call(ANY, domain_event_list[0], first_time=True)
-            mock_publisher.assert_any_call(ANY, domain_event_list[1], first_time=False)
 
-        assert mock_channel_publish.call_count == events_number
+        mock_channel_confirm_delivery.assert_called_once()
+        assert bus.publisher.executed_times == events_number
 
         configurer.clear()
 

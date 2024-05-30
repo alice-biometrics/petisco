@@ -51,10 +51,10 @@ class RabbitMqDomainEventBus(DomainEventBus):
         try:
             check_chaos_publication()
             channel = self.connector.get_channel(self.rabbitmq_key)
-            for i, domain_event in enumerate(domain_events):
+            for domain_event in domain_events:
                 self._check_is_domain_event(domain_event)
                 domain_event = domain_event.update_meta(meta)
-                self.publisher.execute(channel, domain_event, first_time=i == 0)
+                self.publisher.execute(channel, domain_event)
                 published_domain_event.append(domain_event)
             if channel.is_open and not isinstance(self.connector, RabbitMqConsumerConnector):
                 channel.close()
