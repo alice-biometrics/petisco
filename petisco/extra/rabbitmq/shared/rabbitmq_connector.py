@@ -70,10 +70,12 @@ class RabbitMqConnector(metaclass=Singleton):
         except StreamLostError:
             connection = self.get_connection(key_connection)
             channel = connection.channel()
+            channel.confirm_delivery()
         except ConnectionClosedByBroker:
             del self.open_connections[key_connection]
             connection = self.get_connection(key_connection)
             channel = connection.channel()
+            channel.confirm_delivery()
         return channel
 
     def _create_connection(self, key_connection: str) -> BlockingConnection:
