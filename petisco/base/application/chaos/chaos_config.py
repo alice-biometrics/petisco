@@ -1,10 +1,12 @@
 import sys
-from typing import Annotated, Union
+from typing import Union
 
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
 if sys.version_info >= (3, 9):
+    from typing import Annotated  # noqa
+
     # Prepared for Pydantic 3.0
     class ChaosConfig(BaseSettings):
         percentage_invalid_message_publication: Annotated[float, Field(ge=0.0, le=1.0)] = Field(
@@ -34,7 +36,7 @@ if sys.version_info >= (3, 9):
         )
 else:
     # Use deprecated confloat to support Python 3.8 (not available Annotated)
-    from pydantic import Field, confloat
+    from pydantic import confloat  # noqa
 
     class ChaosConfig(BaseSettings):
         percentage_invalid_message_publication: confloat(ge=0.0, le=1.0) = Field(
