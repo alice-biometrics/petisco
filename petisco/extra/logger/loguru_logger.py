@@ -16,11 +16,11 @@ from petisco.extra.logger.logger import (
 
 
 class LoguruLogger(Logger):
-    def __init__(self):
+    def __init__(self) -> None:
         self.logging_level = os.environ.get("PETISCO_LOGGING_LEVEL", "INFO").upper()
         logger.info(f"Set PETISCO_LOGGING_LEVEL: {self.logging_level}")
 
-    def log(self, logging_level, log_message: LogMessage):
+    def log(self, logging_level, log_message: LogMessage) -> None:
         message = log_message.to_dict()
         if logging_level == INFO:
             message["meta"]["level"] = "info"
