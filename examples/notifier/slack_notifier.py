@@ -9,10 +9,10 @@ from petisco.extra.slack import (
     SlackNotifier,
 )
 
-token = os.getenv("SLACK_API_TOKEN")
+token = os.getenv("SLACK_TOKEN")
 
 if not token:
-    raise ValueError("Please, configure the SLACK_API_TOKEN envvar")
+    raise ValueError("Please, configure the SLACK_TOKEN envvar")
 
 gke_accessory = {
     "type": "button",
@@ -24,7 +24,7 @@ gke_accessory = {
 }
 notifier = SlackNotifier(
     token=token,
-    channel="warnings-staging",
+    channel="testing",
     converter=BlocksSlackNotifierMessageConverter(slack_accessory=gke_accessory),
     exception_converter=ExceptionBlocksSlackNotifierMessageConverter(
         slack_accessory=gke_accessory,

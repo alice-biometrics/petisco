@@ -42,8 +42,15 @@ class Middleware(ABC):
         try:
             info_id = self.wrapped_class_input_arguments.get("info_id")
             if info_id and hasattr(info_id, "to_meta"):
-                meta = info_id.to_meta().get("info_id", {})
+                meta.update(info_id.to_meta().get("info_id", {}))
         except Exception as exc:
             logger.error(f"Middleware error getting info_id on get_meta_from_input: {str(exc)}")
+
+        try:
+            device_info = self.wrapped_class_input_arguments.get("device_info")
+            if device_info and hasattr(device_info, "to_meta"):
+                meta.update(device_info.to_meta(metadata_format="new"))
+        except Exception as exc:
+            logger.error(f"Middleware error getting device_info on get_meta_from_input: {str(exc)}")
 
         return meta
