@@ -63,6 +63,7 @@ from petisco.base.domain.message.command_subscriber import CommandSubscriber
 from petisco.base.domain.message.domain_event import DomainEvent
 from petisco.base.domain.message.domain_event_bus import DomainEventBus
 from petisco.base.domain.message.domain_event_subscriber import DomainEventSubscriber
+from petisco.base.domain.message.file_domain_event_bus import FileDomainEventBus
 from petisco.base.domain.message.message import Message
 from petisco.base.domain.message.message_bus import MessageBus
 from petisco.base.domain.message.message_consumer import MessageConsumer
@@ -127,6 +128,7 @@ __all__ = [
     "NotImplementedMessageConfigurer",
     "DomainEventBus",
     "CommandBus",
+    "FileDomainEventBus",
     "NotImplementedDomainEventBus",
     "NotImplementedCommandBus",
     "MessageSubscriber",
