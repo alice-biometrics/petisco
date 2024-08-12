@@ -1,16 +1,19 @@
+from __future__ import annotations
+
 import json
 
-from petisco import DomainEvent, DomainEventBus, NotImplementedDomainEventBus
+from petisco.base.domain.message.domain_event import DomainEvent
+from petisco.base.domain.message.domain_event_bus import DomainEventBus
 
 
 class FileDomainEventBus(DomainEventBus):
     def __init__(self, filename: str):
         self.filename = filename
-        self.bus = NotImplementedDomainEventBus()  # used to check inputs
 
     def publish(self, domain_event: DomainEvent | list[DomainEvent]) -> None:
         domain_events = [domain_event] if isinstance(domain_event, DomainEvent) else domain_event
-        self.bus.publish(domain_events)
+
+        self._check_is_domain_event(domain_event)
 
         ordered_domain_events = sorted(domain_events, key=lambda d: d.get_message_occurred_on(), reverse=True)
 
