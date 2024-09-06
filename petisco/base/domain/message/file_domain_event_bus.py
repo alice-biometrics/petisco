@@ -13,7 +13,8 @@ class FileDomainEventBus(DomainEventBus):
     def publish(self, domain_event: DomainEvent | list[DomainEvent]) -> None:
         domain_events = [domain_event] if isinstance(domain_event, DomainEvent) else domain_event
 
-        self._check_is_domain_event(domain_event)
+        for domain_event in domain_events:
+            self._check_is_domain_event(domain_event)
 
         ordered_domain_events = sorted(domain_events, key=lambda d: d.get_message_occurred_on(), reverse=True)
 
