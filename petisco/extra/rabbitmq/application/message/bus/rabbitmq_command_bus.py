@@ -5,7 +5,6 @@ from pika.exceptions import ChannelClosedByBroker
 from petisco.base.application.chaos.check_chaos import check_chaos_publication
 from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.command_bus import CommandBus
-from petisco.extra.rabbitmq import QueueConfig
 from petisco.extra.rabbitmq.application.message.bus.rabbitmq_message_publisher import (
     RabbitMqMessagePublisher,
 )
@@ -15,6 +14,7 @@ from petisco.extra.rabbitmq.application.message.configurer.rabbitmq_message_conf
 from petisco.extra.rabbitmq.application.message.consumer.rabbitmq_consumer_connector import (
     RabbitMqConsumerConnector,
 )
+from petisco.extra.rabbitmq.shared.queue_config import QueueConfig
 from petisco.extra.rabbitmq.shared.rabbitmq_connector import RabbitMqConnector
 
 
