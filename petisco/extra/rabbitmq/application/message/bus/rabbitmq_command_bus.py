@@ -5,6 +5,7 @@ from pika.exceptions import ChannelClosedByBroker
 from petisco.base.application.chaos.check_chaos import check_chaos_publication
 from petisco.base.domain.message.command import Command
 from petisco.base.domain.message.command_bus import CommandBus
+from petisco.extra.rabbitmq import QueueConfig
 from petisco.extra.rabbitmq.application.message.bus.rabbitmq_message_publisher import (
     RabbitMqMessagePublisher,
 )
@@ -29,11 +30,19 @@ class RabbitMqCommandBus(CommandBus):
         service: str,
         connector: Union[RabbitMqConnector, RabbitMqConsumerConnector] = RabbitMqConnector(),
         fallback: Union[CommandBus, None] = None,
+        queue_config: QueueConfig = QueueConfig.default(),
+        use_store_queues: bool = True,
     ):
         self.connector = connector
         self.exchange_name = f"{organization}.{service}"
         self.rabbitmq_key = f"publisher-{self.exchange_name}"
-        self.configurer = RabbitMqMessageConfigurer(organization, service, connector)
+        self.configurer = RabbitMqMessageConfigurer(
+            organization=organization,
+            service=service,
+            connector=connector,
+            queue_config=queue_config,
+            use_store_queues=use_store_queues,
+        )
         self.already_configured = False
         self.fallback = fallback
         self.publisher = RabbitMqMessagePublisher(self.exchange_name)

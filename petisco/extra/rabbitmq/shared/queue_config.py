@@ -32,8 +32,8 @@ class QueueConfig:
 
     def __init__(
         self,
-        default_retry_ttl: int,
-        default_main_ttl: int,
+        default_retry_ttl: Union[int, None],
+        default_main_ttl: Union[int, None],
         specific_queue_configs: Dict[str, SpecificQueueConfig],
     ) -> None:
         self.default_retry_ttl = default_retry_ttl
