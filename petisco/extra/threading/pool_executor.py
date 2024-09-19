@@ -1,14 +1,14 @@
 from multiprocessing.pool import ThreadPool
-from typing import Any, Callable, List, Tuple
+from typing import Any, List
+
+from petisco.extra.threading import Executable
 
 
-class Executable:
-    def __init__(self, func: Callable[[Any], Any], args: Tuple[Any]) -> None:
-        self.func = func
-        self.args = args
+class MultiprocessingPoolExecutor:
+    """
+    petisco pool executor based on from multiprocessing.pool import ThreadPool
+    """
 
-
-class PoolExecutor:
     def __init__(self, executables: List[Executable], use_multi_threading: bool = True) -> None:
         self.executables = executables
         self.use_multi_threading = use_multi_threading
@@ -35,3 +35,6 @@ class PoolExecutor:
     def clear(self) -> None:
         del self.executables
         self.executables = []
+
+
+PoolExecutor = MultiprocessingPoolExecutor  # make it compatible
