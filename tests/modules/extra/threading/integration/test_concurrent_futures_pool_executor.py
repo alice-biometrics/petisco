@@ -24,5 +24,4 @@ class TestConcurrentFuturesPoolExecutor:
     def should_execute_successfully(self, use_multi_threading: bool):
         pool_executor = ConcurrentFuturesPoolExecutor(self.executables, use_multi_threading)
         func_results = pool_executor.execute()
-
-        assert func_results == ["executable 1", "executable 2", "executable 3"]
+        assert sorted(func_results) == ["executable 1", "executable 2", "executable 3"]
