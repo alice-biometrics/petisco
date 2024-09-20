@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import Any
+from typing import Any, Tuple
 
 from petisco import CriticalError
 
@@ -8,7 +8,7 @@ class Executable:
     def __init__(
         self,
         func: Callable[[Any], Any],
-        args: tuple[Any],
+        args: Tuple[Any],
         name: str | None = None,
         prioritized: bool = False,
     ) -> None:
