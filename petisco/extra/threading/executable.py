@@ -1,5 +1,4 @@
-from collections.abc import Callable
-from typing import Any, Tuple, Union
+from typing import Any, Callable, Tuple, Union
 
 from petisco import CriticalError
 
