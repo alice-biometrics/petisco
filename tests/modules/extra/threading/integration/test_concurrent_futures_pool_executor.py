@@ -1,8 +1,15 @@
 from __future__ import annotations
 
+import sys
+
 import pytest
 
-from petisco.extra.threading import ConcurrentFuturesPoolExecutor, Executable
+from petisco.extra.threading import Executable
+
+if sys.version_info < (3, 10):
+    ConcurrentFuturesPoolExecutor = None  # Not available
+else:
+    from petisco.extra.threading import ConcurrentFuturesPoolExecutor
 
 
 def executable_func(value: str) -> str:

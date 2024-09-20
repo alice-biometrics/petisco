@@ -11,8 +11,8 @@ install:
 
 uninstall:
   run:
-    - pip uninstall petisco -y
-    - pip freeze | xargs pip uninstall -y
+    - uv pip uninstall petisco
+    - uv pip freeze | xargs uv pip uninstall
 
 steps:
   clean:
