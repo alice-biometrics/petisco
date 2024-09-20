@@ -17,6 +17,7 @@ def executable_func(value: str) -> str:
 
 
 @pytest.mark.integration
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="Only available in Python 3.10+")
 class TestConcurrentFuturesPoolExecutor:
     executables: list[Executable]
 
