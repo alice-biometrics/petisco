@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import Any, Tuple
+from typing import Any, Tuple, Union
 
 from petisco import CriticalError
 
@@ -9,7 +9,7 @@ class Executable:
         self,
         func: Callable[[Any], Any],
         args: Tuple[Any],
-        name: str | None = None,
+        name: Union[str, None] = None,
         prioritized: bool = False,
     ) -> None:
         """
