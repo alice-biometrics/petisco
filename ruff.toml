@@ -34,7 +34,7 @@ exclude = [
 line-length = 110
 indent-width = 4
 
-target-version = "py37"
+target-version = "py38"
 
 [lint]
 ignore = [
