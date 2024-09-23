@@ -19,8 +19,21 @@ class Executable:
         """
         self.func = func
         self.args = args
-        self.name = self.func.__qualname__ if name is None else name
+        self._set_name(name)
         self.prioritized = prioritized
+
+    def _set_name(self, name: Union[str, None] = None) -> None:
+        if hasattr(self.func, "__qualname__"):
+            self.name = self.func.__qualname__ if name is None else name
+        else:
+            try:
+                from unittest.mock import Mock  # noqa
+
+                self.name = (
+                    f"Mock:{str(self.func.__class__.__name__)}" if isinstance(self.func, Mock) else name
+                )
+            except:  # noqa
+                self.name = name
 
     def coroutine(self) -> Any:
         return self.func(*self.args)
