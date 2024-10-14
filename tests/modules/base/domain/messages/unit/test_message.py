@@ -112,9 +112,7 @@ class TestMessage:
         assert len(messages) == 5
         assert len(unique_messages) == 4
 
-    def should_format_message_with_base_model(
-        self,
-    ):  # noqa
+    def should_format_message_with_base_model(self):
         class Model(BaseModel):
             model_att: str
 
