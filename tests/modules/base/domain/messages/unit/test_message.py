@@ -1,6 +1,7 @@
 from datetime import timezone
 
 import pytest
+from pydantic.main import BaseModel
 
 from petisco import Message
 from tests.modules.base.mothers.message_mother import MessageMother
@@ -110,3 +111,18 @@ class TestMessage:
 
         assert len(messages) == 5
         assert len(unique_messages) == 4
+
+    def should_format_message_with_base_model(
+        self,
+    ):  # noqa
+        class Model(BaseModel):
+            model_att: str
+
+        message = Message()
+        message._message_attributes = {"base_model": Model(model_att="att")}
+
+        message_json = message.format_json()
+        retrieved_message = Message.from_format(message_json)
+
+        assert message == retrieved_message
+
