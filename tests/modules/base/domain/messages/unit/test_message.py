@@ -113,11 +113,11 @@ class TestMessage:
         assert len(unique_messages) == 4
 
     def should_format_message_with_base_model(self):
-        class Model(BaseModel):
-            model_att: str
+        class Model1(BaseModel):
+            att1: str
 
         message = Message()
-        message._message_attributes = {"base_model": Model(model_att="att")}
+        message._message_attributes = {"base_model": Model1(att1="att")}
 
         message_json = message.format_json()
         retrieved_message = Message.from_format(message_json)
