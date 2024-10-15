@@ -123,4 +123,3 @@ class TestMessage:
         retrieved_message = Message.from_format(message_json)
 
         assert message == retrieved_message
-
