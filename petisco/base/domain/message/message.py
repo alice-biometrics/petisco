@@ -112,8 +112,10 @@ class Message(BaseModel, extra="allow"):
             serialized_value = attribute
             if isinstance(attribute, (Uuid, ValueObject)):
                 serialized_value = attribute.value
-            if isinstance(attribute, datetime):
+            elif isinstance(attribute, datetime):
                 serialized_value = attribute.strftime(TIME_FORMAT)
+            elif isinstance(attribute, BaseModel):
+                serialized_value = attribute.model_dump()
             attributes[key] = serialized_value
         return attributes
 
