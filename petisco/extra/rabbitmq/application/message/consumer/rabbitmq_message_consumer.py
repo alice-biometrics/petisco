@@ -418,7 +418,10 @@ class RabbitMqMessageConsumer(MessageConsumer):
         self.printer.print_action("send_to_dead_letter")
         exchange_name = RabbitMqExchangeNameFormatter.dead_letter(self.exchange_name)
         assert isinstance(method.routing_key, str)
-        routing_key = self._get_routing_key(method.routing_key, "dead_letter.")
+        routing_key = method.routing_key
+        if self.max_retries < 1 and properties.headers.get("queue", None):
+            routing_key = properties.headers.get("queue")
+        routing_key = self._get_routing_key(routing_key, "dead_letter.")
         updated_headers = self.send_message_to(exchange_name, ch, routing_key, properties, body)
         return ConsumerDerivedAction(
             action="send_to_dead_letter",

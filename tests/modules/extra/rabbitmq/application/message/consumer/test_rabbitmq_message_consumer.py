@@ -590,3 +590,58 @@ class TestRabbitMqMessageConsumer:
         spy_consumer_handler_2.assert_count_by_message_id(
             domain_event.get_message_id(), expected_number_event_consumed_by_handler_2
         )
+
+    @testing_with_rabbitmq
+    def should_publish_consume_and_send_to_dead_letter_event_from_rabbitmq_when_fail_consumer_and_no_retries(
+        self,
+    ):
+        max_retries_allowed = 0
+        expected_number_event_consumed = 1
+
+        spy = SpyMessages()
+        spy_dead_letter = SpyMessages()
+
+        def assert_consumer(domain_event: DomainEvent) -> BoolResult:
+            spy.append(domain_event)
+            return isFailure
+
+        domain_event = DomainEventUserCreatedMother.random()
+        subscribers = [
+            MessageSubscriberMother.domain_event_subscriber(
+                domain_event_type=type(domain_event), handler=assert_consumer
+            )
+        ]
+
+        configurer = RabbitMqMessageConfigurerMother.with_retry_ttl_10ms()
+        configurer.configure_subscribers(subscribers)
+
+        bus = RabbitMqDomainEventBusMother.default()
+        bus.publish(domain_event)
+
+        consumer = RabbitMqMessageConsumerMother.with_max_retries(max_retries_allowed)
+        consumer.add_subscribers(subscribers)
+
+        def dead_letter_consumer(domain_event: DomainEvent) -> BoolResult:
+            spy_dead_letter.append(domain_event)
+            return isSuccess
+
+        dead_letter_message_subscriber = MessageSubscriberMother.domain_event_subscriber(
+            domain_event_type=type(domain_event), handler=dead_letter_consumer
+        )
+
+        consumer.add_subscriber_on_dead_letter(dead_letter_message_subscriber)
+
+        consumer.start()
+
+        sleep(2.5)
+
+        consumer.stop()
+        configurer.clear()
+
+        spy.assert_number_unique_messages(1)
+        spy.assert_first_message(domain_event)
+        spy.assert_count_by_message_id(domain_event.get_message_id(), expected_number_event_consumed)
+
+        spy_dead_letter.assert_number_unique_messages(1)
+        spy_dead_letter.assert_first_message(domain_event)
+        spy_dead_letter.assert_count_by_message_id(domain_event.get_message_id(), 1)
