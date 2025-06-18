@@ -4,6 +4,6 @@ pydantic-settings>=2,<3
 requests>=2.28.2,<3
 pyyaml>=6.0,<7
 loguru>=0.6.0,<1
-pyjwt[crypto]==2.4.0
+pyjwt[crypto]>=2.4.0,<3.0.0
 validators>=0.18.2,<1.0.0
 deprecation
