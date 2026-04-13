@@ -2,7 +2,7 @@ ruff==0.4.3
 pre-commit==3.3.3
 mypy==1.4.1
 pip-audit==2.5.5
-pytest==7.4.0
+pytest==9.0.3
 pytest-cov==4.0.0
 pytest-mock==3.10.0
 pytest-env==0.8.1
